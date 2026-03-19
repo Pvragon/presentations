@@ -142,20 +142,53 @@
             padding-left: 0.2rem;
         }
 
-        /* Category grid */
+        /* ==========================================================
+           COMPONENT: Category Card
+           Uniform-height tile for the category browser grid.
+           Design tokens follow Untitled UI spacing scale (4px base).
+           ========================================================== */
+
+        /* -- Tokens -- */
+        :root {
+            --card-padding: 1.5rem;          /* 24px */
+            --card-gap: 1rem;                /* 16px */
+            --card-radius: 16px;
+            --card-min-w: 260px;
+            --card-bg: rgba(248, 250, 252, 0.03);
+            --card-bg-hover: rgba(248, 250, 252, 0.06);
+            --card-border: rgba(248, 250, 252, 0.08);
+            --card-border-hover: rgba(231, 81, 31, 0.25);
+            --card-shadow-hover: 0 8px 25px -8px rgba(231, 81, 31, 0.15);
+            --card-accent-w: 3px;
+            --card-icon-size: 1.5rem;        /* 24px */
+            --card-title-size: 1rem;         /* 16px */
+            --card-desc-size: 0.875rem;      /* 14px */
+            --card-meta-size: 0.75rem;       /* 12px */
+            --card-icon-gap: 0.75rem;        /* 12px */
+            --card-title-gap: 0.25rem;       /* 4px */
+            --card-desc-gap: auto;           /* pushes count to bottom */
+        }
+
         .category-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(var(--card-min-w), 1fr));
+            gap: var(--card-gap);
             list-style: none;
         }
 
+        /* Make <li> stretch so cards are uniform height */
+        .category-grid > li {
+            display: flex;
+        }
+
         .category-card {
-            display: block;
-            padding: 1.5rem;
-            background: rgba(248, 250, 252, 0.03);
-            border: 1px solid rgba(248, 250, 252, 0.08);
-            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding: var(--card-padding);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--card-radius);
             color: var(--text-muted);
             text-decoration: none;
             transition: all 0.3s ease;
@@ -167,65 +200,68 @@
             content: '';
             position: absolute;
             left: 0; top: 0;
-            width: 3px; height: 100%;
+            width: var(--card-accent-w);
+            height: 100%;
             background: var(--accent-orange);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
         .category-card:hover {
-            background: rgba(248, 250, 252, 0.06);
-            border-color: rgba(231, 81, 31, 0.25);
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px -8px rgba(231, 81, 31, 0.15);
+            box-shadow: var(--card-shadow-hover);
         }
 
-        .category-card:hover::before { opacity: 0.7; }
+        .category-card:hover::before { opacity: 1; }
 
         .category-icon {
-            font-size: 1.6rem;
+            font-size: var(--card-icon-size);
             color: var(--accent-orange);
-            margin-bottom: 0.8rem;
+            margin-bottom: var(--card-icon-gap);
             display: block;
         }
 
         .category-card h3 {
-            font-size: 1.1rem;
+            font-size: var(--card-title-size);
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 0.3rem;
+            margin-bottom: var(--card-title-gap);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
         .category-card h3 i.arrow {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--accent-orange);
             opacity: 0;
             transform: translateX(-4px);
             transition: all 0.3s ease;
         }
 
-        .category-card:hover h3 i.arrow { opacity: 0.7; transform: translateX(0); }
+        .category-card:hover h3 i.arrow { opacity: 1; transform: translateX(0); }
 
         .category-desc {
-            font-size: 0.88rem;
+            font-size: var(--card-desc-size);
             color: var(--text-subtle);
             line-height: 1.5;
-            margin-bottom: 0.8rem;
+            margin-bottom: var(--card-desc-gap);
+            flex: 1;
         }
 
         .category-count {
-            font-size: 0.78rem;
+            font-size: var(--card-meta-size);
             color: var(--text-subtle);
-            opacity: 0.7;
+            opacity: 0.6;
             display: flex;
             align-items: center;
             gap: 0.4rem;
+            margin-top: 0.75rem;
         }
 
-        .category-count i { font-size: 0.7rem; }
+        .category-count i { font-size: 0.65rem; }
 
         /* Footer tagline with word rotation */
         .footer {
@@ -261,7 +297,7 @@
             .card-body { padding: 0.5rem 1.5rem 1.5rem; }
             .footer { padding: 1rem 1.5rem; }
             h1 { font-size: 1.6rem; }
-            .category-grid { grid-template-columns: 1fr; }
+            .category-grid { grid-template-columns: 1fr; --card-min-w: 100%; }
         }
 
         @media (max-width: 480px) {
