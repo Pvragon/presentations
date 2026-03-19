@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pvragon Presentations</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #112328;
@@ -28,7 +29,6 @@
             position: relative;
         }
 
-        /* Animated wave background — matches presentation template */
         #wave-bg {
             position: fixed;
             top: 0; left: 0;
@@ -37,10 +37,10 @@
             pointer-events: none;
         }
 
-        /* Glassmorphism card */
         .card {
             width: 92%;
-            max-width: 720px;
+            max-width: 900px;
+            max-height: 85vh;
             background: linear-gradient(160deg, rgba(17, 35, 40, 0.97) 0%, rgba(12, 24, 28, 0.99) 100%);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
@@ -51,11 +51,11 @@
                 inset 0 1px 0 rgba(248, 250, 252, 0.05);
             position: relative;
             z-index: 10;
-            padding: 3rem 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        /* Interior ambient glows */
         .card::before {
             content: '';
             position: absolute;
@@ -94,10 +94,12 @@
             100% { transform: translate(-30px, 20px) scale(1.05); }
         }
 
-        /* Content sits above glows */
-        .card-content {
+        /* Header — fixed at top of card */
+        .card-header {
+            padding: 2.5rem 3rem 1.5rem;
             position: relative;
             z-index: 5;
+            flex-shrink: 0;
         }
 
         h1 {
@@ -111,39 +113,55 @@
         .subtitle {
             color: var(--text-subtle);
             font-size: 1rem;
-            margin-bottom: 2.5rem;
             font-weight: 300;
         }
 
-        h2 {
-            font-size: 0.85rem;
-            color: var(--text-subtle);
-            font-weight: 600;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+        /* Scrollable content area */
+        .card-body {
+            padding: 0.5rem 3rem 2rem;
+            overflow-y: auto;
+            flex: 1;
+            position: relative;
+            z-index: 5;
         }
 
-        .deck-list { list-style: none; }
-        .deck-list li { margin-bottom: 0.7rem; }
+        /* Fade at top/bottom of scroll area */
+        .card-body::-webkit-scrollbar {
+            width: 4px;
+        }
+        .card-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .card-body::-webkit-scrollbar-thumb {
+            background: rgba(248, 250, 252, 0.1);
+            border-radius: 4px;
+        }
+        .card-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(248, 250, 252, 0.2);
+        }
 
-        .deck-list a {
+        /* Category grid */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .category-card {
             display: block;
-            padding: 1.1rem 1.5rem;
+            padding: 1.5rem;
             background: rgba(248, 250, 252, 0.03);
             border: 1px solid rgba(248, 250, 252, 0.08);
-            border-radius: 14px;
+            border-radius: 16px;
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 1.05rem;
-            font-weight: 600;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        /* Subtle left accent bar on hover */
-        .deck-list a::before {
+        .category-card::before {
             content: '';
             position: absolute;
             left: 0; top: 0;
@@ -153,91 +171,130 @@
             transition: opacity 0.3s ease;
         }
 
-        .deck-list a:hover {
+        .category-card:hover {
             background: rgba(248, 250, 252, 0.06);
             border-color: rgba(231, 81, 31, 0.25);
-            color: var(--text-main);
-            transform: translateX(4px);
-            box-shadow: 0 4px 20px -6px rgba(231, 81, 31, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px -8px rgba(231, 81, 31, 0.15);
         }
 
-        .deck-list a:hover::before {
+        .category-card:hover::before {
             opacity: 1;
         }
 
-        .deck-list a .deck-title {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
+        .category-icon {
+            font-size: 1.6rem;
+            color: var(--accent-orange);
+            margin-bottom: 0.8rem;
+            display: block;
         }
 
-        .deck-list a .deck-title i {
-            font-size: 0.9rem;
+        .category-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-card h3 i {
+            font-size: 0.8rem;
             color: var(--accent-orange);
             opacity: 0;
-            transform: translateX(-6px);
+            transform: translateX(-4px);
             transition: all 0.3s ease;
         }
 
-        .deck-list a:hover .deck-title i {
+        .category-card:hover h3 i {
             opacity: 1;
             transform: translateX(0);
         }
 
-        .deck-list a .deck-desc {
-            display: block;
-            font-size: 0.85rem;
+        .category-desc {
+            font-size: 0.88rem;
             color: var(--text-subtle);
-            font-weight: 400;
-            margin-top: 0.25rem;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+
+        .category-count {
+            font-size: 0.78rem;
+            color: var(--text-subtle);
+            opacity: 0.7;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .category-count i {
+            font-size: 0.7rem;
         }
 
         .footer {
-            margin-top: 2.5rem;
-            padding-top: 1.2rem;
+            padding: 1rem 3rem 1.5rem;
             border-top: 1px solid rgba(248, 250, 252, 0.06);
             font-size: 0.8rem;
             color: var(--text-subtle);
             opacity: 0.6;
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
         }
 
         @media (max-width: 768px) {
-            .card { padding: 2rem 1.5rem; }
+            .card-header { padding: 2rem 1.5rem 1rem; }
+            .card-body { padding: 0.5rem 1.5rem 1.5rem; }
+            .footer { padding: 1rem 1.5rem; }
             h1 { font-size: 1.8rem; }
+            .category-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .card { width: 97%; max-height: 90vh; border-radius: 16px; }
+            .card-header { padding: 1.5rem 1.2rem 0.8rem; }
+            .card-body { padding: 0.5rem 1.2rem 1.2rem; }
         }
     </style>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
     <canvas id="wave-bg"></canvas>
 
     <div class="card">
-        <div class="card-content">
+        <div class="card-header">
             <h1>Pvragon <span>Presentations</span></h1>
-            <p class="subtitle">prez.pvra.gon</p>
-
-            <h2>Echo1 V2 Kickoff</h2>
-            <ul class="deck-list">
-                <li><a href="echo1/kickoff-company-intro.html">
-                    <span class="deck-title">Company Intro <i class="fa-solid fa-arrow-right"></i></span>
-                    <span class="deck-desc">Ride Care context + Pvragon orientation</span>
-                </a></li>
-                <li><a href="echo1/kickoff-team-structure.html">
-                    <span class="deck-title">Team Structure <i class="fa-solid fa-arrow-right"></i></span>
-                    <span class="deck-desc">Pod model, roles & responsibilities</span>
-                </a></li>
-                <li><a href="echo1/meeting3-roadmap.html">
-                    <span class="deck-title">Roadmap & Engineering Plan <i class="fa-solid fa-arrow-right"></i></span>
-                    <span class="deck-desc">Timeline, milestones, and month 1 weekly plan</span>
-                </a></li>
-            </ul>
-
-            <div class="footer">Pvragon &middot; Auto-deployed via Vercel</div>
+            <p class="subtitle">prez.pvragon.com</p>
         </div>
+
+        <div class="card-body">
+            <ul class="category-grid">
+                <li>
+                    <a class="category-card" href="echo1/">
+                        <i class="fa-solid fa-rocket category-icon"></i>
+                        <h3>Echo1 V2 <i class="fa-solid fa-arrow-right"></i></h3>
+                        <p class="category-desc">RideCare platform rebuild — kickoff, roadmap, architecture, sprint reviews</p>
+                        <span class="category-count"><i class="fa-solid fa-layer-group"></i> 3 presentations</span>
+                    </a>
+                </li>
+                <!-- Add new categories here. The grid auto-fills columns based on available width. -->
+                <!--
+                <li>
+                    <a class="category-card" href="pvragon/">
+                        <i class="fa-solid fa-building category-icon"></i>
+                        <h3>Pvragon <i class="fa-solid fa-arrow-right"></i></h3>
+                        <p class="category-desc">Company-level decks — strategy, all-hands, investor updates</p>
+                        <span class="category-count"><i class="fa-solid fa-layer-group"></i> 0 presentations</span>
+                    </a>
+                </li>
+                -->
+            </ul>
+        </div>
+
+        <div class="footer">Pvragon &middot; Auto-deployed via Vercel</div>
     </div>
 
-    <!-- Animated wave background -->
     <script>
         (function() {
             const canvas = document.getElementById('wave-bg');
@@ -272,7 +329,6 @@
             function draw() {
                 time += 0.008;
                 ctx.clearRect(0, 0, w, h);
-
                 drawWave(h * 0.72, 30, 400, 0.4, 'rgba(30, 73, 88, 0.12)');
                 drawWave(h * 0.78, 22, 320, 0.6, 'rgba(30, 73, 88, 0.08)');
                 drawWave(h * 0.85, 18, 500, 0.35, 'rgba(231, 81, 31, 0.04)');
@@ -296,7 +352,6 @@
 
                 requestAnimationFrame(draw);
             }
-
             draw();
         })();
     </script>
