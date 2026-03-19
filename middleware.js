@@ -1,35 +1,24 @@
 /**
  * Edge Middleware — per-path password protection for Pvragon Presentations.
  *
- * Protected paths are defined in PROTECTED_PATHS below. Each entry maps a path
- * prefix to a Vercel environment variable name containing the password.
- *
- * Public paths (/, /us, etc.) pass through without any auth check.
- *
- * Auth flow:
- *   1. Request hits a protected path
- *   2. Middleware checks for a valid auth cookie (prez_auth_<category>)
- *   3. If missing/invalid, returns a branded password prompt page
- *   4. User submits password → middleware validates → sets cookie → redirects
- *   5. Cookie lasts 7 days per category
+ * Uses a branded HTML form that POSTs to the same URL. The middleware reads
+ * the request body, validates the password, and sets an HttpOnly cookie.
  *
  * To add a new protected category:
- *   1. Add an entry to PROTECTED_PATHS: '/category-name': 'ENV_VAR_NAME'
- *   2. Set the env var in Vercel: vercel env add ENV_VAR_NAME
- *   3. Push — middleware picks it up automatically
+ *   1. Add entry to PROTECTED_PATHS: '/category-name': 'ENV_VAR_NAME'
+ *   2. Set env var in Vercel: vercel env add ENV_VAR_NAME
+ *   3. Redeploy — middleware picks it up automatically
  */
 
-// Map of protected path prefixes → env var names containing their passwords
+export const config = {
+  matcher: ['/echo1', '/echo1/:path*'],
+};
+
 const PROTECTED_PATHS = {
   '/echo1': 'PREZ_PW_ECHO1',
-  // '/client-decks': 'PREZ_PW_CLIENTS',
 };
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
-
-export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
-};
 
 export default async function middleware(request) {
   const url = new URL(request.url);
@@ -46,35 +35,35 @@ export default async function middleware(request) {
     }
   }
 
-  // Public path — pass through
-  if (!matchedPrefix) {
-    return undefined;
-  }
+  if (!matchedPrefix) return;
 
   const password = process.env[envVarName];
+  if (!password) return;
 
-  // If no password is set in env, pass through (fail open — don't lock people out)
-  if (!password) {
-    return undefined;
-  }
+  const cookieName = `prez_auth${matchedPrefix.replace(/\//g, '_')}`;
 
-  const cookieName = `prez_auth_${matchedPrefix.replace(/\//g, '_')}`;
+  // Handle POST — password submission
+  if (request.method === 'POST') {
+    try {
+      const body = await request.text();
+      const params = new URLSearchParams(body);
+      const submitted = params.get('password');
 
-  // Handle password submission (POST)
-  if (request.method === 'POST' && path === `${matchedPrefix}/__auth`) {
-    const formData = await request.formData();
-    const submitted = formData.get('password');
-
-    if (submitted === password) {
-      // Correct — set cookie and redirect to category index
-      const response = Response.redirect(new URL(matchedPrefix + '/', request.url), 303);
-      response.headers.set(
-        'Set-Cookie',
-        `${cookieName}=${encodeURIComponent(password)}; Path=${matchedPrefix}; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`
-      );
-      return response;
-    } else {
-      // Wrong password — show prompt again with error
+      if (submitted === password) {
+        return new Response(null, {
+          status: 303,
+          headers: {
+            'Location': matchedPrefix + '/',
+            'Set-Cookie': `${cookieName}=${encodeURIComponent(password)}; Path=${matchedPrefix}; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
+          },
+        });
+      } else {
+        return new Response(authPage(matchedPrefix, true), {
+          status: 401,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        });
+      }
+    } catch (e) {
       return new Response(authPage(matchedPrefix, true), {
         status: 401,
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
@@ -83,16 +72,15 @@ export default async function middleware(request) {
   }
 
   // Check auth cookie
-  const cookies = request.headers.get('cookie') || '';
-  const cookieMatch = cookies.split(';').find(c => c.trim().startsWith(cookieName + '='));
-  if (cookieMatch) {
-    const value = decodeURIComponent(cookieMatch.split('=')[1].trim());
-    if (value === password) {
-      return undefined; // Authenticated — pass through
-    }
+  const cookieHeader = request.headers.get('cookie') || '';
+  const authCookie = cookieHeader.split(';').map(c => c.trim()).find(c => c.startsWith(cookieName + '='));
+
+  if (authCookie) {
+    const value = decodeURIComponent(authCookie.split('=')[1]);
+    if (value === password) return;
   }
 
-  // Not authenticated — show password prompt
+  // Not authenticated — show prompt
   return new Response(authPage(matchedPrefix, false), {
     status: 401,
     headers: { 'Content-Type': 'text/html; charset=utf-8' },
@@ -101,6 +89,8 @@ export default async function middleware(request) {
 
 function authPage(prefix, showError) {
   const categoryName = prefix.replace(/^\//, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  // Form POSTs to the current path — middleware intercepts it
+  const actionUrl = prefix + '/';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -149,7 +139,7 @@ function authPage(prefix, showError) {
     h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.3rem; position: relative; }
     h1 span { color: var(--accent-orange); }
     .subtitle { color: var(--text-subtle); font-size: 0.9rem; font-weight: 300; margin-bottom: 1.8rem; position: relative; }
-    form { position: relative; }
+    form { position: relative; display: flex; flex-direction: column; gap: 0.8rem; }
     input[type="password"] {
       width: 100%;
       padding: 0.75rem 1rem;
@@ -161,7 +151,6 @@ function authPage(prefix, showError) {
       font-family: 'Noto Sans', sans-serif;
       outline: none;
       transition: border-color 0.2s;
-      margin-bottom: 1rem;
     }
     input[type="password"]:focus { border-color: rgba(231, 81, 31, 0.5); }
     input[type="password"]::placeholder { color: var(--text-subtle); }
@@ -182,7 +171,6 @@ function authPage(prefix, showError) {
     .error {
       color: var(--accent-orange);
       font-size: 0.85rem;
-      margin-bottom: 1rem;
       position: relative;
     }
     .back { margin-top: 1.2rem; position: relative; }
@@ -195,7 +183,7 @@ function authPage(prefix, showError) {
     <h1>Access <span>${categoryName}</span></h1>
     <p class="subtitle">This section requires a password</p>
     ${showError ? '<p class="error">Incorrect password. Please try again.</p>' : ''}
-    <form method="POST" action="${prefix}/__auth">
+    <form method="POST" action="${actionUrl}">
       <input type="password" name="password" placeholder="Enter password" autofocus autocomplete="off">
       <button type="submit">Continue</button>
     </form>
