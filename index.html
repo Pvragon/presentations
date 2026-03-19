@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pvragon Presentations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #112328;
+            --bg-teal: #1E4958;
+            --accent-orange: #E7511F;
+            --text-main: #F8FAFC;
+            --text-muted: #DEEAEF;
+            --text-subtle: #5E767D;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 3rem 2rem; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        h1 span { color: var(--accent-orange); }
+        .subtitle { color: var(--text-subtle); font-size: 1rem; margin-bottom: 2.5rem; }
+        h2 { font-size: 1.2rem; color: var(--text-subtle); font-weight: 600; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .deck-list { list-style: none; }
+        .deck-list li { margin-bottom: 0.8rem; }
+        .deck-list a {
+            display: block;
+            padding: 1rem 1.5rem;
+            background: rgba(248, 250, 252, 0.03);
+            border: 1px solid rgba(248, 250, 252, 0.08);
+            border-radius: 10px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.05rem;
+            transition: all 0.2s ease;
+        }
+        .deck-list a:hover {
+            background: rgba(248, 250, 252, 0.06);
+            border-color: rgba(231, 81, 31, 0.3);
+            color: var(--text-main);
+        }
+        .deck-list a .deck-desc {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-subtle);
+            margin-top: 0.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pvragon <span>Presentations</span></h1>
+        <p class="subtitle">prez.pvra.gon</p>
+
+        <h2>Echo1 V2 Kickoff</h2>
+        <ul class="deck-list">
+            <li><a href="echo1/kickoff-company-intro.html">
+                Company Intro
+                <span class="deck-desc">Ride Care context + Pvragon orientation</span>
+            </a></li>
+            <li><a href="echo1/kickoff-team-structure.html">
+                Team Structure
+                <span class="deck-desc">Pod model, roles & responsibilities</span>
+            </a></li>
+            <li><a href="echo1/meeting3-roadmap.html">
+                Roadmap & Engineering Plan
+                <span class="deck-desc">Timeline, milestones, and month 1 weekly plan</span>
+            </a></li>
+        </ul>
+    </div>
+</body>
+</html>
