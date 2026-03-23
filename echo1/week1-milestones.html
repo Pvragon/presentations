@@ -71,7 +71,13 @@
 
         .slide {
             flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center;
-            padding: 3.5rem 4rem 5rem; /* extra bottom padding clears nav controls */
+            /*
+             * CONTENT SAFE ZONE — firm rule, do not reduce.
+             * Top:    4.5rem (72px) — clears logo-corner bottom edge (18px top + 46px height = 64px) + 8px buffer.
+             * Bottom: 4.5rem (72px) — clears nav button top edge (28px bottom + 36px btn height = 64px) + 8px buffer.
+             * No slide content may render above or below these boundaries.
+             */
+            padding: 4.5rem 4rem;
             opacity: 0; transform: translateY(15px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center; overflow-y: auto; position: relative; z-index: 5;
         }
