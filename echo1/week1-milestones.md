@@ -22,7 +22,7 @@ Theme: AWS infrastructure up, app scaffold running locally, schema finalized, RL
 
 ---
 
-## Priority 1: Schema + RBAC Finalized (COB Tuesday 3/25)
+## Priority 1: Schema + RBAC Finalized (COB Wednesday 3/26)
 
 Jaime — V2 schema delivered JIT domain-by-domain, finalized COB 3/25. RBAC model (roles, permissions, role-tenant rules) delivered same day.
 
@@ -123,7 +123,7 @@ Farhan's VPC (S2) → RDS (S3) + Valkey (S4) → Roman's S9 auth chain (Week 2).
 
 S0 decouples Rafael's RLS work from this chain — smart insurance.
 
-Schema + RBAC (COB Tuesday) → unblocks Roman, JP, Rafael simultaneously.
+Schema + RBAC (COB Wednesday) → unblocks Roman, JP, Rafael simultaneously.
 
 ---
 

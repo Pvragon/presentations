@@ -69,7 +69,12 @@
         }
         @keyframes drift-c { 0% { transform: translate(-50%, -50%) scale(1); } 33% { transform: translate(-35%, -65%) scale(1.3); } 66% { transform: translate(-60%, -40%) scale(1.1); } 100% { transform: translate(-45%, -55%) scale(0.9); } }
 
-        .slide { flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 3.5rem 4rem; opacity: 0; transform: translateY(15px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; overflow-y: auto; position: relative; z-index: 5; }
+        .slide {
+            flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center;
+            padding: 3.5rem 4rem 5rem; /* extra bottom padding clears nav controls */
+            opacity: 0; transform: translateY(15px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center; overflow-y: auto; position: relative; z-index: 5;
+        }
         .slide.active { display: flex; opacity: 1; transform: translateY(0); }
 
         h1 { font-size: 3.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 1rem; line-height: 1.2; }
@@ -103,7 +108,7 @@
         .stat-callout .stat-number { font-size: 1.8rem; font-weight: 900; color: var(--accent-orange); }
 
         .memory-list { text-align: left; max-width: 750px; margin-top: 1.5rem; }
-        .memory-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+        .memory-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 0.9rem; }
         .memory-item i { font-size: 1.4rem; color: var(--accent-orange); margin-top: 0.2rem; flex-shrink: 0; }
         .memory-item .item-text { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; }
         .memory-item .item-text strong { color: var(--text-main); }
@@ -176,7 +181,7 @@
             <div class="memory-list">
                 <div class="memory-item">
                     <i class="fa-solid fa-database"></i>
-                    <div class="item-text"><strong>P1: Schema + RBAC Finalized</strong> — COB Tuesday 3/25. Blocks 4 people.</div>
+                    <div class="item-text"><strong>P1: Schema + RBAC Finalized</strong> — COB Wednesday 3/26. Blocks 4 people.</div>
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-cloud"></i>
@@ -204,7 +209,7 @@
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-robot"></i>
-                    <div class="item-text"><strong>P8: Agentic Workflow</strong> — CLAUDE.md, conventions, agent patterns established.</div>
+                    <div class="item-text"><strong>P8: Agentic Workflow</strong> — David + JP. CLAUDE.md, conventions, agent patterns.</div>
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-list-check"></i>
@@ -216,10 +221,8 @@
         <!-- SLIDE 3: P1 — Schema + RBAC -->
         <div class="slide">
             <div class="priority-badge">PRIORITY 1</div>
-            <i class="fa-solid fa-diagram-project" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 1rem;"></i>
-            <h2>Schema + RBAC <span class="highlight">COB Tuesday</span></h2>
-            <p><strong>Owner:</strong> Jaime &nbsp;|&nbsp; <strong>Deadline:</strong> COB March 25</p>
-            <p>V2 schema delivered JIT domain-by-domain. RBAC model defines roles, permissions, and role-tenant rules.</p>
+            <h2>Schema + RBAC <span class="highlight">COB Wednesday</span></h2>
+            <p><strong>Owner:</strong> Jaime &nbsp;|&nbsp; <strong>Deadline:</strong> COB March 26</p>
             <div class="workspace-grid">
                 <div class="workspace-card card-blue">
                     <div class="card-icon"><i class="fa-solid fa-user-gear"></i></div>
@@ -242,8 +245,8 @@
                     <p>Cognito groups configuration</p>
                 </div>
             </div>
-            <div class="quote-block" style="margin-top: 1.5rem;">
-                <p>"Highest-risk deliverable this week — four people are directly blocked without it."</p>
+            <div class="stat-callout">
+                <p>Highest-risk deliverable — <span class="stat-number">4 people</span> are directly blocked without it.</p>
             </div>
         </div>
 
@@ -399,15 +402,15 @@
             <div class="priority-badge">PRIORITY 8</div>
             <i class="fa-solid fa-robot" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 1rem;"></i>
             <h2>Agentic Workflow <span class="highlight">Standardization</span></h2>
-            <p><strong>Owner:</strong> JP</p>
+            <p><strong>Owners:</strong> David + JP</p>
             <ul class="bullet-list">
                 <li><strong>CLAUDE.md files</strong> — project-level and workspace-level agent instructions</li>
                 <li><strong>Coding conventions</strong> — file naming, directory structure, component patterns</li>
                 <li><strong>Agent prompt patterns</strong> — how engineers write specs for agent execution</li>
-                <li><strong>Code review standards</strong> — what JP looks for when reviewing agent-produced code</li>
+                <li><strong>Code review standards</strong> — what gets reviewed in agent-produced code</li>
             </ul>
             <div class="quote-block" style="margin-top: 1.5rem;">
-                <p>"This is what makes the spec-to-build pipeline fast. Without established conventions, every engineer reinvents the wheel and JP spends Week 3 on rework instead of coaching."</p>
+                <p>"This is what makes the spec-to-build pipeline fast. Without established conventions, every engineer reinvents the wheel."</p>
             </div>
         </div>
 
@@ -459,7 +462,7 @@
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-database"></i>
-                    <div class="item-text"><strong>Schema (COB Tue) unblocks 3 streams</strong> — Roman's router design, JP's procedure patterns, Rafael's Drizzle files.</div>
+                    <div class="item-text"><strong>Schema (COB Wed) unblocks 3 streams</strong> — Roman's router design, JP's procedure patterns, Rafael's Drizzle files.</div>
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-seedling"></i>
