@@ -544,6 +544,65 @@
             transition: width 0.5s ease;
         }
 
+        /* Directory tree */
+        .dir-tree {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem 2.5rem;
+            margin-top: 1.2rem;
+            text-align: left;
+            width: 100%;
+            max-width: 920px;
+        }
+
+        .dir-tree pre {
+            font-family: 'Noto Sans Mono', 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.55;
+            color: var(--text-subtle);
+            margin: 0;
+            padding: 0.8rem 1rem;
+            background: rgba(248, 250, 252, 0.02);
+            border: 1px solid rgba(248, 250, 252, 0.06);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .dir-tree pre .dir-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .dir-tree pre .dir-accent {
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        .dir-tree pre .dir-teal {
+            color: #3a8da6;
+            font-weight: 600;
+        }
+
+        .dir-tree pre .dir-purple {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .dir-tree pre .dir-green {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        .dir-tree pre .dir-blue {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .dir-tree pre .dir-comment {
+            color: rgba(94, 118, 125, 0.7);
+            font-style: italic;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
@@ -567,7 +626,7 @@
     <div id="presentation">
 
         <div class="interior-glow"></div>
-        <div class="slide-counter" id="slideCounter">1 / 12</div>
+        <div class="slide-counter" id="slideCounter">1 / 13</div>
 
         <img src="https://cdn.pvragon.com/pvragon-logo-teal.svg" alt="Pvragon" class="logo-corner" id="logoCorner">
 
@@ -651,7 +710,62 @@
             </div>
         </div>
 
-        <!-- Slide 5: The Functional Stack -->
+        <!-- Slide 5: Directory Map -->
+        <div class="slide">
+            <h2>The Workspace <span class="highlight">On Disk</span></h2>
+            <p style="margin-bottom: 0.4rem;">This is what the workspace actually looks like. Every directory has a purpose.</p>
+            <div class="dir-tree">
+                <pre><span class="dir-label">~/ai-workspace/</span>
+├── <span class="dir-teal">agents/</span>                <span class="dir-comment"># cross-cutting</span>
+│   └── rowan-anicca/
+│       ├── identity.md
+│       ├── memory/
+│       │   ├── MEMORY.md   <span class="dir-comment"># index</span>
+│       │   └── *.md        <span class="dir-comment"># topics</span>
+│       └── adapters/claude/
+│
+├── <span class="dir-purple">personal/</span>             <span class="dir-comment"># layer 0</span>
+│   ├── notes/
+│   ├── preferences/
+│   ├── scratch/
+│   └── secrets/
+│
+├── <span class="dir-green">team-lib/</span>             <span class="dir-comment"># layer 1</span>
+│   ├── context/
+│   │   ├── global/
+│   │   └── indexed/
+│   ├── directives/
+│   ├── executions/
+│   ├── harnesses/</pre>
+                <pre>│   ├── <span class="dir-green">integrations/</span>
+│   │   ├── apps-script/
+│   │   ├── clickup-cli/
+│   │   └── gws-cli/
+│   ├── personas/
+│   ├── registry/
+│   │   ├── workspace.yaml
+│   │   ├── skills.yaml
+│   │   └── <span class="dir-comment">...manifests</span>
+│   └── skills/
+│
+├── <span class="dir-accent">my-lib/</span>               <span class="dir-comment"># layer 2</span>
+│   ├── backlog/
+│   ├── context/
+│   ├── executions/
+│   ├── runtime/
+│   └── skills/
+│
+└── <span class="dir-blue">projects/</span>             <span class="dir-comment"># layer 3</span>
+    └── my-app/
+        ├── docs/
+        │   ├── specs/
+        │   ├── adrs/
+        │   └── context/
+        └── src/</pre>
+            </div>
+        </div>
+
+        <!-- Slide 6: The Functional Stack -->
         <div class="slide">
             <h2>The <span class="highlight">Functional Stack</span></h2>
             <p>Each directory type in the workspace has a distinct role in the agentic workflow:</p>
