@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pvragon AI Workspace &mdash; Onboarding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #112328;
+            --bg-teal: #1E4958;
+            --accent-orange: #E7511F;
+            --accent-teal: #1E4958;
+            --text-main: #F8FAFC;
+            --text-muted: #DEEAEF;
+            --text-subtle: #5E767D;
+            --grey-light: #F8FAFC;
+            --grey-mid: #DEEAEF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans', Arial, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: #080e10;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #wave-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #presentation {
+            width: 92%;
+            max-width: 1280px;
+            height: 82vh;
+            background: linear-gradient(160deg, rgba(17, 35, 40, 0.97) 0%, rgba(12, 24, 28, 0.99) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(248, 250, 252, 0.08);
+            border-radius: 24px;
+            box-shadow:
+                0 25px 60px -12px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(248, 250, 252, 0.05);
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #presentation::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(30, 73, 88, 0.35) 0%, rgba(30, 73, 88, 0.08) 40%, transparent 70%);
+            top: -15%;
+            right: -10%;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: drift-a 14s ease-in-out infinite alternate;
+        }
+
+        #presentation::after {
+            content: '';
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(231, 81, 31, 0.07) 0%, rgba(231, 81, 31, 0.02) 40%, transparent 70%);
+            bottom: -12%;
+            left: -8%;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: drift-b 18s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift-a {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-60px, 50px) scale(1.2); }
+            66% { transform: translate(-30px, 80px) scale(1.1); }
+            100% { transform: translate(30px, -30px) scale(0.95); }
+        }
+
+        @keyframes drift-b {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -40px) scale(1.15); }
+            66% { transform: translate(70px, -20px) scale(1.25); }
+            100% { transform: translate(-30px, 20px) scale(1.05); }
+        }
+
+        .interior-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(30, 73, 88, 0.2) 0%, rgba(30, 73, 88, 0.05) 45%, transparent 70%);
+            top: 40%;
+            left: 50%;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: drift-c 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift-c {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            33% { transform: translate(-35%, -65%) scale(1.3); }
+            66% { transform: translate(-60%, -40%) scale(1.1); }
+            100% { transform: translate(-45%, -55%) scale(0.9); }
+        }
+
+        .slide {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3.5rem 4rem;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            overflow-y: auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h1 .accent { color: var(--accent-orange); }
+
+        h2 {
+            font-size: 2.4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--text-subtle);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-width: 850px;
+            margin-bottom: 1.2rem;
+        }
+
+        .highlight { color: var(--accent-orange); font-weight: 700; }
+
+        .highlight-teal {
+            color: var(--accent-teal);
+            font-weight: 700;
+            background: rgba(30, 73, 88, 0.3);
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--text-subtle);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .logo-header {
+            height: 36px;
+            margin-bottom: 2.5rem;
+            filter: brightness(1.1);
+        }
+
+        .logo-corner {
+            position: absolute;
+            top: 18px;
+            right: 24px;
+            height: 46px;
+            opacity: 0.45;
+            z-index: 30;
+        }
+
+        /* DOE diagram */
+        .diagram-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            width: 100%;
+            flex-wrap: nowrap;
+        }
+
+        .node {
+            background: rgba(248, 250, 252, 0.04);
+            border: 1px solid rgba(248, 250, 252, 0.08);
+            border-radius: 16px;
+            padding: 1.4rem 1.2rem;
+            width: 200px;
+            min-width: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .node:hover {
+            transform: translateY(-6px);
+            background: rgba(248, 250, 252, 0.06);
+        }
+
+        .node i { font-size: 2rem; margin-bottom: 0.6rem; }
+        .node h3 { font-size: 1.2rem; margin-bottom: 0.3rem; color: var(--text-main); }
+        .node p, .node span { font-size: 0.95rem; color: var(--text-subtle); margin: 0; line-height: 1.4; }
+
+        .node-directive i { color: var(--accent-orange); }
+        .node-directive:hover { border-color: var(--accent-orange); box-shadow: 0 8px 25px -8px rgba(231, 81, 31, 0.3); }
+
+        .node-orchestration i { color: var(--text-main); }
+        .node-orchestration:hover { border-color: var(--text-main); box-shadow: 0 8px 25px -8px rgba(248, 250, 252, 0.15); }
+
+        .node-execution i { color: var(--accent-teal); }
+        .node-execution:hover { border-color: #3a8da6; box-shadow: 0 8px 25px -8px rgba(30, 73, 88, 0.4); }
+
+        .arrow {
+            font-size: 1.3rem;
+            color: rgba(248, 250, 252, 0.15);
+            animation: bounceRight 2.5s infinite;
+        }
+
+        @keyframes bounceRight {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(0); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(4px); }
+        }
+
+        /* Stat callout */
+        .stat-callout {
+            background: rgba(231, 81, 31, 0.08);
+            border: 1px solid rgba(231, 81, 31, 0.2);
+            border-radius: 12px;
+            padding: 1.2rem 2rem;
+            margin-top: 1.5rem;
+            max-width: 700px;
+        }
+
+        .stat-callout p { font-size: 1.1rem; margin: 0; color: var(--text-muted); }
+        .stat-callout .stat-number { font-size: 1.8rem; font-weight: 900; color: var(--accent-orange); }
+
+        /* 2x2 workspace grid */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .workspace-card {
+            background: rgba(248, 250, 252, 0.03);
+            border: 1px solid rgba(248, 250, 252, 0.08);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .workspace-card:hover {
+            background: rgba(248, 250, 252, 0.06);
+            border-color: rgba(248, 250, 252, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .workspace-card .card-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+        .workspace-card h3 { font-size: 1.15rem; color: var(--text-main); margin-bottom: 0.4rem; }
+        .workspace-card p { font-size: 0.95rem; color: var(--text-subtle); margin: 0; line-height: 1.5; }
+
+        .card-personal .card-icon { color: #a78bfa; }
+        .card-personal:hover { border-color: rgba(167, 139, 250, 0.3); }
+
+        .card-mylib .card-icon { color: var(--accent-orange); }
+        .card-mylib:hover { border-color: rgba(231, 81, 31, 0.3); }
+
+        .card-teamlib .card-icon { color: #34d399; }
+        .card-teamlib:hover { border-color: rgba(52, 211, 153, 0.3); }
+
+        .card-projects .card-icon { color: #60a5fa; }
+        .card-projects:hover { border-color: rgba(96, 165, 250, 0.3); }
+
+        /* Memory tier visual */
+        .tier-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .tier-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(248, 250, 252, 0.03);
+            border: 1px solid rgba(248, 250, 252, 0.08);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .tier-row:hover {
+            background: rgba(248, 250, 252, 0.06);
+            transform: translateX(4px);
+        }
+
+        .tier-row i { font-size: 1.5rem; flex-shrink: 0; width: 40px; text-align: center; }
+        .tier-row .tier-label { font-weight: 700; color: var(--text-main); font-size: 1.05rem; min-width: 120px; }
+        .tier-row .tier-desc { font-size: 0.95rem; color: var(--text-subtle); line-height: 1.4; }
+
+        .tier-long i { color: #34d399; }
+        .tier-long:hover { border-color: rgba(52, 211, 153, 0.3); }
+        .tier-mid i { color: #60a5fa; }
+        .tier-mid:hover { border-color: rgba(96, 165, 250, 0.3); }
+        .tier-near i { color: var(--accent-orange); }
+        .tier-near:hover { border-color: rgba(231, 81, 31, 0.3); }
+        .tier-session i { color: var(--text-subtle); }
+        .tier-session:hover { border-color: rgba(94, 118, 125, 0.5); }
+
+        /* Functional stack horizontal */
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .stack-card {
+            background: rgba(248, 250, 252, 0.03);
+            border: 1px solid rgba(248, 250, 252, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stack-card:hover {
+            background: rgba(248, 250, 252, 0.06);
+            transform: translateY(-3px);
+        }
+
+        .stack-card i { font-size: 1.6rem; margin-bottom: 0.5rem; }
+        .stack-card h3 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 0.2rem; }
+        .stack-card p { font-size: 0.8rem; color: var(--text-subtle); margin: 0; line-height: 1.3; }
+
+        /* Dependency flow */
+        .flow-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 1.5rem;
+        }
+
+        .flow-row { display: flex; align-items: center; gap: 0.8rem; }
+
+        .flow-box {
+            background: rgba(248, 250, 252, 0.05);
+            border: 1px solid rgba(248, 250, 252, 0.1);
+            border-radius: 10px;
+            padding: 0.6rem 1.4rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .flow-arrow-down { font-size: 1.2rem; color: rgba(248, 250, 252, 0.15); }
+
+        /* Bullet list */
+        .bullet-list { text-align: left; max-width: 750px; margin-top: 1rem; }
+        .bullet-list li {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+            list-style: none;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+        }
+
+        /* Memory item rows */
+        .memory-list { text-align: left; max-width: 750px; margin-top: 1.5rem; }
+        .memory-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.2rem; }
+        .memory-item i { font-size: 1.4rem; color: var(--accent-orange); margin-top: 0.2rem; flex-shrink: 0; }
+        .memory-item .item-text { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; }
+        .memory-item .item-text strong { color: var(--text-main); }
+
+        /* Quote block */
+        .quote-block {
+            border-left: 3px solid var(--accent-orange);
+            padding: 0.8rem 1.5rem;
+            margin: 1rem 0;
+            text-align: left;
+            max-width: 750px;
+        }
+        .quote-block p { font-style: italic; font-size: 1.2rem; color: var(--text-muted); margin: 0; }
+
+        /* Equation */
+        .equation { display: flex; align-items: center; justify-content: center; gap: 0.6rem; margin: 1.2rem 0; flex-wrap: wrap; }
+        .equation-part {
+            background: rgba(248, 250, 252, 0.05);
+            border: 1px solid rgba(248, 250, 252, 0.1);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .equation-op { font-size: 1.6rem; color: var(--accent-orange); font-weight: 700; }
+        .equation-result { background: rgba(231, 81, 31, 0.1); border: 1px solid rgba(231, 81, 31, 0.3); color: var(--accent-orange); }
+
+        /* Slide counter */
+        .slide-counter {
+            position: absolute;
+            top: 28px;
+            left: 32px;
+            font-size: 0.85rem;
+            color: var(--text-subtle);
+            font-weight: 600;
+            z-index: 30;
+            mix-blend-mode: screen;
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 28px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 36px;
+            z-index: 20;
+        }
+
+        .btn {
+            background: rgba(248, 250, 252, 0.06);
+            border: 1px solid rgba(248, 250, 252, 0.12);
+            color: var(--text-muted);
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Noto Sans', Arial, sans-serif;
+        }
+
+        .btn:hover { background: rgba(248, 250, 252, 0.12); color: var(--text-main); }
+        .btn:active { transform: scale(0.96); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-teal), #2a6a80);
+            border: none;
+            color: var(--text-main);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2a6a80, var(--accent-teal));
+            box-shadow: 0 0 25px rgba(30, 73, 88, 0.5);
+        }
+
+        .progress-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: rgba(248, 250, 252, 0.03);
+            width: 100%;
+            border-radius: 0 0 24px 24px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent-teal), var(--accent-orange));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.8rem; }
+            p { font-size: 1.05rem; }
+            .slide { padding: 2rem 1.5rem; }
+            .diagram-container { flex-direction: column; gap: 0.8rem; }
+            .arrow { transform: rotate(90deg); }
+            .node { width: 100%; max-width: 280px; }
+            .workspace-grid { grid-template-columns: 1fr; }
+            .stack-grid { grid-template-columns: repeat(2, 1fr); }
+            .equation { flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="wave-bg"></canvas>
+
+    <div id="presentation">
+
+        <div class="interior-glow"></div>
+        <div class="slide-counter" id="slideCounter">1 / 12</div>
+
+        <img src="https://cdn.pvragon.com/pvragon-logo-teal.svg" alt="Pvragon" class="logo-corner" id="logoCorner">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <img src="https://cdn.pvragon.com/pvragon-logo-teal.svg" alt="Pvragon" class="logo-header">
+            <h1>The Pvragon <span class="accent">AI Workspace</span></h1>
+            <p class="subtitle">An operating system for agentic development</p>
+            <p>How we turn AI models into reliable, persistent collaborators &mdash; with plain files, clear boundaries, and structured memory.</p>
+        </div>
+
+        <!-- Slide 2: The Problem -->
+        <div class="slide">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 1rem;"></i>
+            <h2>AI Agents Are Powerful, But Fragile</h2>
+            <p>Large language models are remarkably capable. But on their own, they have serious limitations that compound over time:</p>
+            <ul class="bullet-list">
+                <li><strong>No memory</strong> &mdash; they forget everything between sessions</li>
+                <li><strong>No consistency</strong> &mdash; they may do the same task differently each time</li>
+                <li><strong>No identity</strong> &mdash; no persistent context about your business or preferences</li>
+                <li><strong>Compounding errors</strong> &mdash; without guardrails, small mistakes snowball fast</li>
+            </ul>
+            <div class="stat-callout">
+                <p>At <span class="stat-number">90%</span> accuracy per step, a 5-step task only succeeds <span class="stat-number">59%</span> of the time. Structure fixes this.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: DOE Framework -->
+        <div class="slide">
+            <h2>The Core Pattern: <span class="highlight">DOE</span></h2>
+            <p>Every task is separated into three concerns. Each layer has one job.</p>
+            <div class="diagram-container">
+                <div class="node node-directive">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <h3>Directives</h3>
+                    <span>What to do</span>
+                </div>
+                <i class="fa-solid fa-caret-right arrow"></i>
+                <div class="node node-orchestration">
+                    <i class="fa-solid fa-brain"></i>
+                    <h3>Orchestration</h3>
+                    <span>Who decides</span>
+                </div>
+                <i class="fa-solid fa-caret-right arrow"></i>
+                <div class="node node-execution">
+                    <i class="fa-solid fa-gears"></i>
+                    <h3>Execution</h3>
+                    <span>How it gets done</span>
+                </div>
+            </div>
+            <div class="quote-block" style="margin-top: 2rem;">
+                <p>Reliability comes from pushing repeatable steps into deterministic scripts &mdash; while keeping human intent readable and the AI focused on reasoning.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Four Layers -->
+        <div class="slide">
+            <h2>Four Layers, <span class="highlight">Clear Boundaries</span></h2>
+            <p>The workspace is organized by function, not by project or person. Dependencies flow downward only.</p>
+            <div class="workspace-grid">
+                <div class="workspace-card card-personal">
+                    <div class="card-icon"><i class="fa-solid fa-user-shield"></i></div>
+                    <h3>Layer 0 &mdash; Personal</h3>
+                    <p>Your secrets, notes, and local overrides. Never versioned, never shared. The private second brain.</p>
+                </div>
+                <div class="workspace-card card-teamlib">
+                    <div class="card-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    <h3>Layer 1 &mdash; Team Library</h3>
+                    <p>The shared operating system. Canonical skills, directives, executions, and context. Changes require a PR.</p>
+                </div>
+                <div class="workspace-card card-mylib">
+                    <div class="card-icon"><i class="fa-solid fa-flask"></i></div>
+                    <h3>Layer 2 &mdash; My Library</h3>
+                    <p>Your personal extensions. Experiment freely, push while working. Mature tools graduate to the team library.</p>
+                </div>
+                <div class="workspace-card card-projects">
+                    <div class="card-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <h3>Layer 3 &mdash; Projects</h3>
+                    <p>The workbench. Each project is its own repo with standardized docs, specs, and source code.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: The Functional Stack -->
+        <div class="slide">
+            <h2>The <span class="highlight">Functional Stack</span></h2>
+            <p>Each directory type in the workspace has a distinct role in the agentic workflow:</p>
+            <div class="stack-grid">
+                <div class="stack-card">
+                    <i class="fa-solid fa-file-lines" style="color: var(--accent-orange);"></i>
+                    <h3>Directives</h3>
+                    <p>What to do &mdash; intent and constraints</p>
+                </div>
+                <div class="stack-card">
+                    <i class="fa-solid fa-database" style="color: #34d399;"></i>
+                    <h3>Context</h3>
+                    <p>What to know &mdash; persistent knowledge</p>
+                </div>
+                <div class="stack-card">
+                    <i class="fa-solid fa-user-astronaut" style="color: #a78bfa;"></i>
+                    <h3>Personas</h3>
+                    <p>Who to be &mdash; identity and behavior</p>
+                </div>
+                <div class="stack-card">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="color: #60a5fa;"></i>
+                    <h3>Skills</h3>
+                    <p>How to do it &mdash; reusable capabilities</p>
+                </div>
+                <div class="stack-card">
+                    <i class="fa-solid fa-gears" style="color: var(--accent-teal);"></i>
+                    <h3>Executions</h3>
+                    <p>Do the work &mdash; deterministic scripts</p>
+                </div>
+                <div class="stack-card">
+                    <i class="fa-solid fa-plug" style="color: #f59e0b;"></i>
+                    <h3>Integrations</h3>
+                    <p>Connect outside &mdash; CLIs, MCPs, APIs</p>
+                </div>
+                <div class="stack-card">
+                    <i class="fa-solid fa-server" style="color: #34d399;"></i>
+                    <h3>Harnesses</h3>
+                    <p>Run sessions &mdash; the agent's main()</p>
+                </div>
+                <div class="stack-card">
+                    <i class="fa-solid fa-bullseye" style="color: #ef4444;"></i>
+                    <h3>Specs</h3>
+                    <p>Definition of done &mdash; acceptance criteria</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Memory Tiers -->
+        <div class="slide">
+            <h2>Four Tiers of <span class="highlight">Memory</span></h2>
+            <p>The workspace solves context amnesia with a layered memory system. Each tier has a different lifetime and loading strategy.</p>
+            <div class="tier-stack">
+                <div class="tier-row tier-long">
+                    <i class="fa-solid fa-mountain"></i>
+                    <span class="tier-label">Long-term</span>
+                    <span class="tier-desc">Versioned context files, brand guidelines, identity &mdash; loaded on-demand via registry index</span>
+                </div>
+                <div class="tier-row tier-mid">
+                    <i class="fa-solid fa-brain"></i>
+                    <span class="tier-label">Mid-term</span>
+                    <span class="tier-desc">Agent memory topics, lessons learned &mdash; curated across sessions, pruned by distillation</span>
+                </div>
+                <div class="tier-row tier-near">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span class="tier-label">Near-term</span>
+                    <span class="tier-desc">Working files, project plans, current state &mdash; cleared when the initiative completes</span>
+                </div>
+                <div class="tier-row tier-session">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span class="tier-label">Session</span>
+                    <span class="tier-desc">Active context window contents &mdash; volatile, subject to auto-compaction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Agent Identity -->
+        <div class="slide">
+            <i class="fa-solid fa-robot" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1rem;"></i>
+            <h2>Vendor-Independent <span class="highlight">Agent Identity</span></h2>
+            <p>The agent's identity, memory, and behavioral context live in a <strong>git-backed repository</strong> &mdash; not inside any vendor's directory.</p>
+            <div class="memory-list">
+                <div class="memory-item">
+                    <i class="fa-solid fa-code-branch"></i>
+                    <div class="item-text"><strong>Git-backed.</strong> Every memory change is version-controlled with full audit trail and rollback.</div>
+                </div>
+                <div class="memory-item">
+                    <i class="fa-solid fa-link"></i>
+                    <div class="item-text"><strong>Symlink adapters.</strong> Vendor tooling accesses agent data via symlinks. Switch vendors without restructuring memory.</div>
+                </div>
+                <div class="memory-item">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <div class="item-text"><strong>One agent, one memory pool.</strong> All project directories symlink to the same memory, keeping context consolidated.</div>
+                </div>
+                <div class="memory-item">
+                    <i class="fa-solid fa-id-card"></i>
+                    <div class="item-text"><strong>Persistent identity.</strong> Name, pronouns, communication style, and behavioral defaults survive across every session.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Registries -->
+        <div class="slide">
+            <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #34d399; margin-bottom: 1rem;"></i>
+            <h2>Registry-Driven <span class="highlight">Discovery</span></h2>
+            <p>Agents don't guess file paths or scan directories heuristically. Every skill, directive, execution, and context file is registered in a YAML manifest.</p>
+            <div class="flow-visual">
+                <div class="flow-row">
+                    <div class="flow-box" style="border-color: rgba(52, 211, 153, 0.3); color: #34d399;">Team Registry</div>
+                </div>
+                <div class="flow-arrow-down"><i class="fa-solid fa-arrow-down"></i></div>
+                <div class="flow-row">
+                    <div class="flow-box" style="border-color: rgba(231, 81, 31, 0.3); color: var(--accent-orange);">Personal Overrides</div>
+                </div>
+                <div class="flow-arrow-down"><i class="fa-solid fa-arrow-down"></i></div>
+                <div class="flow-row">
+                    <div class="flow-box" style="border-color: rgba(96, 165, 250, 0.3); color: #60a5fa;">Project Docs</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 1.05rem;">Load order is deterministic: shared first, then personal overrides, then project-specific context. No ambiguity.</p>
+        </div>
+
+        <!-- Slide 9: Integrations -->
+        <div class="slide">
+            <i class="fa-solid fa-plug" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+            <h2>Connecting to the <span class="highlight">Outside World</span></h2>
+            <p>Integrations bridge the workspace to external services. Each one has its own authentication, documentation, and invocation interface.</p>
+            <div class="diagram-container" style="margin-top: 1.5rem;">
+                <div class="node" style="width: 220px;">
+                    <i class="fa-solid fa-terminal" style="color: #34d399;"></i>
+                    <h3>CLIs</h3>
+                    <span>Local binaries making API calls</span>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-subtle);">gws, Restish</p>
+                </div>
+                <div class="node" style="width: 220px;">
+                    <i class="fa-solid fa-server" style="color: #60a5fa;"></i>
+                    <h3>MCPs</h3>
+                    <span>Server processes with tool protocol</span>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-subtle);">Playwright, Baserow</p>
+                </div>
+                <div class="node" style="width: 220px;">
+                    <i class="fa-solid fa-cloud-arrow-up" style="color: var(--accent-orange);"></i>
+                    <h3>Remote Execution</h3>
+                    <span>Your code on external infrastructure</span>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-subtle);">Apps Script, n8n</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Operational Modes -->
+        <div class="slide">
+            <i class="fa-solid fa-traffic-light" style="font-size: 3rem; color: var(--accent-teal); margin-bottom: 1rem;"></i>
+            <h2>Location-Based <span class="highlight">Behavior</span></h2>
+            <p>The agent automatically adjusts its behavior based on <em>where</em> it's working. Each directory has a constitution file that sets the rules.</p>
+            <div class="diagram-container" style="margin-top: 1.5rem;">
+                <div class="node" style="width: 220px; border-color: rgba(239, 68, 68, 0.3);">
+                    <i class="fa-solid fa-hand" style="color: #ef4444;"></i>
+                    <h3>STOP</h3>
+                    <span>Workspace root &mdash; route to the right layer</span>
+                </div>
+                <div class="node" style="width: 220px; border-color: rgba(52, 211, 153, 0.3);">
+                    <i class="fa-solid fa-gears" style="color: #34d399;"></i>
+                    <h3>Automation</h3>
+                    <span>Libraries &mdash; DOE automator, focus on reliability</span>
+                </div>
+                <div class="node" style="width: 220px; border-color: rgba(96, 165, 250, 0.3);">
+                    <i class="fa-solid fa-code" style="color: #60a5fa;"></i>
+                    <h3>Engineering</h3>
+                    <span>Projects &mdash; builder mode, read specs, write code</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Governance -->
+        <div class="slide">
+            <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: #34d399; margin-bottom: 1rem;"></i>
+            <h2>Governance That <span class="highlight">Scales</span></h2>
+            <p>Different layers have different rules &mdash; strict where it matters, loose where velocity matters.</p>
+            <div class="memory-list">
+                <div class="memory-item">
+                    <i class="fa-solid fa-lock" style="color: #34d399;"></i>
+                    <div class="item-text"><strong>Team Library &mdash; strict.</strong> All changes via PR. No personal scoping. Required frontmatter, docstrings, and tests.</div>
+                </div>
+                <div class="memory-item">
+                    <i class="fa-solid fa-flask" style="color: var(--accent-orange);"></i>
+                    <div class="item-text"><strong>Personal Library &mdash; loose.</strong> Maximize velocity. Experiment freely. Just don't commit secrets or large binaries.</div>
+                </div>
+                <div class="memory-item">
+                    <i class="fa-solid fa-code-branch" style="color: #60a5fa;"></i>
+                    <div class="item-text"><strong>Projects &mdash; repo-specific.</strong> Each project follows its own style guide, enforced by its own CI/CD pipeline.</div>
+                </div>
+            </div>
+            <div class="quote-block" style="margin-top: 1.5rem;">
+                <p>The workspace prevents entropy by making the right thing easy and the wrong thing hard &mdash; without slowing anyone down.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary / CTA -->
+        <div class="slide">
+            <img src="https://cdn.pvragon.com/pvragon-logo-teal.svg" alt="Pvragon" class="logo-header">
+            <h2>Plain Files. Clear Boundaries. <span class="highlight">Reliable Agents.</span></h2>
+            <div class="equation">
+                <div class="equation-part">DOE Pattern</div>
+                <div class="equation-op">+</div>
+                <div class="equation-part">Four Layers</div>
+                <div class="equation-op">+</div>
+                <div class="equation-part">Tiered Memory</div>
+                <div class="equation-op">=</div>
+                <div class="equation-part equation-result">Deterministic AI</div>
+            </div>
+            <p style="margin-top: 1.5rem;">No vendor lock-in. No magic. Just files and folders that work across VS Code, Obsidian, Git, and any AI agent.</p>
+            <p style="font-size: 1rem; color: var(--text-subtle); margin-top: 0.5rem;">Full reference: <span class="highlight-teal">workspace-reference.md</span> &bull; Editor setup: <span class="highlight-teal">editor-setup-guide.md</span> &bull; Project docs: <span class="highlight-teal">project-docs-standard.md</span></p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn" id="prevBtn" onclick="changeSlide(-1)">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-primary" id="nextBtn" onclick="changeSlide(1)">
+                Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounter = document.getElementById('slideCounter');
+        const logoCorner = document.getElementById('logoCorner');
+
+        function updateUI() {
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            const progress = (currentSlide / (slides.length - 1)) * 100;
+            progressBar.style.width = `${progress}%`;
+            slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+            logoCorner.style.display = (currentSlide === 0 || currentSlide === slides.length - 1) ? 'none' : 'block';
+            prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
+
+            if (currentSlide === slides.length - 1) {
+                nextBtn.innerHTML = 'Done <i class="fa-solid fa-check"></i>';
+                nextBtn.onclick = () => { changeSlide(0); };
+            } else {
+                nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
+                nextBtn.onclick = () => changeSlide(1);
+            }
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+            updateUI();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                if (currentSlide < slides.length - 1) changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            }
+        });
+
+        updateUI();
+    </script>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('wave-bg');
+            const ctx = canvas.getContext('2d');
+            let w, h, time = 0;
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function drawWave(yBase, amplitude, wavelength, speed, color) {
+                ctx.beginPath();
+                for (let x = 0; x <= w; x += 2) {
+                    const y = yBase
+                        + Math.sin((x / wavelength) + (time * speed)) * amplitude
+                        + Math.sin((x / (wavelength * 0.6)) + (time * speed * 0.7)) * (amplitude * 0.4)
+                        + Math.cos((x / (wavelength * 1.8)) + (time * speed * 0.3)) * (amplitude * 0.25);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.lineTo(w, h);
+                ctx.lineTo(0, h);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            function draw() {
+                time += 0.008;
+                ctx.clearRect(0, 0, w, h);
+                drawWave(h * 0.72, 30, 400, 0.4, 'rgba(30, 73, 88, 0.12)');
+                drawWave(h * 0.78, 22, 320, 0.6, 'rgba(30, 73, 88, 0.08)');
+                drawWave(h * 0.85, 18, 500, 0.35, 'rgba(231, 81, 31, 0.04)');
+                drawWave(h * 0.88, 15, 280, 0.8, 'rgba(30, 73, 88, 0.06)');
+
+                ctx.save();
+                ctx.beginPath();
+                for (let x = 0; x <= w; x += 2) {
+                    const y = h * 0.18
+                        + Math.sin((x / 500) + (time * 0.25)) * 20
+                        + Math.cos((x / 350) + (time * 0.15)) * 12;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.lineTo(w, 0);
+                ctx.lineTo(0, 0);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(30, 73, 88, 0.08)';
+                ctx.fill();
+                ctx.restore();
+
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+        })();
+    </script>
+</body>
+
+</html>
