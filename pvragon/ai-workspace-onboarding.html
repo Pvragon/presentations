@@ -544,64 +544,49 @@
             transition: width 0.5s ease;
         }
 
-        /* Directory tree */
-        .dir-tree {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.4rem 2.5rem;
+        /* Directory tree columns */
+        .dir-columns {
+            display: flex;
+            gap: 0.8rem;
             margin-top: 1.2rem;
-            text-align: left;
             width: 100%;
-            max-width: 920px;
+            max-width: 1050px;
+            align-items: flex-start;
         }
 
-        .dir-tree pre {
+        .dir-col {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dir-col-narrow {
+            flex: 0.8;
+        }
+
+        .dir-col pre {
             font-family: 'Noto Sans Mono', 'Courier New', monospace;
-            font-size: 0.82rem;
-            line-height: 1.55;
+            font-size: 0.78rem;
+            line-height: 1.5;
             color: var(--text-subtle);
             margin: 0;
-            padding: 0.8rem 1rem;
+            padding: 0.7rem 0.8rem;
             background: rgba(248, 250, 252, 0.02);
             border: 1px solid rgba(248, 250, 252, 0.06);
             border-radius: 10px;
             overflow-x: auto;
+            white-space: pre;
         }
 
-        .dir-tree pre .dir-label {
-            color: var(--text-muted);
-            font-weight: 600;
+        .dir-col pre + pre {
+            margin-top: 0.5rem;
         }
 
-        .dir-tree pre .dir-accent {
-            color: var(--accent-orange);
-            font-weight: 600;
-        }
-
-        .dir-tree pre .dir-teal {
-            color: #3a8da6;
-            font-weight: 600;
-        }
-
-        .dir-tree pre .dir-purple {
-            color: #a78bfa;
-            font-weight: 600;
-        }
-
-        .dir-tree pre .dir-green {
-            color: #34d399;
-            font-weight: 600;
-        }
-
-        .dir-tree pre .dir-blue {
-            color: #60a5fa;
-            font-weight: 600;
-        }
-
-        .dir-tree pre .dir-comment {
-            color: rgba(94, 118, 125, 0.7);
-            font-style: italic;
-        }
+        .dir-col pre .c-teal { color: #3a8da6; font-weight: 600; }
+        .dir-col pre .c-purple { color: #a78bfa; font-weight: 600; }
+        .dir-col pre .c-green { color: #34d399; font-weight: 600; }
+        .dir-col pre .c-orange { color: var(--accent-orange); font-weight: 600; }
+        .dir-col pre .c-blue { color: #60a5fa; font-weight: 600; }
+        .dir-col pre .c-dim { color: rgba(94, 118, 125, 0.6); font-style: italic; }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -714,54 +699,70 @@
         <div class="slide">
             <h2>The Workspace <span class="highlight">On Disk</span></h2>
             <p style="margin-bottom: 0.4rem;">This is what the workspace actually looks like. Every directory has a purpose.</p>
-            <div class="dir-tree">
-                <pre><span class="dir-label">~/ai-workspace/</span>
-├── <span class="dir-teal">agents/</span>                <span class="dir-comment"># cross-cutting</span>
-│   └── rowan-anicca/
-│       ├── identity.md
-│       ├── memory/
-│       │   ├── MEMORY.md   <span class="dir-comment"># index</span>
-│       │   └── *.md        <span class="dir-comment"># topics</span>
-│       └── adapters/claude/
+            <div class="dir-columns">
+                <div class="dir-col dir-col-narrow">
+                    <pre><span class="c-teal">agents/</span>
+└── rowan-anicca/
+    ├── identity.md
+    ├── memory/
+    │   ├── MEMORY.md
+    │   └── *.md
+    └── adapters/</pre>
+                    <pre><span class="c-purple">personal/</span>  <span class="c-dim">layer 0</span>
+├── notes/
+├── preferences/
+├── scratch/
+└── secrets/</pre>
+                </div>
+                <div class="dir-col">
+                    <pre><span class="c-green">team-lib/</span>  <span class="c-dim">layer 1</span>
+├── context/
+│   ├── global/
+│   └── indexed/
+├── directives/
+├── executions/
+├── harnesses/
+├── integrations/
+├── personas/
+├── registry/
+│   ├── workspace.yaml
+│   ├── skills.yaml
+│   ├── executions.yaml
+│   └── <span class="c-dim">...manifests</span>
+└── skills/</pre>
+                </div>
+                <div class="dir-col">
+                    <pre><span class="c-orange">my-lib/</span>  <span class="c-dim">layer 2</span>
+├── archive/
+├── backlog/
+├── context/
+│   ├── global/
+│   └── indexed/
+├── directives/
+├── executions/
+├── harnesses/
+├── integrations/
+├── personas/
+├── registry/
+│   ├── skills.yaml
+│   ├── executions.yaml
+│   └── <span class="c-dim">...manifests</span>
+├── runtime/
+└── skills/</pre>
+                </div>
+                <div class="dir-col dir-col-narrow">
+                    <pre><span class="c-blue">projects/</span>  <span class="c-dim">layer 3</span>
+├── my-app/
+│   ├── docs/
+│   │   ├── specs/
+│   │   ├── adrs/
+│   │   └── context/
+│   └── src/
 │
-├── <span class="dir-purple">personal/</span>             <span class="dir-comment"># layer 0</span>
-│   ├── notes/
-│   ├── preferences/
-│   ├── scratch/
-│   └── secrets/
-│
-├── <span class="dir-green">team-lib/</span>             <span class="dir-comment"># layer 1</span>
-│   ├── context/
-│   │   ├── global/
-│   │   └── indexed/
-│   ├── directives/
-│   ├── executions/
-│   ├── harnesses/</pre>
-                <pre>│   ├── <span class="dir-green">integrations/</span>
-│   │   ├── apps-script/
-│   │   ├── clickup-cli/
-│   │   └── gws-cli/
-│   ├── personas/
-│   ├── registry/
-│   │   ├── workspace.yaml
-│   │   ├── skills.yaml
-│   │   └── <span class="dir-comment">...manifests</span>
-│   └── skills/
-│
-├── <span class="dir-accent">my-lib/</span>               <span class="dir-comment"># layer 2</span>
-│   ├── backlog/
-│   ├── context/
-│   ├── executions/
-│   ├── runtime/
-│   └── skills/
-│
-└── <span class="dir-blue">projects/</span>             <span class="dir-comment"># layer 3</span>
-    └── my-app/
-        ├── docs/
-        │   ├── specs/
-        │   ├── adrs/
-        │   └── context/
-        └── src/</pre>
+└── another-app/
+    ├── docs/
+    └── src/</pre>
+                </div>
             </div>
         </div>
 
