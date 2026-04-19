@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing Automation Machine — Pvragon</title>
+<style>
+  :root {
+    --bg-dark: #0a1a1e;
+    --bg-surface: #112328;
+    --bg-elevated: #1b3138;
+    --bg-panel: #0f2024;
+    --accent: #E7511F;
+    --accent-dim: #c44019;
+    --accent-glow: rgba(231, 81, 31, 0.35);
+    --teal: #1E4958;
+    --teal-accent: #3a8da6;
+    --text-main: #F8FAFC;
+    --text-muted: #DEEAEF;
+    --text-subtle: #8fa3a9;
+    --text-faint: #5E767D;
+    --border-subtle: rgba(248,250,252,0.08);
+    --border-med: rgba(248,250,252,0.15);
+    --border-strong: rgba(248,250,252,0.25);
+
+    --p0-main: #ef4444; --p0-bg: #2a0e0e;
+    --p1-main: #f59e0b; --p1-bg: #2a1d08;
+    --p2-main: #eab308; --p2-bg: #2a2408;
+    --p3-main: #84cc16; --p3-bg: #1b2a08;
+    --p4-main: #10b981; --p4-bg: #08271d;
+    --p5-main: #14b8a6; --p5-bg: #082724;
+    --p6-main: #3b82f6; --p6-bg: #0d1d39;
+    --p7-main: #a855f7; --p7-bg: #22122e;
+
+    --input-main: #94a3b8;
+    --input-bg: #1a2833;
+    --output-main: #E7511F;
+    --output-bg: #2a1007;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    color: var(--text-main);
+    background: var(--bg-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  .app-header {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .app-header h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+  }
+  .app-header h1 .accent-orange { color: var(--accent); }
+
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .controls label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-subtle); }
+  .controls select, .controls input[type="search"] {
+    font: inherit;
+    padding: 5px 9px;
+    border: 1px solid var(--border-med);
+    border-radius: 5px;
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    outline: none;
+  }
+  .controls select:focus, .controls input[type="search"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+  .controls input[type="checkbox"] { accent-color: var(--accent); }
+  .controls button {
+    font: inherit;
+    padding: 5px 14px;
+    border: 1px solid var(--border-med);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .controls button:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .app-main {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+  }
+
+  /* Channels panel (left) */
+  .channels-panel {
+    width: 300px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border-subtle);
+    background: var(--bg-panel);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .channels-panel input[type="search"] {
+    margin: 12px;
+    padding: 8px 10px;
+    border: 1px solid var(--border-med);
+    border-radius: 5px;
+    font: inherit;
+    background: var(--bg-elevated);
+    color: var(--text-main);
+  }
+  .channels-panel input[type="search"]::placeholder { color: var(--text-faint); }
+  .channel-count { padding: 0 16px 8px; font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.4px; }
+  .channel-list-header {
+    display: flex;
+    gap: 8px;
+    padding: 8px 14px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text-faint);
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    font-weight: 600;
+  }
+  .channel-list-header .ch-id { min-width: 36px; }
+  .channel-list-header .ch-name { flex: 1; }
+  .channel-list-header .ch-cat { width: 24px; text-align: center; }
+  .channel-list-header .ch-score { text-align: right; min-width: 36px; }
+  #channel-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+  #channel-list li {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    transition: background 0.1s;
+  }
+  #channel-list li:hover { background: rgba(231, 81, 31, 0.08); }
+  #channel-list li.active {
+    background: rgba(231, 81, 31, 0.18);
+    border-left: 3px solid var(--accent);
+    padding-left: 11px;
+  }
+  #channel-list .ch-id { font-family: ui-monospace, monospace; color: var(--text-faint); font-size: 10.5px; min-width: 36px; }
+  #channel-list .ch-name { flex: 1; color: var(--text-muted); }
+  #channel-list li.active .ch-name { color: var(--text-main); font-weight: 500; }
+  #channel-list .ch-score {
+    font-variant-numeric: tabular-nums;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  #channel-list .ch-cat {
+    font-size: 9.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .ch-cat-Paid { background: rgba(245,158,11,0.18); color: #fbbf24; }
+  .ch-cat-Owned { background: rgba(16,185,129,0.18); color: #34d399; }
+  .ch-cat-Earned { background: rgba(20,184,166,0.18); color: #2dd4bf; }
+  .ch-cat-Hybrid { background: rgba(168,85,247,0.18); color: #c084fc; }
+
+  /* Graph area */
+  .graph-wrapper {
+    flex: 1;
+    position: relative;
+    background: radial-gradient(ellipse at center, var(--bg-surface) 0%, var(--bg-dark) 100%);
+    min-width: 0;
+  }
+  #graph { width: 100%; height: 100%; }
+
+  /* Detail panel (right) */
+  .detail-panel {
+    width: 400px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border-subtle);
+    background: var(--bg-panel);
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .detail-panel .empty {
+    color: var(--text-subtle);
+    text-align: center;
+    margin-top: 80px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .detail-panel .empty strong { color: var(--accent); }
+  .detail-header { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
+  .detail-header h2 { margin: 8px 0 4px; font-size: 24px; font-family: ui-monospace, monospace; font-weight: 600; color: var(--text-main); }
+  .detail-header .node-name { margin: 0 0 6px; font-size: 16px; font-weight: 500; color: var(--accent); }
+  .detail-header .subcategory { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-subtle); }
+  .detail-section { margin: 16px 0; }
+  .detail-section h3 {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--accent);
+    margin: 14px 0 8px;
+    font-weight: 600;
+  }
+  .detail-section p { margin: 0 0 8px; line-height: 1.55; color: var(--text-muted); }
+  .detail-section ul, .detail-section ol { margin: 0; padding-left: 20px; color: var(--text-muted); }
+  .detail-section li { margin: 4px 0; line-height: 1.5; }
+  .detail-section code {
+    background: var(--bg-elevated);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    display: inline-block;
+    margin: 2px 3px;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+  }
+  .detail-section a[data-node-id], .detail-section a[data-input-id], .detail-section a[data-output-id] {
+    color: var(--accent);
+    cursor: pointer;
+    font-family: ui-monospace, monospace;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .detail-section a:hover { text-decoration: underline; }
+
+  .detail-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .metric {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .metric-label {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+  }
+  .metric-value { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-main); }
+  .metric-value small { font-weight: 400; color: var(--text-faint); font-size: 11px; }
+
+  .phase-badge, .tier-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10.5px;
+    font-weight: 600;
+    font-family: ui-monospace, monospace;
+    border: 1px solid;
+    margin-right: 6px;
+  }
+  .category-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 3px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .phase-p0 { background: var(--p0-bg); color: var(--p0-main); border-color: var(--p0-main); }
+  .phase-p1 { background: var(--p1-bg); color: var(--p1-main); border-color: var(--p1-main); }
+  .phase-p2 { background: var(--p2-bg); color: var(--p2-main); border-color: var(--p2-main); }
+  .phase-p3 { background: var(--p3-bg); color: var(--p3-main); border-color: var(--p3-main); }
+  .phase-p4 { background: var(--p4-bg); color: var(--p4-main); border-color: var(--p4-main); }
+  .phase-p5 { background: var(--p5-bg); color: var(--p5-main); border-color: var(--p5-main); }
+  .phase-p6 { background: var(--p6-bg); color: var(--p6-main); border-color: var(--p6-main); }
+  .phase-p7 { background: var(--p7-bg); color: var(--p7-main); border-color: var(--p7-main); }
+  .tier-input { background: var(--input-bg); color: var(--input-main); border-color: var(--input-main); }
+  .tier-output { background: var(--output-bg); color: var(--output-main); border-color: var(--output-main); }
+
+  .edge-type-hard, .edge-type-soft, .edge-type-signal, .edge-type-consumes, .edge-type-produces {
+    display: inline-block;
+    font-size: 9px;
+    text-transform: uppercase;
+    padding: 1px 5px;
+    border-radius: 2px;
+    margin-right: 5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+  }
+  .edge-type-hard { background: var(--accent); color: white; }
+  .edge-type-soft { background: var(--text-subtle); color: var(--bg-dark); }
+  .edge-type-signal { background: var(--text-faint); color: white; }
+  .edge-type-consumes { background: var(--input-main); color: var(--bg-dark); }
+  .edge-type-produces { background: var(--output-main); color: white; }
+
+  .io-section ul { list-style: none; padding: 0; }
+  .io-section li {
+    display: flex;
+    gap: 8px;
+    margin: 6px 0;
+    padding: 6px 10px;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+    border-left: 3px solid;
+    align-items: center;
+  }
+  .io-section li.io-input { border-left-color: var(--input-main); }
+  .io-section li.io-output { border-left-color: var(--output-main); }
+  .io-section li .io-id { font-family: ui-monospace, monospace; font-size: 10px; color: var(--text-faint); min-width: 32px; }
+  .io-section li .io-name { flex: 1; font-size: 12px; color: var(--text-muted); }
+
+  /* Footer legend */
+  .app-footer {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+    padding: 10px 20px;
+    font-size: 11px;
+  }
+  .legend {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .legend-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .legend-title { color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.6px; font-size: 10px; margin-right: 4px; }
+  .phase-swatch, .tier-swatch {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 10px;
+    font-family: ui-monospace, monospace;
+    border: 1px solid;
+  }
+  .phase-swatch.p0 { background: var(--p0-bg); color: var(--p0-main); border-color: var(--p0-main); }
+  .phase-swatch.p1 { background: var(--p1-bg); color: var(--p1-main); border-color: var(--p1-main); }
+  .phase-swatch.p2 { background: var(--p2-bg); color: var(--p2-main); border-color: var(--p2-main); }
+  .phase-swatch.p3 { background: var(--p3-bg); color: var(--p3-main); border-color: var(--p3-main); }
+  .phase-swatch.p4 { background: var(--p4-bg); color: var(--p4-main); border-color: var(--p4-main); }
+  .phase-swatch.p5 { background: var(--p5-bg); color: var(--p5-main); border-color: var(--p5-main); }
+  .phase-swatch.p6 { background: var(--p6-bg); color: var(--p6-main); border-color: var(--p6-main); }
+  .phase-swatch.p7 { background: var(--p7-bg); color: var(--p7-main); border-color: var(--p7-main); }
+  .tier-swatch.input { background: var(--input-bg); color: var(--input-main); border-color: var(--input-main); }
+  .tier-swatch.output { background: var(--output-bg); color: var(--output-main); border-color: var(--output-main); }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    z-index: 1000;
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    padding: 14px 16px;
+    border-radius: 8px;
+    max-width: 420px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    pointer-events: none;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+    border: 1px solid var(--border-med);
+  }
+  .tooltip.hidden { display: none; }
+  .tooltip strong { color: var(--accent); font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 0.3px; display: block; margin-bottom: 4px; }
+  .tooltip p { margin: 4px 0; color: var(--text-muted); }
+  .tooltip .tooltip-stats {
+    display: flex;
+    gap: 14px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+  .tooltip .stat b { color: var(--accent); font-weight: 600; margin-right: 4px; }
+  .tooltip .tooltip-section {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .tooltip .tooltip-section b { color: var(--accent); font-weight: 600; }
+  .tooltip .tooltip-explain {
+    margin: 8px 0 10px;
+    padding: 10px 12px;
+    background: rgba(231, 81, 31, 0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-main);
+  }
+  .tooltip .tooltip-explain b { color: var(--accent); font-weight: 600; display: block; margin-bottom: 3px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="app-header">
+    <h1><span class="accent-orange">◆</span> Marketing Automation Machine</h1>
+    <div class="controls">
+      <label>Scenario
+        <select id="scenario-select">
+          <option value="">Baseline</option>
+        </select>
+      </label>
+      <label>Category
+        <select id="category-select">
+          <option value="">All</option>
+          <option>Paid</option>
+          <option>Owned</option>
+          <option>Earned</option>
+          <option>Hybrid</option>
+        </select>
+      </label>
+      <label>Phase
+        <select id="phase-select">
+          <option value="">All phases</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="show-signals" checked> Signals</label>
+      <button id="reset-btn">Reset</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <aside class="channels-panel">
+      <input type="search" id="channel-search" placeholder="Search channels…">
+      <div class="channel-count" id="channel-count"></div>
+      <div class="channel-list-header">
+        <span class="ch-id">ID</span>
+        <span class="ch-name">Channel</span>
+        <span class="ch-cat" title="Category: Paid / Owned / Earned / Hybrid">Cat</span>
+        <span class="ch-score" title="Cost-effectiveness score (effectiveness / cost)">Score</span>
+      </div>
+      <ul id="channel-list"></ul>
+    </aside>
+
+    <div class="graph-wrapper">
+      <div id="graph"></div>
+      <div id="tooltip" class="tooltip hidden"></div>
+    </div>
+
+    <aside class="detail-panel" id="detail-panel">
+      <div class="empty">
+        <strong>Click a channel</strong> to see its full subsystem: what <em>inputs</em> it needs, which <em>capabilities</em> execute it, and what <em>outputs</em> it produces.<br><br>
+        <strong>Click a node</strong> for details &amp; neighbors.<br><br>
+        <strong>Hover nodes</strong> for a quick summary.
+      </div>
+    </aside>
+  </main>
+
+  <footer class="app-footer">
+    <div class="legend">
+      <span class="legend-group">
+        <span class="legend-title">Tiers</span>
+        <span class="tier-swatch input">◆ Inputs</span>
+        <span class="tier-swatch output">▶ Outputs</span>
+      </span>
+      <span class="legend-group">
+        <span class="legend-title">Phases</span>
+        <span class="phase-swatch p0">P0 Revenue Now</span>
+        <span class="phase-swatch p1">P1 Foundation</span>
+        <span class="phase-swatch p2">P2 Paid</span>
+        <span class="phase-swatch p3">P3 Content</span>
+        <span class="phase-swatch p4">P4 Organic</span>
+        <span class="phase-swatch p5">P5 Earned</span>
+        <span class="phase-swatch p6">P6 Rich Media</span>
+        <span class="phase-swatch p7">P7 Specialized</span>
+      </span>
+      <span class="legend-group">
+        <span class="legend-title">Edges</span>
+        <svg width="28" height="4"><line x1="0" y1="2" x2="28" y2="2" stroke="#E7511F" stroke-width="2.5"/></svg> hard
+        <svg width="28" height="4"><line x1="0" y1="2" x2="28" y2="2" stroke="#8fa3a9" stroke-width="1.8" stroke-dasharray="5,3"/></svg> soft
+        <svg width="28" height="4"><line x1="0" y1="2" x2="28" y2="2" stroke="#5E767D" stroke-width="1.2" stroke-dasharray="2,2"/></svg> signal
+      </span>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ Inline data ============ -->
+<script type="text/csv" id="nodes-csv">node_id,node_name,description,capability_cluster,cost_to_build,cost_rationale,channels_enabled_count,value_enabled_sum,roi_score,primary_tech_today,sample_channels,notes
+N-037,Performance analytics & attribution,"Cross-channel measurement, multi-touch attribution, conversion tracking, ROI reporting","Analytics|ROI reporting|Conversion optimization|Attribution modeling",3,"Attribution models are the hard part. Off-the-shelf (GA4, Mixpanel, Amplitude) covers basics; real MTA needs a warehouse + identity graph.",107,400,133.3,"GA4|Mixpanel|Amplitude|Segment|Dreamdata|Snowflake+dbt","C001|C028|C035|C089","Universal enabler. Required for every measurable channel. Foundation node — build early."
+N-002,Short-form copy generation,"Ad headlines, social posts, subject lines, push notifications, tweet threads","Copywriting (short)|Headlines|Ad copy|Social copy",1,"LLMs are superhuman at short-form when primed with brand voice + performance data feedback loop.",35,115,115.0,"Claude|GPT-4|AdCreative.ai|Copy.ai","C001|C005|C028|C048","Lowest-cost highest-leverage node. Couple with performance data feedback to compound."
+N-041,Pixel / tracking deployment,"Analytics pixels, conversion tags, UTMs, server-side events","Technical setup|Pixel deployment|UTM hygiene",1,"Solved problem — GTM + server-side tracking. Configuration, not engineering.",27,95,95.0,"Google Tag Manager|Segment|RudderStack","C001|C005|C006|C017","Prerequisite for every paid digital channel. Without it, no attribution feeds N-037."
+N-013,Brand asset library & style operator,"Centralized brand assets (logos, colors, voice, image styles) enforced across outputs","Brand asset management|Brand voice enforcement|Design system",2,"DAM tools exist (Frontify, Brandfolder); harder part is automating style enforcement.",41,140,70.0,"Frontify|Brandfolder|Notion+LLM guardrails","C005|C028|C038|C089","Force-multiplier for N-002, N-007, N-009, N-010. Invest early to keep content consistent."
+N-007,Landing page copy + design + build,"Generate, A/B test, and ship high-converting landing pages per campaign","Landing page copy|Landing page design|CRO|Page build",2,"Unbounce/Webflow/Framer + LLM templates get 80% there. CRO testing adds complexity but off-the-shelf.",38,134,67.0,"Unbounce|Webflow|Framer|v0.dev","C001|C006|C041|C089","Every paid dollar eventually hits a page. Low cost, massive coverage."
+N-018,Audience segmentation & targeting,"Persona definition, lookalike audiences, behavioral segments, signal-based targeting","Audience segmentation|Lookalike modeling|Persona targeting",2,"CDP + ML segmentation is a solved stack. Hard part is signal quality, not model quality.",31,117,58.5,"Segment|Hightouch|Census|Customer.io","C001|C006|C028|C089","Foundation for all paid + lifecycle channels."
+N-009,Static graphic design,"Generate on-brand static creative: feed posts, ad variants, ebook layouts, case study graphics","Graphic design|Visual design|Feed design|Ad creative",3,"Diffusion models + brand-constrained generation is close but not airtight. Human review gates still needed.",41,140,46.7,"Midjourney|DALL-E 3|Canva|Nano Banana|Adobe Firefly","C005|C028|C048|C089","Second-broadest visual node. Couple with N-013 so outputs inherit brand automatically."
+N-014,Social scheduling & publishing,"Cross-platform scheduling, queue management, platform-specific formatting","Social scheduling|Multi-platform publishing",1,"Buffer, Publer, Hootsuite — commodity. API wrappers for anything custom.",13,44,44.0,"Buffer|Publer|Hootsuite|Typefully","C048|C051|C054|C057","Dead-simple to build. Pair with N-002 + N-009 for full organic-social loop."
+N-022,Paid campaign setup & management,"Multi-platform campaign creation, targeting config, creative uploads, budget allocation","Campaign management|PPC management|Platform APIs",3,"Each platform has its own API and quirks. Aggregators help but enterprise-grade takes real engineering.",39,125,41.7,"Smartly.io|Skai|Madgicx|direct APIs","C001|C005|C006|C089","Heavy lift but enables ~1/3 of all channels."
+N-024,A/B testing orchestration,"Experiment design, variant delivery, stat-sig evaluation, winner deployment","A/B testing|CRO|Statistical analysis",2,"GrowthBook (OSS) or Optimizely handle infra. Automation layer is orchestration + LLM variant generation.",20,75,37.5,"GrowthBook|Optimizely|VWO","C005|C028|C036|C037","Multiplies value of every other content/paid node."
+N-008,Topic & trend discovery,"Identify what to write/post/say based on SERP, social trends, competitor content, keyword gaps","Topic research|Trend awareness|Content strategy",2,"Ahrefs/Semrush APIs + LLM synthesis + trend APIs cover it. Good custom GPT or agent pattern.",20,74,37.0,"Ahrefs|Semrush|Exploding Topics|Glimpse|LLM+SERP","C034|C035|C048|C054","Feeds N-001, N-002, N-004, N-005. High leverage."
+N-023,Bid / budget optimization,"Cross-platform budget allocation, bid management, pacing, diminishing-returns detection","Bid optimization|Budget pacing|Performance marketing",3,"Platform algos handle micro-optimization. Cross-platform allocation is the real moat.",25,83,27.7,"Smartly.io|Madgicx|Northbeam|in-house MMM","C001|C005|C006|C018","Pairs with N-022 and N-037. Consider build-vs-buy."
+N-034,Social engagement,"Reply to comments, DMs, @-mentions on-brand at scale","Community engagement|Comment reply|Social listening+reply",2,"LLM + brand voice + moderation filter. Platform APIs limited on some channels.",16,55,27.5,"Sprout Social|Sprinklr|LLM+platform APIs","C048|C049|C054|C119","Force-multiplier for organic reach."
+N-017,Blog / CMS publishing,"Publish, format, cross-link, schedule content to owned CMS with SEO metadata","CMS publishing|Content ops",1,"WordPress/Webflow/Notion + API wrappers. Fully solved.",7,27,27.0,"WordPress|Webflow|Contentful|Notion API","C034|C043|C046|C100","Trivial to build. Pair with N-001 + N-005 for full SEO content pipeline."
+N-004,Video scriptwriting,"Scripts for ads, explainers, Shorts, webinars, demos — platform-specific format","Video scriptwriting|Storyboarding",2,"LLM handles this well given product context + platform constraints.",14,50,25.0,"Claude|GPT-4|Descript","C008|C040|C041|C054","Upstream of N-010, N-011, N-012."
+N-021,CRM / lifecycle state management,"Unified contact record, lifecycle stage tracking, state transitions, activity history","CRM|Lifecycle state|Contact database",2,"HubSpot/Salesforce/Attio cover 90%. Integration work is the cost.",11,47,23.5,"HubSpot|Attio|Salesforce|Clay","C028|C071|C102|C120","Connective tissue for lifecycle + sales."
+N-040,Marketing automation (triggers, journeys),"Behavioral triggers, branching journeys, scoring, rule-based routing","Marketing automation|Journey orchestration",2,"Customer.io/Braze/Iterable handle it. Custom agent-based orchestration is emerging.",11,46,23.0,"Customer.io|Braze|Iterable|HubSpot","C028|C029|C032|C071","Powers all lifecycle nodes. Pair tight with N-021."
+N-001,Long-form content writing,"Blog posts, whitepapers, case studies, ebooks, guest articles, thought pieces","Long-form writing|Content creation|Editorial",2,"LLMs produce draft quality; human edit pass still needed. Pipeline = research → outline → draft → edit.",11,46,23.0,"Claude|GPT-4|Jasper|specialized agents","C034|C039|C046|C067","Foundation of SEO + PR + sales enablement."
+N-038,Brand / social listening,"Monitor brand mentions, sentiment, competitor mentions, industry conversations","Brand monitoring|Social listening|Sentiment analysis",2,"Brand24/Mention/Sprinklr cover monitoring. Action layer (respond/alert/route) is where value is.",10,40,20.0,"Brand24|Mention|Sprinklr|Sprout","C061|C069|C074|C078","Feeds N-028 (PR), N-033 (review response), N-034 (engagement)."
+N-015,Email campaign orchestration,"Send scheduling, deliverability management, list hygiene, bounce handling","Email orchestration|Deliverability",1,"Customer.io/Braze/Resend commodity. Deliverability engineering is the non-obvious cost.",4,19,19.0,"Customer.io|Braze|Resend|Postmark","C028|C029|C033|C099","Cheap, high-hit. Compliance (N-042) is non-negotiable pair."
+N-046,Meeting booking / calendar ops,"Calendar scheduling, reminder flows, timezone handling, round-robin routing","Meeting booking|Calendar ops",1,"Calendly, Chili Piper, Cal.com. Fully commoditized.",5,18,18.0,"Calendly|Chili Piper|Cal.com","C047|C092|C102|C103","Trivial but enables every sales-touch channel."
+N-051,Founder / personal brand operations,"Ghostwrite & manage founder content across LinkedIn/X/podcast guest ops/newsletter","Personal brand|Ghostwriting|Founder content",3,"LLM ghostwriting okay; voice authenticity + consistency is the hard part.",11,44,14.67,"LLM+context pipeline|Supergrow|Taplio","C049|C050|C065|C119","Very high leverage per channel — founder voice carries trust premium."
+N-003,Email sequence writing,"Drip sequences, nurture flows, onboarding emails, re-engagement, cold outbound","Email copywriting|Sequence writing",2,"LLM + performance loop + segmentation-aware generation.",7,27,13.5,"Claude|GPT-4|Lavender|Instantly copy tools","C028|C029|C101|C102","Pair with N-015 and N-021 for complete lifecycle."
+N-005,SEO + AEO research & optimization,"Keyword research, SERP analysis, on-page optimization, answer-engine-readiness","SEO|AEO|Technical SEO|Keyword research",3,"Ahrefs/Semrush APIs + Screaming Frog + LLM. AEO is newer — Perplexity visibility, ChatGPT citations, Schema.org.",10,40,13.33,"Ahrefs|Semrush|Screaming Frog|Profound|Peec","C034|C035|C054|C094","Long tail of value — compounds. AEO is the 2026 evolution to prioritize."
+N-010,Short-form video production,"Generate Reels/Shorts/TikTok video with voice, motion, captions","Short-form video|Motion graphics",3,"Sora, Runway, Kling + auto-captioning + templates. Quality still variable.",9,32,10.67,"Sora|Runway|Kling|CapCut|Opus Clip","C007|C053|C055|C057","Top format for organic reach in 2026."
+N-030,Partnership / BD outreach,"Identify, qualify, and nurture partnership/integration/reseller opportunities","Partnership outreach|BD|Relationship management",4,"Relationship-driven; automation surfaces leads + drafts outreach but negotiation stays human.",11,41,10.25,"Apollo|Clay|Crossbeam|partner CRM","C081|C082|C083|C118","Lower-ROI by channel count but high-ROI by deal size."
+N-028,Media / PR pitching,"Journalist discovery, pitch personalization, HARO monitoring, follow-up","PR|Media relations|Journalist outreach",3,"Muck Rack/Prowly + LLM personalization + HARO automation. Relationship-dependent for top-tier.",7,27,9.0,"Muck Rack|Prowly|Qwoted|HARO","C061|C062|C067|C068","Earned media has highest credibility."
+N-033,Review solicitation & monitoring,"Trigger review requests at right lifecycle moment, respond to reviews, flag issues","Review management|Reputation management",2,"Timing heuristic + LLM response + G2/Capterra APIs.",4,18,9.0,"G2|Capterra|Trustpilot API|Birdeye","C069|C070|C071|C072","All four channels in the cluster are 4-5 effectiveness."
+N-042,Compliance management,"CAN-SPAM, TCPA, GDPR, CCPA, CASL — consent tracking, opt-outs, regional routing","Compliance|Privacy|Consent management",3,"OneTrust/Usercentrics + legal review. Jurisdiction complexity is the cost.",7,24,8.0,"OneTrust|Usercentrics|LinkSquares","C028|C029|C030|C101","Non-optional infrastructure. Get wrong once = existential risk."
+N-011,Long-form video production,"Explainer videos, product demos, webinar recordings, YouTube long-form","Long-form video|Video editing|Post-production",4,"Generative video improving but not yet production-grade for 10min+. Still needs human editor.",8,31,7.75,"Descript|Opus Clip|Runway|Adobe Premiere","C019|C040|C041|C054","YouTube is a top-5 channel by ROI."
+N-039,Competitive intelligence,"Track competitor moves: positioning, pricing, feature launches, content, hiring","Competitive intel|Market research",3,"Kompyte/Klue + SERP/web scraping + LLM synthesis.",5,23,7.67,"Klue|Kompyte|Crayon|Bardeen+LLM","C035|C037|C073|C094","Feeds N-001, N-005, N-008. Underrated."
+N-036,Q&A community answering,"Monitor and answer questions on Quora, Reddit, Stack Overflow, niche forums","Community Q&A|Forum engagement",2,"LLM + platform APIs + reputation-building over time.",4,15,7.5,"Platform APIs|LLM+moderation","C075|C076|C077|C098","Long-play channel — reputation compounds."
+N-043,Event planning & logistics,"Webinar ops, conference booth mgmt, registration, sponsorship coordination","Event management|Logistics",4,"SaaS tools (Hopin, Zoom Events, Bizzabo); automation layer is registration + nurture.",8,30,7.5,"Zoom Events|Goldcast|Bizzabo","C041|C066|C089|C092","Physical-world logistics resists automation."
+N-016,SMS / push dispatch,"Transactional and marketing SMS/push with consent handling","SMS|Push notifications|Lifecycle dispatch",1,"Twilio/OneSignal/Klaviyo. Commodity.",2,7,7.0,"Twilio|OneSignal|Klaviyo|Attentive","C030|C031","Narrow but cheap."
+N-019,Prospect list building & data enrichment,"Build + enrich contact lists from firmographic and behavioral signals","List building|Data enrichment|Contact discovery",2,"Apollo/ZoomInfo/Clay APIs. Commoditized.",5,14,7.0,"Apollo|ZoomInfo|Clay|LeadMagic","C101|C102|C114|C115","Required for all outbound. Clay is current best-in-class."
+N-020,Account-based targeting (ABM),"Target account identification, intent signals, multi-threaded outreach","ABM|Intent data|Multi-threading",3,"6sense/Demandbase + Clay + intent feeds. Sophisticated ABM is a meaningful lift.",5,21,7.0,"6sense|Demandbase|Clay|RB2B","C006|C017|C092|C118","For B2B enterprise motions."
+N-006,Original research & data synthesis,"Original surveys, benchmark reports, industry analyses","Research methodology|Data collection|Analysis",4,"Survey infra + panel access + analysis. Real investment.",6,26,6.5,"Typeform|Qualtrics|Centiment|Prolific|LLM analysis","C038|C039|C046|C073","Generates disproportionate earned media + backlinks."
+N-045,SDR cadence orchestration,"Multi-touch outbound sequences across email, LinkedIn, phone","Sales cadence|Multi-touch sequencing",2,"Outreach, Salesloft, Apollo, Smartlead. Commodity.",4,13,6.5,"Outreach|Salesloft|Apollo|Smartlead","C101|C102|C103|C115","Pair with N-019 (lists) and N-046 (booking)."
+N-035,Community moderation & programming,"Run Slack/Discord/Circle community: moderation, content, events, engagement","Community management|Moderation|Programming",3,"LLM mod + scheduling helps; community design requires human judgment.",5,19,6.33,"Circle|Slack|Discord|Commsor","C058|C059|C080|C097","Hard to fully automate without killing the community feel."
+N-012,Audio production,"Voice-over generation, podcast editing, radio spot production","Audio production|Voice-over|Podcast editing",3,"ElevenLabs + Descript + Riverside cover most of it.",6,19,6.33,"ElevenLabs|Descript|Riverside|Adobe Audition","C020|C021|C047|C065","Voice cloning quality now production-grade."
+N-032,Conference CFP & speaking ops,"Track CFPs, submit abstracts, prep talks, manage speaker logistics","CFP submission|Speaking prep",3,"Papercall, Sessionize + LLM draft of abstracts. Talk prep requires speaker time.",3,12,4.0,"Papercall|Sessionize|LLM draft","C066|C089|C092","Disproportionate earned-media value per talk."
+N-048,App Store Optimization,"Keyword research, title/description/screenshot optimization, review mgmt for app stores","ASO|App marketplace optimization",2,"AppTweak, Sensor Tower, App Radar + LLM copy.",2,8,4.0,"AppTweak|Sensor Tower|App Radar","C086|C087","Narrow — only if you have a mobile app."
+N-031,Podcast guest booking,"Research podcasts, pitch guests, manage scheduling, pre-interview briefs","Podcast outreach|Guest booking",3,"ListenNotes + LLM pitches + CRM tracking.",3,11,3.67,"ListenNotes|Podchaser|PodcastGuests.com","C021|C047|C065","Good for founder/exec brand building."
+N-025,Cold email outbound,"Deliverability-optimized cold email at scale with personalization","Cold email|Deliverability|Personalization",2,"Smartlead, Instantly, Lemlist + Clay for personalization. Deliverability matters.",2,7,3.5,"Smartlead|Instantly|Lemlist|Clay","C101|C102","Regulated (CAN-SPAM, GDPR); watch N-042 carefully."
+N-047,Demo / sales-call delivery,"Conduct live or AI-augmented product demos, follow-up with recording + next steps","Demo delivery|Sales calls|Meeting intelligence",5,"AI sales agents emerging but trust gap for high-stakes calls. Augmentation > replacement today.",4,17,3.4,"Gong|Chorus|11x|Artisan|Humanic","C037|C092|C102|C118","Highest unit-cost node."
+N-050,Open-source / dev-relations operations,"Maintain OSS projects, engage in dev communities, produce dev-focused content","DevRel|OSS maintenance|Developer community",4,"Dev trust is relational and high-bar. Automation assists but flagship work is human.",3,13,3.25,"GitHub|Dev.to|Hashnode|LLM for docs","C077|C097|C098","Essential for dev-first products."
+N-049,GPT / AI-agent creation & listing,"Build custom GPTs, AI agents, deploy to marketplaces (GPT Store, Poe, etc.)","AI agent development|Prompt engineering",2,"Already a core Pvragon skill. Ship a few, iterate based on usage signal.",2,6,3.0,"GPT Builder|Poe|LangChain|Pvragon stack","C088|C096","Emerging channel."
+N-029,Influencer / creator outreach,"Discover, qualify, negotiate, and brief influencer partnerships","Influencer outreach|Creator relations|Negotiation",3,"Grin, Aspire, Modash cover discovery. Negotiation + brief quality still relational.",2,8,2.67,"Grin|Aspire|Modash|CreatorIQ","C023|C024","Higher value if creator marketing is core to GTM."
+N-044,Physical production & mailing,"Direct mail, branded swag, print collateral — design, produce, fulfill","Direct mail|Swag|Print production",3,"Sendoso, Reachdesk, Alyce. Orchestration is mature; logistics costs remain.",4,7,2.33,"Sendoso|Reachdesk|Alyce|Printful","C104|C108|C113|C117","Reserve for high-value ABM or customer gifting."
+N-026,LinkedIn outbound DM sequencing,"Multi-touch LinkedIn DM + content engagement sequences","LinkedIn outbound|DM sequencing",3,"LI restricts automation; compliant tools (Expandi, Dripify) walk the line.",2,7,2.33,"Expandi|Dripify|HeyReach","C102|C103","Gray area on LI. Account safety is the real cost."
+N-027,Cold calling / telephony,"AI voice agents + human-initiated cold calls with CRM logging","Cold calling|Telephony|Voice AI",4,"AI voice agents emerging; quality + compliance gap remains.",3,9,2.25,"Bland AI|Retell|Synthflow|human SDRs","C102|C114|C115","Lowest-ROI node. Reserve for high-ACV enterprise."
+</script>
+
+<script type="text/csv" id="inputs-csv">input_id,input_name,description,category,typical_owner,freshness
+I-01,Brand identity & voice,"Logo, colors, typography, voice-and-tone guidelines, visual examples",Brand,Marketing/Design,Annual refresh
+I-02,Product positioning & value proposition,"One-liner, elevator pitch, differentiated messaging, feature→benefit translations",Product,Product Marketing,Quarterly review
+I-03,ICP / target persona definitions,"Firmographic, psychographic, job titles, pain points, jobs-to-be-done",Market,Product Marketing / Sales,Quarterly review
+I-04,Pricing & packaging,"Plans, price points, discounts, contract terms, free-tier rules",Product,Finance/Product,Quarterly or launch-driven
+I-05,Compliance & legal constraints,"CAN-SPAM, TCPA, GDPR, CCPA, industry rules, consent requirements",Compliance,Legal,Ongoing
+I-06,Keyword & SEO intent data,"Search volume, difficulty, SERP snapshots, intent classifications, long-tail opportunities",Market,SEO team,Continuous
+I-07,Competitive intelligence,"Competitor positioning, pricing, feature launches, ad copy, content themes",Market,PMM / Intel team,Continuous
+I-08,Customer research & interviews,"Verbatim quotes, JTBD interviews, survey results, sales-call transcripts",Customer,Research/Sales,Quarterly
+I-09,CRM contact & lifecycle data,"Contact records, lifecycle stage, activity history, firmographic enrichment",Operational,RevOps,Continuous
+I-10,Prospect / account target lists,"Enriched prospect lists, target accounts, intent signals, contact info",Operational,SDR / RevOps,Continuous
+I-11,Testimonials & case study inputs,"Customer quotes, video clips, before/after metrics, permission-to-use rights",Customer,Customer Marketing,Per-customer
+I-12,Campaign budget & allocation,"Per-channel spend limits, cap rules, CPA/CPL targets, flight dates",Operational,Finance / Marketing Ops,Monthly
+I-13,Historical performance data,"Prior campaign results, top-performing creative, winning angles, benchmarks",Operational,Marketing Analytics,Continuous
+I-14,Media & journalist contact list,"Reporters, outlets, beats, past coverage, contact preferences",Network,PR team,Ongoing
+I-15,Editorial calendar & content plan,"Topic pillars, publication dates, campaign themes, narrative arcs",Operational,Content Marketing,Monthly/Quarterly
+I-16,Event / conference target list,"Events, CFP deadlines, sponsorship options, attendee profiles, costs",Network,Events team,Annual planning
+I-17,Partnership / affiliate / influencer network,"Target partners, existing relationships, commercial terms, co-marketing potential",Network,BD / Partnerships,Ongoing
+I-18,Original research & data assets,"First-party surveys, benchmark reports, proprietary datasets, analysis tools",Customer,Research team,Annual+
+</script>
+
+<script type="text/csv" id="outputs-csv">output_id,output_name,description,category,delivery_format,cadence
+O-01,Published articles (blog + SEO),"Long-form articles indexed and ranking on owned domain",Content,Web page,Weekly+
+O-02,Gated long-form content,"Whitepapers, ebooks, deeply researched reports behind a lead-capture form",Content,PDF + LP,Monthly
+O-03,Case studies published,"Customer success stories with metrics and named quotes",Content,Web page + PDF,Monthly
+O-04,Research reports,"Original data reports, benchmark studies, industry analyses",Content,PDF + web,Quarterly+
+O-05,Knowledge base / help docs,"Self-serve customer documentation for activation and retention",Content,Web pages,Continuous
+O-06,Landing pages deployed,"Campaign-specific and evergreen conversion-focused pages",Web,Live URLs,Per-campaign
+O-07,Product & demo pages,"Always-on product, feature, and interactive-demo pages",Web,Live URLs,Evergreen
+O-08,Interactive tools / calculators,"Proprietary tools delivering personalized output and capturing leads",Web,Live app,Evergreen
+O-09,Short-form video published,"Reels, Shorts, TikToks, Instagram/Facebook video posts",Video,Platform posts,Per-post
+O-10,Long-form video published,"YouTube episodes, explainer videos, product demos, webinar recordings",Video,Platform posts,Weekly+
+O-11,Podcast episodes (owned),"Regular podcast episodes published on major platforms",Audio,Audio files,Weekly+
+O-12,Paid ad campaigns running,"Active paid campaigns across search, social, display, and video platforms",Paid,Platform campaigns,Continuous
+O-13,Email campaigns sent,"Broadcast emails, drip flows, lifecycle nurtures delivered to inbox",Lifecycle,Inbox sends,Continuous
+O-14,SMS / push campaigns sent,"Text messages and web/mobile push notifications to opted-in contacts",Lifecycle,Mobile dispatch,Continuous
+O-15,Newsletter issues sent,"Regular-cadence newsletters (own or sponsored)",Lifecycle,Email + web,Weekly+
+O-16,Cold email sequences running,"Active outbound multi-touch email cadences targeting prospect accounts",Outbound,Inbox sends,Continuous
+O-17,SDR activity logs,"Logged calls, LinkedIn touches, multi-channel cadence touches per rep",Outbound,CRM activity,Continuous
+O-18,Demo / sales calls completed,"Recorded demos and sales meetings with pipeline attribution",Sales,Recordings + CRM,Continuous
+O-19,Social posts published,"Posts across LinkedIn, X, Instagram, TikTok, Facebook organic accounts",Social,Platform posts,Daily+
+O-20,Community engagement replies,"Replies to comments, DMs, mentions, forum threads across platforms",Social,Platform activity,Continuous
+O-21,Q&A answers posted,"Authoritative answers on Quora, Reddit, Stack Overflow, niche forums",Social,Platform posts,Weekly+
+O-22,Reviews solicited & responded,"Review requests sent + public responses on G2/Capterra/Trustpilot",Earned,Platform activity,Continuous
+O-23,Webinars & virtual events held,"Live and on-demand events with registration and nurture flows",Events,Live/recorded,Monthly+
+O-24,In-person event presence,"Trade show booths, roundtables, dinners, sponsored conferences",Events,Physical,Quarterly+
+O-25,Speaking engagements delivered,"Conference talks, guest webinars, guest podcast appearances",Events,Talks + recordings,Monthly+
+O-26,Media placements earned,"PR coverage, bylines, HARO quotes, analyst mentions, award wins",Earned,Published links,Continuous
+O-27,Partnership & affiliate activations,"Signed partner deals, co-marketing campaigns, affiliate programs running",Partnership,Agreements + campaigns,Per-deal
+O-28,Influencer campaigns running,"Active branded-content partnerships with influencers/creators",Paid,Platform content,Continuous
+O-29,Direct mail / physical touches,"Direct mail pieces, branded swag, printed collateral sent to targets",Physical,Physical delivery,Continuous
+O-30,AI agents / marketplace listings,"Custom GPTs, AI agents listed on marketplaces; software/app store listings",Marketplace,Platform listings,Ongoing
+O-31,Open source & dev-relations outputs,"OSS releases, technical blog posts, developer docs, community contributions",DevRel,Repos + content,Continuous
+</script>
+
+<script type="text/csv" id="channels-csv">channel_id,channel_name,category,subcategory,description,work_steps,capabilities_required,cost_rating,effectiveness_rating,cost_effectiveness_score,notes
+C001,Google Search Ads (PPC),Paid,Search,"Paid bidding on keywords in Google Search results","Keyword research|Ad copywriting|Landing page setup|Campaign launch|Bid optimization|Analytics","Copywriting|PPC management|Analytics|Conversion optimization",4,5,1.25,"Best for bottom-of-funnel high-intent keywords"
+C002,Bing/Microsoft Ads,Paid,Search,"Paid search advertising on Bing and Yahoo","Keyword research|Ad copywriting|Campaign setup|Bid optimization","PPC management|Analytics",3,3,1.00,"B2B audiences skew higher on Bing; less competition than Google"
+C003,Google Shopping Ads,Paid,Search,"Product listings in Google Shopping tab","Product feed setup|Feed optimization|Bid management|Analytics","E-commerce|Feed management|Analytics",3,4,1.33,"Ecommerce-specific; limited for pure SaaS"
+C004,Search Retargeting,Paid,Search,"Ads shown to previous site visitors searching relevant keywords","Pixel install|Audience segmentation|Campaign setup|Bid optimization","Analytics|Audience segmentation",3,4,1.33,"High intent audiences; efficient spend"
+C005,Meta Ads (Facebook/Instagram),Paid,Social,"Ads across the Meta ecosystem with detailed targeting","Audience definition|Creative production|Campaign launch|Optimization","Copywriting|Graphic design|Video editing|Analytics",2,4,2.00,"Lower CPLs than LinkedIn; good for awareness and lead gen"
+C006,LinkedIn Ads,Paid,Social,"Sponsored content, InMail, and lead gen forms on LinkedIn","Audience targeting|Creative production|Campaign setup|Optimization","Copywriting|Design|Analytics|B2B strategy",5,5,1.00,"Gold standard for B2B; targets titles and seniority"
+C007,TikTok Ads,Paid,Social,"In-feed native video ads on TikTok","Audience targeting|Video production|Campaign launch|Real-time optimization","Video editing|Copywriting|Trend awareness",2,3,1.50,"Emerging for B2B; strong for younger-audience awareness"
+C008,YouTube Skippable In-stream Ads,Paid,Video,"Skippable video ads before/during/after YouTube videos","Video production|Audience targeting|Bid strategy|Analytics","Video production|Analytics",2,4,2.00,"Good awareness at lower cost than traditional media"
+C009,YouTube Bumper Ads,Paid,Video,"Non-skippable 6-second video ads","Video production|Targeting|Optimization","Short-form video production",2,3,1.50,"Brand recall focused; short attention windows"
+C010,YouTube Non-skippable In-stream,Paid,Video,"Forced-view ads before YouTube content","Video production|Targeting|Optimization","Video production|Copywriting",3,4,1.33,"Forced completion better for conversions"
+C011,YouTube Display/Overlay,Paid,Video,"Text and image ads alongside YouTube video","Creative production|Targeting|Bid management","Design|Copywriting",2,3,1.50,"Low cost; less intrusive than in-stream"
+C012,X/Twitter Ads,Paid,Social,"Promoted Tweets and accounts on X","Tweet creation|Audience targeting|Bid management","Copywriting|Analytics",2,2,1.00,"Lower engagement than other platforms; thought-leadership niche"
+C013,Pinterest Ads,Paid,Social,"Promoted Pins in feeds and search","Pin design|Audience targeting|Campaign setup","Design|Copywriting",2,3,1.50,"High intent; visual/design industries; limited B2B"
+C014,Snapchat Ads,Paid,Social,"Full-screen ads in Snapchat","Creative production|Audience targeting|Optimization","Video/photo production",2,2,1.00,"Younger demographic; limited B2B use"
+C015,Reddit Ads,Paid,Social,"Sponsored posts in subreddits","Audience targeting|Post creation|Community selection","Copywriting|Platform culture awareness",2,2,1.00,"Growing B2B; requires authentic community respect"
+C016,Programmatic Display Ads,Paid,Display,"Automated bidding for display placements across the web","Audience data|Creative production|Campaign setup|Optimization","Data analysis|Audience segmentation|Design",2,3,1.50,"Scale and efficiency; lower CTR than search"
+C017,Retargeting Display Ads,Paid,Display,"Display ads shown to prior site visitors across the web","Pixel install|Audience segmentation|Creative production","Analytics|Design|Audience strategy",2,4,2.00,"Efficient conversion play on warm audiences"
+C018,Native Advertising / Sponsored Content,Paid,Display,"Ads formatted as editorial content on publisher sites","Publisher selection|Content creation|Placement|Analytics","Copywriting|Content production|Journalism",3,4,1.33,"Less ad blindness; better engagement than banners"
+C019,Connected TV (CTV) / Streaming Ads,Paid,Video,"Ads on streaming platforms (Hulu, Disney+, Roku)","Audience targeting|Video creative|Campaign launch","Video production|Analytics",4,4,1.00,"High-quality environment; expensive; brand awareness"
+C020,Audio / Spotify Ads,Paid,Audio,"Spoken ads in music and podcast streams","Audio script|Voice-over production|Targeting|Launch","Copywriting|Audio production",2,3,1.50,"Growing channel; strong targeting"
+C021,Podcast Host-Read Sponsorships,Paid,Audio,"Host reads ad during episode","Podcast selection|Script writing|Production|Delivery","Copywriting|Podcast selection",3,4,1.33,"Intimate trusted format; high engagement"
+C022,Premium Video Pre/Mid/Post-Roll,Paid,Video,"Video ads on news and premium publisher sites","Video production|Audience targeting|Placement selection","Video production|Analytics",3,3,1.00,"Contextual targeting; brand-safe environments"
+C023,Macro Influencer Partnerships,Paid,Influencer,"Paid branded content from 100k+ follower influencers","Research|Negotiation|Brief|Delivery","Negotiation|Brief writing|Community mgmt",3,4,1.33,"Authenticity varies; good for awareness and credibility"
+C024,Micro-Influencer Sponsorships,Paid,Influencer,"Paid content from 10k-100k follower influencers","Research|Outreach|Negotiation|Tracking","Relationship building|Brief writing",2,4,2.00,"Higher engagement; more affordable; better B2B ROI"
+C025,Affiliate Networks (CJ/ShareASale/Impact),Paid,Affiliate,"Commission-based partnerships via managed networks","Network integration|Campaign setup|Optimization|Analytics","Analytics|Network management",2,3,1.50,"Distributed network; less control than direct affiliates"
+C026,Direct Affiliate Program,Paid,Affiliate,"Your own commission program with content creators","Partner recruitment|Link setup|Tracking|Payouts","Analytics|Relationship management",2,4,2.00,"Performance-based; pay only for results; scalable"
+C027,Bundle/Deal Sites (AppSumo),Paid,Marketplace,"Product placement on lifetime-deal and bundle sites","Application|Negotiation|Campaign setup|Follow-up","Business development|Customer success",1,3,3.00,"Rapid acquisition; lifetime-deal model; lower margins"
+C028,Email Marketing (Broadcast),Owned,Email,"Direct email to subscriber list","Audience building|Segmentation|Campaign creation|Sending|Analytics","Copywriting|Email design|Segmentation",1,5,5.00,"Highest ROI channel; owned asset; repeatable"
+C029,Drip / Lifecycle Automation,Owned,Email,"Automated email sequences triggered by behavior","List building|Segmentation|Journey mapping|Automation|Optimization","Email copywriting|Automation strategy",1,5,5.00,"Nurtures leads efficiently; scalable; personalizable"
+C030,SMS / Text Message Marketing,Owned,Lifecycle,"Direct SMS to opted-in contacts","Opt-in list|Message creation|Sending|Compliance","Copywriting|Compliance (TCPA)",1,4,4.00,"98% open rates; short-form discipline required"
+C031,Push Notifications (Web/App),Owned,Lifecycle,"Browser or app notifications to users","Permission capture|Message creation|Scheduling|Analytics","Copywriting|Technical setup|Timing strategy",1,3,3.00,"High engagement when targeted; can be intrusive"
+C032,In-App Messaging,Owned,Lifecycle,"Messages inside SaaS product","User segmentation|Message creation|Trigger setup|Analytics","Copywriting|User psychology|Segmentation",1,5,5.00,"Highly contextual; drives activation and adoption"
+C033,Customer Referral Program,Owned,Growth,"Incentivize existing customers to refer others","Program design|Incentive structure|System setup|Marketing|Analytics","Program design|Copywriting|Analytics",1,4,4.00,"Leverages customers; high-quality leads; viral potential"
+C034,Company Blog / Content Hub,Owned,Content,"Long-form articles on owned domain","Topic research|Outline|Writing|SEO optimization|Publishing|Promotion","Copywriting|SEO|Content strategy",1,5,5.00,"Cornerstone of content marketing; compounding SEO asset"
+C035,SEO / Organic Search,Owned,Search,"Optimization for Google organic rankings","Keyword research|Content creation|Technical SEO|Link building|Monitoring","SEO strategy|Technical SEO|Content",1,5,5.00,"Highest long-term ROI; compounds once ranked"
+C036,Homepage & Core Landing Pages,Owned,Website,"Optimized pages on main domain","Copy strategy|Design|CRO|A/B testing","Copywriting|Design|CRO",1,5,5.00,"Foundation of digital presence; high-traffic conversion"
+C037,Product & Demo Pages,Owned,Website,"Pages showcasing product features and demos","Product strategy|Copy|Design|Interactive elements|Analytics","Copywriting|Design|Product knowledge",1,5,5.00,"Direct conversion driver; most-visited by prospects"
+C038,Gated Whitepapers / Ebooks,Owned,Content,"Long-form research offered as downloads","Research|Writing|Design|Gating|Promotion","Writing|Research|Design",1,4,4.00,"Lead-gen driver; establishes thought leadership"
+C039,Case Studies,Owned,Content,"Customer success stories with metrics","Interviews|Writing|Design|Publishing|Distribution","Writing|Interviewing|Design",1,5,5.00,"Extremely credible; addresses decision-stage objections"
+C040,Owned Video Content,Owned,Video,"Long-form video on site or YouTube channel","Planning|Filming|Editing|Optimization|Analytics","Video production|Editing|Scripting",2,4,2.00,"Increasing viewer preference; ranks in Google"
+C041,Webinars / Virtual Events,Owned,Events,"Live online educational events","Topic selection|Content creation|Registration|Promotion|Execution|Follow-up","Event mgmt|Copywriting|Technical setup",2,5,2.50,"Filters for intent; evergreen replay value"
+C042,Interactive Tools / Calculators,Owned,Content,"Proprietary tools delivering personalized output","Concept|Development|Launch|Promotion|Lead capture","Product dev|Copywriting|UX",2,4,2.00,"High engagement; unique positioning; lead gen"
+C043,Knowledge Base / Help Docs,Owned,Content,"Self-serve customer documentation","Content org|Writing|Formatting|Publishing|Maintenance","Technical writing|Content org",1,4,4.00,"Reduces support load; drives long-tail SEO"
+C044,FAQ Pages,Owned,Content,"Questions and answers addressing common queries","Question compilation|Answering|SEO optimization","Writing|SEO",1,3,3.00,"Answers intent-driven searches; quick to create"
+C045,Glossary / Resource Library,Owned,Content,"Definitions and reference material","Topic research|Writing|Linking|Publishing","Content writing|SEO",1,3,3.00,"Long-term SEO; good for AEO / answer engines"
+C046,Industry Research / Original Data,Owned,Content,"Original surveys, studies, and benchmarks","Research design|Data collection|Analysis|Writing|Distribution","Research methodology|Writing|Analytics",3,5,1.67,"Highly citable; generates earned media"
+C047,Company Podcast,Owned,Audio,"Company-produced podcast series","Topic planning|Guest coordination|Recording|Editing|Distribution","Audio production|Interviewing|Editing",2,3,1.50,"Builds authority; loyal niche audience"
+C048,LinkedIn Organic (Company Page),Owned,Social,"Unpaid posts on LinkedIn company page","Content planning|Writing|Scheduling|Engagement|Analytics","Copywriting|Social strategy|Community mgmt",1,4,4.00,"Primary professional network; consistent posting wins"
+C049,LinkedIn Employee Advocacy,Owned,Social,"Employees share content from personal accounts","Content creation|Employee enablement|Organic sharing|Engagement","Content creation|Employee coordination",1,5,5.00,"~8x engagement vs company page; builds personal brands"
+C050,LinkedIn Newsletter,Owned,Social,"Regular newsletter published on LinkedIn","Newsletter planning|Writing|Publishing|Promotion|Analytics","Newsletter writing|Strategy",1,4,4.00,"Guaranteed delivery; professional audience"
+C051,X/Twitter Organic,Owned,Social,"Unpaid posts on X","Tweet creation|Scheduling|Engagement|Community building","Copywriting|Community mgmt",1,2,2.00,"Lower B2B engagement; thought leadership play"
+C052,Instagram Organic,Owned,Social,"Unpaid posts, Stories, Reels on Instagram","Content creation|Posting|Stories|Reels|Engagement","Photo/video production|Copywriting",1,2,2.00,"Limited B2B; lifestyle and culture"
+C053,TikTok Organic,Owned,Social,"Unpaid videos on TikTok company account","Video concept|Filming|Editing|Posting|Engagement","Video production|Copywriting|Trend awareness",1,3,3.00,"Emerging channel; requires authentic approach"
+C054,YouTube Organic (Channel),Owned,Video,"Long and short videos on company YouTube channel","Planning|Filming|Editing|Uploading|SEO|Community","Video production|Editing|SEO|Community mgmt",1,5,5.00,"Second-largest search engine; long content lifespan"
+C055,YouTube Shorts,Owned,Video,"Short-form vertical videos on YouTube","Concept|Filming|Editing|Uploading|Analytics","Video production|Editing|Trend awareness",1,4,4.00,"Homepage discovery; longer lifespan than TikTok"
+C056,Facebook Organic Page,Owned,Social,"Unpaid posts on Facebook","Content creation|Posting|Community engagement|Analytics","Community mgmt|Copywriting",1,2,2.00,"Low organic reach; often needs paid amplification"
+C057,Instagram Reels,Owned,Video,"Short-form vertical videos on Instagram","Concept|Filming|Editing|Uploading|Hashtags","Video production|Editing",1,3,3.00,"Higher reach than feed posts; discovery-friendly"
+C058,Slack Customer Community,Owned,Community,"Company-hosted Slack workspace","Setup|Channel org|Moderation|Engagement|Support","Community mgmt|Moderation",1,4,4.00,"Tight-knit; real-time; integration-friendly"
+C059,Discord Customer Community,Owned,Community,"Company-hosted Discord server","Setup|Channel creation|Moderation|Engagement|Analytics","Community mgmt|Moderation",1,3,3.00,"Casual tone; strong for dev/gaming audiences"
+C060,Facebook Groups,Owned,Community,"Company-hosted community on Facebook","Creation|Moderation|Content|Engagement|Growth","Community mgmt|Moderation",1,3,3.00,"Owned audience; built-in distribution"
+C061,Press Releases / Wire,Earned,PR,"Distribution of news through media wires","News development|Writing|Media list|Pitching|Measurement","Writing|Media relations|Newsjacking",1,3,3.00,"3rd-party credibility; requires newsworthy angle"
+C062,Earned Media Coverage,Earned,PR,"Unpaid articles about company in news outlets","Relationship building|Pitching|Story development|Tracking","Media relations|Relationship building",1,5,5.00,"Highest credibility; difficult to secure"
+C063,Trade / Industry Publications,Earned,PR,"Mentions in industry trade sites","Pitching|Guest contributions|Coverage|Relationships","Writing|Media relations",1,4,4.00,"Targeted professional audience; long lifespan"
+C064,HARO / Help-A-Reporter,Earned,PR,"Responding to journalist source requests","Signup|Monitoring|Responding|Quoted|Linking","Writing|Subject matter expertise",1,3,3.00,"Authority + backlinks; time-consuming"
+C065,Podcast Guest Appearances,Earned,Audio,"Appearances on 3rd-party podcasts","Research|Outreach|Prep|Recording|Promotion","Interviewing|Thought leadership",1,4,4.00,"Builds authority; reaches engaged audiences"
+C066,Public Speaking at Conferences,Earned,Events,"Talks at industry conferences","Research|CFP submission|Preparation|Presentation|Follow-up","Speaking|Thought leadership",2,4,2.00,"High credibility; direct audience access"
+C067,Bylines / Guest Articles,Earned,Content,"Articles published under your name on 3rd-party sites","Topic|Writing|Pitch|Approval|Promotion","Writing|Media relations",1,4,4.00,"3rd-party credibility; SEO backlink value"
+C068,Industry Awards,Earned,PR,"Awards and recognition programs","Submission|Selection|Award|Coverage|Promotion","Thought leadership|PR",1,4,4.00,"Strong social proof; media coverage"
+C069,G2 / Capterra Listings,Earned,Reviews,"Product listings on software review sites","Profile setup|Optimization|Review solicitation|Reputation","Review mgmt|Customer relations",1,5,5.00,"High purchase influence; SEO benefits"
+C070,TrustRadius / Gartner Peer Insights,Earned,Reviews,"B2B review platforms with decision-maker presence","Profile creation|Optimization|Review solicitation|Responses","Reputation management",1,4,4.00,"B2B decision-maker presence"
+C071,Customer Testimonials,Earned,Reviews,"Quotes and videos on your site and elsewhere","Outreach|Requests|Collection|Display|Response","Customer relations|Review mgmt",1,5,5.00,"Strong social proof; influences purchase"
+C072,Best-Of Lists / Round-Ups,Earned,Reviews,"Inclusion in 'best of' category lists","Application|Selection|Inclusion|Marketing","PR|Outreach",1,4,4.00,"Credibility; badge usage; media coverage"
+C073,Analyst Reports (Gartner/Forrester),Earned,Reviews,"Inclusion in Magic Quadrant, Wave, etc.","Analyst relations|Data submission|Report inclusion","Thought leadership|Analyst relations",2,5,2.50,"Highest B2B credibility; influences big deals"
+C074,Organic Social Shares,Earned,Social,"Users naturally sharing your content","Content creation|Organic post|User sharing","Content strategy|Copywriting",1,3,3.00,"Authentic promotion; reaches new audiences"
+C075,Reddit Organic Engagement,Earned,Community,"Authentic participation and mentions in subreddits","Community participation|Value delivery|Discussion","Community engagement|Subject expertise",1,3,3.00,"High trust; backfires if seen as promotional"
+C076,Quora Answers,Earned,Community,"Thought-leadership answers on Quora","Question ID|Comprehensive answers|Promotion|Analytics","Writing|Thought leadership",1,4,4.00,"Intent-driven audience; evergreen content"
+C077,Stack Overflow / Dev Forums,Earned,Community,"Dev team participation in Q&A communities","Profile|Answering|Reputation|Link placement","Developer knowledge|Community participation",1,4,4.00,"High dev credibility; long-term visibility"
+C078,Unlinked Brand Mentions,Earned,General,"Online mentions of brand without backlink","Monitoring|Relationships|Outreach|Link requests","Brand monitoring|Relationship building",1,3,3.00,"Brand awareness; citation value for AEO"
+C079,Backlinks / Link Building,Earned,SEO,"Inbound links from external sites","Content creation|Outreach|Relationships|Placement","SEO|Outreach|Content marketing",1,5,5.00,"Core SEO ranking factor; builds domain authority"
+C080,Ambassador / Community Champions,Earned,Community,"Community members actively advocating for product","Recruitment|Training|Content creation|Advocacy","Community mgmt|Relationship building",1,4,4.00,"Authentic distributed promotion"
+C081,Reseller / Channel Partners,Hybrid,Partnership,"Partners selling your product as part of their offer","Recruitment|Training|Enablement|Co-marketing|Revenue share","Channel mgmt|Sales enablement",2,4,2.00,"Extends sales reach; high-value; needs infrastructure"
+C082,Co-Marketing Partnerships,Hybrid,Partnership,"Joint campaigns with complementary companies","Partner ID|Campaign planning|Content|Execution|Analytics","Project mgmt|Copywriting|Design",2,4,2.00,"Reach new audiences; shared cost and effort"
+C083,Tech Integrations / Marketplace Partners,Hybrid,Partnership,"Integrations with complementary tools and their marketplaces","Negotiation|Technical integration|Joint launch|Co-promotion","Product dev|Relationship mgmt",2,4,2.00,"Adds product value; reaches partner customers"
+C084,VAR Programs,Hybrid,Partnership,"Value-added resellers bundling your product","Recruitment|Enablement|Margin structure|Support|Joint selling","Channel mgmt|Sales support",2,4,2.00,"Bundles product in larger solutions"
+C085,OEM / White Label,Hybrid,Partnership,"Original equipment manufacturer / private-label deals","Partner discovery|Negotiation|Implementation|Support","Business development|Technical mgmt",3,3,1.00,"Extends market; sometimes low brand visibility"
+C086,Software Marketplace Listings,Owned,Marketplace,"Product listings on app marketplaces (Shopify, Salesforce AppExchange, etc.)","Store optimization|Keyword research|Listing|Review mgmt|Analytics","Product marketing|ASO-style optimization",1,4,4.00,"Passive discovery; long-term asset; high intent"
+C087,Mobile App Store Optimization (ASO),Owned,Marketplace,"Optimizing app store listings for discovery","Keyword research|Title/description optimization|Screenshots|Reviews","ASO|Copywriting|Design",1,4,4.00,"Mobile-first; passive discovery; high conversion"
+C088,GPT Store / AI Marketplace Listing,Owned,Marketplace,"Listing custom GPT in ChatGPT store","GPT creation|Submission|Promotion|Analytics","AI product dev|Promotion",1,3,3.00,"Emerging channel; high discovery potential"
+C089,Trade Shows / In-Person Conferences,Paid,Events,"Booth presence and sponsorships at industry events","Event selection|Booth design|Lead capture|Follow-up|ROI","Event mgmt|Lead nurturing",3,4,1.33,"High-quality leads; long attribution window"
+C090,Virtual Event Sponsorships,Paid,Events,"Sponsorships of online conferences","Event research|Selection|Assets|Lead capture","Lead nurturing|Marketing ops",2,3,1.50,"Broader reach; lower cost than in-person"
+C091,Webinar Sponsorships,Paid,Events,"Sponsorship of 3rd-party webinars","Webinar ID|Negotiation|Promotion|Lead capture|Nurturing","Lead mgmt|Analytics",2,4,2.00,"Targeted audience; qualified leads; passive"
+C092,Executive Roundtables / ABM Dinners,Paid,Events,"Invite-only events for target accounts","Guest ID|Logistics|Content|Facilitation|Follow-up","Event mgmt|Relationship building",2,4,2.00,"Senior decision-makers; ABM focus"
+C093,Community Meetups,Owned,Events,"Local in-person or virtual meetups","Planning|Venue/logistics|Promotion|Facilitation|Follow-up","Event mgmt|Community building",1,3,3.00,"Local brand building; relationship depth"
+C094,Answer Engine Optimization (AEO),Owned,Search,"Optimization for AI answer engines (ChatGPT, Perplexity, Gemini)","Content optimization|AI profiles|Monitoring|Iteration","SEO|AI strategy|Copywriting",1,3,3.00,"Emerging; captures AI-mediated search traffic"
+C095,Perplexity Ads,Paid,AI,"Paid ads on Perplexity answer engine","Campaign setup|Targeting|Optimization","Performance marketing|Analytics",2,2,1.00,"First-mover advantage; niche but growing"
+C096,Custom GPTs / AI Agents,Owned,AI,"Branded AI apps distributed via GPT Store or similar","GPT development|Submission|Promotion|Analytics","AI/prompt engineering|Technical",2,3,1.50,"New distribution channel; high differentiation"
+C097,Developer Advocacy / DevRel,Owned,Community,"Dedicated team engaging dev community","Content|Talks|Open source|Community support","Technical storytelling|Dev knowledge",3,5,1.67,"Essential for dev-focused products; compounds"
+C098,Open Source / GitHub Presence,Owned,Community,"Open-source projects and tools","Project dev|Documentation|Maintenance|Community","Software dev|Technical writing",1,4,4.00,"Dev mindshare; credibility; reach into dev community"
+C099,Newsletter Sponsorships,Paid,Email,"Sponsorships in 3rd-party niche newsletters","Newsletter ID|Negotiation|Creative|Tracking","Copywriting|Targeting",2,5,2.50,"Qualified audiences; high trust; strong CTR"
+C100,Owned Newsletter / Substack,Owned,Content,"Personal newsletter building owned audience","Audience building|Consistent publishing|Monetization|Guest posts","Writing|Audience building",1,3,3.00,"Owned audience; high engagement"
+C101,Cold Email Outreach,Owned,Outbound,"Direct prospecting emails to target accounts","List building|Research|Copywriting|Sending|Follow-up","List research|Copywriting|Sales process",1,3,3.00,"Scalable; low cost; regulation (CAN-SPAM)"
+C102,SDR / Outbound Sales,Owned,Outbound,"Cold calls, email, and LinkedIn by SDRs","Research|Strategy|Multi-touch sequencing|Nurturing|Sales","Sales|Relationship building|Persistence",2,4,2.00,"High touch; personal; high CAC early-stage"
+C103,LinkedIn Outbound / DM Sequencing,Owned,Outbound,"Multi-touch LinkedIn campaigns combining content and DMs","Target ID|Content|Profile|DM sequencing|Sales","LinkedIn strategy|Copywriting|Persistence",1,3,3.00,"Professional network; permission-based; trackable"
+C104,Direct Mail,Paid,Outbound,"Physical mail to prospects","List|Design|Printing|Mailing|Follow-up","Design|Copywriting|Logistics",3,2,0.67,"Tangible; stands out; low response; expensive"
+C105,Viral Loops / Product Virality,Owned,Growth,"Built-in product mechanics encouraging sharing","Product design|Incentive structure|Measurement|Optimization","Product mgmt|Analytics",1,4,4.00,"Exponential growth potential; product-native"
+C106,Giveaways / Contests,Owned,Growth,"Contests driving participation and sharing","Design|Platform setup|Promotion|Analytics|Follow-up","Campaign mgmt|Copywriting",1,3,3.00,"Engagement; list building; viral potential"
+C107,Growth Hacking Experiments,Owned,Growth,"Rapid experimentation on channels and tactics","Idea|Build|Test|Measure|Iterate|Scale","Analytics|Copywriting|Product sense",1,3,3.00,"Fast learning; high variance; experiment culture"
+C108,Billboards / OOH,Paid,Offline,"Physical advertising on billboards and transit","Location selection|Design|Placement|Measurement","Creative design|Copywriting",4,2,0.50,"Brand awareness; low precision; expensive"
+C109,Print Advertising / Trade Magazines,Paid,Offline,"Ads in print publications","Publication selection|Creative|Negotiation|Placement","Design|Copywriting",3,2,0.67,"Niche pro audiences; declining medium"
+C110,Radio Advertising,Paid,Offline,"Sponsored content on radio broadcasts","Station selection|Copy|Production|Placement","Copywriting|Audio production",3,2,0.67,"Local audiences; poor measurement"
+C111,TV Advertising,Paid,Offline,"Commercials on broadcast or cable TV","Network selection|Production|Buying|Airing|Measurement","Video production|Buying strategy",5,2,0.40,"Massive reach; high cost; poor B2B targeting"
+C112,Event / Team / Cause Sponsorships,Paid,Offline,"Sponsorships of events, teams, causes","Partnership negotiation|Assets|Activation|Measurement","Relationship mgmt|Brand building",3,3,1.00,"Brand association; emotional connection"
+C113,Flyers / Local Marketing,Owned,Offline,"Physical flyers distributed locally","Design|Printing|Distribution|Response tracking","Design|Copywriting|Distribution",1,1,1.00,"Low cost; hyperlocal; low response"
+C114,Door-to-Door / Field Sales,Paid,Outbound,"In-person prospecting at businesses or homes","Territory planning|Training|Visits|Follow-up","Sales|In-person communication",3,2,0.67,"Very high touch; niche use cases"
+C115,Telemarketing / Cold Calling,Owned,Outbound,"Phone prospecting","List|Scripting|Calling|Follow-up|Analytics","Sales|Scripting|Persistence",2,3,1.50,"Declining but effective in B2B enterprise"
+C116,Guerilla / Street Marketing,Paid,Offline,"Unconventional in-the-wild stunts and installs","Concept|Logistics|Execution|Capture|Amplification","Creative|Event mgmt|PR",2,3,1.50,"Virality potential; hard to measure"
+C117,Branded Merchandise / Swag,Paid,Offline,"Branded items distributed to prospects and customers","Design|Manufacturing|Distribution|Tracking","Design|Logistics|Sourcing",2,2,1.00,"Brand awareness; keepsake value; trade show pairing"
+C118,Strategic Investor / Advisor Network,Owned,Partnership,"Leverage investor and advisor connections for intros","Relationship building|Ask framing|Intro requests|Follow-up","Relationship mgmt|Founder skills",1,4,4.00,"Warm intros; trusted referrals; early-stage favorite"
+C119,Founder-Led Social Media,Owned,Social,"Founder posting thought leadership on LinkedIn/X","Content planning|Posting|Engagement|Community","Personal brand|Writing|Consistency",1,5,5.00,"Highest trust signal; compounds; free but time-intensive"
+C120,Alumni / Customer Advocacy Network,Owned,Community,"Former customers and power users advocating publicly","Identification|Enablement|Content co-creation|Amplification","Community mgmt|Relationship building",1,4,4.00,"Authentic; high-trust; former-customer network effect"
+</script>
+
+<script type="application/json" id="edges-json">
+{"edges":[
+{"id":"E001","source":"N-041","target":"N-037","type":"hard","rationale":"Pixel/tag deployment feeds conversion data into analytics"},
+{"id":"E002","source":"N-019","target":"N-021","type":"hard","rationale":"Prospect records land in CRM as contact entities"},
+{"id":"E003","source":"N-019","target":"N-025","type":"hard","rationale":"Cold email cannot run without a target list"},
+{"id":"E004","source":"N-021","target":"N-025","type":"hard","rationale":"CRM gates outbound (dedup, suppression, unsubscribes)"},
+{"id":"E005","source":"N-021","target":"N-045","type":"hard","rationale":"SDR cadence operates on CRM contact records"},
+{"id":"E006","source":"N-021","target":"N-046","type":"hard","rationale":"Meeting booking writes bookings back to CRM"},
+{"id":"E007","source":"N-021","target":"N-047","type":"hard","rationale":"Demo delivery reads CRM context for personalization"},
+{"id":"E008","source":"N-021","target":"N-040","type":"hard","rationale":"Marketing automation triggers read CRM lifecycle state"},
+{"id":"E009","source":"N-021","target":"N-015","type":"hard","rationale":"Email orchestration sends to CRM audiences"},
+{"id":"E010","source":"N-021","target":"N-033","type":"hard","rationale":"Review solicitation fires from CRM lifecycle events"},
+{"id":"E011","source":"N-042","target":"N-025","type":"hard","rationale":"Compliance gates every cold email send"},
+{"id":"E012","source":"N-042","target":"N-015","type":"hard","rationale":"Compliance gates every marketing email send"},
+{"id":"E013","source":"N-042","target":"N-016","type":"hard","rationale":"Compliance gates every SMS/push send"},
+{"id":"E014","source":"N-002","target":"N-025","type":"hard","rationale":"Cold email copy is the short-copy payload"},
+{"id":"E015","source":"N-002","target":"N-014","type":"hard","rationale":"Social posts are the short-copy output"},
+{"id":"E016","source":"N-002","target":"N-022","type":"hard","rationale":"Ad headlines/descriptions are short copy fed to paid campaigns"},
+{"id":"E017","source":"N-002","target":"N-016","type":"hard","rationale":"SMS/push messages are short-copy payload"},
+{"id":"E018","source":"N-002","target":"N-003","type":"soft","rationale":"Short-copy patterns inform sequence writing"},
+{"id":"E019","source":"N-013","target":"N-002","type":"soft","rationale":"Brand voice constrains short-copy generation"},
+{"id":"E020","source":"N-013","target":"N-001","type":"soft","rationale":"Brand voice informs long-form writing"},
+{"id":"E021","source":"N-013","target":"N-003","type":"soft","rationale":"Brand voice informs email sequence writing"},
+{"id":"E022","source":"N-013","target":"N-004","type":"soft","rationale":"Brand voice + visual guidelines inform video scripts"},
+{"id":"E023","source":"N-013","target":"N-007","type":"hard","rationale":"Landing pages must use brand system"},
+{"id":"E024","source":"N-013","target":"N-009","type":"hard","rationale":"Static design consumes brand assets as core input"},
+{"id":"E025","source":"N-013","target":"N-010","type":"soft","rationale":"Short video inherits brand palette and voice"},
+{"id":"E026","source":"N-013","target":"N-011","type":"soft","rationale":"Long video inherits brand palette and voice"},
+{"id":"E027","source":"N-013","target":"N-012","type":"soft","rationale":"Audio production inherits brand voice guidelines"},
+{"id":"E028","source":"N-013","target":"N-017","type":"soft","rationale":"CMS themes and templates embody brand system"},
+{"id":"E029","source":"N-018","target":"N-022","type":"hard","rationale":"Paid campaigns cannot run without defined audiences"},
+{"id":"E030","source":"N-018","target":"N-040","type":"hard","rationale":"Marketing automation branches by segment"},
+{"id":"E031","source":"N-018","target":"N-015","type":"hard","rationale":"Email orchestration sends to defined segments"},
+{"id":"E032","source":"N-018","target":"N-016","type":"hard","rationale":"SMS/push sends target defined segments"},
+{"id":"E033","source":"N-018","target":"N-003","type":"soft","rationale":"Email sequences tailor per segment"},
+{"id":"E034","source":"N-018","target":"N-025","type":"soft","rationale":"Cold email targeting improves when segments are defined"},
+{"id":"E035","source":"N-025","target":"N-045","type":"soft","rationale":"Cold email is one of several cadence touches"},
+{"id":"E036","source":"N-045","target":"N-046","type":"soft","rationale":"SDR cadence generates replies routed into calendar booking"},
+{"id":"E037","source":"N-046","target":"N-047","type":"hard","rationale":"Booked meeting is the demo event"},
+{"id":"E038","source":"N-040","target":"N-015","type":"hard","rationale":"Marketing automation orchestrates email sends"},
+{"id":"E039","source":"N-040","target":"N-016","type":"hard","rationale":"Marketing automation orchestrates SMS/push dispatch"},
+{"id":"E040","source":"N-040","target":"N-046","type":"soft","rationale":"MA flows can schedule meetings"},
+{"id":"E041","source":"N-003","target":"N-015","type":"hard","rationale":"Sequenced email sends require sequence content as payload"},
+{"id":"E042","source":"N-037","target":"N-023","type":"hard","rationale":"Bid optimization needs conversion data"},
+{"id":"E043","source":"N-037","target":"N-024","type":"hard","rationale":"A/B testing needs conversion data"},
+{"id":"E044","source":"N-037","target":"N-018","type":"signal","rationale":"Analytics cohorts refine segmentation"},
+{"id":"E045","source":"N-037","target":"N-040","type":"signal","rationale":"Analytics events fire MA triggers"},
+{"id":"E046","source":"N-041","target":"N-022","type":"hard","rationale":"Retargeting strategies require deployed pixels"},
+{"id":"E047","source":"N-009","target":"N-022","type":"hard","rationale":"Static creative is the ad visual asset"},
+{"id":"E048","source":"N-009","target":"N-014","type":"soft","rationale":"Feed posts use static design output"},
+{"id":"E049","source":"N-007","target":"N-022","type":"hard","rationale":"Paid campaigns need landing destinations"},
+{"id":"E050","source":"N-020","target":"N-022","type":"soft","rationale":"ABM overlays targeting on paid campaigns"},
+{"id":"E051","source":"N-020","target":"N-019","type":"soft","rationale":"ABM targeting refines list-building priorities"},
+{"id":"E052","source":"N-020","target":"N-025","type":"soft","rationale":"ABM personalizes cold email by target account"},
+{"id":"E053","source":"N-020","target":"N-045","type":"soft","rationale":"ABM orchestrates multi-channel cadence"},
+{"id":"E054","source":"N-020","target":"N-044","type":"soft","rationale":"ABM often includes direct-mail touches"},
+{"id":"E055","source":"N-022","target":"N-023","type":"hard","rationale":"Bid optimization acts on campaigns that exist"},
+{"id":"E056","source":"N-022","target":"N-024","type":"hard","rationale":"A/B testing acts on campaigns that exist"},
+{"id":"E057","source":"N-039","target":"N-008","type":"soft","rationale":"Competitive intel surfaces topic opportunities"},
+{"id":"E058","source":"N-039","target":"N-005","type":"soft","rationale":"Competitive intel surfaces keyword gaps"},
+{"id":"E059","source":"N-008","target":"N-001","type":"hard","rationale":"Long-form pieces are written against a selected topic"},
+{"id":"E060","source":"N-008","target":"N-002","type":"soft","rationale":"Topic discovery informs short-copy themes"},
+{"id":"E061","source":"N-008","target":"N-004","type":"hard","rationale":"Video scripts start from a selected topic"},
+{"id":"E062","source":"N-008","target":"N-005","type":"soft","rationale":"Topic discovery surfaces keyword clusters"},
+{"id":"E063","source":"N-005","target":"N-001","type":"soft","rationale":"SEO keyword intent shapes long-form structure"},
+{"id":"E064","source":"N-005","target":"N-017","type":"soft","rationale":"SEO metadata applied at publish time"},
+{"id":"E065","source":"N-005","target":"N-007","type":"soft","rationale":"SEO shapes landing-page copy for organic discovery"},
+{"id":"E066","source":"N-001","target":"N-017","type":"hard","rationale":"Long-form content is published via CMS"},
+{"id":"E067","source":"N-001","target":"N-014","type":"soft","rationale":"Long-form repurposed into social posts"},
+{"id":"E068","source":"N-017","target":"N-005","type":"signal","rationale":"Published pages generate ranking signals"},
+{"id":"E069","source":"N-006","target":"N-001","type":"soft","rationale":"Original research feeds long-form pieces"},
+{"id":"E070","source":"N-006","target":"N-028","type":"soft","rationale":"Original research provides PR hooks"},
+{"id":"E071","source":"N-004","target":"N-010","type":"hard","rationale":"Short-form video is produced against a script"},
+{"id":"E072","source":"N-004","target":"N-011","type":"hard","rationale":"Long-form video is produced against a script"},
+{"id":"E073","source":"N-004","target":"N-012","type":"hard","rationale":"Audio production is performed against a script"},
+{"id":"E074","source":"N-011","target":"N-010","type":"soft","rationale":"Long-form video is cut into short-form clips"},
+{"id":"E075","source":"N-012","target":"N-031","type":"soft","rationale":"Audio capability enables podcast guest circuits"},
+{"id":"E076","source":"N-010","target":"N-014","type":"soft","rationale":"Short video published through social scheduling"},
+{"id":"E077","source":"N-051","target":"N-014","type":"soft","rationale":"Founder content is scheduled alongside brand content"},
+{"id":"E078","source":"N-014","target":"N-034","type":"hard","rationale":"Published posts generate engagement opportunities"},
+{"id":"E079","source":"N-038","target":"N-034","type":"hard","rationale":"Brand listening surfaces conversations to engage"},
+{"id":"E080","source":"N-038","target":"N-033","type":"hard","rationale":"Brand listening surfaces new reviews to respond to"},
+{"id":"E081","source":"N-038","target":"N-028","type":"soft","rationale":"Brand listening surfaces PR opportunities"},
+{"id":"E082","source":"N-028","target":"N-051","type":"soft","rationale":"PR coverage feeds founder-brand credibility"},
+{"id":"E083","source":"N-031","target":"N-051","type":"soft","rationale":"Podcast guesting builds founder brand"},
+{"id":"E084","source":"N-032","target":"N-051","type":"soft","rationale":"Conference speaking builds founder brand"},
+{"id":"E085","source":"N-030","target":"N-021","type":"hard","rationale":"BD relationships land in CRM"},
+{"id":"E086","source":"N-043","target":"N-007","type":"hard","rationale":"Events require registration landing pages"},
+{"id":"E087","source":"N-043","target":"N-014","type":"soft","rationale":"Event promotion runs through social scheduling"},
+{"id":"E088","source":"N-043","target":"N-046","type":"soft","rationale":"Events generate meeting requests"},
+{"id":"E089","source":"N-043","target":"N-022","type":"soft","rationale":"Event registration amplified via paid campaigns"},
+{"id":"E090","source":"N-044","target":"N-022","type":"soft","rationale":"Direct-mail touches coordinated with paid campaigns"},
+{"id":"E091","source":"N-035","target":"N-034","type":"soft","rationale":"Community moderation informs external engagement replies"},
+{"id":"E092","source":"N-036","target":"N-034","type":"soft","rationale":"Q&A answering is a specialized engagement"},
+{"id":"E093","source":"N-026","target":"N-045","type":"soft","rationale":"LinkedIn DM is part of SDR cadence"},
+{"id":"E094","source":"N-027","target":"N-045","type":"soft","rationale":"Cold calling is part of SDR cadence"},
+{"id":"E095","source":"N-049","target":"N-017","type":"soft","rationale":"AI agents published as content assets"},
+{"id":"E096","source":"N-050","target":"N-001","type":"soft","rationale":"DevRel produces technical long-form content"},
+{"id":"E097","source":"N-050","target":"N-036","type":"soft","rationale":"DevRel engages developer Q&A"},
+{"id":"E098","source":"N-048","target":"N-022","type":"soft","rationale":"ASO insights coordinate with app-install campaigns"},
+{"id":"E099","source":"N-029","target":"N-014","type":"soft","rationale":"Influencer posts coordinated with social scheduling"},
+{"id":"E100","source":"N-033","target":"N-034","type":"soft","rationale":"Review response templates inform social engagement"},
+{"id":"E101","source":"N-014","target":"N-037","type":"signal","rationale":"Social post performance emits signals"},
+{"id":"E102","source":"N-022","target":"N-037","type":"signal","rationale":"Paid campaigns emit conversion signals"},
+{"id":"E103","source":"N-025","target":"N-037","type":"signal","rationale":"Cold email emits open/click/reply signals"},
+{"id":"E104","source":"N-017","target":"N-037","type":"signal","rationale":"Published pages emit traffic signals"},
+{"id":"E105","source":"N-015","target":"N-037","type":"signal","rationale":"Marketing email emits conversion signals"},
+{"id":"E106","source":"N-047","target":"N-037","type":"signal","rationale":"Demo outcomes emit pipeline signals"},
+{"id":"E107","source":"N-046","target":"N-037","type":"signal","rationale":"Booking rates emit funnel signals"},
+{"id":"E108","source":"N-043","target":"N-037","type":"signal","rationale":"Event outcomes emit signals"},
+{"id":"E109","source":"N-015","target":"N-025","type":"hard","rationale":"Cold email requires email-send infrastructure"},
+{"id":"E110","source":"N-003","target":"N-025","type":"hard","rationale":"Cold email sequence copy is the multi-touch payload"},
+{"id":"E111","source":"N-041","target":"N-007","type":"hard","rationale":"Landing pages host the pixels that emit conversions"},
+{"id":"E112","source":"N-037","target":"N-022","type":"signal","rationale":"Analytics performance data informs campaign decisions"},
+{"id":"E113","source":"N-009","target":"N-007","type":"soft","rationale":"Landing pages use static design output"},
+{"id":"E114","source":"N-002","target":"N-007","type":"soft","rationale":"Landing page headlines are short-copy output"},
+{"id":"E115","source":"N-021","target":"N-003","type":"soft","rationale":"Sequence writing uses CRM state for personalization"},
+{"id":"E116","source":"N-013","target":"N-051","type":"soft","rationale":"Founder-brand inherits corporate brand voice"},
+{"id":"E117","source":"N-018","target":"N-007","type":"soft","rationale":"Segments drive persona landing-page variants"},
+{"id":"E118","source":"N-037","target":"N-002","type":"signal","rationale":"Performance data refines short-copy patterns"},
+{"id":"E119","source":"N-049","target":"N-014","type":"soft","rationale":"AI agent launches announced via social scheduling"},
+{"id":"E120","source":"N-049","target":"N-037","type":"signal","rationale":"AI agent usage emits signals"},
+{"id":"E121","source":"N-013","target":"N-044","type":"soft","rationale":"Physical mail follows brand system"},
+{"id":"E122","source":"N-021","target":"N-044","type":"hard","rationale":"Direct mail targets are CRM contact records"},
+{"id":"E123","source":"N-030","target":"N-043","type":"soft","rationale":"Partnership BD produces joint events"},
+{"id":"E124","source":"N-030","target":"N-001","type":"soft","rationale":"Partnerships produce co-authored content"},
+{"id":"E125","source":"N-013","target":"N-029","type":"soft","rationale":"Influencer briefs carry brand voice"},
+{"id":"E126","source":"N-006","target":"N-017","type":"soft","rationale":"Research reports published via CMS"},
+{"id":"E127","source":"N-006","target":"N-005","type":"soft","rationale":"Original research anchors SEO pages"},
+{"id":"E128","source":"N-033","target":"N-037","type":"signal","rationale":"Review solicitation emits rating signals"},
+{"id":"E129","source":"N-034","target":"N-037","type":"signal","rationale":"Engagement metrics emit signals"},
+{"id":"E130","source":"N-037","target":"N-003","type":"signal","rationale":"Performance data refines sequence copy patterns"}
+]}
+</script>
+
+<script type="application/json" id="io-mapping-json">
+{"node_io":{"N-001":{"consumes":["I-01","I-02","I-06","I-07","I-08","I-15","I-18"],"produces":["O-01","O-02","O-03","O-04"]},"N-002":{"consumes":["I-01","I-02","I-03","I-13"],"produces":[]},"N-003":{"consumes":["I-01","I-02","I-03","I-09","I-13"],"produces":[]},"N-004":{"consumes":["I-01","I-02","I-08","I-15"],"produces":[]},"N-005":{"consumes":["I-06","I-07","I-13"],"produces":[]},"N-006":{"consumes":["I-03","I-08"],"produces":["O-04"]},"N-007":{"consumes":["I-01","I-02","I-03","I-04","I-11","I-13"],"produces":["O-06","O-07","O-08"]},"N-008":{"consumes":["I-06","I-07","I-13","I-15"],"produces":[]},"N-009":{"consumes":["I-01"],"produces":[]},"N-010":{"consumes":["I-01","I-02"],"produces":["O-09"]},"N-011":{"consumes":["I-01","I-02"],"produces":["O-10"]},"N-012":{"consumes":["I-01","I-02"],"produces":["O-11"]},"N-013":{"consumes":[],"produces":[]},"N-014":{"consumes":["I-03","I-13","I-15"],"produces":["O-19"]},"N-015":{"consumes":["I-03","I-05","I-09"],"produces":["O-13","O-15"]},"N-016":{"consumes":["I-05","I-09"],"produces":["O-14"]},"N-017":{"consumes":["I-15"],"produces":["O-01","O-05"]},"N-018":{"consumes":["I-03","I-09","I-13"],"produces":[]},"N-019":{"consumes":["I-03"],"produces":[]},"N-020":{"consumes":["I-10","I-11"],"produces":[]},"N-021":{"consumes":["I-05","I-09"],"produces":[]},"N-022":{"consumes":["I-03","I-04","I-12","I-13"],"produces":["O-12"]},"N-023":{"consumes":["I-12","I-13"],"produces":[]},"N-024":{"consumes":["I-13"],"produces":[]},"N-025":{"consumes":["I-02","I-03","I-05","I-09","I-10"],"produces":["O-16"]},"N-026":{"consumes":["I-02","I-03","I-10"],"produces":["O-17"]},"N-027":{"consumes":["I-02","I-03","I-05","I-10"],"produces":["O-17"]},"N-028":{"consumes":["I-11","I-14","I-18"],"produces":["O-26"]},"N-029":{"consumes":["I-17"],"produces":["O-28"]},"N-030":{"consumes":["I-17"],"produces":["O-27"]},"N-031":{"consumes":["I-17"],"produces":["O-25"]},"N-032":{"consumes":["I-16","I-18"],"produces":["O-25"]},"N-033":{"consumes":["I-09","I-11"],"produces":["O-22"]},"N-034":{"consumes":["I-01","I-03"],"produces":["O-20"]},"N-035":{"consumes":["I-01"],"produces":["O-20"]},"N-036":{"consumes":["I-01","I-02"],"produces":["O-21"]},"N-037":{"consumes":[],"produces":[]},"N-038":{"consumes":[],"produces":[]},"N-039":{"consumes":[],"produces":[]},"N-040":{"consumes":["I-03","I-09","I-13"],"produces":[]},"N-041":{"consumes":[],"produces":[]},"N-042":{"consumes":[],"produces":[]},"N-043":{"consumes":["I-12","I-16"],"produces":["O-23","O-24"]},"N-044":{"consumes":["I-01","I-09","I-10"],"produces":["O-29"]},"N-045":{"consumes":["I-09","I-10"],"produces":["O-17"]},"N-046":{"consumes":["I-09"],"produces":[]},"N-047":{"consumes":["I-02","I-04","I-11"],"produces":["O-18"]},"N-048":{"consumes":["I-06","I-13"],"produces":["O-30"]},"N-049":{"consumes":["I-02"],"produces":["O-30"]},"N-050":{"consumes":["I-02"],"produces":["O-31"]},"N-051":{"consumes":["I-01","I-02","I-15"],"produces":["O-19"]}}}
+</script>
+
+<script type="application/json" id="scenarios-json">
+{"scenarios":{"b2b-saas-micro":{"name":"B2B SaaS (micro)","subcategory_multipliers":{"Search":1.1,"Social":1.0,"Video":0.9,"Audio":1.0,"Email":1.2,"Lifecycle":1.3,"Content":1.4,"Events":0.3,"Community":1.4,"Partnership":1.0,"Outbound":0.4,"Offline":0.1,"Marketplace":1.5,"Reviews":1.5,"AI":1.3,"Growth":1.3,"PR":0.8,"Influencer":0.9,"Affiliate":1.1,"Display":0.6,"Website":1.2,"SEO":1.4,"General":1.0},"channel_overrides":{"C006":1.3,"C027":1.8,"C069":1.5,"C070":1.3,"C088":1.7,"C094":1.6,"C099":1.5,"C102":0.6,"C019":0,"C111":0,"C108":0,"C104":0,"C089":0.4,"C073":0.5}},"b2c-saas-micro":{"name":"B2C SaaS (micro)","subcategory_multipliers":{"Search":1.0,"Social":1.3,"Video":1.3,"Audio":0.7,"Email":1.0,"Lifecycle":1.4,"Content":0.8,"Events":0.1,"Community":1.0,"Partnership":0.8,"Outbound":0.0,"Offline":0.1,"Marketplace":1.6,"Reviews":1.3,"AI":1.1,"Growth":1.6,"PR":0.6,"Influencer":1.3,"Affiliate":0.9,"Display":1.0,"Website":1.0,"SEO":1.0,"General":1.0},"channel_overrides":{"C005":1.4,"C007":1.5,"C087":1.9,"C086":1.6,"C031":1.4,"C030":1.3,"C033":1.7,"C105":1.8,"C106":1.3,"C006":0.2,"C102":0,"C101":0,"C092":0,"C073":0,"C104":0,"C038":0.4,"C065":0.5,"C089":0}},"print-on-demand":{"name":"Print on Demand","subcategory_multipliers":{"Search":1.2,"Social":1.2,"Video":1.0,"Audio":0.3,"Email":1.2,"Lifecycle":1.3,"Content":0.7,"Events":0.4,"Community":0.9,"Partnership":0.8,"Outbound":0.0,"Offline":0.4,"Marketplace":1.6,"Reviews":1.5,"AI":0.7,"Growth":1.3,"PR":0.6,"Influencer":1.4,"Affiliate":1.2,"Display":1.0,"Website":1.1,"SEO":1.0,"General":1.0},"channel_overrides":{"C003":1.7,"C013":1.6,"C005":1.4,"C086":1.8,"C071":1.5,"C029":1.4,"C024":1.5,"C106":1.5,"C006":0.1,"C102":0,"C101":0,"C073":0,"C092":0,"C050":0.2,"C089":0.3}},"printables-digital":{"name":"Printables (digital)","subcategory_multipliers":{"Search":1.0,"Social":1.3,"Video":0.7,"Audio":0.2,"Email":1.4,"Lifecycle":1.3,"Content":1.0,"Events":0.1,"Community":1.0,"Partnership":0.7,"Outbound":0.0,"Offline":0.1,"Marketplace":1.7,"Reviews":1.3,"AI":0.8,"Growth":1.3,"PR":0.4,"Influencer":1.2,"Affiliate":1.3,"Display":0.5,"Website":1.0,"SEO":1.2,"General":1.0},"channel_overrides":{"C013":1.8,"C086":1.9,"C028":1.5,"C100":1.5,"C106":1.6,"C026":1.5,"C029":1.4,"C008":0.3,"C102":0,"C101":0,"C073":0,"C089":0,"C092":0,"C104":0,"C108":0}},"custom-directory":{"name":"Custom Directory","subcategory_multipliers":{"Search":1.5,"Social":0.8,"Video":0.6,"Audio":0.6,"Email":1.2,"Lifecycle":1.0,"Content":1.4,"Events":0.3,"Community":1.2,"Partnership":1.3,"Outbound":1.2,"Offline":0.1,"Marketplace":0.5,"Reviews":1.3,"AI":1.1,"Growth":1.0,"PR":1.0,"Influencer":0.5,"Affiliate":1.2,"Display":0.8,"Website":1.3,"SEO":1.6,"General":1.0},"channel_overrides":{"C035":1.8,"C079":1.8,"C094":1.7,"C078":1.6,"C034":1.5,"C067":1.5,"C101":1.4,"C082":1.3,"C100":1.4,"C019":0,"C111":0,"C108":0,"C087":0.4,"C073":0.3,"C089":0.3}},"high-value-marketplace":{"name":"High-Value Marketplace","subcategory_multipliers":{"Search":1.1,"Social":0.9,"Video":1.0,"Audio":1.0,"Email":1.1,"Lifecycle":1.1,"Content":1.2,"Events":1.5,"Community":1.1,"Partnership":1.4,"Outbound":1.4,"Offline":0.8,"Marketplace":0.8,"Reviews":1.5,"AI":0.9,"Growth":0.8,"PR":1.3,"Influencer":0.9,"Affiliate":0.7,"Display":1.0,"Website":1.2,"SEO":1.1,"General":1.0},"channel_overrides":{"C006":1.5,"C073":1.7,"C039":1.4,"C041":1.5,"C092":1.7,"C089":1.5,"C062":1.5,"C102":1.5,"C084":1.4,"C007":0.3,"C053":0.3,"C087":0,"C088":0.3,"C115":1.3,"C104":1.2}},"database-business":{"name":"Database Business","subcategory_multipliers":{"Search":1.3,"Social":1.0,"Video":0.9,"Audio":1.0,"Email":1.2,"Lifecycle":1.1,"Content":1.3,"Events":1.0,"Community":1.0,"Partnership":1.3,"Outbound":1.4,"Offline":0.3,"Marketplace":1.1,"Reviews":1.3,"AI":1.2,"Growth":1.2,"PR":1.1,"Influencer":0.7,"Affiliate":1.3,"Display":0.8,"Website":1.2,"SEO":1.4,"General":1.0},"channel_overrides":{"C035":1.6,"C042":1.5,"C038":1.5,"C006":1.4,"C069":1.4,"C096":1.4,"C083":1.5,"C067":1.5,"C101":1.5,"C073":1.3,"C108":0,"C113":0,"C117":0.2,"C053":0.4,"C087":0.3}},"b2b-services":{"name":"B2B Services","subcategory_multipliers":{"Search":0.9,"Social":1.1,"Video":0.9,"Audio":1.2,"Email":1.0,"Lifecycle":0.8,"Content":1.3,"Events":1.3,"Community":1.2,"Partnership":1.5,"Outbound":1.4,"Offline":0.7,"Marketplace":0.5,"Reviews":1.1,"AI":0.8,"Growth":0.9,"PR":1.2,"Influencer":0.8,"Affiliate":0.9,"Display":0.6,"Website":1.2,"SEO":1.1,"General":1.0},"channel_overrides":{"C119":1.8,"C118":1.8,"C049":1.5,"C065":1.5,"C066":1.5,"C067":1.5,"C039":1.4,"C041":1.4,"C102":1.4,"C086":0.2,"C087":0,"C053":0.4,"C088":0.5,"C108":0,"C111":0,"C017":0.5}},"first-party-small-products":{"name":"1st-Party Small Products","subcategory_multipliers":{"Search":0.9,"Social":1.3,"Video":1.0,"Audio":1.0,"Email":1.5,"Lifecycle":1.4,"Content":1.3,"Events":0.6,"Community":1.2,"Partnership":1.2,"Outbound":0.3,"Offline":0.1,"Marketplace":1.5,"Reviews":1.2,"AI":1.2,"Growth":1.4,"PR":0.8,"Influencer":1.1,"Affiliate":1.5,"Display":0.5,"Website":1.1,"SEO":1.0,"General":1.0},"channel_overrides":{"C028":1.7,"C029":1.7,"C119":1.8,"C051":1.5,"C088":1.5,"C100":1.6,"C099":1.6,"C026":1.4,"C027":1.7,"C102":0.2,"C092":0,"C089":0.3,"C104":0,"C108":0,"C111":0,"C073":0}},"b2c-microtools":{"name":"B2C Microtools","subcategory_multipliers":{"Search":1.2,"Social":1.1,"Video":1.3,"Audio":0.6,"Email":0.7,"Lifecycle":0.7,"Content":1.2,"Events":0.1,"Community":1.2,"Partnership":0.9,"Outbound":0.0,"Offline":0.0,"Marketplace":1.7,"Reviews":1.2,"AI":1.3,"Growth":1.4,"PR":0.5,"Influencer":1.1,"Affiliate":0.9,"Display":0.4,"Website":1.0,"SEO":1.2,"General":1.0},"channel_overrides":{"C087":1.9,"C086":1.7,"C035":1.4,"C075":1.5,"C055":1.4,"C057":1.4,"C088":1.7,"C106":1.5,"C033":1.4,"C079":1.3,"C006":0.2,"C073":0,"C089":0,"C102":0,"C101":0,"C092":0,"C104":0,"C108":0,"C111":0}},"content-business":{"name":"Content Business","subcategory_multipliers":{"Search":1.2,"Social":1.3,"Video":1.3,"Audio":1.3,"Email":1.4,"Lifecycle":1.0,"Content":1.3,"Events":0.8,"Community":1.2,"Partnership":1.3,"Outbound":0.3,"Offline":0.2,"Marketplace":1.0,"Reviews":0.8,"AI":1.0,"Growth":1.3,"PR":1.1,"Influencer":1.2,"Affiliate":1.3,"Display":0.7,"Website":1.0,"SEO":1.2,"General":1.0},"channel_overrides":{"C050":1.7,"C100":1.7,"C054":1.6,"C047":1.5,"C028":1.5,"C065":1.6,"C067":1.5,"C099":1.6,"C082":1.4,"C119":1.5,"C006":1.3,"C073":0.2,"C089":0.3,"C092":0.3,"C104":0,"C108":0,"C087":0.5}}}}
+</script>
+
+<!-- Libraries -->
+<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+<script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+<script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+
+<script>
+/* ===== Config ===== */
+const PHASE_MAP = {
+  "N-002":"P0","N-019":"P0","N-021":"P0","N-025":"P0","N-037":"P0","N-042":"P0","N-045":"P0","N-046":"P0","N-047":"P0",
+  "N-003":"P1","N-013":"P1","N-015":"P1","N-018":"P1","N-040":"P1","N-041":"P1",
+  "N-007":"P2","N-009":"P2","N-020":"P2","N-022":"P2","N-023":"P2","N-024":"P2",
+  "N-001":"P3","N-004":"P3","N-005":"P3","N-008":"P3","N-017":"P3",
+  "N-014":"P4","N-016":"P4","N-033":"P4","N-034":"P4","N-038":"P4","N-051":"P4",
+  "N-028":"P5","N-029":"P5","N-030":"P5","N-031":"P5","N-032":"P5",
+  "N-006":"P6","N-010":"P6","N-011":"P6","N-012":"P6","N-043":"P6","N-044":"P6",
+  "N-026":"P7","N-027":"P7","N-035":"P7","N-036":"P7","N-039":"P7","N-048":"P7","N-049":"P7","N-050":"P7"
+};
+const PHASE_LABELS = {
+  P0:"Revenue Now", P1:"Foundation", P2:"Paid Acquisition", P3:"Content Engine",
+  P4:"Organic Distribution", P5:"Earned & Relationships", P6:"Rich Media & Events", P7:"Specialized"
+};
+const PHASE_COLORS = {
+  P0:{main:"#ef4444",bg:"#2a0e0e"}, P1:{main:"#f59e0b",bg:"#2a1d08"},
+  P2:{main:"#eab308",bg:"#2a2408"}, P3:{main:"#84cc16",bg:"#1b2a08"},
+  P4:{main:"#10b981",bg:"#08271d"}, P5:{main:"#14b8a6",bg:"#082724"},
+  P6:{main:"#3b82f6",bg:"#0d1d39"}, P7:{main:"#a855f7",bg:"#22122e"}
+};
+const INPUT_COLORS  = { main: "#94a3b8", bg: "#1a2833" };
+const OUTPUT_COLORS = { main: "#E7511F", bg: "#2a1007" };
+
+/* Display-name overrides: clean up "+", "/", "&" that confused the label renderer.
+   Falls back to the raw CSV name if not listed here. */
+const NODE_DISPLAY_NAMES = {
+  "N-005":"SEO and AEO research","N-006":"Original research",
+  "N-007":"Landing page builder","N-013":"Brand asset library",
+  "N-019":"Prospect list building","N-021":"CRM and lifecycle",
+  "N-022":"Paid campaign manager","N-023":"Bid and budget optimization",
+  "N-028":"PR and media pitching","N-029":"Influencer outreach",
+  "N-033":"Review solicitation","N-035":"Community moderation",
+  "N-037":"Analytics and attribution","N-038":"Brand and social listening",
+  "N-041":"Pixel and tracking","N-043":"Event planning",
+  "N-044":"Physical production","N-047":"Demo delivery",
+  "N-049":"AI agent creation","N-050":"Dev relations and OSS",
+  "N-051":"Founder brand ops"
+};
+const INPUT_DISPLAY_NAMES = {
+  "I-01":"Brand identity","I-02":"Product positioning",
+  "I-03":"ICP and personas","I-04":"Pricing and packaging",
+  "I-05":"Compliance and legal","I-06":"Keyword and SEO data",
+  "I-07":"Competitive intelligence","I-08":"Customer research",
+  "I-09":"CRM and lifecycle data","I-10":"Prospect lists",
+  "I-11":"Testimonials and proof","I-12":"Campaign budget",
+  "I-13":"Performance history","I-14":"Journalist contacts",
+  "I-15":"Editorial calendar","I-16":"Event target list",
+  "I-17":"Partner network","I-18":"Research assets"
+};
+const OUTPUT_DISPLAY_NAMES = {
+  "O-01":"Published articles","O-02":"Gated content",
+  "O-03":"Case studies","O-04":"Research reports",
+  "O-05":"Knowledge base","O-06":"Landing pages",
+  "O-07":"Product pages","O-08":"Interactive tools",
+  "O-09":"Short-form video","O-10":"Long-form video",
+  "O-11":"Podcast episodes","O-12":"Paid campaigns",
+  "O-13":"Email campaigns","O-14":"SMS and push",
+  "O-15":"Newsletter issues","O-16":"Cold email sequences",
+  "O-17":"SDR activity","O-18":"Demo calls",
+  "O-19":"Social posts","O-20":"Engagement replies",
+  "O-21":"Q and A answers","O-22":"Reviews solicited",
+  "O-23":"Webinars held","O-24":"In-person events",
+  "O-25":"Speaking engagements","O-26":"Media placements",
+  "O-27":"Partner activations","O-28":"Influencer campaigns",
+  "O-29":"Direct mail sent","O-30":"AI agent listings",
+  "O-31":"Dev content"
+};
+
+/* Per-scenario phase overrides.
+   Each business type has a different revenue path, so "Revenue Now" (P0) and
+   Foundation (P1) nodes differ. These maps override PHASE_MAP per scenario;
+   nodes not listed fall back to their baseline phase. */
+const SCENARIO_PHASE_OVERRIDES = {
+  "b2b-saas-micro": {
+    // Self-serve content-led growth; SDR motion too expensive for micro
+    "N-001":"P0","N-017":"P0","N-007":"P0","N-033":"P0","N-034":"P0","N-013":"P0","N-041":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+  },
+  "b2c-saas-micro": {
+    // App store + viral loops + push; no outbound
+    "N-048":"P0","N-007":"P0","N-014":"P0","N-016":"P0","N-033":"P0","N-041":"P0","N-013":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+  },
+  "print-on-demand": {
+    // Marketplace (Etsy/Shopify) + visual + email + reviews
+    "N-007":"P0","N-009":"P0","N-033":"P0","N-041":"P0","N-013":"P0","N-014":"P0","N-015":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+  },
+  "printables-digital": {
+    // Etsy + Pinterest + email list
+    "N-009":"P0","N-013":"P0","N-014":"P0","N-015":"P0","N-033":"P0","N-041":"P0","N-017":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+  },
+  "custom-directory": {
+    // SEO-led + outbound listing acquisition
+    "N-005":"P0","N-001":"P0","N-017":"P0","N-008":"P0","N-041":"P0","N-013":"P0",
+    "N-045":"P7","N-046":"P7","N-047":"P7"
+  },
+  "high-value-marketplace": {
+    // Enterprise sales + PR + events (keep outbound in P0)
+    "N-028":"P0","N-013":"P0","N-041":"P0","N-043":"P0"
+  },
+  "database-business": {
+    // Outbound + SEO + free tools (keep outbound in P0)
+    "N-007":"P0","N-017":"P0","N-008":"P0","N-005":"P0","N-041":"P0","N-013":"P0"
+  },
+  "b2b-services": {
+    // Founder brand + LinkedIn + referrals + case studies
+    "N-051":"P0","N-001":"P0","N-026":"P0","N-041":"P0","N-013":"P0","N-014":"P0","N-034":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7"
+  },
+  "first-party-small-products": {
+    // Email list + launch mechanics + founder brand
+    "N-015":"P0","N-003":"P0","N-014":"P0","N-051":"P0","N-007":"P0","N-041":"P0","N-013":"P0","N-033":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+  },
+  "b2c-microtools": {
+    // Extension store + problem-SEO + short video
+    "N-048":"P0","N-007":"P0","N-017":"P0","N-005":"P0","N-041":"P0","N-013":"P0","N-033":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+  },
+  "content-business": {
+    // Audience-first — platform content + newsletter + founder brand
+    "N-001":"P0","N-017":"P0","N-015":"P0","N-014":"P0","N-051":"P0","N-008":"P0","N-041":"P0","N-013":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+  }
+};
+
+/* Plain-English "what it does" explanations for each capability node.
+   Written for a non-marketer — tells you, in one sentence or two,
+   what job this node is actually doing in the machine. */
+const NODE_EXPLAIN = {
+  "N-001": "Writes long articles — blog posts, case studies, whitepapers, ebooks. Given a topic and product context, produces thousands of words of authoritative content.",
+  "N-002": "Writes all the short text in marketing — ad headlines, social posts, email subject lines, push notifications. Tiny, punchy, everywhere.",
+  "N-003": "Writes multi-email sequences — welcome flows, nurture drips, onboarding emails, re-engagement campaigns. The automated email conversations over days.",
+  "N-004": "Writes scripts for videos — Reels, explainers, product demos, webinars. Turns a topic into a hook→body→CTA storyline per platform.",
+  "N-005": "Figures out what to write about to rank in Google and get cited by AI search engines. Keyword research + SERP analysis + on-page + schema.",
+  "N-006": "Runs surveys, collects data, produces original research reports. Generates 'We surveyed 500 CTOs'-style data that gets cited in press and earns backlinks.",
+  "N-007": "Builds the web pages paid ads send traffic to. Copy + design + CRO testing + deployment of campaign landing pages optimized to convert visitors.",
+  "N-008": "Decides what to say. Monitors search trends, competitors, and audience conversations to find worth-writing topics. Feeds all content nodes with ideas.",
+  "N-009": "Produces all visual static creative — ad images, social feed posts, ebook layouts, case study graphics. Stills that carry the brand everywhere.",
+  "N-010": "Produces short vertical videos for Reels/Shorts/TikTok. Script → shoot or generate → edit → caption → export. 15–60 second outputs.",
+  "N-011": "Produces longer videos — product demos, YouTube episodes, explainers, webinar recordings. Minutes to hours, higher production value than shorts.",
+  "N-012": "Records and produces audio — podcast episodes, ad voice-overs, radio spots. Voice cloning, editing, mastering.",
+  "N-013": "The canonical source for how the brand looks and sounds. Logos, colors, fonts, voice rules. Every other node reads from here to stay on-brand.",
+  "N-014": "Actually posts content to social platforms on schedule. Buffer/Publer-style. Handles LinkedIn, X, Instagram, TikTok, Facebook posting mechanics.",
+  "N-015": "The email-sending engine. Handles scheduling, deliverability, bounce handling, list hygiene. The infrastructure behind every sent email.",
+  "N-016": "Sends text messages and mobile/web push notifications to opted-in users. Twilio/OneSignal-style dispatch.",
+  "N-017": "The publishing step — takes a finished article and puts it live on the blog with SEO metadata, internal links, and correct formatting.",
+  "N-018": "Slices the audience into meaningful groups ('VP-level at 50-200-person SaaS', 'trial users who visited pricing 3+ times'). Every targeted campaign needs this.",
+  "N-019": "Builds lists of target prospects with enriched contact info — names, titles, emails, company data. Apollo/ZoomInfo/Clay-style who-to-email lists.",
+  "N-020": "Identifies specific target accounts worth pursuing, reads intent signals showing they're in-market, and orchestrates multi-channel outreach at them.",
+  "N-021": "The source of truth for every person and company we've touched — contact info, lifecycle stage, every interaction logged. HubSpot/Salesforce.",
+  "N-022": "Actually runs the paid ads — creates campaigns in Google/Meta/LinkedIn/TikTok ad platforms, uploads creative, configures targeting, launches, manages.",
+  "N-023": "Decides where to spend each dollar. Shifts budget across platforms and campaigns based on performance, avoids diminishing returns, maximizes ROI per dollar.",
+  "N-024": "Runs controlled experiments on ads, landing pages, emails. Measures which version wins with statistical confidence and rolls the winner out.",
+  "N-025": "Sends cold-email sequences to prospects who've never heard of you. Smartlead/Instantly-style deliverability-optimized outbound at scale.",
+  "N-026": "Sends multi-touch DM sequences on LinkedIn to target prospects — each touch spaced over days and combined with content engagement.",
+  "N-027": "Makes outbound phone calls — with AI voice agents (Bland, Retell) or human SDRs — and logs every call and outcome into the CRM.",
+  "N-028": "Pitches stories to journalists. Finds the right reporter at the right outlet, personalizes the pitch, follows up, lands coverage.",
+  "N-029": "Finds and negotiates with influencers/creators to post about the brand. Handles discovery, brief writing, and contract negotiation.",
+  "N-030": "Finds and closes partnership deals — integrations, resellers, co-marketing arrangements. System sources leads and drafts outreach; humans close.",
+  "N-031": "Books founders/execs as guests on relevant third-party podcasts. Researches shows, pitches the guest, handles scheduling and prep.",
+  "N-032": "Submits speaker applications (CFPs) to conferences. Tracks deadlines, writes compelling talk abstracts, manages speaker logistics.",
+  "N-033": "Asks happy customers to post reviews on G2/Capterra/Trustpilot at the right lifecycle moment, and responds to incoming reviews in brand voice.",
+  "N-034": "Replies to comments, DMs, and @-mentions on social platforms. Keeps the brand active and responsive everywhere it gets mentioned.",
+  "N-035": "Runs owned community spaces — Slack, Discord, or Circle workspaces. Moderates conversations, plans community events, keeps things productive.",
+  "N-036": "Answers questions on Quora, Reddit, Stack Overflow with authoritative, helpful responses that build reputation and drive relevant traffic.",
+  "N-037": "Measures everything. Tracks every click, conversion, and dollar across every channel. The answer to 'is any of this working?' and the feedback loop for every other node.",
+  "N-038": "Watches the internet for mentions of the brand, competitors, and relevant conversations. Surfaces opportunities to engage and threats to respond to.",
+  "N-039": "Tracks what competitors are doing — pricing changes, feature launches, new messaging, hiring patterns. Feeds strategic decisions everywhere.",
+  "N-040": "The 'if this then that' engine for marketing — 'if user abandons cart send this email', 'if lead scores > 50 route to sales'. Customer.io/Braze orchestration.",
+  "N-041": "Deploys the tracking tags on every page and event — Google Analytics, Facebook Pixel, UTMs, server-side events. Foundation for all downstream measurement.",
+  "N-042": "Keeps every outbound message legal — CAN-SPAM, TCPA, GDPR, CCPA. Manages consent records, opt-outs, regional routing. Non-optional infrastructure.",
+  "N-043": "Plans and runs events — webinars, trade-show booths, executive roundtables, conferences. Registration flows, logistics, post-event follow-up.",
+  "N-044": "Sends physical things — direct mail, branded swag, printed collateral. Partners with Sendoso/Reachdesk/Printful for fulfillment.",
+  "N-045": "Orchestrates multi-touch outbound sequences — email + LinkedIn + phone — spaced over days/weeks. What an SDR rep does, automated.",
+  "N-046": "Calendly-style calendar ops. Handles scheduling, reminders, time zones, round-robin routing across a sales team.",
+  "N-047": "Conducts live product demos — humans augmented by Gong-style call intelligence, or AI sales agents for simple demos. Records, transcribes, drives follow-ups.",
+  "N-048": "Optimizes app store listings (iOS App Store, Google Play) for discovery — keywords, title, description, screenshots, review management.",
+  "N-049": "Builds custom AI agents (ChatGPT GPTs, Poe bots, custom apps) that live in AI marketplaces as a new distribution channel for the brand.",
+  "N-050": "Engages the developer community — maintains open-source projects, answers Stack Overflow questions, writes technical blog posts, speaks at dev conferences.",
+  "N-051": "Ghostwrites and manages the founder/CEO's public content — LinkedIn posts, X threads, guest podcast appearances. Founder voice carries a trust premium."
+};
+
+/* ===== Data loading ===== */
+const NODES = Papa.parse(document.getElementById('nodes-csv').textContent.trim(), {header:true, skipEmptyLines:true}).data
+  .map(n => ({
+    ...n,
+    phase: PHASE_MAP[n.node_id] || 'P0',
+    cost_to_build: parseInt(n.cost_to_build,10),
+    channels_enabled_count: parseInt(n.channels_enabled_count,10),
+    value_enabled_sum: parseFloat(n.value_enabled_sum),
+    roi_score: parseFloat(n.roi_score),
+  }));
+const INPUTS  = Papa.parse(document.getElementById('inputs-csv').textContent.trim(),  {header:true, skipEmptyLines:true}).data;
+const OUTPUTS = Papa.parse(document.getElementById('outputs-csv').textContent.trim(), {header:true, skipEmptyLines:true}).data;
+const CHANNELS = Papa.parse(document.getElementById('channels-csv').textContent.trim(), {header:true, skipEmptyLines:true}).data
+  .map(c => ({
+    ...c,
+    cost_rating: parseFloat(c.cost_rating),
+    effectiveness_rating: parseFloat(c.effectiveness_rating),
+    cost_effectiveness_score: parseFloat(c.cost_effectiveness_score),
+    adjusted_effectiveness: parseFloat(c.effectiveness_rating),
+    adjusted_score: parseFloat(c.cost_effectiveness_score),
+  }));
+const EDGES = JSON.parse(document.getElementById('edges-json').textContent).edges;
+const NODE_IO = JSON.parse(document.getElementById('io-mapping-json').textContent).node_io;
+const SCENARIOS = JSON.parse(document.getElementById('scenarios-json').textContent).scenarios;
+
+const INPUT_BY_ID  = Object.fromEntries(INPUTS.map(i => [i.input_id, i]));
+const OUTPUT_BY_ID = Object.fromEntries(OUTPUTS.map(o => [o.output_id, o]));
+const NODE_BY_ID   = Object.fromEntries(NODES.map(n => [n.node_id, n]));
+
+/* ===== Channel → subsystem inference ===== */
+function tok(s){ return (s||'').split('|').map(x=>x.trim()).filter(Boolean); }
+const CHANNEL_SUBSYSTEMS = {};
+CHANNELS.forEach(ch => {
+  const chCaps = tok(ch.capabilities_required).map(x=>x.toLowerCase());
+  const matched = new Set();
+  NODES.forEach(n => {
+    const samples = tok(n.sample_channels);
+    if (samples.includes(ch.channel_id)) { matched.add(n.node_id); return; }
+    const nCaps = tok(n.capability_cluster).map(x=>x.toLowerCase());
+    const overlaps = chCaps.some(cc =>
+      nCaps.some(nc => nc.includes(cc) || cc.includes(nc) ||
+        cc.split(/\s+/).some(w => w.length>3 && nc.includes(w)) ||
+        nc.split(/\s+/).some(w => w.length>3 && cc.includes(w))
+      )
+    );
+    if (overlaps) matched.add(n.node_id);
+  });
+  matched.add('N-037');
+  if (ch.category !== 'Earned' || ['PR','Audio','Content'].includes(ch.subcategory)) matched.add('N-013');
+  CHANNEL_SUBSYSTEMS[ch.channel_id] = Array.from(matched);
+});
+function channelIO(channelId) {
+  const nodeIds = CHANNEL_SUBSYSTEMS[channelId] || [];
+  const inputs = new Set(), outputs = new Set();
+  nodeIds.forEach(nId => {
+    const io = NODE_IO[nId];
+    if (!io) return;
+    io.consumes.forEach(i => inputs.add(i));
+    io.produces.forEach(o => outputs.add(o));
+  });
+  return { nodes: nodeIds, inputs: [...inputs], outputs: [...outputs] };
+}
+
+/* ===== Graph ===== */
+let cy;
+function buildElements() {
+  const elements = [];
+  // Input nodes
+  INPUTS.forEach(i => {
+    const display = INPUT_DISPLAY_NAMES[i.input_id] || i.input_name;
+    elements.push({ group:'nodes', data:{
+      id: i.input_id, nodeType: 'input', label: `${i.input_id}\n${display}`,
+      name: i.input_name, description: i.description, category: i.category,
+      typical_owner: i.typical_owner, freshness: i.freshness
+    }});
+  });
+  // Capability nodes
+  NODES.forEach(n => {
+    const display = NODE_DISPLAY_NAMES[n.node_id] || n.node_name;
+    elements.push({ group:'nodes', data:{
+      id: n.node_id, nodeType: 'capability',
+      label: `${n.node_id}\n${display}`,
+      phase: n.phase, name: n.node_name, description: n.description,
+      capability_cluster: n.capability_cluster, cost_to_build: n.cost_to_build,
+      cost_rationale: n.cost_rationale, channels_enabled_count: n.channels_enabled_count,
+      value_enabled_sum: n.value_enabled_sum, roi_score: n.roi_score,
+      primary_tech_today: n.primary_tech_today, notes: n.notes
+    }});
+  });
+  // Output nodes
+  OUTPUTS.forEach(o => {
+    const display = OUTPUT_DISPLAY_NAMES[o.output_id] || o.output_name;
+    elements.push({ group:'nodes', data:{
+      id: o.output_id, nodeType: 'output', label: `${o.output_id}\n${display}`,
+      name: o.output_name, description: o.description, category: o.category,
+      delivery_format: o.delivery_format, cadence: o.cadence
+    }});
+  });
+  // Capability → capability edges
+  EDGES.forEach(e => {
+    elements.push({ group:'edges', data:{
+      id: e.id, source: e.source, target: e.target, type: e.type, rationale: e.rationale
+    }});
+  });
+  // Input → capability + capability → output edges
+  Object.entries(NODE_IO).forEach(([nid, io]) => {
+    io.consumes.forEach(iid => elements.push({ group:'edges', data:{
+      id: `IN-${iid}-${nid}`, source: iid, target: nid,
+      type: 'consumes', rationale: `${NODE_BY_ID[nid]?.node_name || nid} consumes ${INPUT_BY_ID[iid]?.input_name || iid}`
+    }}));
+    io.produces.forEach(oid => elements.push({ group:'edges', data:{
+      id: `OUT-${nid}-${oid}`, source: nid, target: oid,
+      type: 'produces', rationale: `${NODE_BY_ID[nid]?.node_name || nid} produces ${OUTPUT_BY_ID[oid]?.output_name || oid}`
+    }}));
+  });
+  return elements;
+}
+
+function initGraph() {
+  cy = cytoscape({
+    container: document.getElementById('graph'),
+    elements: buildElements(),
+    minZoom: 0.05, maxZoom: 3.0,
+    wheelSensitivity: 0.25,
+    style: [
+      // Capability nodes
+      { selector: 'node[nodeType="capability"]', style: {
+          'label': 'data(label)',
+          'background-color': ele => PHASE_COLORS[ele.data('phase')].bg,
+          'border-color':     ele => PHASE_COLORS[ele.data('phase')].main,
+          'border-width': 3,
+          'shape': 'round-rectangle',
+          'width': 1500,
+          'height': 500,
+          'text-wrap': 'wrap',
+          'text-max-width': 1400,
+          'font-size': 80,
+          'font-weight': 600,
+          'line-height': 1.15,
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'color': ele => PHASE_COLORS[ele.data('phase')].main,
+          'padding': 40,
+          'min-zoomed-font-size': 0,
+          'transition-property': 'opacity, border-width, background-color',
+          'transition-duration': '0.2s',
+      }},
+      // Input nodes
+      { selector: 'node[nodeType="input"]', style: {
+          'label': 'data(label)',
+          'background-color': INPUT_COLORS.bg,
+          'border-color': INPUT_COLORS.main,
+          'border-width': 3,
+          'shape': 'round-diamond',
+          'width': 1300,
+          'height': 700,
+          'text-wrap': 'wrap',
+          'text-max-width': 850,
+          'font-size': 72,
+          'font-weight': 600,
+          'line-height': 1.15,
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'color': INPUT_COLORS.main,
+          'padding': 48,
+          'min-zoomed-font-size': 0,
+          'transition-property': 'opacity',
+          'transition-duration': '0.2s',
+      }},
+      // Output nodes
+      { selector: 'node[nodeType="output"]', style: {
+          'label': 'data(label)',
+          'background-color': OUTPUT_COLORS.bg,
+          'border-color': OUTPUT_COLORS.main,
+          'border-width': 3,
+          'shape': 'round-tag',
+          'width': 1500,
+          'height': 500,
+          'text-wrap': 'wrap',
+          'text-max-width': 1400,
+          'font-size': 80,
+          'font-weight': 600,
+          'line-height': 1.15,
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'color': OUTPUT_COLORS.main,
+          'padding': 40,
+          'min-zoomed-font-size': 0,
+          'transition-property': 'opacity',
+          'transition-duration': '0.2s',
+      }},
+      // Edge base
+      { selector: 'edge', style: {
+          'curve-style': 'bezier',
+          'target-arrow-shape': 'triangle',
+          'arrow-scale': 0.9,
+          'transition-property': 'opacity, line-color, width',
+          'transition-duration': '0.2s',
+      }},
+      { selector: 'edge[type="hard"]', style: {
+          'width': 2.2, 'line-color': '#E7511F', 'target-arrow-color': '#E7511F'
+      }},
+      { selector: 'edge[type="soft"]', style: {
+          'width': 1.6, 'line-color': '#8fa3a9', 'target-arrow-color': '#8fa3a9', 'line-style': 'dashed'
+      }},
+      { selector: 'edge[type="signal"]', style: {
+          'width': 1.2, 'line-color': '#5E767D', 'target-arrow-color': '#5E767D', 'line-style': 'dotted', 'opacity': 0.6
+      }},
+      { selector: 'edge[type="consumes"]', style: {
+          'width': 1.8, 'line-color': '#94a3b8', 'target-arrow-color': '#94a3b8'
+      }},
+      { selector: 'edge[type="produces"]', style: {
+          'width': 1.8, 'line-color': '#E7511F', 'target-arrow-color': '#E7511F'
+      }},
+      { selector: '.dimmed', style: { 'opacity': 0.1 }},
+      { selector: '.highlighted', style: { 'border-width': 4, 'z-index': 999 }},
+      { selector: 'edge.highlighted', style: { 'width': 3, 'opacity': 1 }},
+      { selector: '.hidden', style: { 'display': 'none' }},
+    ],
+    layout: { name: 'preset' }
+  });
+
+  // Hide inputs & outputs by default (shown only when focused on a channel)
+  cy.batch(() => {
+    cy.nodes('[nodeType="input"], [nodeType="output"]').addClass('hidden');
+    cy.edges('[type="consumes"], [type="produces"]').addClass('hidden');
+  });
+
+  runDefaultLayout();
+
+  // Handlers
+  cy.on('tap', 'node', (evt) => {
+    const node = evt.target;
+    showNodeDetail(node);
+    highlightNeighbors(node);
+  });
+  cy.on('tap', (evt) => {
+    if (evt.target === cy) {
+      clearChannelFocus();
+      showEmptyDetail();
+    }
+  });
+  cy.on('mouseover', 'node', (evt) => showNodeTooltip(evt.target, evt));
+  cy.on('mousemove', 'node', positionTooltip);
+  cy.on('mouseout', 'node', hideTooltip);
+  cy.on('mouseover', 'edge', (evt) => showEdgeTooltip(evt.target, evt));
+  cy.on('mousemove', 'edge', positionTooltip);
+  cy.on('mouseout', 'edge', hideTooltip);
+  // Keep fonts readable when the user zooms
+  cy.on('zoom', updateFontScale);
+}
+
+function runDefaultLayout() {
+  const visible = cy.elements().not('.hidden');
+  visible.layout({
+    name: 'dagre',
+    rankDir: 'LR',
+    rankSep: 120,
+    nodeSep: 50,
+    edgeSep: 25,
+    padding: 50,
+    animate: true,
+    animationDuration: 500,
+    animationEasing: 'ease-out',
+    fit: true,
+    spacingFactor: 1.0,
+  }).run();
+  setTimeout(() => enforceNoOverlap(), 550);
+}
+
+function focusChannel(channelId) {
+  const { nodes: nodeIds, inputs, outputs } = channelIO(channelId);
+  const visibleSet = new Set([...nodeIds, ...inputs, ...outputs]);
+
+  cy.batch(() => {
+    // Show/hide nodes
+    cy.nodes().forEach(n => {
+      if (visibleSet.has(n.id())) n.removeClass('hidden dimmed');
+      else n.addClass('hidden');
+    });
+    // Show only relevant edges
+    cy.edges().forEach(e => {
+      const bothVisible = visibleSet.has(e.source().id()) && visibleSet.has(e.target().id());
+      if (bothVisible) e.removeClass('hidden dimmed');
+      else e.addClass('hidden');
+    });
+  });
+
+  // Run layout on visible subset
+  cy.elements().not('.hidden').layout({
+    name: 'dagre',
+    rankDir: 'LR',
+    rankSep: 200,
+    nodeSep: 80,
+    edgeSep: 35,
+    padding: 80,
+    animate: true,
+    animationDuration: 600,
+    animationEasing: 'ease-out',
+    fit: true,
+    spacingFactor: 1.0,
+  }).run();
+  setTimeout(() => enforceNoOverlap(), 650);
+}
+
+/* Zoom-responsive font scaling (CONTAINED VARIANT).
+   Scales font inversely with zoom so labels stay readable when zoomed out,
+   but HARD-CAPS the font so it never outgrows the node box. Text-max-width
+   stays pinned to the node interior so wrapped text can't leak sideways. */
+const TARGET_SCREEN_FONT_PX = 16;   // target on-screen pixel size (readable minimum)
+const BASE_CAP_FONT = 80;
+const BASE_IN_FONT = 72;
+const MAX_CAP_FONT = 130;           // text stays inside 1200x560 node at this size
+const MAX_IN_FONT = 115;            // text stays inside 1040x760 diamond at this size
+
+function updateFontScale() {
+  if (!cy) return;
+  const z = cy.zoom();
+  const neededCap = Math.min(MAX_CAP_FONT, Math.max(BASE_CAP_FONT, TARGET_SCREEN_FONT_PX / z));
+  const neededIn  = Math.min(MAX_IN_FONT,  Math.max(BASE_IN_FONT,  (TARGET_SCREEN_FONT_PX - 1) / z));
+  cy.batch(() => {
+    cy.nodes('[nodeType="capability"], [nodeType="output"]').style('font-size', neededCap);
+    cy.nodes('[nodeType="input"]').style('font-size', neededIn);
+  });
+}
+
+/* No-overlap enforcement: if dagre packed any rank too tight, push nodes
+   apart vertically (within their x column) until every pair has ≥ gap px.
+   Runs in O(n²) but only across ~50 visible nodes per pass. */
+function enforceNoOverlap() {
+  const GAP = 22; // minimum clear space between node bounding boxes
+  const MAX_PASSES = 14;
+  const visible = cy.nodes().not('.hidden');
+  for (let pass = 0; pass < MAX_PASSES; pass++) {
+    let moved = false;
+    const arr = visible.toArray();
+    for (let i = 0; i < arr.length; i++) {
+      const a = arr[i];
+      const ab = a.boundingBox();
+      for (let j = i + 1; j < arr.length; j++) {
+        const b = arr[j];
+        const bb = b.boundingBox();
+        const xOverlap = ab.x1 < bb.x2 && bb.x1 < ab.x2;
+        const yOverlap = ab.y1 < bb.y2 && bb.y1 < ab.y2;
+        if (xOverlap && yOverlap) {
+          // Overlap. Push the lower one down.
+          const needed = ((ab.h + bb.h) / 2 + GAP) - Math.abs(a.position('y') - b.position('y'));
+          if (needed > 0) {
+            const lower = (a.position('y') >= b.position('y')) ? a : b;
+            lower.position({ x: lower.position('x'), y: lower.position('y') + needed });
+            moved = true;
+          }
+        }
+      }
+    }
+    if (!moved) break;
+  }
+  cy.fit(undefined, 60);
+  updateFontScale();
+}
+
+function clearChannelFocus() {
+  cy.batch(() => {
+    cy.nodes('[nodeType="capability"]').removeClass('hidden dimmed highlighted');
+    cy.nodes('[nodeType="input"], [nodeType="output"]').addClass('hidden').removeClass('highlighted dimmed');
+    cy.edges().forEach(e => {
+      const t = e.data('type');
+      if (t === 'consumes' || t === 'produces') e.addClass('hidden');
+      else e.removeClass('hidden dimmed highlighted');
+    });
+  });
+  runDefaultLayout();
+  document.querySelectorAll('#channel-list li').forEach(li => li.classList.remove('active'));
+}
+
+function highlightNeighbors(node) {
+  const neighborhood = node.closedNeighborhood().not('.hidden');
+  cy.elements().not('.hidden').addClass('dimmed').removeClass('highlighted');
+  neighborhood.removeClass('dimmed');
+  node.addClass('highlighted');
+  node.connectedEdges().not('.hidden').addClass('highlighted');
+}
+
+/* ===== Tooltips ===== */
+const tooltipEl = document.getElementById('tooltip');
+function showNodeTooltip(node, evt) {
+  const d = node.data();
+  let html = '';
+  if (d.nodeType === 'capability') {
+    html = `
+      <strong>${d.id} — ${d.name}</strong>
+      <div class="tooltip-explain"><b>What it does:</b> ${NODE_EXPLAIN[d.id] || d.description}</div>
+      <div class="tooltip-stats">
+        <span class="stat"><b>Cost</b>${d.cost_to_build}/5</span>
+        <span class="stat"><b>Channels</b>${d.channels_enabled_count}</span>
+        <span class="stat"><b>Value</b>${d.value_enabled_sum}</span>
+        <span class="stat"><b>ROI</b>${d.roi_score}</span>
+      </div>
+      <div class="tooltip-section"><b>Technical scope:</b> ${d.description}</div>
+      <div class="tooltip-section"><b>Primary tech:</b> ${(d.primary_tech_today||'').replace(/\|/g,' · ')}</div>
+      <div class="tooltip-section"><b>Cost rationale:</b> ${d.cost_rationale}</div>
+      <div class="tooltip-section"><b>Notes:</b> ${d.notes}</div>`;
+  } else if (d.nodeType === 'input') {
+    html = `
+      <strong>${d.id} — ${d.name}</strong>
+      <div class="tooltip-explain"><b>What it is:</b> A context/data input the machine consumes. ${d.description}</div>
+      <div class="tooltip-section"><b>Category:</b> ${d.category}</div>
+      <div class="tooltip-section"><b>Typical owner:</b> ${d.typical_owner}</div>
+      <div class="tooltip-section"><b>Freshness:</b> ${d.freshness}</div>`;
+  } else if (d.nodeType === 'output') {
+    html = `
+      <strong>${d.id} — ${d.name}</strong>
+      <div class="tooltip-explain"><b>What it is:</b> A deliverable the machine produces. ${d.description}</div>
+      <div class="tooltip-section"><b>Category:</b> ${d.category}</div>
+      <div class="tooltip-section"><b>Format:</b> ${d.delivery_format}</div>
+      <div class="tooltip-section"><b>Cadence:</b> ${d.cadence}</div>`;
+  }
+  tooltipEl.innerHTML = html;
+  tooltipEl.classList.remove('hidden');
+  positionTooltip(evt);
+}
+function showEdgeTooltip(edge, evt) {
+  const d = edge.data();
+  tooltipEl.innerHTML = `
+    <strong>${d.id || (d.source+' → '+d.target)}</strong>
+    <p><span class="edge-type-${d.type}" style="padding:1px 6px; border-radius:3px;">${d.type}</span></p>
+    <p>${d.rationale}</p>`;
+  tooltipEl.classList.remove('hidden');
+  positionTooltip(evt);
+}
+function positionTooltip(evt) {
+  const oe = evt.originalEvent || evt;
+  if (!oe.clientX) return;
+  const pad = 14;
+  tooltipEl.style.left = '0'; tooltipEl.style.top = '0';
+  const rect = tooltipEl.getBoundingClientRect();
+  let x = oe.clientX + pad, y = oe.clientY + pad;
+  if (x + rect.width + 10 > window.innerWidth) x = oe.clientX - rect.width - pad;
+  if (y + rect.height + 10 > window.innerHeight) y = oe.clientY - rect.height - pad;
+  tooltipEl.style.left = `${x}px`; tooltipEl.style.top = `${y}px`;
+}
+function hideTooltip() { tooltipEl.classList.add('hidden'); }
+
+/* ===== Detail panel ===== */
+const detailPanel = document.getElementById('detail-panel');
+function showEmptyDetail() {
+  detailPanel.innerHTML = `<div class="empty">
+    <strong>Click a channel</strong> to see its full subsystem: what <em>inputs</em> it needs, which <em>capabilities</em> execute it, and what <em>outputs</em> it produces.<br><br>
+    <strong>Click a node</strong> for details &amp; neighbors.<br><br>
+    <strong>Hover nodes</strong> for a quick summary.
+  </div>`;
+}
+
+function showNodeDetail(node) {
+  const d = node.data();
+  if (d.nodeType === 'capability') showCapabilityDetail(d.id);
+  else if (d.nodeType === 'input')  showInputDetail(d.id);
+  else if (d.nodeType === 'output') showOutputDetail(d.id);
+}
+
+function showCapabilityDetail(nodeId) {
+  const n = NODE_BY_ID[nodeId]; if (!n) return;
+  const upstream   = EDGES.filter(e => e.target === nodeId);
+  const downstream = EDGES.filter(e => e.source === nodeId);
+  const io = NODE_IO[nodeId] || { consumes: [], produces: [] };
+  detailPanel.innerHTML = `
+    <div class="detail-header">
+      <span class="phase-badge phase-${n.phase.toLowerCase()}">${n.phase} ${PHASE_LABELS[n.phase]}</span>
+      <h2>${n.node_id}</h2>
+      <p class="node-name">${n.node_name}</p>
+    </div>
+    <div class="detail-section"><p>${n.description}</p></div>
+    <div class="detail-metrics">
+      <div class="metric"><div class="metric-label">Cost</div><div class="metric-value">${n.cost_to_build}/5</div></div>
+      <div class="metric"><div class="metric-label">Channels</div><div class="metric-value">${n.channels_enabled_count}</div></div>
+      <div class="metric"><div class="metric-label">Value</div><div class="metric-value">${n.value_enabled_sum}</div></div>
+      <div class="metric"><div class="metric-label">ROI</div><div class="metric-value">${n.roi_score}</div></div>
+    </div>
+    <div class="detail-section"><h3>Cost rationale</h3><p>${n.cost_rationale}</p></div>
+    <div class="detail-section"><h3>Primary tech</h3><p>${n.primary_tech_today.split('|').map(t=>`<code>${t.trim()}</code>`).join(' ')}</p></div>
+    <div class="detail-section"><h3>Notes</h3><p>${n.notes}</p></div>
+    <div class="detail-section io-section"><h3>Consumes (${io.consumes.length})</h3>
+      <ul>${io.consumes.map(iid => {
+        const i = INPUT_BY_ID[iid];
+        return i ? `<li class="io-input"><span class="io-id">${iid}</span><span class="io-name"><a data-input-id="${iid}">${i.input_name}</a></span></li>` : '';
+      }).join('') || '<li>—</li>'}</ul>
+    </div>
+    <div class="detail-section io-section"><h3>Produces (${io.produces.length})</h3>
+      <ul>${io.produces.map(oid => {
+        const o = OUTPUT_BY_ID[oid];
+        return o ? `<li class="io-output"><span class="io-id">${oid}</span><span class="io-name"><a data-output-id="${oid}">${o.output_name}</a></span></li>` : '';
+      }).join('') || '<li>—</li>'}</ul>
+    </div>
+    <div class="detail-section"><h3>Upstream nodes (${upstream.length})</h3>
+      <ul>${upstream.map(e => `<li><span class="edge-type-${e.type}">${e.type}</span> <a data-node-id="${e.source}">${e.source}</a> — <em>${e.rationale}</em></li>`).join('') || '<li>—</li>'}</ul>
+    </div>
+    <div class="detail-section"><h3>Downstream nodes (${downstream.length})</h3>
+      <ul>${downstream.map(e => `<li><span class="edge-type-${e.type}">${e.type}</span> <a data-node-id="${e.target}">${e.target}</a> — <em>${e.rationale}</em></li>`).join('') || '<li>—</li>'}</ul>
+    </div>`;
+}
+
+function showInputDetail(iid) {
+  const i = INPUT_BY_ID[iid]; if (!i) return;
+  const consumers = Object.entries(NODE_IO).filter(([,io]) => io.consumes.includes(iid)).map(([nid])=>nid);
+  detailPanel.innerHTML = `
+    <div class="detail-header">
+      <span class="tier-badge tier-input">◆ INPUT</span>
+      <h2>${i.input_id}</h2>
+      <p class="node-name">${i.input_name}</p>
+      <p class="subcategory">${i.category}</p>
+    </div>
+    <div class="detail-section"><p>${i.description}</p></div>
+    <div class="detail-section"><h3>Typical owner</h3><p>${i.typical_owner}</p></div>
+    <div class="detail-section"><h3>Freshness cadence</h3><p>${i.freshness}</p></div>
+    <div class="detail-section"><h3>Consumed by (${consumers.length} capabilities)</h3>
+      <ul>${consumers.map(nid => {
+        const n = NODE_BY_ID[nid];
+        return n ? `<li><span class="phase-badge phase-${n.phase.toLowerCase()}">${n.phase}</span> <a data-node-id="${nid}">${nid}</a> — ${n.node_name}</li>` : '';
+      }).join('') || '<li>—</li>'}</ul>
+    </div>`;
+}
+
+function showOutputDetail(oid) {
+  const o = OUTPUT_BY_ID[oid]; if (!o) return;
+  const producers = Object.entries(NODE_IO).filter(([,io]) => io.produces.includes(oid)).map(([nid])=>nid);
+  detailPanel.innerHTML = `
+    <div class="detail-header">
+      <span class="tier-badge tier-output">▶ OUTPUT</span>
+      <h2>${o.output_id}</h2>
+      <p class="node-name">${o.output_name}</p>
+      <p class="subcategory">${o.category}</p>
+    </div>
+    <div class="detail-section"><p>${o.description}</p></div>
+    <div class="detail-section"><h3>Delivery format</h3><p>${o.delivery_format}</p></div>
+    <div class="detail-section"><h3>Cadence</h3><p>${o.cadence}</p></div>
+    <div class="detail-section"><h3>Produced by (${producers.length} capabilities)</h3>
+      <ul>${producers.map(nid => {
+        const n = NODE_BY_ID[nid];
+        return n ? `<li><span class="phase-badge phase-${n.phase.toLowerCase()}">${n.phase}</span> <a data-node-id="${nid}">${nid}</a> — ${n.node_name}</li>` : '';
+      }).join('') || '<li>—</li>'}</ul>
+    </div>`;
+}
+
+function showChannelDetail(channelId) {
+  const c = CHANNELS.find(x => x.channel_id === channelId); if (!c) return;
+  const io = channelIO(channelId);
+  focusChannel(channelId);
+  document.querySelectorAll('#channel-list li').forEach(li => li.classList.toggle('active', li.dataset.channelId === channelId));
+  const scenarioChanged = Math.abs(c.adjusted_effectiveness - c.effectiveness_rating) > 0.01;
+  detailPanel.innerHTML = `
+    <div class="detail-header">
+      <span class="category-badge ch-cat-${c.category}">${c.category}</span>
+      <h2>${c.channel_id}</h2>
+      <p class="node-name">${c.channel_name}</p>
+      <p class="subcategory">${c.subcategory}</p>
+    </div>
+    <div class="detail-section"><p>${c.description}</p></div>
+    <div class="detail-metrics">
+      <div class="metric"><div class="metric-label">Cost</div><div class="metric-value">${c.cost_rating}/5</div></div>
+      <div class="metric"><div class="metric-label">Effect.</div><div class="metric-value">${c.adjusted_effectiveness.toFixed(1)}${scenarioChanged ? `<small>/${c.effectiveness_rating}</small>` : ''}</div></div>
+      <div class="metric"><div class="metric-label">Score</div><div class="metric-value">${c.adjusted_score.toFixed(2)}</div></div>
+    </div>
+    <div class="detail-section io-section"><h3>Inputs needed (${io.inputs.length})</h3>
+      <ul>${io.inputs.sort().map(iid => {
+        const i = INPUT_BY_ID[iid];
+        return i ? `<li class="io-input"><span class="io-id">${iid}</span><span class="io-name"><a data-input-id="${iid}">${i.input_name}</a></span></li>` : '';
+      }).join('') || '<li>—</li>'}</ul>
+    </div>
+    <div class="detail-section"><h3>Capabilities used (${io.nodes.length})</h3>
+      <ul>${io.nodes.sort().map(nid => {
+        const n = NODE_BY_ID[nid];
+        return n ? `<li><span class="phase-badge phase-${n.phase.toLowerCase()}">${n.phase}</span> <a data-node-id="${nid}">${nid}</a> — ${n.node_name}</li>` : '';
+      }).join('')}</ul>
+    </div>
+    <div class="detail-section io-section"><h3>Outputs produced (${io.outputs.length})</h3>
+      <ul>${io.outputs.sort().map(oid => {
+        const o = OUTPUT_BY_ID[oid];
+        return o ? `<li class="io-output"><span class="io-id">${oid}</span><span class="io-name"><a data-output-id="${oid}">${o.output_name}</a></span></li>` : '';
+      }).join('') || '<li>—</li>'}</ul>
+    </div>
+    <div class="detail-section"><h3>Work steps</h3>
+      <ol>${c.work_steps.split('|').map(s=>`<li>${s.trim()}</li>`).join('')}</ol>
+    </div>
+    <div class="detail-section"><h3>Notes</h3><p>${c.notes}</p></div>`;
+}
+
+/* ===== Scenario & filters ===== */
+function applyScenario(scenarioId) {
+  // 1) Channel effectiveness multipliers → adjusted scores
+  if (!scenarioId) {
+    CHANNELS.forEach(c => { c.adjusted_effectiveness = c.effectiveness_rating; c.adjusted_score = c.cost_effectiveness_score; });
+  } else {
+    const s = SCENARIOS[scenarioId];
+    CHANNELS.forEach(c => {
+      const subMult = (s.subcategory_multipliers[c.subcategory] !== undefined) ? s.subcategory_multipliers[c.subcategory] : 1.0;
+      const override = s.channel_overrides[c.channel_id];
+      const mult = override !== undefined ? override : subMult;
+      c.adjusted_effectiveness = Math.min(5, c.effectiveness_rating * mult);
+      c.adjusted_score = c.cost_rating > 0 ? c.adjusted_effectiveness / c.cost_rating : 0;
+    });
+  }
+  // 2) Per-scenario phase assignments (moves nodes between P0–P7 based on revenue path)
+  const phaseOverrides = scenarioId ? (SCENARIO_PHASE_OVERRIDES[scenarioId] || {}) : {};
+  NODES.forEach(n => {
+    n.phase = phaseOverrides[n.node_id] || PHASE_MAP[n.node_id] || 'P0';
+  });
+  if (cy) {
+    cy.batch(() => {
+      NODES.forEach(n => {
+        const el = cy.getElementById(n.node_id);
+        if (el.nonempty()) el.data('phase', n.phase);
+      });
+    });
+  }
+  renderChannelList();
+}
+
+function renderChannelList() {
+  const search = document.getElementById('channel-search').value.toLowerCase();
+  const category = document.getElementById('category-select').value;
+  let filtered = CHANNELS.slice();
+  if (search) filtered = filtered.filter(c =>
+    c.channel_id.toLowerCase().includes(search) ||
+    c.channel_name.toLowerCase().includes(search) ||
+    c.subcategory.toLowerCase().includes(search) ||
+    c.description.toLowerCase().includes(search)
+  );
+  if (category) filtered = filtered.filter(c => c.category === category);
+  filtered.sort((a,b) => b.adjusted_score - a.adjusted_score);
+  const list = document.getElementById('channel-list');
+  list.innerHTML = filtered.map(c => `
+    <li data-channel-id="${c.channel_id}">
+      <span class="ch-id">${c.channel_id}</span>
+      <span class="ch-name">${c.channel_name}</span>
+      <span class="ch-cat ch-cat-${c.category}">${c.category[0]}</span>
+      <span class="ch-score">${c.adjusted_score.toFixed(1)}</span>
+    </li>`).join('');
+  document.getElementById('channel-count').textContent = `${filtered.length} of ${CHANNELS.length} channels`;
+}
+
+function applyPhaseFilter(phase) {
+  cy.nodes('[nodeType="capability"]').removeClass('dimmed highlighted');
+  if (!phase) return;
+  const ids = NODES.filter(n => n.phase === phase).map(n => n.node_id);
+  cy.nodes('[nodeType="capability"]').addClass('dimmed');
+  ids.forEach(id => cy.getElementById(id).removeClass('dimmed').addClass('highlighted'));
+}
+
+function toggleSignals(show) {
+  cy.edges('[type="signal"]').style('display', show ? 'element' : 'none');
+}
+
+/* ===== Init ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  // Populate dropdowns
+  const scSelect = document.getElementById('scenario-select');
+  Object.entries(SCENARIOS).forEach(([id,s]) => {
+    const o = document.createElement('option'); o.value = id; o.textContent = s.name;
+    scSelect.appendChild(o);
+  });
+  const phSelect = document.getElementById('phase-select');
+  Object.entries(PHASE_LABELS).forEach(([id,label]) => {
+    const o = document.createElement('option'); o.value = id; o.textContent = `${id} — ${label}`;
+    phSelect.appendChild(o);
+  });
+
+  initGraph();
+  applyScenario('');
+
+  // Events
+  scSelect.addEventListener('change', e => applyScenario(e.target.value));
+  document.getElementById('category-select').addEventListener('change', renderChannelList);
+  document.getElementById('phase-select').addEventListener('change', e => applyPhaseFilter(e.target.value));
+  document.getElementById('channel-search').addEventListener('input', renderChannelList);
+  document.getElementById('show-signals').addEventListener('change', e => toggleSignals(e.target.checked));
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    document.getElementById('scenario-select').value = '';
+    document.getElementById('category-select').value = '';
+    document.getElementById('phase-select').value = '';
+    document.getElementById('channel-search').value = '';
+    document.getElementById('show-signals').checked = true;
+    toggleSignals(true);
+    applyScenario('');
+    clearChannelFocus();
+    showEmptyDetail();
+  });
+
+  document.getElementById('channel-list').addEventListener('click', e => {
+    const li = e.target.closest('li[data-channel-id]');
+    if (!li) return;
+    showChannelDetail(li.dataset.channelId);
+  });
+
+  detailPanel.addEventListener('click', e => {
+    const nodeLink = e.target.closest('a[data-node-id]');
+    if (nodeLink) {
+      const id = nodeLink.dataset.nodeId;
+      showCapabilityDetail(id);
+      const n = cy.getElementById(id);
+      if (n.nonempty() && !n.hasClass('hidden')) {
+        highlightNeighbors(n);
+        cy.animate({ center: { eles: n }, zoom: 1.0 }, { duration: 400 });
+      }
+      return;
+    }
+    const inputLink = e.target.closest('a[data-input-id]');
+    if (inputLink) { showInputDetail(inputLink.dataset.inputId); return; }
+    const outputLink = e.target.closest('a[data-output-id]');
+    if (outputLink) { showOutputDetail(outputLink.dataset.outputId); return; }
+  });
+});
+</script>
+</body>
+</html>
