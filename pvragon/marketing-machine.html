@@ -1127,6 +1127,7 @@ const SCENARIO_PHASE_OVERRIDES = {
    graph when a scenario is active, and the same sequence shows as a "Build
    Next" checklist in the default detail panel. */
 const SCENARIO_BUILD_ORDER = {
+  "baseline":          ["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-045","N-046","N-047"],
   "b2b-saas-micro":    ["N-013","N-041","N-037","N-021","N-002","N-007","N-017","N-001","N-033","N-034"],
   "b2c-saas-micro":    ["N-013","N-041","N-037","N-007","N-048","N-002","N-014","N-016","N-033"],
   "print-on-demand":   ["N-013","N-041","N-037","N-009","N-007","N-002","N-014","N-015","N-033"],
@@ -1653,9 +1654,11 @@ function hideTooltip() { tooltipEl.classList.add('hidden'); }
 const detailPanel = document.getElementById('detail-panel');
 function buildOrderCardHtml() {
   const scenarioId = document.getElementById('scenario-select') ? document.getElementById('scenario-select').value : '';
-  if (!scenarioId) return '';
-  const scenarioName = SCENARIOS[scenarioId] && SCENARIOS[scenarioId].name;
-  const order = SCENARIO_BUILD_ORDER[scenarioId] || [];
+  const key = scenarioId || 'baseline';
+  const scenarioName = scenarioId
+    ? (SCENARIOS[scenarioId] && SCENARIOS[scenarioId].name)
+    : 'Baseline (B2B SaaS average)';
+  const order = SCENARIO_BUILD_ORDER[key] || [];
   if (!order.length) return '';
   const rows = order.map((nid, i) => {
     const n = NODE_BY_ID[nid];
@@ -1842,8 +1845,10 @@ function applyScenario(scenarioId) {
   NODES.forEach(n => {
     n.phase = phaseOverrides[n.node_id] || PHASE_MAP[n.node_id] || 'P0';
   });
-  // 3) Build-order badges: prefix P0 node labels with ①②③… for the recommended sequence
-  const buildOrder = scenarioId ? (SCENARIO_BUILD_ORDER[scenarioId] || []) : [];
+  // 3) Build-order badges: prefix P0 node labels with the recommended sequence
+  //    Falls back to the baseline order when no scenario is selected.
+  const buildOrderKey = scenarioId || 'baseline';
+  const buildOrder = SCENARIO_BUILD_ORDER[buildOrderKey] || [];
   if (cy) {
     cy.batch(() => {
       NODES.forEach(n => {
