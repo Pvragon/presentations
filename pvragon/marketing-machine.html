@@ -304,10 +304,11 @@
 
   .detail-metrics {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin: 14px 0;
   }
+  .detail-metrics.three { grid-template-columns: repeat(3, 1fr); }
   .metric {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
@@ -1602,27 +1603,19 @@ function showNodeTooltip(node, evt) {
       <div class="tooltip-stats">
         <span class="stat"><b>Cost</b>${d.cost_to_build}/5</span>
         <span class="stat"><b>Channels</b>${d.channels_enabled_count}</span>
-        <span class="stat"><b>Value</b>${d.value_enabled_sum}</span>
         <span class="stat"><b>ROI</b>${d.roi_score}</span>
       </div>
-      <div class="tooltip-section"><b>Technical scope:</b> ${d.description}</div>
-      <div class="tooltip-section"><b>Primary tech:</b> ${(d.primary_tech_today||'').replace(/\|/g,' · ')}</div>
-      <div class="tooltip-section"><b>Cost rationale:</b> ${d.cost_rationale}</div>
       <div class="tooltip-section"><b>Notes:</b> ${d.notes}</div>`;
   } else if (d.nodeType === 'input') {
     html = `
       <strong>${d.id} — ${d.name}</strong>
       <div class="tooltip-explain"><b>What it is:</b> A context/data input the machine consumes. ${d.description}</div>
-      <div class="tooltip-section"><b>Category:</b> ${d.category}</div>
-      <div class="tooltip-section"><b>Typical owner:</b> ${d.typical_owner}</div>
-      <div class="tooltip-section"><b>Freshness:</b> ${d.freshness}</div>`;
+      <div class="tooltip-section"><b>Category:</b> ${d.category}</div>`;
   } else if (d.nodeType === 'output') {
     html = `
       <strong>${d.id} — ${d.name}</strong>
       <div class="tooltip-explain"><b>What it is:</b> A deliverable the machine produces. ${d.description}</div>
-      <div class="tooltip-section"><b>Category:</b> ${d.category}</div>
-      <div class="tooltip-section"><b>Format:</b> ${d.delivery_format}</div>
-      <div class="tooltip-section"><b>Cadence:</b> ${d.cadence}</div>`;
+      <div class="tooltip-section"><b>Category:</b> ${d.category}</div>`;
   }
   tooltipEl.innerHTML = html;
   tooltipEl.classList.remove('hidden');
@@ -1710,15 +1703,12 @@ function showCapabilityDetail(nodeId) {
       <h2>${n.node_id}</h2>
       <p class="node-name">${n.node_name}</p>
     </div>
-    <div class="detail-section"><p>${n.description}</p></div>
+    <div class="detail-section"><p>${NODE_EXPLAIN[n.node_id] || n.description}</p></div>
     <div class="detail-metrics">
       <div class="metric"><div class="metric-label">Cost</div><div class="metric-value">${n.cost_to_build}/5</div></div>
       <div class="metric"><div class="metric-label">Channels</div><div class="metric-value">${n.channels_enabled_count}</div></div>
-      <div class="metric"><div class="metric-label">Value</div><div class="metric-value">${n.value_enabled_sum}</div></div>
       <div class="metric"><div class="metric-label">ROI</div><div class="metric-value">${n.roi_score}</div></div>
     </div>
-    <div class="detail-section"><h3>Cost rationale</h3><p>${n.cost_rationale}</p></div>
-    <div class="detail-section"><h3>Primary tech</h3><p>${n.primary_tech_today.split('|').map(t=>`<code>${t.trim()}</code>`).join(' ')}</p></div>
     <div class="detail-section"><h3>Notes</h3><p>${n.notes}</p></div>
     <div class="detail-section io-section"><h3>Consumes (${io.consumes.length})</h3>
       <ul>${io.consumes.map(iid => {
@@ -1751,8 +1741,6 @@ function showInputDetail(iid) {
       <p class="subcategory">${i.category}</p>
     </div>
     <div class="detail-section"><p>${i.description}</p></div>
-    <div class="detail-section"><h3>Typical owner</h3><p>${i.typical_owner}</p></div>
-    <div class="detail-section"><h3>Freshness cadence</h3><p>${i.freshness}</p></div>
     <div class="detail-section"><h3>Consumed by (${consumers.length} capabilities)</h3>
       <ul>${consumers.map(nid => {
         const n = NODE_BY_ID[nid];
@@ -1772,8 +1760,6 @@ function showOutputDetail(oid) {
       <p class="subcategory">${o.category}</p>
     </div>
     <div class="detail-section"><p>${o.description}</p></div>
-    <div class="detail-section"><h3>Delivery format</h3><p>${o.delivery_format}</p></div>
-    <div class="detail-section"><h3>Cadence</h3><p>${o.cadence}</p></div>
     <div class="detail-section"><h3>Produced by (${producers.length} capabilities)</h3>
       <ul>${producers.map(nid => {
         const n = NODE_BY_ID[nid];
@@ -1796,7 +1782,7 @@ function showChannelDetail(channelId) {
       <p class="subcategory">${c.subcategory}</p>
     </div>
     <div class="detail-section"><p>${c.description}</p></div>
-    <div class="detail-metrics">
+    <div class="detail-metrics three">
       <div class="metric"><div class="metric-label">Cost</div><div class="metric-value">${c.cost_rating}/5</div></div>
       <div class="metric"><div class="metric-label">Effect.</div><div class="metric-value">${c.adjusted_effectiveness.toFixed(1)}${scenarioChanged ? `<small>/${c.effectiveness_rating}</small>` : ''}</div></div>
       <div class="metric"><div class="metric-label">Score</div><div class="metric-value">${c.adjusted_score.toFixed(2)}</div></div>
