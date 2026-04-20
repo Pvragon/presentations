@@ -144,7 +144,39 @@
   .channel-list-header .ch-name { flex: 1; }
   .channel-list-header .ch-cat { width: 24px; text-align: center; }
   .channel-list-header .ch-score { text-align: right; min-width: 36px; }
-  #cat-header-help { cursor: help; color: var(--accent); }
+  #cat-header-help { cursor: pointer; color: var(--accent); }
+  #edge-help { cursor: pointer; color: var(--accent); background: rgba(231,81,31,0.15); padding: 0 4px; border-radius: 3px; margin-left: 2px; }
+
+  .edge-defs {
+    display: none;
+    position: fixed;
+    left: 50%;
+    bottom: 60px;
+    transform: translateX(-50%);
+    width: min(720px, 92vw);
+    max-height: 60vh;
+    overflow-y: auto;
+    z-index: 200;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(231,81,31,0.4);
+    border-radius: 10px;
+    padding: 18px 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .edge-defs.open { display: block; }
+  .edge-defs .edge-def-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; font-weight: 700;
+    color: var(--accent); margin-bottom: 12px;
+  }
+  .edge-def-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 8px 0; border-bottom: 1px dashed var(--border-subtle);
+    font-size: 12px; line-height: 1.55; color: var(--text-muted);
+  }
+  .edge-def-row:last-child { border-bottom: 0; }
+  .edge-def-row > svg { flex-shrink: 0; margin-top: 8px; }
+  .edge-def-row b { color: var(--accent); font-weight: 600; }
+  .edge-def-row em { color: var(--text-main); font-style: italic; }
   .cat-defs {
     display: none;
     padding: 10px 14px;
@@ -521,6 +553,30 @@
     </aside>
   </main>
 
+  <div class="edge-defs" id="edge-defs">
+    <div class="edge-def-title">What the edges mean</div>
+    <div class="edge-def-row">
+      <svg width="36" height="4"><line x1="0" y1="2" x2="36" y2="2" stroke="#E7511F" stroke-width="3"/></svg>
+      <span><b>Hard</b> — a blocking dependency. The target capability literally cannot operate without the source's output. If you remove the source, the target breaks. Example: a paid campaign (N-022) can't run without targeting segments (N-018). Arrow direction is producer → consumer.</span>
+    </div>
+    <div class="edge-def-row">
+      <svg width="36" height="4"><line x1="0" y1="2" x2="36" y2="2" stroke="#8fa3a9" stroke-width="2" stroke-dasharray="6,4"/></svg>
+      <span><b>Soft</b> — an enhancing dependency. The target works without the source but works <em>better</em> with it. Removing the source degrades quality; it doesn't break the system. Example: brand voice (N-013) improves short copy (N-002) but short copy can still be written without it.</span>
+    </div>
+    <div class="edge-def-row">
+      <svg width="36" height="4"><line x1="0" y1="2" x2="36" y2="2" stroke="#5E767D" stroke-width="1.5" stroke-dasharray="2,3"/></svg>
+      <span><b>Signal</b> — telemetry, feedback, or measurement flow. The source emits data (events, metrics, signals) that the target consumes for optimization or learning. Not part of the operational data path — more like a dashboard wire than a pipeline. Example: a cold email (N-025) emits open/click/reply signals to analytics (N-037), which in turn signals back to short copy (N-002) what phrasing is working.</span>
+    </div>
+    <div class="edge-def-row">
+      <svg width="36" height="12" style="margin-top:-4px"><polygon points="0,6 8,2 8,10" fill="#94a3b8"/><line x1="0" y1="6" x2="36" y2="6" stroke="#94a3b8" stroke-width="2"/></svg>
+      <span><b>Consumes</b> (input → capability) — a capability reads a context input. E.g. cold email consumes CRM data, compliance rules, ICP definitions. Grey lines.</span>
+    </div>
+    <div class="edge-def-row">
+      <svg width="36" height="12" style="margin-top:-4px"><polygon points="0,6 8,2 8,10" fill="#E7511F"/><line x1="0" y1="6" x2="36" y2="6" stroke="#E7511F" stroke-width="2"/></svg>
+      <span><b>Produces</b> (capability → output) — a capability emits a deliverable artifact. E.g. the paid-campaigns capability produces "paid ad campaigns running". Orange lines.</span>
+    </div>
+  </div>
+
   <footer class="app-footer">
     <div class="legend">
       <span class="legend-group">
@@ -540,7 +596,7 @@
         <span class="phase-swatch p7">P7 Specialized</span>
       </span>
       <span class="legend-group">
-        <span class="legend-title">Edges</span>
+        <span class="legend-title">Edges <span id="edge-help" title="Click for definitions">ⓘ</span></span>
         <svg width="28" height="4"><line x1="0" y1="2" x2="28" y2="2" stroke="#E7511F" stroke-width="2.5"/></svg> hard
         <svg width="28" height="4"><line x1="0" y1="2" x2="28" y2="2" stroke="#8fa3a9" stroke-width="1.8" stroke-dasharray="5,3"/></svg> soft
         <svg width="28" height="4"><line x1="0" y1="2" x2="28" y2="2" stroke="#5E767D" stroke-width="1.2" stroke-dasharray="2,2"/></svg> signal
@@ -1083,7 +1139,7 @@ const SCENARIO_BUILD_ORDER = {
   "b2c-microtools":    ["N-013","N-041","N-037","N-048","N-002","N-007","N-017","N-005","N-033"],
   "content-business":  ["N-013","N-041","N-037","N-021","N-051","N-017","N-015","N-014","N-034","N-030"]
 };
-const CIRCLE_NUMBERS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮'];
+const CIRCLE_NUMBERS = ['[1]','[2]','[3]','[4]','[5]','[6]','[7]','[8]','[9]','[10]','[11]','[12]','[13]','[14]','[15]'];
 
 /* Category definitions — surfaced in tooltips and the Build Next panel. */
 const CATEGORY_DEFINITIONS = {
@@ -1595,36 +1651,37 @@ function hideTooltip() { tooltipEl.classList.add('hidden'); }
 
 /* ===== Detail panel ===== */
 const detailPanel = document.getElementById('detail-panel');
-function showEmptyDetail() {
+function buildOrderCardHtml() {
   const scenarioId = document.getElementById('scenario-select') ? document.getElementById('scenario-select').value : '';
-  const scenarioName = scenarioId ? (SCENARIOS[scenarioId] && SCENARIOS[scenarioId].name) : '';
-  const order = scenarioId ? (SCENARIO_BUILD_ORDER[scenarioId] || []) : [];
-  let buildNext = '';
-  if (order.length) {
-    const rows = order.map((nid, i) => {
-      const n = NODE_BY_ID[nid];
-      if (!n) return '';
-      const display = NODE_DISPLAY_NAMES[nid] || n.node_name;
-      const circle = CIRCLE_NUMBERS[i] || `${i+1}.`;
-      return `<li class="build-row">
-        <span class="build-num">${circle}</span>
-        <a data-node-id="${nid}" class="build-link">
-          <span class="build-id">${nid}</span>
-          <span class="build-name">${display}</span>
-        </a>
-      </li>`;
-    }).join('');
-    buildNext = `
-      <div class="build-sequence">
-        <div class="build-header">
-          <span class="build-kicker">Recommended build order</span>
-          <h3 class="build-title">${scenarioName}</h3>
-          <p class="build-sub">Start at ① and work down. Each step uses outputs from earlier steps.</p>
-        </div>
-        <ol class="build-list">${rows}</ol>
-      </div>`;
-  }
-  detailPanel.innerHTML = `${buildNext}
+  if (!scenarioId) return '';
+  const scenarioName = SCENARIOS[scenarioId] && SCENARIOS[scenarioId].name;
+  const order = SCENARIO_BUILD_ORDER[scenarioId] || [];
+  if (!order.length) return '';
+  const rows = order.map((nid, i) => {
+    const n = NODE_BY_ID[nid];
+    if (!n) return '';
+    const display = NODE_DISPLAY_NAMES[nid] || n.node_name;
+    return `<li class="build-row">
+      <span class="build-num">${i+1}</span>
+      <a data-node-id="${nid}" class="build-link">
+        <span class="build-id">${nid}</span>
+        <span class="build-name">${display}</span>
+      </a>
+    </li>`;
+  }).join('');
+  return `
+    <div class="build-sequence">
+      <div class="build-header">
+        <span class="build-kicker">🎯 Recommended build order</span>
+        <h3 class="build-title">${scenarioName}</h3>
+        <p class="build-sub">Start at #1 and work down. Each step uses outputs from earlier steps.</p>
+      </div>
+      <ol class="build-list">${rows}</ol>
+    </div>`;
+}
+
+function showEmptyDetail() {
+  detailPanel.innerHTML = `${buildOrderCardHtml()}
     <div class="empty">
       <strong>Click a channel</strong> to see its full subsystem: what <em>inputs</em> it needs, which <em>capabilities</em> execute it, and what <em>outputs</em> it produces.<br><br>
       <strong>Click a node</strong> for details &amp; neighbors.<br><br>
@@ -1644,7 +1701,7 @@ function showCapabilityDetail(nodeId) {
   const upstream   = EDGES.filter(e => e.target === nodeId);
   const downstream = EDGES.filter(e => e.source === nodeId);
   const io = NODE_IO[nodeId] || { consumes: [], produces: [] };
-  detailPanel.innerHTML = `
+  detailPanel.innerHTML = `${buildOrderCardHtml()}
     <div class="detail-header">
       <span class="phase-badge phase-${n.phase.toLowerCase()}">${n.phase} ${PHASE_LABELS[n.phase]}</span>
       <h2>${n.node_id}</h2>
@@ -1683,7 +1740,7 @@ function showCapabilityDetail(nodeId) {
 function showInputDetail(iid) {
   const i = INPUT_BY_ID[iid]; if (!i) return;
   const consumers = Object.entries(NODE_IO).filter(([,io]) => io.consumes.includes(iid)).map(([nid])=>nid);
-  detailPanel.innerHTML = `
+  detailPanel.innerHTML = `${buildOrderCardHtml()}
     <div class="detail-header">
       <span class="tier-badge tier-input">◆ INPUT</span>
       <h2>${i.input_id}</h2>
@@ -1704,7 +1761,7 @@ function showInputDetail(iid) {
 function showOutputDetail(oid) {
   const o = OUTPUT_BY_ID[oid]; if (!o) return;
   const producers = Object.entries(NODE_IO).filter(([,io]) => io.produces.includes(oid)).map(([nid])=>nid);
-  detailPanel.innerHTML = `
+  detailPanel.innerHTML = `${buildOrderCardHtml()}
     <div class="detail-header">
       <span class="tier-badge tier-output">▶ OUTPUT</span>
       <h2>${o.output_id}</h2>
@@ -1728,7 +1785,7 @@ function showChannelDetail(channelId) {
   focusChannel(channelId);
   document.querySelectorAll('#channel-list li').forEach(li => li.classList.toggle('active', li.dataset.channelId === channelId));
   const scenarioChanged = Math.abs(c.adjusted_effectiveness - c.effectiveness_rating) > 0.01;
-  detailPanel.innerHTML = `
+  detailPanel.innerHTML = `${buildOrderCardHtml()}
     <div class="detail-header">
       <span class="category-badge ch-cat-${c.category}">${c.category}</span>
       <h2>${c.channel_id}</h2>
@@ -1798,7 +1855,7 @@ function applyScenario(scenarioId) {
         const nid = n.id();
         const displayName = NODE_DISPLAY_NAMES[nid] || (NODE_BY_ID[nid] && NODE_BY_ID[nid].node_name) || '';
         const idx = buildOrder.indexOf(nid);
-        const prefix = (idx >= 0 && idx < CIRCLE_NUMBERS.length) ? `${CIRCLE_NUMBERS[idx]}  ` : '';
+        const prefix = (idx >= 0 && idx < CIRCLE_NUMBERS.length) ? `BUILD STEP ${idx + 1}\n` : '';
         n.data('label', `${prefix}${nid}\n${displayName}`);
       });
     });
@@ -1890,7 +1947,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const catDefs = document.getElementById('cat-defs');
   if (catHeader && catDefs) {
     catHeader.addEventListener('click', () => catDefs.classList.toggle('open'));
-    catHeader.addEventListener('mouseenter', () => catDefs.classList.add('open'));
+  }
+
+  // Edge definitions popover
+  const edgeHelp = document.getElementById('edge-help');
+  const edgeDefs = document.getElementById('edge-defs');
+  if (edgeHelp && edgeDefs) {
+    edgeHelp.addEventListener('click', (e) => { e.stopPropagation(); edgeDefs.classList.toggle('open'); });
+    document.addEventListener('click', (e) => {
+      if (!edgeDefs.contains(e.target) && e.target !== edgeHelp) edgeDefs.classList.remove('open');
+    });
   }
 
   detailPanel.addEventListener('click', e => {
