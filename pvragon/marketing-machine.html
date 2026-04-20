@@ -144,6 +144,32 @@
   .channel-list-header .ch-name { flex: 1; }
   .channel-list-header .ch-cat { width: 24px; text-align: center; }
   .channel-list-header .ch-score { text-align: right; min-width: 36px; }
+  #cat-header-help { cursor: help; color: var(--accent); }
+  .cat-defs {
+    display: none;
+    padding: 10px 14px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .cat-defs.open { display: block; }
+  .cat-def-row { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0; }
+  .cat-def-badge {
+    flex-shrink: 0;
+    font-size: 9.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    min-width: 14px;
+    text-align: center;
+    margin-top: 1px;
+  }
+  .cat-def-text { flex: 1; }
+  .cat-def-text b { color: var(--accent); font-weight: 600; }
   #channel-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
   #channel-list li {
     padding: 10px 14px;
@@ -410,6 +436,27 @@
     color: var(--text-main);
   }
   .tooltip .tooltip-explain b { color: var(--accent); font-weight: 600; display: block; margin-bottom: 3px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Build-order sequence block (empty detail panel) */
+  .build-sequence {
+    background: linear-gradient(180deg, rgba(231,81,31,0.06) 0%, rgba(231,81,31,0.01) 100%);
+    border: 1px solid rgba(231,81,31,0.3);
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .build-sequence .build-header { margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(231,81,31,0.2); }
+  .build-sequence .build-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--accent); }
+  .build-sequence .build-title { margin: 4px 0 2px; font-size: 18px; font-weight: 700; color: var(--text-main); }
+  .build-sequence .build-sub { margin: 0; font-size: 11.5px; line-height: 1.45; color: var(--text-subtle); }
+  .build-sequence .build-list { list-style: none; margin: 0; padding: 0; counter-reset: build; }
+  .build-sequence .build-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border-subtle); }
+  .build-sequence .build-row:last-child { border-bottom: 0; }
+  .build-sequence .build-num { font-size: 20px; color: var(--accent); font-weight: 700; min-width: 28px; text-align: center; }
+  .build-sequence .build-link { flex: 1; text-decoration: none; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+  .build-sequence .build-link:hover .build-name { color: var(--accent); }
+  .build-sequence .build-id { font-family: ui-monospace, monospace; font-size: 10px; color: var(--text-faint); letter-spacing: 0.4px; }
+  .build-sequence .build-name { font-size: 13px; font-weight: 500; color: var(--text-main); }
 </style>
 </head>
 <body>
@@ -448,8 +495,14 @@
       <div class="channel-list-header">
         <span class="ch-id">ID</span>
         <span class="ch-name">Channel</span>
-        <span class="ch-cat" title="Category: Paid / Owned / Earned / Hybrid">Cat</span>
+        <span class="ch-cat" id="cat-header-help" title="Hover for definitions">Cat ⓘ</span>
         <span class="ch-score" title="Cost-effectiveness score (effectiveness / cost)">Score</span>
+      </div>
+      <div class="cat-defs" id="cat-defs">
+        <span class="cat-def-row"><span class="cat-def-badge ch-cat-Paid">P</span><span class="cat-def-text"><b>Paid</b> — you pay for reach. Ads, sponsorships, direct mail. Stops when budget stops.</span></span>
+        <span class="cat-def-row"><span class="cat-def-badge ch-cat-Owned">O</span><span class="cat-def-text"><b>Owned</b> — audience &amp; assets you control. Website, email list, social followers, app stores, community.</span></span>
+        <span class="cat-def-row"><span class="cat-def-badge ch-cat-Earned">E</span><span class="cat-def-text"><b>Earned</b> — others vouch for you without payment. Press, reviews, word-of-mouth, mentions.</span></span>
+        <span class="cat-def-row"><span class="cat-def-badge ch-cat-Hybrid">H</span><span class="cat-def-text"><b>Hybrid</b> — partnership plays mixing commercial terms + shared effort. Resellers, affiliates, co-marketing.</span></span>
       </div>
       <ul id="channel-list"></ul>
     </aside>
@@ -1002,10 +1055,42 @@ const SCENARIO_PHASE_OVERRIDES = {
     "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
   },
   "content-business": {
-    // Audience-first — platform content + newsletter + founder brand
-    "N-001":"P0","N-017":"P0","N-015":"P0","N-014":"P0","N-051":"P0","N-008":"P0","N-041":"P0","N-013":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+    // Audience-first — DISTRIBUTION, not production. Content creation itself
+    // (N-001 writing, N-010/N-011 video, N-012 audio) is product-dev, not marketing.
+    // P0 focuses on reach: publishing infrastructure, newsletter, founder brand, collabs.
+    "N-017":"P0","N-015":"P0","N-014":"P0","N-051":"P0","N-037":"P0","N-041":"P0","N-013":"P0","N-034":"P0","N-030":"P0",
+    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1",
+    "N-001":"P6","N-008":"P6"
   }
+};
+
+/* Per-scenario recommended BUILD ORDER for P0 nodes.
+   Hand-curated dependency-aware sequence. First entries are foundational
+   (brand, pixel, analytics); later entries are consumers that need upstream
+   nodes to exist first. Numbered badges render on matching P0 nodes in the
+   graph when a scenario is active, and the same sequence shows as a "Build
+   Next" checklist in the default detail panel. */
+const SCENARIO_BUILD_ORDER = {
+  "b2b-saas-micro":    ["N-013","N-041","N-037","N-021","N-002","N-007","N-017","N-001","N-033","N-034"],
+  "b2c-saas-micro":    ["N-013","N-041","N-037","N-007","N-048","N-002","N-014","N-016","N-033"],
+  "print-on-demand":   ["N-013","N-041","N-037","N-009","N-007","N-002","N-014","N-015","N-033"],
+  "printables-digital":["N-013","N-041","N-037","N-009","N-002","N-014","N-015","N-017","N-033"],
+  "custom-directory":  ["N-013","N-041","N-037","N-021","N-008","N-005","N-001","N-017","N-019","N-025"],
+  "high-value-marketplace":["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-045","N-046","N-047","N-043","N-028"],
+  "database-business": ["N-013","N-041","N-037","N-042","N-021","N-019","N-008","N-005","N-017","N-007","N-025","N-045"],
+  "b2b-services":      ["N-013","N-041","N-037","N-021","N-051","N-002","N-001","N-014","N-034","N-026"],
+  "first-party-small-products":["N-013","N-041","N-037","N-021","N-051","N-002","N-003","N-015","N-007","N-014","N-033"],
+  "b2c-microtools":    ["N-013","N-041","N-037","N-048","N-002","N-007","N-017","N-005","N-033"],
+  "content-business":  ["N-013","N-041","N-037","N-021","N-051","N-017","N-015","N-014","N-034","N-030"]
+};
+const CIRCLE_NUMBERS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮'];
+
+/* Category definitions — surfaced in tooltips and the Build Next panel. */
+const CATEGORY_DEFINITIONS = {
+  "Paid":   "You pay for reach. Ad platforms, sponsorships, direct mail. Stops when the budget stops.",
+  "Owned":  "You control the audience and the asset. Your website, email list, social followers, app store listings, community.",
+  "Earned": "Third parties vouch for you without payment. Press coverage, reviews, organic word-of-mouth, unlinked brand mentions.",
+  "Hybrid": "Partnership plays that straddle categories — resellers, affiliates, co-marketing. Commercial terms plus shared effort."
 };
 
 /* Plain-English "what it does" explanations for each capability node.
@@ -1511,11 +1596,40 @@ function hideTooltip() { tooltipEl.classList.add('hidden'); }
 /* ===== Detail panel ===== */
 const detailPanel = document.getElementById('detail-panel');
 function showEmptyDetail() {
-  detailPanel.innerHTML = `<div class="empty">
-    <strong>Click a channel</strong> to see its full subsystem: what <em>inputs</em> it needs, which <em>capabilities</em> execute it, and what <em>outputs</em> it produces.<br><br>
-    <strong>Click a node</strong> for details &amp; neighbors.<br><br>
-    <strong>Hover nodes</strong> for a quick summary.
-  </div>`;
+  const scenarioId = document.getElementById('scenario-select') ? document.getElementById('scenario-select').value : '';
+  const scenarioName = scenarioId ? (SCENARIOS[scenarioId] && SCENARIOS[scenarioId].name) : '';
+  const order = scenarioId ? (SCENARIO_BUILD_ORDER[scenarioId] || []) : [];
+  let buildNext = '';
+  if (order.length) {
+    const rows = order.map((nid, i) => {
+      const n = NODE_BY_ID[nid];
+      if (!n) return '';
+      const display = NODE_DISPLAY_NAMES[nid] || n.node_name;
+      const circle = CIRCLE_NUMBERS[i] || `${i+1}.`;
+      return `<li class="build-row">
+        <span class="build-num">${circle}</span>
+        <a data-node-id="${nid}" class="build-link">
+          <span class="build-id">${nid}</span>
+          <span class="build-name">${display}</span>
+        </a>
+      </li>`;
+    }).join('');
+    buildNext = `
+      <div class="build-sequence">
+        <div class="build-header">
+          <span class="build-kicker">Recommended build order</span>
+          <h3 class="build-title">${scenarioName}</h3>
+          <p class="build-sub">Start at ① and work down. Each step uses outputs from earlier steps.</p>
+        </div>
+        <ol class="build-list">${rows}</ol>
+      </div>`;
+  }
+  detailPanel.innerHTML = `${buildNext}
+    <div class="empty">
+      <strong>Click a channel</strong> to see its full subsystem: what <em>inputs</em> it needs, which <em>capabilities</em> execute it, and what <em>outputs</em> it produces.<br><br>
+      <strong>Click a node</strong> for details &amp; neighbors.<br><br>
+      <strong>Hover nodes</strong> for a quick summary.
+    </div>`;
 }
 
 function showNodeDetail(node) {
@@ -1671,15 +1785,28 @@ function applyScenario(scenarioId) {
   NODES.forEach(n => {
     n.phase = phaseOverrides[n.node_id] || PHASE_MAP[n.node_id] || 'P0';
   });
+  // 3) Build-order badges: prefix P0 node labels with ①②③… for the recommended sequence
+  const buildOrder = scenarioId ? (SCENARIO_BUILD_ORDER[scenarioId] || []) : [];
   if (cy) {
     cy.batch(() => {
       NODES.forEach(n => {
         const el = cy.getElementById(n.node_id);
         if (el.nonempty()) el.data('phase', n.phase);
       });
+      // Update labels with build-order circled numbers
+      cy.nodes('[nodeType="capability"]').forEach(n => {
+        const nid = n.id();
+        const displayName = NODE_DISPLAY_NAMES[nid] || (NODE_BY_ID[nid] && NODE_BY_ID[nid].node_name) || '';
+        const idx = buildOrder.indexOf(nid);
+        const prefix = (idx >= 0 && idx < CIRCLE_NUMBERS.length) ? `${CIRCLE_NUMBERS[idx]}  ` : '';
+        n.data('label', `${prefix}${nid}\n${displayName}`);
+      });
     });
   }
   renderChannelList();
+  // 4) Refresh empty-state detail panel if nothing is actively shown (render Build Next list)
+  const emptyEl = detailPanel && detailPanel.querySelector('.empty');
+  if (emptyEl || (detailPanel && !detailPanel.querySelector('.detail-header'))) showEmptyDetail();
 }
 
 function renderChannelList() {
@@ -1757,6 +1884,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!li) return;
     showChannelDetail(li.dataset.channelId);
   });
+
+  // Category definitions panel toggle (click or hover on "Cat ⓘ" header)
+  const catHeader = document.getElementById('cat-header-help');
+  const catDefs = document.getElementById('cat-defs');
+  if (catHeader && catDefs) {
+    catHeader.addEventListener('click', () => catDefs.classList.toggle('open'));
+    catHeader.addEventListener('mouseenter', () => catDefs.classList.add('open'));
+  }
 
   detailPanel.addEventListener('click', e => {
     const nodeLink = e.target.closest('a[data-node-id]');
