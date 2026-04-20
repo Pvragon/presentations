@@ -1846,7 +1846,8 @@ function applyScenario(scenarioId) {
         const nid = n.id();
         const displayName = NODE_DISPLAY_NAMES[nid] || (NODE_BY_ID[nid] && NODE_BY_ID[nid].node_name) || '';
         const idx = buildOrder.indexOf(nid);
-        const prefix = (idx >= 0 && idx < CIRCLE_NUMBERS.length) ? `BUILD STEP ${idx + 1}\n` : '';
+        // Inline {BS N} prefix before the ID so label stays ≤ 3 lines total.
+        const prefix = (idx >= 0 && idx < CIRCLE_NUMBERS.length) ? `{BS${idx + 1}} ` : '';
         n.data('label', `${prefix}${nid}\n${displayName}`);
       });
     });
