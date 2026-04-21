@@ -991,14 +991,14 @@ C120,Alumni / Customer Advocacy Network,Owned,Community,"Former customers and po
 <script>
 /* ===== Config ===== */
 const PHASE_MAP = {
-  "N-002":"P0","N-019":"P0","N-021":"P0","N-025":"P0","N-037":"P0","N-042":"P0","N-045":"P0","N-046":"P0","N-047":"P0",
+  "N-002":"P0","N-019":"P0","N-021":"P0","N-025":"P0","N-026":"P0","N-027":"P0","N-037":"P0","N-042":"P0","N-045":"P0","N-046":"P0","N-047":"P0",
   "N-003":"P1","N-013":"P1","N-015":"P1","N-018":"P1","N-040":"P1","N-041":"P1",
   "N-007":"P2","N-009":"P2","N-020":"P2","N-022":"P2","N-023":"P2","N-024":"P2",
   "N-001":"P3","N-004":"P3","N-005":"P3","N-008":"P3","N-017":"P3",
   "N-014":"P4","N-016":"P4","N-033":"P4","N-034":"P4","N-038":"P4","N-051":"P4",
   "N-028":"P5","N-029":"P5","N-030":"P5","N-031":"P5","N-032":"P5",
   "N-006":"P6","N-010":"P6","N-011":"P6","N-012":"P6","N-043":"P6","N-044":"P6",
-  "N-026":"P7","N-027":"P7","N-035":"P7","N-036":"P7","N-039":"P7","N-048":"P7","N-049":"P7","N-050":"P7"
+  "N-035":"P7","N-036":"P7","N-039":"P7","N-048":"P7","N-049":"P7","N-050":"P7"
 };
 const PHASE_LABELS = {
   P0:"Revenue Now", P1:"Foundation", P2:"Paid Acquisition", P3:"Content Engine",
@@ -1066,27 +1066,27 @@ const SCENARIO_PHASE_OVERRIDES = {
   "b2b-saas-micro": {
     // Self-serve content-led growth; SDR motion too expensive for micro
     "N-001":"P0","N-017":"P0","N-007":"P0","N-033":"P0","N-034":"P0","N-013":"P0","N-041":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+    "N-019":"P7","N-025":"P7","N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
   },
   "b2c-saas-micro": {
     // App store + viral loops + push; no outbound
     "N-048":"P0","N-007":"P0","N-014":"P0","N-016":"P0","N-033":"P0","N-041":"P0","N-013":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+    "N-019":"P7","N-025":"P7","N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
   },
   "print-on-demand": {
     // Marketplace (Etsy/Shopify) + visual + email + reviews
     "N-007":"P0","N-009":"P0","N-033":"P0","N-041":"P0","N-013":"P0","N-014":"P0","N-015":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+    "N-019":"P7","N-025":"P7","N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
   },
   "printables-digital": {
     // Etsy + Pinterest + email list
     "N-009":"P0","N-013":"P0","N-014":"P0","N-015":"P0","N-033":"P0","N-041":"P0","N-017":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+    "N-019":"P7","N-025":"P7","N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
   },
   "custom-directory": {
     // SEO-led + outbound listing acquisition
     "N-005":"P0","N-001":"P0","N-017":"P0","N-008":"P0","N-041":"P0","N-013":"P0",
-    "N-045":"P7","N-046":"P7","N-047":"P7"
+    "N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7"
   },
   "high-value-marketplace": {
     // Enterprise sales + PR + events (keep outbound in P0)
@@ -1097,26 +1097,26 @@ const SCENARIO_PHASE_OVERRIDES = {
     "N-007":"P0","N-017":"P0","N-008":"P0","N-005":"P0","N-041":"P0","N-013":"P0"
   },
   "b2b-services": {
-    // Founder brand + LinkedIn + referrals + case studies
+    // Founder brand + LinkedIn + referrals + case studies; phone too niche for P0
     "N-051":"P0","N-001":"P0","N-026":"P0","N-041":"P0","N-013":"P0","N-014":"P0","N-034":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7"
+    "N-019":"P7","N-025":"P7","N-027":"P7","N-045":"P7"
   },
   "first-party-small-products": {
     // Email list + launch mechanics + founder brand
     "N-015":"P0","N-003":"P0","N-014":"P0","N-051":"P0","N-007":"P0","N-041":"P0","N-013":"P0","N-033":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+    "N-019":"P7","N-025":"P7","N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
   },
   "b2c-microtools": {
     // Extension store + problem-SEO + short video
     "N-048":"P0","N-007":"P0","N-017":"P0","N-005":"P0","N-041":"P0","N-013":"P0","N-033":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
+    "N-019":"P7","N-025":"P7","N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1"
   },
   "content-business": {
     // Audience-first — DISTRIBUTION, not production. Content creation itself
     // (N-001 writing, N-010/N-011 video, N-012 audio) is product-dev, not marketing.
     // P0 focuses on reach: publishing infrastructure, newsletter, founder brand, collabs.
     "N-017":"P0","N-015":"P0","N-014":"P0","N-051":"P0","N-037":"P0","N-041":"P0","N-013":"P0","N-034":"P0","N-030":"P0",
-    "N-019":"P7","N-025":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1",
+    "N-019":"P7","N-025":"P7","N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7","N-042":"P1",
     "N-001":"P6","N-008":"P6"
   }
 };
@@ -1128,14 +1128,14 @@ const SCENARIO_PHASE_OVERRIDES = {
    graph when a scenario is active, and the same sequence shows as a "Build
    Next" checklist in the default detail panel. */
 const SCENARIO_BUILD_ORDER = {
-  "baseline":          ["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-045","N-046","N-047"],
+  "baseline":          ["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-026","N-027","N-045","N-046","N-047"],
   "b2b-saas-micro":    ["N-013","N-041","N-037","N-021","N-002","N-007","N-017","N-001","N-033","N-034"],
   "b2c-saas-micro":    ["N-013","N-041","N-037","N-007","N-048","N-002","N-014","N-016","N-033"],
   "print-on-demand":   ["N-013","N-041","N-037","N-009","N-007","N-002","N-014","N-015","N-033"],
   "printables-digital":["N-013","N-041","N-037","N-009","N-002","N-014","N-015","N-017","N-033"],
   "custom-directory":  ["N-013","N-041","N-037","N-021","N-008","N-005","N-001","N-017","N-019","N-025"],
-  "high-value-marketplace":["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-045","N-046","N-047","N-043","N-028"],
-  "database-business": ["N-013","N-041","N-037","N-042","N-021","N-019","N-008","N-005","N-017","N-007","N-025","N-045"],
+  "high-value-marketplace":["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-026","N-027","N-045","N-046","N-047","N-043","N-028"],
+  "database-business": ["N-013","N-041","N-037","N-042","N-021","N-019","N-008","N-005","N-017","N-007","N-025","N-026","N-027","N-045"],
   "b2b-services":      ["N-013","N-041","N-037","N-021","N-051","N-002","N-001","N-014","N-034","N-026"],
   "first-party-small-products":["N-013","N-041","N-037","N-021","N-051","N-002","N-003","N-015","N-007","N-014","N-033"],
   "b2c-microtools":    ["N-013","N-041","N-037","N-048","N-002","N-007","N-017","N-005","N-033"],
