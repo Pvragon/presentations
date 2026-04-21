@@ -991,12 +991,12 @@ C120,Alumni / Customer Advocacy Network,Owned,Community,"Former customers and po
 <script>
 /* ===== Config ===== */
 const PHASE_MAP = {
-  "N-002":"P0","N-019":"P0","N-021":"P0","N-025":"P0","N-026":"P0","N-027":"P0","N-037":"P0","N-042":"P0","N-045":"P0","N-046":"P0","N-047":"P0",
+  "N-002":"P0","N-019":"P0","N-021":"P0","N-025":"P0","N-026":"P0","N-037":"P0","N-042":"P0","N-045":"P0","N-046":"P0","N-047":"P0",
   "N-003":"P1","N-013":"P1","N-015":"P1","N-018":"P1","N-040":"P1","N-041":"P1",
   "N-007":"P2","N-009":"P2","N-020":"P2","N-022":"P2","N-023":"P2","N-024":"P2",
   "N-001":"P3","N-004":"P3","N-005":"P3","N-008":"P3","N-017":"P3",
   "N-014":"P4","N-016":"P4","N-033":"P4","N-034":"P4","N-038":"P4","N-051":"P4",
-  "N-028":"P5","N-029":"P5","N-030":"P5","N-031":"P5","N-032":"P5",
+  "N-027":"P5","N-028":"P5","N-029":"P5","N-030":"P5","N-031":"P5","N-032":"P5",
   "N-006":"P6","N-010":"P6","N-011":"P6","N-012":"P6","N-043":"P6","N-044":"P6",
   "N-035":"P7","N-036":"P7","N-039":"P7","N-048":"P7","N-049":"P7","N-050":"P7"
 };
@@ -1089,12 +1089,12 @@ const SCENARIO_PHASE_OVERRIDES = {
     "N-026":"P7","N-027":"P7","N-045":"P7","N-046":"P7","N-047":"P7"
   },
   "high-value-marketplace": {
-    // Enterprise sales + PR + events (keep outbound in P0)
-    "N-028":"P0","N-013":"P0","N-041":"P0","N-043":"P0"
+    // Enterprise sales + PR + events (keep outbound in P0); high-ACV justifies phone
+    "N-027":"P0","N-028":"P0","N-013":"P0","N-041":"P0","N-043":"P0"
   },
   "database-business": {
-    // Outbound + SEO + free tools (keep outbound in P0)
-    "N-007":"P0","N-017":"P0","N-008":"P0","N-005":"P0","N-041":"P0","N-013":"P0"
+    // Outbound + SEO + free tools (keep outbound in P0); high-ACV justifies phone
+    "N-027":"P0","N-007":"P0","N-017":"P0","N-008":"P0","N-005":"P0","N-041":"P0","N-013":"P0"
   },
   "b2b-services": {
     // Founder brand + LinkedIn + referrals + case studies; phone too niche for P0
@@ -1128,7 +1128,7 @@ const SCENARIO_PHASE_OVERRIDES = {
    graph when a scenario is active, and the same sequence shows as a "Build
    Next" checklist in the default detail panel. */
 const SCENARIO_BUILD_ORDER = {
-  "baseline":          ["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-026","N-027","N-045","N-046","N-047"],
+  "baseline":          ["N-013","N-041","N-037","N-042","N-021","N-019","N-002","N-025","N-026","N-045","N-046","N-047"],
   "b2b-saas-micro":    ["N-013","N-041","N-037","N-021","N-002","N-007","N-017","N-001","N-033","N-034"],
   "b2c-saas-micro":    ["N-013","N-041","N-037","N-007","N-048","N-002","N-014","N-016","N-033"],
   "print-on-demand":   ["N-013","N-041","N-037","N-009","N-007","N-002","N-014","N-015","N-033"],
