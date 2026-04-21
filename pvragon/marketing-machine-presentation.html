@@ -4,19 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Marketing Automation Machine — Pvragon</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
   :root {
     --bg-dark: #112328;
     --bg-teal: #1E4958;
     --accent-orange: #E7511F;
-    --accent-teal: #1E4958;
     --text-main: #F8FAFC;
     --text-muted: #DEEAEF;
-    --text-subtle: #5E767D;
-    --success-dark: #016536;
-    --success-light: #DDFFEF;
+    --text-subtle: #8fa3a9;
+    --text-faint: #5E767D;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans', Arial, sans-serif; }
   html, body { height: 100%; }
@@ -60,177 +58,195 @@
     transition: width 0.4s ease; z-index: 50;
     box-shadow: 0 0 8px rgba(231,81,31,0.4);
   }
-
   .slide-counter {
-    position: absolute; top: 18px; right: 24px;
-    font-size: 0.75rem; font-weight: 600;
-    color: var(--text-subtle); letter-spacing: 0.08em;
+    position: absolute; top: 22px; right: 28px;
+    font-size: 0.72rem; font-weight: 600;
+    color: var(--text-faint); letter-spacing: 0.12em;
     text-transform: uppercase; z-index: 40;
   }
-
   .logo-corner {
-    position: absolute; top: 18px; left: 24px;
-    font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em;
+    position: absolute; top: 22px; left: 28px;
+    font-size: 0.82rem; font-weight: 800; letter-spacing: 0.2em;
     color: var(--text-muted); z-index: 40;
   }
   .logo-corner .dot { color: var(--accent-orange); }
 
   #slides {
-    flex: 1; overflow: hidden; position: relative; z-index: 2;
-    padding: 56px 80px 88px;
+    flex: 1; position: relative; z-index: 2;
   }
+
+  /* Every slide is full-bleed inside the container, vertically centered,
+     with generous inset padding so content breathes. */
   .slide {
-    position: absolute; top: 56px; left: 80px; right: 80px; bottom: 88px;
-    opacity: 0; transform: translateX(30px);
+    position: absolute; inset: 60px 72px 80px;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    opacity: 0; transform: translateY(14px);
     transition: opacity 0.45s ease, transform 0.45s ease;
     pointer-events: none;
     overflow-y: auto;
   }
-  .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+  .slide.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .slide::-webkit-scrollbar { width: 6px; }
   .slide::-webkit-scrollbar-thumb { background: rgba(248,250,252,0.15); border-radius: 6px; }
 
   .eyebrow {
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.22em;
     text-transform: uppercase; color: var(--accent-orange);
-    margin-bottom: 14px;
+    margin-bottom: 28px;
   }
   h1 {
-    font-size: clamp(2.4rem, 4.8vw, 4rem);
-    font-weight: 900; line-height: 1.05; margin-bottom: 18px;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 900; line-height: 1.02;
+    letter-spacing: -0.02em;
   }
   h1 .accent { color: var(--accent-orange); }
   h2 {
-    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
-    font-weight: 700; line-height: 1.15; margin-bottom: 20px;
+    font-size: clamp(2.2rem, 4.4vw, 3.4rem);
+    font-weight: 800; line-height: 1.08;
+    letter-spacing: -0.015em;
   }
-  h2 .accent, h3 .accent { color: var(--accent-orange); }
-  h3 { font-size: 1.5rem; font-weight: 600; margin-bottom: 16px; }
-  p { font-size: 1.08rem; line-height: 1.55; color: var(--text-muted); margin-bottom: 14px; }
-  p.lead { font-size: 1.25rem; color: var(--text-main); }
-  p.subtitle { font-size: 1.35rem; color: var(--text-muted); font-weight: 400; }
+  h2 .accent { color: var(--accent-orange); }
+  h3 { font-size: 1.3rem; font-weight: 600; }
+  p { font-size: 1.1rem; line-height: 1.6; color: var(--text-muted); }
+  p.subtitle { font-size: 1.45rem; color: var(--text-muted); font-weight: 400; line-height: 1.45; }
 
-  .bullet-list { list-style: none; padding: 0; margin: 18px 0; }
-  .bullet-list li {
-    position: relative; padding-left: 30px; margin-bottom: 14px;
-    font-size: 1.05rem; line-height: 1.55; color: var(--text-muted);
-  }
-  .bullet-list li::before {
-    content: '▸'; position: absolute; left: 0; top: 0;
-    color: var(--accent-orange); font-weight: 700;
-  }
-  .bullet-list li strong { color: var(--text-main); }
+  /* Generic vertical-flow slide with space between sections */
+  .flow-center { max-width: 860px; margin: 0 auto; text-align: center; }
+  .flow-left   { max-width: 920px; margin: 0 auto; }
+  .stack > * + * { margin-top: 28px; }
+  .stack-lg > * + * { margin-top: 44px; }
 
-  .stat-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-    margin: 24px 0;
+  /* Stats row — evenly spaced, bold numbers */
+  .stat-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    margin-top: 32px;
   }
-  .stat-card {
-    background: rgba(30,73,88,0.35);
-    border: 1px solid rgba(248,250,252,0.08);
-    border-radius: 12px; padding: 20px;
+  .stat {
     text-align: center;
+    padding: 28px 20px;
+    background: rgba(30,73,88,0.3);
+    border: 1px solid rgba(248,250,252,0.08);
+    border-radius: 14px;
   }
-  .stat-card .stat-number {
-    font-size: 2.5rem; font-weight: 900;
-    color: var(--accent-orange); line-height: 1;
-  }
-  .stat-card .stat-label {
-    font-size: 0.82rem; font-weight: 600;
-    color: var(--text-muted); letter-spacing: 0.08em;
-    text-transform: uppercase; margin-top: 6px;
-  }
+  .stat .big { font-size: 3.2rem; font-weight: 900; color: var(--accent-orange); line-height: 1; }
+  .stat .lbl { margin-top: 10px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
 
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
-  .card {
+  /* Three-card grid with equal heights */
+  .card-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-top: 32px; align-items: stretch;
+  }
+  .card-row .card {
+    display: flex; flex-direction: column;
+    padding: 28px 26px;
     background: rgba(30,73,88,0.28);
     border: 1px solid rgba(248,250,252,0.08);
-    border-radius: 14px; padding: 22px 24px;
+    border-radius: 14px;
   }
-  .card h3 {
-    font-size: 1.15rem; margin-bottom: 10px;
-    color: var(--accent-orange);
+  .card .card-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent-orange);
+    margin-bottom: 12px;
   }
-  .card .card-kicker {
-    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--text-subtle); font-weight: 700; margin-bottom: 8px;
+  .card h3 { color: var(--text-main); margin-bottom: 10px; font-size: 1.3rem; }
+  .card p { font-size: 0.98rem; line-height: 1.55; flex: 1; }
+
+  .principles {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 28px; margin-top: 40px;
+  }
+  .principle { text-align: center; padding: 12px; }
+  .principle .p-num {
+    display: inline-block; width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(231,81,31,0.18); color: var(--accent-orange);
+    border: 1.5px solid var(--accent-orange);
+    font-weight: 800; font-size: 1.1rem;
+    line-height: 42px; margin-bottom: 14px;
+  }
+  .principle h3 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 8px; }
+  .principle p { font-size: 0.95rem; line-height: 1.5; }
+
+  /* P0 flow diagram */
+  .p0-flow {
+    margin-top: 40px;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 8px;
+  }
+  .p0-step {
+    display: flex; flex-direction: column; align-items: center;
+    min-width: 104px; padding: 10px 12px; border-radius: 10px;
+    background: rgba(231,81,31,0.12);
+    border: 1.5px solid rgba(231,81,31,0.45);
+  }
+  .p0-step .s-num {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--accent-orange); text-transform: uppercase;
+  }
+  .p0-step .s-name {
+    font-size: 0.86rem; font-weight: 600; color: var(--text-main);
+    margin-top: 3px; text-align: center; line-height: 1.25;
+  }
+  .p0-arrow {
+    color: var(--accent-orange); font-size: 0.9rem; opacity: 0.6;
   }
 
-  .tier-label {
-    display: inline-block; padding: 2px 10px; border-radius: 4px;
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .tier-input { background: rgba(148,163,184,0.2); color: #cbd5e1; border: 1px solid #94a3b8; }
-  .tier-cap { background: rgba(231,81,31,0.2); color: #fca97e; border: 1px solid var(--accent-orange); }
-  .tier-out { background: rgba(231,81,31,0.3); color: #fff; border: 1px solid var(--accent-orange); }
-
-  .phase-pills {
-    display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0;
-  }
-  .phase-pill {
-    padding: 6px 12px; border-radius: 20px;
-    font-size: 0.8rem; font-weight: 600;
-    border: 1px solid;
-  }
-  .p0 { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: #ef4444; }
-  .p1 { background: rgba(245,158,11,0.15); color: #fcd34d; border-color: #f59e0b; }
-  .p2 { background: rgba(234,179,8,0.15); color: #fde047; border-color: #eab308; }
-  .p3 { background: rgba(132,204,22,0.15); color: #bef264; border-color: #84cc16; }
-  .p4 { background: rgba(16,185,129,0.15); color: #6ee7b7; border-color: #10b981; }
-  .p5 { background: rgba(20,184,166,0.15); color: #5eead4; border-color: #14b8a6; }
-  .p6 { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: #3b82f6; }
-  .p7 { background: rgba(168,85,247,0.15); color: #d8b4fe; border-color: #a855f7; }
-
+  /* Node-slide layout — vertically centered, minimal */
   .node-slide .node-header {
-    display: flex; align-items: center; gap: 20px; margin-bottom: 24px;
-    padding: 20px 24px; border-radius: 14px;
-    background: linear-gradient(90deg, rgba(239,68,68,0.15), rgba(239,68,68,0.04));
-    border: 1px solid rgba(239,68,68,0.4);
+    display: flex; align-items: baseline; gap: 18px;
+    margin-bottom: 36px; padding-bottom: 20px;
+    border-bottom: 1px solid rgba(248,250,252,0.1);
   }
-  .node-slide .node-badge {
-    background: #ef4444; color: white;
-    font-weight: 800; font-size: 1.05rem;
-    padding: 6px 14px; border-radius: 6px;
-    letter-spacing: 0.05em; flex-shrink: 0;
+  .node-slide .step-chip {
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent-orange);
+    padding: 6px 12px; border: 1.5px solid var(--accent-orange);
+    border-radius: 999px;
   }
   .node-slide .node-id {
-    font-family: ui-monospace, monospace;
-    font-size: 0.85rem; letter-spacing: 0.08em;
-    color: #fca5a5; text-transform: uppercase; font-weight: 700;
+    font-family: ui-monospace, monospace; font-size: 0.95rem;
+    color: var(--text-faint); letter-spacing: 0.05em;
+    margin-left: auto;
   }
   .node-slide .node-name {
-    font-size: 1.6rem; font-weight: 700;
-    color: var(--text-main); margin-top: 2px;
+    font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800;
+    color: var(--text-main); letter-spacing: -0.01em;
+    margin-bottom: 36px; line-height: 1.1;
   }
-  .node-slide .section-card {
-    background: rgba(30,73,88,0.28);
-    border-left: 3px solid var(--accent-orange);
-    padding: 16px 22px; border-radius: 8px;
-    margin-bottom: 16px;
+  .node-slide .what-block, .node-slide .why-block {
+    max-width: 920px;
   }
-  .node-slide .section-card .section-kicker {
-    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--accent-orange); font-weight: 700; margin-bottom: 6px;
+  .node-slide .blk-kicker {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent-orange);
+    margin-bottom: 10px;
   }
-  .node-slide .section-card p {
-    font-size: 1.02rem; line-height: 1.6;
-    color: var(--text-main); margin: 0;
+  .node-slide .blk-text {
+    font-size: 1.2rem; line-height: 1.55; color: var(--text-main);
+    font-weight: 400; margin-bottom: 32px;
   }
-  .node-slide .why-card {
-    border-left-color: #fca5a5;
+  .node-slide .ctx-note {
+    margin-top: 24px; padding: 14px 18px;
+    background: rgba(30,73,88,0.4);
+    border-left: 2px solid var(--text-subtle);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.92rem; line-height: 1.5;
+    color: var(--text-subtle);
   }
-  .node-slide .why-card .section-kicker { color: #fca5a5; }
+  .node-slide .ctx-note strong { color: var(--text-muted); font-weight: 600; }
 
+  /* CTA */
   .cta-box {
-    background: linear-gradient(135deg, rgba(231,81,31,0.18), rgba(231,81,31,0.04));
+    background: linear-gradient(135deg, rgba(231,81,31,0.14), rgba(231,81,31,0.02));
     border: 1px solid rgba(231,81,31,0.4);
-    border-radius: 14px; padding: 28px 32px;
-    margin: 24px 0;
+    border-radius: 16px; padding: 32px 36px;
+    margin: 36px auto 0; max-width: 720px;
+    text-align: center;
   }
-  .cta-box h3 { color: var(--accent-orange); font-size: 1.4rem; margin-bottom: 10px; }
+  .cta-box h3 { color: var(--accent-orange); font-size: 1.4rem; margin-bottom: 12px; }
   .cta-box a {
-    display: inline-block; margin-top: 12px; padding: 12px 24px;
+    display: inline-block; margin-top: 18px; padding: 14px 28px;
     background: var(--accent-orange); color: white;
     font-weight: 700; border-radius: 8px;
     text-decoration: none;
@@ -238,16 +254,48 @@
   }
   .cta-box a:hover { background: #c44019; transform: translateY(-2px); }
 
+  /* Phase pills (less prescriptive about names) */
+  .phase-pill-row {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 10px; margin-top: 32px;
+  }
+  .ph-pill {
+    padding: 8px 16px; border-radius: 999px;
+    font-size: 0.9rem; font-weight: 600;
+    border: 1px solid; letter-spacing: 0.02em;
+  }
+  .ph0 { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: #ef4444; }
+  .ph1 { background: rgba(245,158,11,0.15); color: #fcd34d; border-color: #f59e0b; }
+  .ph2 { background: rgba(234,179,8,0.15); color: #fde047; border-color: #eab308; }
+  .ph3 { background: rgba(132,204,22,0.15); color: #bef264; border-color: #84cc16; }
+  .ph4 { background: rgba(16,185,129,0.15); color: #6ee7b7; border-color: #10b981; }
+  .ph5 { background: rgba(20,184,166,0.15); color: #5eead4; border-color: #14b8a6; }
+  .ph6 { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: #3b82f6; }
+  .ph7 { background: rgba(168,85,247,0.15); color: #d8b4fe; border-color: #a855f7; }
+
+  /* Scenarios grid */
+  .sc-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 10px 36px; margin-top: 32px;
+    max-width: 720px;
+  }
+  .sc-item {
+    padding: 10px 14px;
+    border-left: 2px solid var(--accent-orange);
+    font-size: 1rem; color: var(--text-muted);
+  }
+
+  /* Nav */
   .nav-controls {
     position: absolute; bottom: 22px; left: 50%;
     transform: translateX(-50%);
-    display: flex; gap: 16px; align-items: center;
+    display: flex; gap: 14px;
     z-index: 50;
   }
   .nav-btn {
-    width: 42px; height: 42px; border-radius: 50%;
+    width: 44px; height: 44px; border-radius: 50%;
     border: 1px solid rgba(248,250,252,0.15);
-    background: rgba(17,35,40,0.8);
+    background: rgba(17,35,40,0.85);
     color: var(--text-muted);
     cursor: pointer; font-size: 1rem;
     display: flex; align-items: center; justify-content: center;
@@ -255,23 +303,18 @@
   }
   .nav-btn:hover { background: var(--accent-orange); color: white; border-color: var(--accent-orange); }
   .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .nav-hint { font-size: 0.75rem; color: var(--text-subtle); }
 
   .footer-link {
-    position: absolute; bottom: 18px; right: 24px;
-    font-size: 0.75rem; color: var(--text-subtle);
-    z-index: 40;
+    position: absolute; bottom: 18px; right: 28px;
+    font-size: 0.72rem; color: var(--text-faint);
+    z-index: 40; letter-spacing: 0.04em;
   }
   .footer-link a { color: var(--accent-orange); text-decoration: none; }
 
-  /* Intro-slide specific centering */
-  .slide.center { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
-
   @media (max-width: 900px) {
-    #slides { padding: 50px 30px 80px; }
-    .slide { top: 50px; left: 30px; right: 30px; bottom: 80px; }
-    .stat-grid { grid-template-columns: 1fr; }
-    .two-col { grid-template-columns: 1fr; gap: 20px; }
+    .slide { inset: 50px 28px 76px; }
+    .card-row, .stat-row, .principles { grid-template-columns: 1fr; gap: 16px; }
+    .sc-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -284,392 +327,425 @@
   <div id="slides">
 
     <!-- 1. Hero -->
-    <div class="slide center active">
-      <div class="eyebrow">Go-to-market proposal · April 2026</div>
-      <h1>The <span class="accent">Marketing Automation</span><br>Machine</h1>
-      <p class="subtitle">A plan to reach every customer — without hiring a marketing team.</p>
-      <p style="margin-top: 24px; color: var(--text-subtle); font-size: 0.95rem;">Use arrow keys or the controls below to navigate.</p>
+    <div class="slide active">
+      <div class="flow-center">
+        <div class="eyebrow">Go-to-market proposal · April 2026</div>
+        <h1>The <span class="accent">Marketing Automation</span><br>Machine</h1>
+        <p class="subtitle" style="margin-top: 36px;">A plan to make GTM as agentic as dev.</p>
+      </div>
     </div>
 
     <!-- 2. Problem -->
     <div class="slide">
-      <div class="eyebrow">The problem</div>
-      <h2>Product is no longer <span class="accent">the moat</span>.</h2>
-      <p class="lead">In a world where agentic development lets anyone build a production-ready product in days, the differentiator shifts downstream.</p>
-      <ul class="bullet-list">
-        <li><strong>Code is commoditized.</strong> LLMs + agents can assemble the same features we can, at 1/10th the time and cost.</li>
-        <li><strong>Features are copyable.</strong> What ships on Monday gets cloned by Friday.</li>
-        <li><strong>Attention is the scarce resource.</strong> The winners aren't who builds better — they're who gets heard.</li>
-      </ul>
+      <div class="flow-center stack">
+        <div class="eyebrow">The problem</div>
+        <h2>Product is no longer <span class="accent">the moat</span>.</h2>
+        <p class="subtitle" style="margin-top: 16px;">Agentic development made features copyable in days. The old advantage — "we can build it" — got commoditized.</p>
+      </div>
     </div>
 
     <!-- 3. Opportunity -->
     <div class="slide">
-      <div class="eyebrow">The opportunity</div>
-      <h2><span class="accent">Distribution</span> is the new moat.</h2>
-      <p class="lead">Whoever can reliably reach the most customers, in the most channels, with the most relevant message, wins.</p>
-      <p>But there's a catch: distribution has traditionally required headcount — SDRs, content teams, media buyers, PR, community managers. Doing it all well has meant hiring 20+ people for a year before you see results.</p>
-      <p class="lead" style="margin-top: 20px; color: var(--accent-orange); font-weight: 600;">What if a small team could run distribution at the scale of a 50-person marketing org?</p>
+      <div class="flow-center stack">
+        <div class="eyebrow">The opportunity</div>
+        <h2>Distribution <span class="accent">is</span>.</h2>
+        <p class="subtitle" style="margin-top: 16px;">Reach is now the scarce resource. Whoever gets heard wins — and the same agentic capability that commoditized product can be turned on distribution.</p>
+      </div>
     </div>
 
-    <!-- 4. The ask -->
+    <!-- 4. Proposal -->
     <div class="slide">
-      <div class="eyebrow">The proposal</div>
-      <h2>Build a <span class="accent">machine</span>, not a team.</h2>
-      <p>A unified go-to-market system that:</p>
-      <ul class="bullet-list">
-        <li>Covers <strong>every viable marketing channel</strong> a company might want to use.</li>
-        <li>Operates on <strong>agentic automation</strong>, with humans in the loop only where judgment is irreplaceable.</li>
-        <li>Starts producing revenue in <strong>60–90 days</strong>, not 18 months.</li>
-        <li>Scales to 10x output without 10x the headcount.</li>
-      </ul>
-      <p style="margin-top: 18px;">This deck lays out the framework, the methodology, and the first 11 things we build.</p>
+      <div class="flow-center">
+        <div class="eyebrow">The proposal</div>
+        <h2>Make GTM <span class="accent">agentic</span>.</h2>
+        <div class="principles">
+          <div class="principle">
+            <div class="p-num">1</div>
+            <h3>Cover every channel</h3>
+            <p>Catalogue every viable way to reach customers. Nothing left out by default.</p>
+          </div>
+          <div class="principle">
+            <div class="p-num">2</div>
+            <h3>Operate agentically</h3>
+            <p>Automate the repeatable work. Keep humans where judgment actually matters.</p>
+          </div>
+          <div class="principle">
+            <div class="p-num">3</div>
+            <h3>Sequence for revenue</h3>
+            <p>Build in the order that gets to a closed deal soonest, then compound.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- 5. The map -->
+    <!-- 5. Channel taxonomy -->
     <div class="slide">
-      <div class="eyebrow">Methodology · Step 1</div>
-      <h2>Start with <span class="accent">every channel</span>.</h2>
-      <p>We catalogued 120 distinct ways a company can reach customers today — synthesized from Gabriel Weinberg's <em>Traction</em> (19 channels), HubSpot, Gartner, Reforge, First Round Review, and emerging 2025–2026 answer-engine channels.</p>
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-number">120</div><div class="stat-label">Channels</div></div>
-        <div class="stat-card"><div class="stat-number">4</div><div class="stat-label">Categories</div></div>
-        <div class="stat-card"><div class="stat-number">23</div><div class="stat-label">Subcategories</div></div>
+      <div class="flow-center stack">
+        <div class="eyebrow">Methodology · 1 of 5</div>
+        <h2>Start with <span class="accent">every channel</span>.</h2>
+        <p>We catalogued the full space of ways a company can reach customers — drawing from Gabriel Weinberg's <em>Traction</em>, HubSpot, Gartner, Reforge, and emerging AI-search channels.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="big">120</div><div class="lbl">Channels</div></div>
+          <div class="stat"><div class="big">4</div><div class="lbl">Categories</div></div>
+          <div class="stat"><div class="big">23</div><div class="lbl">Subcategories</div></div>
+        </div>
       </div>
-      <div class="phase-pills">
-        <span class="phase-pill p0">Paid</span>
-        <span class="phase-pill p3">Owned</span>
-        <span class="phase-pill p5">Earned</span>
-        <span class="phase-pill p7">Hybrid</span>
-      </div>
-      <p style="font-size: 0.95rem;">Each channel is scored for baseline cost (1–5) and effectiveness (1–5), with a cost-effectiveness score (effectiveness / cost).</p>
     </div>
 
-    <!-- 6. The machine -->
+    <!-- 6. Deduplicate to capabilities -->
     <div class="slide">
-      <div class="eyebrow">Methodology · Step 2</div>
-      <h2>Deduplicate into <span class="accent">automation nodes</span>.</h2>
-      <p>Running 120 channels means a lot of redundant work. "Write a LinkedIn ad headline" and "write a Google Search ad headline" are the same <em>capability</em> — short-form copy generation.</p>
-      <p>We collapsed the underlying work into <strong>51 unique capabilities</strong>, each representing one thing the machine needs to do well.</p>
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-number">51</div><div class="stat-label">Capabilities</div></div>
-        <div class="stat-card"><div class="stat-number">130</div><div class="stat-label">Dependency edges</div></div>
-        <div class="stat-card"><div class="stat-number">8</div><div class="stat-label">Build phases</div></div>
+      <div class="flow-center stack">
+        <div class="eyebrow">Methodology · 2 of 5</div>
+        <h2>Deduplicate into <span class="accent">capabilities</span>.</h2>
+        <p>Running 120 channels means a lot of repeated work. "Write a LinkedIn ad headline" and "write a Google ad headline" are the same underlying capability — short-form copy.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="big">51</div><div class="lbl">Capabilities</div></div>
+          <div class="stat"><div class="big">130</div><div class="lbl">Dependencies</div></div>
+          <div class="stat"><div class="big">8</div><div class="lbl">Build phases</div></div>
+        </div>
       </div>
-      <p style="font-size: 0.95rem;">Every capability has a cost-to-build estimate, a ROI score, a list of channels it enables, and a plain-English explanation of what it does.</p>
     </div>
 
     <!-- 7. I/O flow -->
     <div class="slide">
-      <div class="eyebrow">Methodology · Step 3</div>
-      <h2>Model the flow: <span class="accent">inputs → capabilities → outputs</span>.</h2>
-      <p>Every capability consumes some context (what the business knows about itself) and produces some deliverable (what actually ships to market).</p>
-      <div class="two-col" style="margin-top: 20px;">
-        <div class="card">
-          <div class="card-kicker"><span class="tier-label tier-input">◆ Inputs</span></div>
-          <h3>18 context types</h3>
-          <p style="font-size: 0.95rem;">Brand identity, ICP, pricing, compliance rules, keyword data, CRM records, prospect lists, testimonials, campaign budget, editorial calendar…</p>
-        </div>
-        <div class="card">
-          <div class="card-kicker"><span class="tier-label tier-out">▶ Outputs</span></div>
-          <h3>31 artifact types</h3>
-          <p style="font-size: 0.95rem;">Published articles, landing pages, paid ad campaigns running, email sent, cold email sequences, webinars held, demos delivered, partnerships signed…</p>
+      <div class="flow-left stack">
+        <div class="eyebrow" style="text-align: center;">Methodology · 3 of 5</div>
+        <h2 style="text-align: center;">Every flow: <span class="accent">inputs → capabilities → outputs</span>.</h2>
+        <p style="text-align: center;">Each capability consumes some context the business already has, and produces a deliverable — whether that deliverable ships to market directly or feeds the next capability downstream.</p>
+        <div class="card-row">
+          <div class="card">
+            <div class="card-label">◆ Inputs</div>
+            <h3>18 context types</h3>
+            <p>Brand identity, ICP, pricing, compliance rules, keyword data, CRM records, prospect lists, testimonials, budget, editorial calendar.</p>
+          </div>
+          <div class="card">
+            <div class="card-label">▣ Capabilities</div>
+            <h3>51 atomic nodes</h3>
+            <p>The machine's building blocks. Each one takes inputs, does the work, emits outputs. Each carries a cost estimate and an ROI signal.</p>
+          </div>
+          <div class="card">
+            <div class="card-label">▶ Outputs</div>
+            <h3>31 artifact types</h3>
+            <p>Published articles, landing pages, running ad campaigns, email sends, cold-email sequences, webinars held, demos delivered.</p>
+          </div>
         </div>
       </div>
-      <p style="font-size: 0.95rem; margin-top: 20px;">When you click a channel in the interactive tool, it shows the exact inputs the machine needs + the artifacts the machine produces for that channel.</p>
     </div>
 
-    <!-- 8. Build order -->
+    <!-- 8. Phases -->
     <div class="slide">
-      <div class="eyebrow">Methodology · Step 4</div>
-      <h2>Sequence by <span class="accent">revenue velocity</span>.</h2>
-      <p>Not every capability should be built at once. We grouped the 51 nodes into 8 phases, ordered by <em>how quickly they produce revenue</em>:</p>
-      <div class="phase-pills">
-        <span class="phase-pill p0">P0 Revenue Now</span>
-        <span class="phase-pill p1">P1 Foundation</span>
-        <span class="phase-pill p2">P2 Paid Acquisition</span>
-        <span class="phase-pill p3">P3 Content Engine</span>
-        <span class="phase-pill p4">P4 Organic Distribution</span>
-        <span class="phase-pill p5">P5 Earned</span>
-        <span class="phase-pill p6">P6 Rich Media &amp; Events</span>
-        <span class="phase-pill p7">P7 Specialized</span>
+      <div class="flow-center stack">
+        <div class="eyebrow">Methodology · 4 of 5</div>
+        <h2>Sequence by <span class="accent">revenue velocity</span>.</h2>
+        <p>The 51 capabilities don't all get built at once. We grouped them into eight phases, ordered by how quickly each phase produces revenue.</p>
+        <div class="phase-pill-row">
+          <span class="ph-pill ph0">P0 Revenue Now</span>
+          <span class="ph-pill ph1">P1</span>
+          <span class="ph-pill ph2">P2</span>
+          <span class="ph-pill ph3">P3</span>
+          <span class="ph-pill ph4">P4</span>
+          <span class="ph-pill ph5">P5</span>
+          <span class="ph-pill ph6">P6</span>
+          <span class="ph-pill ph7">P7</span>
+        </div>
+        <p style="margin-top: 16px; font-size: 0.98rem; color: var(--text-subtle);">P0 is the direct path to the first closed deal. Later phases vary by business type — for content-led or community-led businesses, the compounding phases matter more than paid.</p>
       </div>
-      <p>P0 is the fastest direct path to a closed deal. P1 is the measurement and infrastructure backbone everything else needs. P2–P7 are the compounding layers you add once revenue is flowing.</p>
     </div>
 
     <!-- 9. Scenarios -->
     <div class="slide">
-      <div class="eyebrow">Methodology · Step 5</div>
-      <h2>Different businesses, <span class="accent">different sequences</span>.</h2>
-      <p>A B2B enterprise play shouldn't build the same machine as a content business or a print-on-demand shop. We encoded 11 business-type presets:</p>
-      <ul class="bullet-list" style="columns: 2; column-gap: 32px;">
-        <li>B2B SaaS (micro)</li>
-        <li>B2C SaaS (micro)</li>
-        <li>Print on Demand</li>
-        <li>Printables (digital)</li>
-        <li>Custom Directory</li>
-        <li>High-Value Marketplace</li>
-        <li>Database Business</li>
-        <li>B2B Services</li>
-        <li>1st-Party Small Products</li>
-        <li>B2C Microtools</li>
-        <li>Content Business</li>
-      </ul>
-      <p>Each preset re-weights channel effectiveness <em>and</em> re-sequences the phases so the first 10 things you build actually match how that business makes money.</p>
+      <div class="flow-center stack">
+        <div class="eyebrow">Methodology · 5 of 5</div>
+        <h2>Different businesses, <span class="accent">different paths</span>.</h2>
+        <p>A B2B enterprise play doesn't build the same machine as a content business or a print-on-demand shop. We encoded eleven business-type presets that re-weight channels and re-sequence phases.</p>
+        <div class="sc-grid" style="margin-left: auto; margin-right: auto;">
+          <div class="sc-item">B2B SaaS (micro)</div>
+          <div class="sc-item">B2C SaaS (micro)</div>
+          <div class="sc-item">Print on Demand</div>
+          <div class="sc-item">Printables (digital)</div>
+          <div class="sc-item">Custom Directory</div>
+          <div class="sc-item">High-Value Marketplace</div>
+          <div class="sc-item">Database Business</div>
+          <div class="sc-item">B2B Services</div>
+          <div class="sc-item">1st-Party Small Products</div>
+          <div class="sc-item">B2C Microtools</div>
+          <div class="sc-item">Content Business</div>
+        </div>
+      </div>
     </div>
 
-    <!-- 10. P0 intro -->
+    <!-- 10. P0 baseline intro + diagram -->
     <div class="slide">
-      <div class="eyebrow">The Baseline P0</div>
-      <h2>What we build <span class="accent">first</span>.</h2>
-      <p class="lead">For a generic B2B SaaS, here are the 11 capabilities that get built in phase zero — in this exact order.</p>
-      <p>The order matters: each step builds on the outputs of the ones before it. Step 1 has no dependencies. Step 11 cannot exist without steps 1–10.</p>
-      <div style="margin-top: 20px; padding: 16px; background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; border-radius: 6px;">
-        <strong style="color: #fca5a5; display: block; margin-bottom: 4px; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;">Time to first revenue</strong>
-        <p style="color: var(--text-main); margin: 0;">With the P0 set in place, a B2B SaaS should be booking demos and closing deals in <strong>30–60 days</strong>.</p>
+      <div class="flow-left">
+        <div class="eyebrow" style="text-align: center;">The Baseline P0</div>
+        <h2 style="text-align: center;">What gets built <span class="accent">first</span>.</h2>
+        <p style="text-align: center; max-width: 720px; margin: 0 auto;">Eleven capabilities, in order. The first five are foundation — context and measurement every later step needs. The next six are the outbound revenue loop.</p>
+        <div class="p0-flow">
+          <div class="p0-step"><span class="s-num">Step 1</span><span class="s-name">Brand identity</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 2</span><span class="s-name">Pixel & tracking</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 3</span><span class="s-name">Analytics</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 4</span><span class="s-name">Compliance</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 5</span><span class="s-name">CRM</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 6</span><span class="s-name">Prospect lists</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 7</span><span class="s-name">Short copy</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 8</span><span class="s-name">Cold email</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 9</span><span class="s-name">SDR cadence</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 10</span><span class="s-name">Meeting booking</span></div>
+          <span class="p0-arrow">→</span>
+          <div class="p0-step"><span class="s-num">Step 11</span><span class="s-name">Demo delivery</span></div>
+        </div>
       </div>
     </div>
 
     <!-- 11. BS1 Brand -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 1</div>
-        <div>
-          <div class="node-id">N-013</div>
-          <div class="node-name">Brand asset library</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 1</span>
+          <span class="node-id">N-013</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>The canonical source for how the brand looks and sounds — logos, colors, fonts, voice rules. Every other node reads from here to stay on-brand.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #1</div>
-        <p>Every downstream node that produces customer-facing output — copy, design, landing pages, emails, social posts — inherits from brand. If it's not defined first, everything below carries inconsistency. And zero cost to delay: your first outbound email is already making a brand impression whether you meant it or not. Define once; re-use everywhere.</p>
+        <div class="node-name">Brand identity</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">The canonical source for how the brand looks and sounds. Logos, colors, fonts, voice rules — the single reference every downstream node reads from.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's first</div>
+          <p class="blk-text">Every output touches a customer. If brand isn't defined before the first email, post, or landing page, each downstream node carries its own interpretation of who we are.</p>
+        </div>
+        <div class="ctx-note"><strong>Current state:</strong> ~80% in place for Pvragon already. Mostly a codification exercise — not a from-scratch build.</div>
       </div>
     </div>
 
     <!-- 12. BS2 Pixel -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 2</div>
-        <div>
-          <div class="node-id">N-041</div>
-          <div class="node-name">Pixel and tracking</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 2</span>
+          <span class="node-id">N-041</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Deploys the tracking tags on every page and conversion event — Google Analytics, Meta Pixel, UTMs, server-side events. The foundation for all downstream measurement.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #2</div>
-        <p>Every paid dollar spent before pixels are live is spent <em>blind</em>. Without conversion tracking you have no attribution, no bid optimization, no A/B significance — just vibes. Fifteen minutes of Tag Manager configuration up front prevents three months of "we don't know what's working."</p>
+        <div class="node-name">Pixel &amp; tracking</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">The tracking tags on pages and conversion events — GA4, pixels, UTMs, server-side events. The raw signal feed that later steps read from.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's second</div>
+          <p class="blk-text">Without tracking deployed, there's no way to answer "is this working" for anything that comes next. Cheap to set up; painful to retrofit.</p>
+        </div>
       </div>
     </div>
 
     <!-- 13. BS3 Analytics -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 3</div>
-        <div>
-          <div class="node-id">N-037</div>
-          <div class="node-name">Analytics and attribution</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 3</span>
+          <span class="node-id">N-037</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Measures everything. Tracks every click, conversion, and dollar across every channel. The feedback loop that makes every other node smarter.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #3</div>
-        <p>Answers the question "is any of this working?" Analytics is a force multiplier — it appears in 107 of 120 channel subsystems because every measurable channel feeds it. Once pixels are live (BS 2), analytics turns signal into decisions. Without it, every later node is a bet without a scoreboard.</p>
+        <div class="node-name">Analytics &amp; attribution</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">Measurement across every channel — what got clicked, what converted, where dollars went. The feedback loop that makes every other step smarter over time.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's third</div>
+          <p class="blk-text">Once the tracking layer is in place, this turns raw signal into decisions. Without it, optimization in later steps is guesswork.</p>
+        </div>
       </div>
     </div>
 
     <!-- 14. BS4 Compliance -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 4</div>
-        <div>
-          <div class="node-id">N-042</div>
-          <div class="node-name">Compliance and legal</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 4</span>
+          <span class="node-id">N-042</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Keeps every outbound message legal — CAN-SPAM, TCPA, GDPR, CCPA. Manages consent records, opt-outs, and regional routing.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #4</div>
-        <p>Cold email (BS 8), SMS (future phase), and lifecycle email (P1) are all regulated channels. A compliance mistake is an existential risk — fines, deliverability collapse, or worse. Cost to implement correctly up front is tiny; cost to retrofit after a violation is catastrophic. Non-optional infrastructure, not optional hygiene.</p>
+        <div class="node-name">Compliance &amp; legal</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">Consent records, opt-outs, and regional rules for outbound messaging. CAN-SPAM, GDPR, TCPA scaffolding in place before anything hits a customer inbox.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's fourth</div>
+          <p class="blk-text">Outbound email, SMS, and lifecycle sends all depend on this being right. Getting it wrong is expensive. Getting it right up front is cheap.</p>
+        </div>
       </div>
     </div>
 
     <!-- 15. BS5 CRM -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 5</div>
-        <div>
-          <div class="node-id">N-021</div>
-          <div class="node-name">CRM and lifecycle state</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 5</span>
+          <span class="node-id">N-021</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>The source of truth for every person and company we've touched — contact info, lifecycle stage, every interaction logged. HubSpot / Salesforce / Attio-style.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #5</div>
-        <p>Connective tissue for sales AND lifecycle marketing. SDR cadence, email orchestration, demo delivery, review solicitation, meeting booking — every downstream node reads CRM state. Without it, you can't dedupe outbound, target lifecycle sends, or track pipeline. Not exciting to build, but required.</p>
+        <div class="node-name">CRM &amp; lifecycle state</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">The record of every person and company touched — contact info, lifecycle stage, activity history. HubSpot, Salesforce, or similar.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's fifth</div>
+          <p class="blk-text">The next six steps all depend on knowing who we're talking to and where they are in the journey. Without this layer, outbound is blind and lifecycle marketing can't exist.</p>
+        </div>
       </div>
     </div>
 
     <!-- 16. BS6 Lists -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 6</div>
-        <div>
-          <div class="node-id">N-019</div>
-          <div class="node-name">Prospect list building</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 6</span>
+          <span class="node-id">N-019</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Builds lists of target prospects with enriched contact info — names, titles, emails, company data. Apollo / ZoomInfo / Clay-style.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #6</div>
-        <p>Cold outbound is impossible without a list. List quality is <em>the</em> single biggest driver of cold email reply rates — the best sequence writing in the world fails against a bad list. Builds the who-to-email dataset that BS 8 cold email depends on.</p>
+        <div class="node-name">Prospect list building</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">Enriched contact lists of target prospects — names, titles, emails, firmographic context. Apollo / ZoomInfo / Clay-style data.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's sixth</div>
+          <p class="blk-text">Cold outbound needs a list. Quality of the list tends to matter more than the quality of the outreach. Builds the "who we're emailing" layer.</p>
+        </div>
       </div>
     </div>
 
     <!-- 17. BS7 Short copy -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 7</div>
-        <div>
-          <div class="node-id">N-002</div>
-          <div class="node-name">Short-form copy generation</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 7</span>
+          <span class="node-id">N-002</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Writes all the short text in marketing — ad headlines, social posts, email subject lines, push notifications. Tiny, punchy, everywhere.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #7</div>
-        <p>The payload for every other channel that moves. Cold emails, social posts, paid ads — all are short copy at the surface. Cheapest node to build (mostly LLM + brand-voice prompt), highest channel coverage (35+ channels need it). Highest ROI node in the entire machine at 115.</p>
+        <div class="node-name">Short-form copy</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">All the short text in marketing: ad headlines, social posts, email subject lines, push notifications. A small, flexible, brand-aware text engine.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's seventh</div>
+          <p class="blk-text">The shared payload across a large fraction of channels. Cheap to build on top of an LLM plus a brand-voice layer — and useful everywhere.</p>
+        </div>
       </div>
     </div>
 
     <!-- 18. BS8 Cold email -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 8</div>
-        <div>
-          <div class="node-id">N-025</div>
-          <div class="node-name">Cold email outbound</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 8</span>
+          <span class="node-id">N-025</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Sends cold email sequences to prospects who've never heard of you. Smartlead / Instantly / Lemlist-style deliverability-optimized outbound at scale.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #8</div>
-        <p>The first active revenue-producing channel in the sequence. Takes list (BS 6) + CRM (BS 5) + copy (BS 7) + compliance (BS 4) and converts them into booked meetings. For B2B SaaS, cold email is the fastest path from "we exist" to "we closed a deal." Everything upstream exists to make this work.</p>
+        <div class="node-name">Cold email outbound</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">Deliverability-aware outbound sequences to prospects who haven't heard of us. Smartlead / Instantly / Lemlist-style send layer.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's eighth</div>
+          <p class="blk-text">The first active outbound step in the sequence. Pulls list + CRM + copy + compliance together into something that can book meetings.</p>
+        </div>
       </div>
     </div>
 
-    <!-- 19. BS9 SDR -->
+    <!-- 19. BS9 SDR cadence -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 9</div>
-        <div>
-          <div class="node-id">N-045</div>
-          <div class="node-name">SDR cadence orchestration</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 9</span>
+          <span class="node-id">N-045</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Orchestrates multi-touch outbound sequences — email + LinkedIn + phone — spaced over days or weeks. What an SDR rep does, but automated.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #9</div>
-        <p>Cold email alone gets ~1–3% reply rates. Multi-touch cadence (email + LinkedIn + call) raises that to 5–10% — a 3–5x multiplier on outbound pipeline. Cadence is the mechanism that turns a single-touch send into a real pipeline-generation engine. Outreach / Salesloft are commodities; the automation layer is where we win.</p>
+        <div class="node-name">SDR cadence orchestration</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">Multi-touch outbound sequences — email plus LinkedIn plus phone — spaced across days or weeks. What an SDR does, orchestrated.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's ninth</div>
+          <p class="blk-text">Single-touch cold email has low response rates in most categories. Layering additional touches meaningfully increases reply rates.</p>
+        </div>
       </div>
     </div>
 
     <!-- 20. BS10 Meetings -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 10</div>
-        <div>
-          <div class="node-id">N-046</div>
-          <div class="node-name">Meeting booking</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 10</span>
+          <span class="node-id">N-046</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Calendar scheduling, reminders, timezone handling, round-robin routing across a sales team. Calendly / Chili Piper / Cal.com-style.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #10</div>
-        <p>The handoff from marketing/SDR to sales. Without frictionless self-serve booking, prospect replies die in "let's find a time" ping-pong. Trivial to build (commoditized SaaS), but eliminates a massive drop-off between "interested prospect" and "meeting on the calendar."</p>
+        <div class="node-name">Meeting booking</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">Scheduling, reminders, timezone handling, round-robin routing. Calendly / Cal.com-style calendar infrastructure.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's tenth</div>
+          <p class="blk-text">The handoff from "interested prospect" to "meeting on the calendar." Unfrictioning this step prevents a common drop-off.</p>
+        </div>
       </div>
     </div>
 
     <!-- 21. BS11 Demo -->
     <div class="slide node-slide">
-      <div class="node-header">
-        <div class="node-badge">BS 11</div>
-        <div>
-          <div class="node-id">N-047</div>
-          <div class="node-name">Demo delivery</div>
+      <div class="flow-left">
+        <div class="node-header">
+          <span class="step-chip">Build Step 11</span>
+          <span class="node-id">N-047</span>
         </div>
-      </div>
-      <div class="section-card">
-        <div class="section-kicker">What it does</div>
-        <p>Conducts live product demos — humans augmented by Gong-style call intelligence, or AI sales agents for simpler demos. Records, transcribes, drives follow-ups.</p>
-      </div>
-      <div class="section-card why-card">
-        <div class="section-kicker">Why it's P0 #11</div>
-        <p>The final conversion surface where a qualified meeting becomes a closed deal. Everything in BS 1–10 existed to feed this node quality pipeline. It's the highest unit-cost node in the machine (augmentation &gt; full automation today) — but it's where revenue actually happens, so it's non-negotiable in the baseline.</p>
+        <div class="node-name">Demo delivery</div>
+        <div class="what-block">
+          <div class="blk-kicker">What it is</div>
+          <p class="blk-text">The conversation where a qualified prospect sees the product. Today that's humans — augmented by call-recording and summarization tools.</p>
+        </div>
+        <div class="why-block">
+          <div class="blk-kicker">Why it's eleventh</div>
+          <p class="blk-text">The node where outbound effort converts to pipeline, and pipeline converts to revenue. Everything upstream exists to feed this moment good inputs.</p>
+        </div>
       </div>
     </div>
 
-    <!-- 22. CTA Interactive -->
+    <!-- 22. Interactive tool -->
     <div class="slide">
-      <div class="eyebrow">Explore</div>
-      <h2>Try the <span class="accent">interactive explorer</span>.</h2>
-      <p>The full system — 120 channels, 51 capability nodes, 18 inputs, 31 outputs, 130 edges, 11 scenarios — is available as an interactive web tool. Click any channel to see its subsystem. Pick a scenario to see how the build order changes for a different business.</p>
-      <div class="cta-box">
-        <h3>Marketing Automation Machine Explorer</h3>
-        <p style="color: var(--text-muted); margin: 0;">Live tool with every scenario, every subsystem, and the full recommended build order.</p>
-        <a href="marketing-machine.html">Open the explorer →</a>
+      <div class="flow-center">
+        <div class="eyebrow">Explore</div>
+        <h2>See the <span class="accent">whole system</span>.</h2>
+        <p style="margin-top: 16px;">The full system — every channel, every capability, every scenario — is live as an interactive tool. Pick a business type to see how the build order changes.</p>
+        <div class="cta-box">
+          <h3>Marketing Automation Machine — Explorer</h3>
+          <p style="color: var(--text-muted);">120 channels, 51 capabilities, 11 scenarios, live.</p>
+          <a href="marketing-machine.html">Open the explorer →</a>
+        </div>
       </div>
     </div>
 
     <!-- 23. Close -->
-    <div class="slide center">
-      <div class="eyebrow">What's next</div>
-      <h1>Build <span class="accent">step one</span>.</h1>
-      <p class="subtitle">With P0 sequenced and scoped, the question becomes: do we execute?</p>
-      <ul class="bullet-list" style="margin-top: 30px;">
-        <li><strong>Validate the baseline</strong> — confirm BS 1–11 is the right cold-start sequence for Pvragon's actual first product.</li>
-        <li><strong>Pick a scenario</strong> — for each Pvragon venture, select the matching business-type preset and re-weight.</li>
-        <li><strong>Start shipping</strong> — BS 1 (brand) is a week. BS 2–5 are commoditized SaaS integration. By week 4 we're running outbound.</li>
-      </ul>
-      <p style="margin-top: 30px; font-size: 0.95rem; color: var(--text-subtle);">Source files: <code>my-lib/runtime/deliverables/260418-marketing-automation-architecture/</code></p>
+    <div class="slide">
+      <div class="flow-center stack-lg">
+        <div class="eyebrow">Next</div>
+        <h1>Pick a business. <span class="accent">Build step one.</span></h1>
+        <p class="subtitle" style="max-width: 680px; margin-left: auto; margin-right: auto;">
+          This is a framework, not a promise. The first real test is choosing one Pvragon venture, picking its scenario, and shipping Build Step 1 by the end of the week.
+        </p>
+      </div>
     </div>
 
   </div>
 
   <div class="nav-controls">
-    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" title="Previous (←)"><i class="fa-solid fa-chevron-left"></i></button>
-    <span class="nav-hint">← → to navigate</span>
-    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)" title="Next (→)"><i class="fa-solid fa-chevron-right"></i></button>
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" title="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)" title="Next"><i class="fa-solid fa-chevron-right"></i></button>
   </div>
   <div class="footer-link"><a href="index.html">← All Pvragon presentations</a></div>
 </div>
