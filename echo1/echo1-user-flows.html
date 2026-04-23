@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo1 · User Flows & Role Journeys</title>
+<style>
+  :root {
+    --brand: #0F172A;
+    --accent: #6366F1;
+    --accent2: #06B6D4;
+    --accent3: #10B981;
+    --warn: #F59E0B;
+    --danger: #EF4444;
+    --surface: #F8FAFC;
+    --card: #FFFFFF;
+    --border: #E2E8F0;
+    --text: #1E293B;
+    --muted: #64748B;
+    --dispatcher: #0D9488;
+    --driver: #BE185D;
+    --requester: #F59E0B;
+    --shared: #8B5CF6;
+    --manager: #CA8A04;
+    --finance: #16A34A;
+    --client-admin: #2563EB;
+    --requester: #F59E0B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--surface); color: var(--text); }
+
+  /* ── Header ── */
+  .site-header { background: var(--brand); color: #fff; padding: 20px 32px; }
+  .site-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -.3px; }
+  .site-header p { font-size: 13px; color: #94A3B8; margin-top: 4px; }
+
+  /* ── Layout ── */
+  .main { max-width: 1280px; margin: 0 auto; padding: 24px 24px 64px; }
+
+  /* ── Role Tabs ── */
+  .role-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .role-tab {
+    padding: 8px 20px; border-radius: 24px; border: 2px solid transparent;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s;
+    background: var(--card); color: var(--muted); border-color: var(--border);
+  }
+  .role-tab:hover { border-color: currentColor; }
+  .role-tab.active { color: #fff; }
+  .role-tab[data-role="all"].active    { background: var(--brand); border-color: var(--brand); }
+  .role-tab[data-role="dispatcher"].active { background: var(--dispatcher); border-color: var(--dispatcher); }
+  .role-tab[data-role="driver"].active { background: var(--driver); border-color: var(--driver); }
+  .role-tab[data-role="requester"].active { background: var(--requester); border-color: var(--requester); }
+  .role-tab[data-role="shared"].active { background: var(--shared); border-color: var(--shared); }
+
+  /* Role dot */
+  .role-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+  /* ── Role Panels ── */
+  .role-panel { display: none; }
+  .role-panel.active { display: block; }
+
+  /* ── Section ── */
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px; padding-left: 2px;
+  }
+
+  /* ── Journey Grid ── */
+  .journey-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-bottom: 32px; }
+
+  /* ── Journey Card ── */
+  .journey-card {
+    background: var(--card); border-radius: 12px; border: 1.5px solid var(--border);
+    overflow: hidden; cursor: pointer; transition: box-shadow .15s, border-color .15s;
+  }
+  .journey-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+  .journey-card.open { border-color: var(--accent); box-shadow: 0 4px 24px rgba(99,102,241,.12); }
+
+  .journey-header {
+    display: flex; align-items: center; gap: 12px; padding: 16px 18px;
+    user-select: none;
+  }
+  .journey-icon {
+    width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-size: 18px; flex-shrink: 0;
+  }
+  .journey-meta { flex: 1; }
+  .journey-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .journey-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .journey-chevron { color: var(--muted); font-size: 12px; transition: transform .2s; }
+  .journey-card.open .journey-chevron { transform: rotate(180deg); }
+
+  /* ── Flow Panel ── */
+  .flow-panel { display: none; padding: 0 18px 18px; }
+  .journey-card.open .flow-panel { display: block; }
+
+  /* ── Flow Diagram ── */
+  .flow { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+
+  .flow-step {
+    display: flex; align-items: flex-start; gap: 0; width: 100%;
+  }
+
+  /* left rail */
+  .flow-rail { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+  .flow-node-dot {
+    width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid currentColor;
+    background: #fff; flex-shrink: 0; margin-top: 3px; z-index: 1;
+  }
+  .flow-node-dot.filled { background: currentColor; }
+  .flow-line {
+    width: 2px; flex: 1; min-height: 20px; background: var(--border); margin: 0;
+  }
+
+  /* step content */
+  .flow-content { flex: 1; padding-bottom: 16px; padding-left: 8px; }
+  .flow-step:last-child .flow-content { padding-bottom: 0; }
+  .flow-step-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .flow-step-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+  .flow-step-uc { font-size: 10px; font-weight: 600; letter-spacing: .04em; color: var(--accent); margin-top: 4px; }
+
+  /* branch */
+  .flow-branch {
+    margin: 4px 0 4px 8px; padding: 8px 10px; background: #F8FAFC; border-left: 2px solid var(--border);
+    border-radius: 0 6px 6px 0;
+  }
+  .flow-branch-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .flow-branch-item { font-size: 12px; color: var(--text); padding: 2px 0; }
+  .flow-branch-item::before { content: '→ '; color: var(--muted); }
+
+  /* decision node */
+  .flow-decision {
+    display: inline-flex; align-items: center; gap: 6px; background: #FFFBEB;
+    border: 1.5px solid #FDE68A; border-radius: 6px; padding: 4px 10px;
+    font-size: 12px; font-weight: 500; color: #92400E; margin: 2px 0;
+  }
+
+  /* tag chips */
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-left: 6px; }
+  .tag-p0  { background: #FEE2E2; color: #991B1B; }
+  .tag-p1  { background: #FEF3C7; color: #92400E; }
+  .tag-new { background: #D1FAE5; color: #065F46; }
+
+  /* screen label */
+  .screen-label {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #F1F5F9; border: 1px solid var(--border); border-radius: 6px;
+    padding: 3px 9px; font-size: 11px; font-weight: 500; color: var(--text); margin: 3px 0;
+  }
+  .screen-label::before { content: '🖥'; font-size: 10px; }
+  .screen-label.mobile::before { content: '📱'; }
+
+  /* role badge */
+  .role-badge {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 12px; margin-right: 4px;
+  }
+  .role-badge.dispatcher { background: #F0FDFA; color: var(--dispatcher); }
+  .role-badge.driver     { background: #FDF2F8; color: var(--driver); }
+  .role-badge.requester  { background: #FFFBEB; color: #D97706; }
+
+  /* divider */
+  hr.flow-divider { border: none; border-top: 1px dashed var(--border); margin: 12px 0; }
+
+  /* roles-involved section */
+  .roles-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+
+  /* ── Flow Map Nodes ── */
+  .fnode {
+    position: absolute; width: 168px; padding: 8px 11px; border-radius: 9px;
+    border: 2px solid transparent; cursor: pointer; user-select: none;
+    transition: transform .12s, box-shadow .12s;
+    background: #fff;
+  }
+  .fnode:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.13); z-index:10; }
+  .fnode.shared     { border-color: var(--shared);     background: #F5F3FF; }
+  .fnode.dispatcher { border-color: var(--dispatcher); background: #F0FDFA; }
+  .fnode.driver     { border-color: var(--driver);     background: #FDF2F8; }
+  .fnode.requester  { border-color: var(--requester);  background: #FFFBEB; }
+  .fnode-role  { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; opacity: .65; margin-bottom: 3px; }
+  .fnode.shared .fnode-role     { color: var(--shared); }
+  .fnode.dispatcher .fnode-role { color: var(--dispatcher); }
+  .fnode.driver .fnode-role     { color: var(--driver); }
+  .fnode.requester .fnode-role  { color: #D97706; }
+  .fnode-title { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.35; }
+  .fnode.question { border-color: #FB923C; border-style: dashed; background: #FFF7ED; }
+  .fnode.question .fnode-role { color: #C2410C; }
+
+
+  .role-tab[data-role="manager"].active   { background: var(--manager);     border-color: var(--manager); }
+  .role-tab[data-role="finance"].active   { background: var(--finance);     border-color: var(--finance); }
+  .role-tab[data-role="client-admin"].active { background: var(--client-admin); border-color: var(--client-admin); }
+  .role-tab[data-role="flowmap"]          { border-style: dashed; }
+  .role-tab[data-role="flowmap"].active   { background: #334155; border-color: #334155; border-style: solid; }
+  .role-tab { flex-shrink: 0; }
+  .fnode.manager     { border-color: var(--manager);     background: #FEFCE8; }
+  .fnode.finance     { border-color: var(--finance);     background: #F0FDF4; }
+  .fnode.client-admin { border-color: var(--client-admin); background: #EFF6FF; }
+  .fnode.requester   { border-color: var(--requester);   background: #FFFBEB; }
+  .fnode.manager .fnode-role     { color: var(--manager); }
+  .fnode.finance .fnode-role     { color: var(--finance); }
+  .fnode.client-admin .fnode-role { color: var(--client-admin); }
+  .fnode.requester .fnode-role   { color: #D97706; }
+  .role-badge.manager   { background: #FEFCE8; color: var(--manager); }
+  .role-badge.finance   { background: #F0FDF4; color: var(--finance); }
+  .role-badge.requester { background: #FFFBEB; color: #D97706; }
+  .journey-card.open.role-manager  { border-color: var(--manager); box-shadow: 0 4px 24px rgba(124,58,237,.12); }
+  .journey-card.open.role-finance  { border-color: var(--finance); box-shadow: 0 4px 24px rgba(8,145,178,.12); }
+
+  /* Open-question card styling */
+  .journey-card.open-question { border-color: #FB923C !important; border-style: dashed !important; }
+  .journey-card.open-question .journey-header { background: #FFF7ED; }
+  .oq-banner {
+    margin: 0 18px 12px; padding: 8px 12px; background: #FFF7ED; border: 1.5px solid #FED7AA;
+    border-radius: 7px; font-size: 12px; color: #9A3412; line-height: 1.5;
+  }
+  .oq-banner strong { font-weight: 700; }
+
+  /* ── Legend ── */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 24px; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* ── Week badge (card header) ── */
+  .week-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px;
+    border-radius: 10px; background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1;
+    margin-left: 6px; letter-spacing: .02em; vertical-align: middle; white-space: nowrap;
+  }
+
+  /* ── Week label on flow map nodes ── */
+  .fnode-week {
+    font-size: 9px; font-weight: 600; color: #64748B; margin-top: 4px;
+    letter-spacing: .02em; opacity: .8;
+  }
+  .fnode.question .fnode-week { color: #C2410C; }
+
+  /* ── Role Overview ── */
+  .role-overview { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  .role-stat {
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 14px 18px; min-width: 140px;
+  }
+  .role-stat-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .role-stat-value { font-size: 22px; font-weight: 700; color: var(--text); margin-top: 4px; }
+  .role-stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        /* ##DONE_STATE_START## */
+  /* Done: fade + green checkmark */
+  .flow-step.done .flow-content { opacity: 0.42; position: relative; }
+  .flow-step.done .flow-content::before {
+    content: '\2705'; position: absolute; top: 0; right: 0;
+    font-size: 14px; line-height: 1; pointer-events: none;
+  }
+  .fnode.done { opacity: 0.42; position: relative; }
+  .fnode.done::after {
+    content: '\2705'; position: absolute; top: 5px; right: 7px;
+    font-size: 12px; line-height: 1; pointer-events: none;
+  }
+  /* QA: amber left-border + test-tube on flow steps; amber step title text */
+  .flow-step.qa .flow-content { position: relative; border-left: 3px solid #f59e0b; padding-left: 6px; }
+  .flow-step.qa .flow-content::before {
+    content: '\1F9EA'; position: absolute; top: 0; right: 0;
+    font-size: 13px; line-height: 1; pointer-events: none;
+  }
+  .flow-step.qa .flow-step-name { color: #b45309; }
+  /* Fnode status pill (bottom of map node) — sole status indicator on map */
+  .fnode-status {
+    display: inline-block; margin-top: 5px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 1px 6px; border-radius: 8px; text-transform: uppercase;
+  }
+  .fnode-status.status-complete    { background: #d1fae5; color: #065f46; }
+  .fnode-status.status-qa         { background: #fef3c7; color: #92400e; }
+  .fnode-status.status-inprogress { background: #ede9fe; color: #5b21b6; }
+  /* Journey-level status badges (user flow card headers) */
+  .journey-status-badge {
+    display: inline-flex; align-items: center;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    padding: 2px 8px; border-radius: 10px;
+    margin-left: 7px; vertical-align: middle;
+    text-transform: uppercase;
+  }
+  .status-complete    { background: #d1fae5; color: #065f46; }
+  .status-qa         { background: #fef3c7; color: #92400e; }
+  .status-inprogress { background: #ede9fe; color: #5b21b6; }
+  /* ##DONE_STATE_END## */
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>Echo1 · User Flows &amp; Role Journeys</h1>
+  <p>Derived from 86 UCs · 1,302 features · Spec v2 · Generated 2026-04-06</p>
+</div>
+
+<div class="main">
+
+  <!-- Legend -->
+  <div class="legend">
+    <span style="font-weight:600; color: var(--text);">Roles:</span>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--dispatcher)"></div> Dispatcher</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--driver)"></div> Driver</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--requester)"></div> External Requester</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--shared)"></div> Shared / All Roles</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--manager)"></div> Operations Manager</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--finance)"></div> Finance Specialist</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--client-admin)"></div> Client Admin</div>
+    <span style="color:var(--border)">|</span>
+    <span class="tag tag-p0">P0</span> May 15 launch
+    <span class="tag tag-p1">P1</span> Post-launch
+    <span class="tag tag-new">New</span> V2-only feature
+  </div>
+
+  <!-- Role Tabs -->
+  <div class="role-tabs">
+    <button class="role-tab active" data-role="all" onclick="switchRole('all')">All Roles</button>
+    <button class="role-tab" data-role="dispatcher" onclick="switchRole('dispatcher')">
+      <span class="role-dot" style="background:var(--dispatcher)"></span>Dispatcher
+    </button>
+    <button class="role-tab" data-role="driver" onclick="switchRole('driver')">
+      <span class="role-dot" style="background:var(--driver)"></span>Driver
+    </button>
+    <button class="role-tab" data-role="requester" onclick="switchRole('requester')">
+      <span class="role-dot" style="background:var(--requester)"></span>External Requester
+    </button>
+    <button class="role-tab" data-role="shared" onclick="switchRole('shared')">
+      <span class="role-dot" style="background:var(--shared)"></span>Shared Journeys
+    </button>
+    <button class="role-tab" data-role="manager" onclick="switchRole('manager')">
+      <span class="role-dot" style="background:var(--manager)"></span>Ops Manager
+    </button>
+    <button class="role-tab" data-role="finance" onclick="switchRole('finance')">
+      <span class="role-dot" style="background:var(--finance)"></span>Finance
+    </button>
+    <button class="role-tab" data-role="client-admin" onclick="switchRole('client-admin')">
+      <span class="role-dot" style="background:var(--client-admin)"></span>Client Admin
+    </button>
+    <button class="role-tab flowmap-tab" data-role="flowmap" onclick="switchRole('flowmap')" style="margin-left:12px; flex-shrink:0;">
+      🗺 System Flow
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       ALL ROLES panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel active" id="panel-all">
+
+    <div class="role-overview">
+      <div class="role-stat">
+        <div class="role-stat-label">Roles Identified</div>
+        <div class="role-stat-value">6</div>
+        <div class="role-stat-sub">User-facing (+ 4 deferred)</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Journeys Mapped</div>
+        <div class="role-stat-value">22</div>
+        <div class="role-stat-sub">Across all roles</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Dispatcher Journeys</div>
+        <div class="role-stat-value">8</div>
+        <div class="role-stat-sub">6 P0, 2 P1</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Driver Journeys</div>
+        <div class="role-stat-value">4</div>
+        <div class="role-stat-sub">3 P0, 1 P1</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">External Requester Journeys</div>
+        <div class="role-stat-value">2</div>
+        <div class="role-stat-sub">2 P0</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;">
+      Use the tabs above to filter by role, or browse all journeys below. Click any journey card to expand the screen-by-screen flow.
+      <br>Three user-facing roles are in scope for May 15: <strong>Dispatcher</strong>, <strong>Driver</strong>, and <strong>External Requester</strong>.
+      Admin roles (platform_admin, admin) are deferred to a later pass.
+    </p>
+
+    <div class="section-label">Shared Journeys (All Roles)</div>
+    <div class="journey-grid" id="shared-in-all"></div>
+
+    <div class="section-label">Dispatcher Journeys</div>
+    <div class="journey-grid" id="dispatcher-in-all"></div>
+
+    <div class="section-label">Driver Journeys</div>
+    <div class="journey-grid" id="driver-in-all"></div>
+
+    <div class="section-label">External Requester Journeys</div>
+    <div class="journey-grid" id="requester-in-all"></div>
+
+    <div class="section-label">Operations Manager Journeys</div>
+    <div class="journey-grid" id="manager-in-all"></div>
+
+    <div class="section-label">Finance Specialist Journeys</div>
+    <div class="journey-grid" id="finance-in-all"></div>
+
+    <div class="section-label">Client Admin Journeys</div>
+    <div class="journey-grid" id="client-admin-in-all"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       DISPATCHER panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-dispatcher">
+    <div class="role-overview">
+      <div class="role-stat">
+        <div class="role-stat-label">Primary Interface</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;">Desktop Browser</div>
+        <div class="role-stat-sub">12-hour shifts, MFA required</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Core Journeys</div>
+        <div class="role-stat-value">8</div>
+        <div class="role-stat-sub">6 P0 for May 15</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Key Domains</div>
+        <div class="role-stat-value" style="font-size:12px; margin-top:8px;">Intake · Dispatch</div>
+        <div class="role-stat-sub">Transport · Billing · Admin</div>
+      </div>
+    </div>
+    <div class="journey-grid" id="dispatcher-panel-grid"></div>
+    <p style="font-size:12px; color:var(--muted); margin-top:16px; padding: 10px 14px; background:#EEF2FF; border-radius:8px; border-left:3px solid var(--dispatcher);">
+      <strong>Note:</strong> Billing &amp; Claims and Ops Reporting are not dispatcher functions — those belong to
+      <strong>Finance Specialist</strong> and <strong>Operations Manager</strong> respectively. Dispatchers have no billing visibility.
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       DRIVER panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-driver">
+    <div class="role-overview">
+      <div class="role-stat">
+        <div class="role-stat-label">Primary Interface</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;">Mobile PWA</div>
+        <div class="role-stat-sub">~120 drivers, rural areas</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Core Journeys</div>
+        <div class="role-stat-value">4</div>
+        <div class="role-stat-sub">3 P0, 1 P1</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Key Constraint</div>
+        <div class="role-stat-value" style="font-size:12px; margin-top:8px;">Offline Resilience</div>
+        <div class="role-stat-sub">Session survives connectivity loss</div>
+      </div>
+    </div>
+    <div class="journey-grid" id="driver-panel-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SUBMITTER panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-requester">
+    <div class="role-overview">
+      <div class="role-stat">
+        <div class="role-stat-label">Primary Interface</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;">Public Web Form</div>
+        <div class="role-stat-sub">No login required for submission</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Core Journeys</div>
+        <div class="role-stat-value">2</div>
+        <div class="role-stat-sub">Both P0 for May 15</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Context</div>
+        <div class="role-stat-value" style="font-size:12px; margin-top:8px;">Social Workers</div>
+        <div class="role-stat-sub">State agencies, tribal entities</div>
+      </div>
+    </div>
+    <div class="journey-grid" id="requester-panel-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SHARED panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-shared">
+    <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Journeys shared across multiple roles.</p>
+    <div class="journey-grid" id="shared-panel-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       OPERATIONS MANAGER panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-manager">
+    <div class="role-overview">
+      <div class="role-stat">
+        <div class="role-stat-label">Primary Interface</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;">Desktop Browser</div>
+        <div class="role-stat-sub">Operations Dashboard (same as Dispatcher)</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Cognito Group</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;"><code>manager</code></div>
+        <div class="role-stat-sub">Consolidates V1 Manager + FleetManager</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Key Superpowers vs Dispatcher</div>
+        <div class="role-stat-value" style="font-size:12px; margin-top:8px;">Fleet CRUD · Full Reporting</div>
+        <div class="role-stat-sub">Override restricted fields · HR read</div>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;">
+      Operations Manager has all Dispatcher capabilities plus fleet management, full operational reporting,
+      billing read access, HR data read access, issue escalation/HR record creation, and approval authority
+      over dispatcher-restricted field edits.
+    </p>
+    <div class="section-label">Operations Manager Journeys</div>
+    <div class="journey-grid" id="manager-panel-grid"></div>
+    <p style="font-size:12px; color:var(--muted); margin-top:16px; padding: 10px 14px; background:#F5F3FF; border-radius:8px; border-left:3px solid var(--manager);">
+      Also inherits all <strong>Dispatcher journeys</strong> (Intake Validation, Manual Dispatch, Bulk Dispatch,
+      Monitor Active Operations, Post-Transport Processing, Ref Data Management). Use the Dispatcher tab to see those flows.
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       FINANCE SPECIALIST panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-finance">
+    <div class="role-overview">
+      <div class="role-stat">
+        <div class="role-stat-label">Primary Interface</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;">Billing Dashboard</div>
+        <div class="role-stat-sub">Dedicated billing route group</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Cognito Group</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;"><code>finance</code></div>
+        <div class="role-stat-sub">Maps from V1 Accounting</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Key Constraint</div>
+        <div class="role-stat-value" style="font-size:12px; margin-top:8px;">No Dispatch Access</div>
+        <div class="role-stat-sub">Cannot create or assign transports</div>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;">
+      Finance Specialist owns the full billing lifecycle from transport review through claims submission and remittance.
+      They have <strong>read-only</strong> access to transport records for billing context, and manage all payer/billing configuration.
+      <br><strong>Note:</strong> Dispatchers do <em>not</em> have billing access — amounts, invoices, claims, and reimbursement rates are Finance-only.
+    </p>
+    <div class="section-label">Finance Specialist Journeys</div>
+    <div class="journey-grid" id="finance-panel-grid"></div>
+    <p style="font-size:12px; color:var(--muted); margin-top:16px; padding: 10px 14px; background:#ECFEFF; border-radius:8px; border-left:3px solid var(--finance);">
+      Finance Specialist also has <strong>read access</strong> to Ops Reporting (UC-08a, UC-08d) and client insurance data for claims processing.
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CLIENT ADMIN panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-client-admin">
+    <div class="role-overview">
+      <div class="role-stat">
+        <div class="role-stat-label">Primary Interface</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;">Client Portal</div>
+        <div class="role-stat-sub">Scoped to own requesting_entity_id</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Cognito Group</div>
+        <div class="role-stat-value" style="font-size:14px; margin-top:8px;"><code>client_admin</code></div>
+        <div class="role-stat-sub">Maps from V1 Admin (level 5)</div>
+      </div>
+      <div class="role-stat">
+        <div class="role-stat-label">Launch Status</div>
+        <div class="role-stat-value" style="font-size:12px; margin-top:8px; color:#EA580C;">Minimal at Launch</div>
+        <div class="role-stat-sub">Full self-service is post-May 15</div>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;">
+      Client Administrators are leadership/designated staff at partner organizations (requesting entities). They see their
+      own organization's transport activity only — no other tenant data, no PHI beyond what's operationally necessary,
+      no financial data, no employee data. Personas doc explicitly states: <em>"minimal feature set at launch — full
+      self-service capabilities are post-launch."</em>
+    </p>
+    <div class="section-label">Client Admin Journeys</div>
+    <div class="journey-grid" id="client-admin-panel-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       FLOW MAP panel
+  ══════════════════════════════════════════════ -->
+  <div class="role-panel" id="panel-flowmap">
+    <p style="font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.6;">
+      End-to-end system flow across all roles. Click any node to jump to that journey's detail.<br><span style="color:#EA580C; font-weight:600;">Post-May 15 roles not shown:</span> HR (<code>hr</code>), IT/User Management (<code>it_user</code>), Tenant Admin (<code>tenant_admin</code>), Platform Admin (<code>platform_admin</code>), Support Agent (<code>support_agent</code> — planned). See personas doc for details.
+      <span style="margin-left:12px; font-size:12px;">
+        <span style="display:inline-block;width:28px;height:2px;background:var(--border);vertical-align:middle;margin-right:4px;"></span>same role &nbsp;
+        <span style="display:inline-block;width:28px;height:2px;background:#A5B4FC;border-top:2px dashed #A5B4FC;vertical-align:middle;margin-right:4px;"></span>cross-role handoff
+      </span>
+    </p>
+
+    <div style="overflow-x:auto; padding-bottom:16px;">
+    <div id="flowmap-container" style="position:relative; width:1480px; height:1100px; font-family:inherit;">
+
+      <!-- Swimlane backgrounds -->
+      <svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;" id="flowmap-arrows">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#94A3B8"/>
+          </marker>
+          <marker id="arr-cross" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#A5B4FC"/>
+          </marker>
+          <marker id="arr-driver" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#6EE7B7"/>
+          </marker>
+        </defs>
+
+        <!-- Swimlane bands -->
+        <rect x="0" y="0"   width="1480" height="75"  fill="#F8FAFC" rx="0"/>
+        <rect x="0" y="75"  width="1480" height="165" fill="#FFFBEB" rx="0" opacity="0.6"/>
+        <rect x="0" y="240" width="1480" height="310" fill="#CCFBF1" rx="0" opacity="0.55"/>
+        <rect x="0" y="550" width="1480" height="160" fill="#FEFCE8" rx="0" opacity="0.45"/>
+        <rect x="0" y="710" width="1480" height="110" fill="#DCFCE7" rx="0" opacity="0.5"/>
+        <rect x="0" y="820" width="1480" height="100" fill="#DBEAFE" rx="0" opacity="0.45"/>
+        <rect x="0" y="920" width="1480" height="180" fill="#FCE7F3" rx="0" opacity="0.5"/>
+
+        <!-- Swimlane labels -->
+        <text x="8" y="37"  font-size="10" font-weight="700" fill="#64748B" letter-spacing=".06em" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90,8,37)">ALL ROLES</text>
+        <text x="8" y="157" font-size="10" font-weight="700" fill="#D97706" letter-spacing=".06em" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90,8,157)">EXT. REQUESTER</text>
+        <text x="8" y="395" font-size="10" font-weight="700" fill="#0D9488" letter-spacing=".06em" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90,8,395)">DISPATCHER</text>
+        <text x="8" y="630" font-size="10" font-weight="700" fill="#CA8A04" letter-spacing=".06em" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90,8,630)">OPS MGR</text>
+        <text x="8" y="765" font-size="10" font-weight="700" fill="#16A34A" letter-spacing=".06em" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90,8,765)">FINANCE</text>
+        <text x="8" y="870" font-size="10" font-weight="700" fill="#2563EB" letter-spacing=".06em" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90,8,870)">CLIENT ADMIN</text>
+        <text x="8" y="1010" font-size="10" font-weight="700" fill="#BE185D" letter-spacing=".06em" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90,8,1010)">DRIVER</text>
+
+        <!-- Divider lines -->
+        <line x1="0" y1="75"  x2="1480" y2="75"  stroke="#E2E8F0" stroke-width="1"/>
+        <line x1="0" y1="240" x2="1480" y2="240" stroke="#E2E8F0" stroke-width="1"/>
+        <line x1="0" y1="550" x2="1480" y2="550" stroke="#E2E8F0" stroke-width="1"/>
+        <line x1="0" y1="920" x2="1480" y2="920" stroke="#E2E8F0" stroke-width="1"/>
+        <line x1="0" y1="820" x2="1480" y2="820" stroke="#E2E8F0" stroke-width="1"/>
+        <line x1="0" y1="710" x2="1480" y2="710" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- ── Arrows drawn by JS ── -->
+      </svg>
+
+      <!-- ── Nodes ── -->
+
+      <!-- SHARED row -->
+      <div class="fnode shared"   data-jid="auth"    style="left:60px;  top:10px;"  onclick="navigateToJourney('auth','shared')">
+        <div class="fnode-role">All Roles</div>
+        <div class="fnode-title">Authentication &amp; Login</div>
+        <div class="fnode-week">W1</div>
+      </div>
+      <div class="fnode shared"   data-jid="profile" style="left:280px; top:10px;"  onclick="navigateToJourney('profile','shared')">
+        <div class="fnode-role">All Roles</div>
+        <div class="fnode-title">Profile &amp; Settings</div>
+        <div class="fnode-week">W3</div>
+      </div>
+
+      <!-- REQUEST SUBMITTER row -->
+      <div class="fnode requester" data-jid="submit-tr"    style="left:60px;  top:86px;"  onclick="navigateToJourney('submit-tr','requester')">
+        <div class="fnode-role">External Requester</div>
+        <div class="fnode-title">Submit Transport Request</div>
+        <div class="fnode-week">W3–W5</div>
+      </div>
+      <div class="fnode requester" data-jid="email-intake"  style="left:280px; top:86px;" onclick="navigateToJourney('email-intake','requester')">
+        <div class="fnode-role">External Requester</div>
+        <div class="fnode-title">Email Intake (State Forms)</div>
+        <div class="fnode-week">W4–W5</div>
+      </div>
+      <div class="fnode requester" data-jid="sms-cancel"    style="left:540px; top:105px;" onclick="navigateToJourney('sms-cancel','requester')">
+        <div class="fnode-role">External Requester</div>
+        <div class="fnode-title">SMS Self-Service Cancel</div>
+        <div class="fnode-week">W4–W5</div>
+      </div>
+
+      <!-- DISPATCHER row -->
+      <div class="fnode dispatcher" data-jid="intake-validation" style="left:310px; top:252px;" onclick="navigateToJourney('intake-validation','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Intake &amp; Request Validation</div>
+        <div class="fnode-week">W4–W5</div>
+      </div>
+      <div class="fnode dispatcher" data-jid="admin-data"         style="left:310px; top:355px;" onclick="navigateToJourney('admin-data','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Reference Data Management</div>
+        <div class="fnode-week">W3</div>
+      </div>
+      <div class="fnode dispatcher" data-jid="manual-dispatch"    style="left:580px; top:252px;" onclick="navigateToJourney('manual-dispatch','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Manual Single Dispatch</div>
+        <div class="fnode-week">W4–W6</div>
+      </div>
+      <div class="fnode dispatcher" data-jid="bulk-dispatch"      style="left:580px; top:345px;" onclick="navigateToJourney('bulk-dispatch','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Bulk Dispatch / Route Optimization</div>
+        <div class="fnode-week">W5–W7</div>
+      </div>
+      <div class="fnode dispatcher" data-jid="route-dispatch"     style="left:580px; top:462px;" onclick="navigateToJourney('route-dispatch','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Route Dispatch (Multi-Stop)</div>
+        <div class="fnode-week">W5–W6</div>
+      </div>
+      <div class="fnode dispatcher" data-jid="ops-monitoring"     style="left:860px; top:280px;" onclick="navigateToJourney('ops-monitoring','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Monitor Active Operations</div>
+        <div class="fnode-week">W5–W6</div>
+      </div>
+      <div class="fnode dispatcher" data-jid="post-transport"     style="left:1110px;top:255px;" onclick="navigateToJourney('post-transport','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Post-Transport Processing</div>
+        <div class="fnode-week">W6–W7</div>
+      </div>
+      <div class="fnode finance"    data-jid="billing"            style="left:580px; top:720px;" onclick="navigateToJourney('billing','finance')">
+        <div class="fnode-role">Finance Specialist</div>
+        <div class="fnode-title">Billing &amp; Claims</div>
+        <div class="fnode-week">W5–W7</div>
+      </div>
+      <div class="fnode manager"    data-jid="ops-reporting"      style="left:1110px;top:590px;" onclick="navigateToJourney('ops-reporting','manager')">
+        <div class="fnode-role">Ops Manager</div>
+        <div class="fnode-title">Ops Reporting <span style="font-size:9px;opacity:.7">(P1)</span></div>
+        <div class="fnode-week">W6–W7</div>
+      </div>
+
+      <!-- DRIVER row -->
+      <div class="fnode driver" data-jid="driver-upcoming"           style="left:580px; top:940px;" onclick="navigateToJourney('driver-upcoming','driver')">
+        <div class="fnode-role">Driver</div>
+        <div class="fnode-title">View Upcoming Rides</div>
+        <div class="fnode-week">W4–W5</div>
+      </div>
+      <div class="fnode driver" data-jid="driver-trip-prescheduled"  style="left:840px; top:940px;" onclick="navigateToJourney('driver-trip-prescheduled','driver')">
+        <div class="fnode-role">Driver</div>
+        <div class="fnode-title">Execute Pre-Scheduled Trip</div>
+        <div class="fnode-week">W5–W6</div>
+      </div>
+      <div class="fnode driver" data-jid="driver-trip-crisis"        style="left:840px; top:1010px;" onclick="navigateToJourney('driver-trip-crisis','driver')">
+        <div class="fnode-role">Driver</div>
+        <div class="fnode-title">Execute Crisis Trip</div>
+        <div class="fnode-week">W5–W6</div>
+      </div>
+
+
+
+      <!-- DISPATCHER new nodes -->
+      <div class="fnode dispatcher" data-jid="comms"   style="left:1300px;top:252px;" onclick="navigateToJourney('comms','dispatcher')">
+        <div class="fnode-role">Dispatcher</div>
+        <div class="fnode-title">Communications &amp; Notifications</div>
+        <div class="fnode-week">W4–W5</div>
+      </div>
+      <div class="fnode dispatcher" data-jid="issues"  style="left:1300px;top:345px;" onclick="navigateToJourney('issues','dispatcher')">
+        <div class="fnode-role">Dispatcher / Manager</div>
+        <div class="fnode-title">Issue Tracking <span style="font-size:9px;opacity:.7">(P1)</span></div>
+      </div>
+
+      <!-- OPERATIONS MANAGER row -->
+      <div class="fnode manager"   data-jid="fleet-mgmt" style="left:580px; top:570px;" onclick="navigateToJourney('fleet-mgmt','manager')">
+        <div class="fnode-role">Ops Manager</div>
+        <div class="fnode-title">Fleet &amp; Driver Management</div>
+        <div class="fnode-week">W3–W6</div>
+      </div>
+
+      <!-- CLIENT ADMIN row -->
+      <div class="fnode client-admin" data-jid="client-portal" style="left:310px;top:820px;" onclick="navigateToJourney('client-portal','client-admin')">
+        <div class="fnode-role">Client Admin · Deferred</div>
+        <div class="fnode-title">Client Portal</div>
+        <div class="fnode-week">Post-launch</div>
+      </div>
+
+      <!-- DRIVER new node -->
+      <div class="fnode driver" data-jid="driver-ancillary" style="left:1100px;top:940px;" onclick="navigateToJourney('driver-ancillary','driver')">
+        <div class="fnode-role">Driver</div>
+        <div class="fnode-title">Ancillary Forms <span style="font-size:9px;opacity:.7">(P1)</span></div>
+      </div>
+
+    </div><!-- /flowmap-container -->
+    </div><!-- /overflow wrapper -->
+  </div><!-- /panel-flowmap -->
+
+</div><!-- /main -->
+
+<script>
+// ─────────────────────────────────────────────
+// Journey Data
+// ─────────────────────────────────────────────
+const journeys = [
+
+  // ── SHARED ───────────────────────────────
+  {
+    id: 'auth',
+    role: 'shared',
+    icon: '🔐',
+    iconBg: '#EEF2FF',
+    title: 'Authentication & Login',
+    subtitle: 'All roles · MFA mandatory: platform_admin, tenant_admin, dispatcher · Recommended: manager, finance, hr · Optional: driver — so that every user gets into the platform with the right level of login security for their role, and tenant data stays completely isolated.',
+    priority: 'p0',
+    week: 'W1',
+    steps: [
+      {
+        name: 'Login Page',
+        screen: 'Login Screen',
+        desc: 'Tenant-branded login page. Email + password entry via Amplify Authenticator component. Resolves tenant from subdomain.',
+        uc: 'UC-10a'
+      },
+      {
+        name: 'MFA Challenge',
+        screen: 'MFA Screen',
+        desc: 'TOTP authenticator app (mandatory for dispatchers). Optional for drivers — mobile device binding acts as implicit 2nd factor.',
+        uc: 'UC-10a',
+        branch: {
+          label: 'If first login',
+          items: ['TOTP QR code setup screen', 'Password change (FORCE_CHANGE_PASSWORD state)', 'Email confirmation link']
+        }
+      },
+      {
+        name: 'Employment Status Check',
+        desc: 'Post-auth Lambda trigger confirms employee status = Employed. Blocks login with message if not active.',
+        uc: 'UC-10a'
+      },
+      {
+        name: 'Role-Based Redirect',
+        desc: 'JWT cognito:groups claim determines destination.',
+        uc: 'UC-10a',
+        branch: {
+          label: 'Destination by role',
+          items: [
+            'Driver → Driver Dashboard (mobile PWA)',
+            'Dispatcher/Admin → Operations Dashboard',
+            'Platform Admin → Platform Admin Panel'
+          ]
+        }
+      },
+      {
+        name: 'Session Active',
+        desc: '12-hour session with token refresh. Deep-link redirect preserved if user accessed a protected URL before login.',
+        uc: 'UC-10d',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'profile',
+    role: 'shared',
+    icon: '👤',
+    iconBg: '#F0FDF4',
+    title: 'Profile & Settings',
+    subtitle: 'All roles · View/edit personal info, change password, logout — so that each team member can manage their own credentials and account information without requiring IT involvement.',
+    priority: 'p0',
+    week: 'W3',
+    steps: [
+      { name: 'Profile Page', screen: 'Profile Screen', desc: 'Accessed from app shell header dropdown. Card layout: Personal Info, Employee Info, Security.', uc: 'UC-10b' },
+      { name: 'Edit Personal Info', desc: 'Toggle form for name, address, phone, email. Google Places autocomplete for address field.', uc: 'UC-10b' },
+      { name: 'Change Password', desc: 'Cognito changePassword API. 12+ chars, complexity rules enforced.', uc: 'UC-10b' },
+      { name: 'Upload Profile Photo', desc: 'S3 presigned URL upload. Image resized client-side. Shows in header on next session.', uc: 'UC-10b' },
+      { name: 'Logout', desc: 'Cognito signOut(). Clears all client state (Zustand stores, TanStack cache). Redirects to login.', uc: 'UC-10b', isFinal: true }
+    ]
+  },
+
+
+  {
+    id: 'employee-mgmt',
+    role: 'shared',
+    icon: '👥',
+    iconBg: '#F5F3FF',
+    title: 'Employee Management *',
+    subtitle: 'All roles · Access level varies by role — UC-09c + UC-09f. * = feature-gated — so that HR, IT, and managers can handle the full employee lifecycle in one place, with server-side role checks ensuring only authorized mutations occur.',
+    priority: 'p0',
+    week: 'W3–W5',
+    steps: [
+      {
+        name: 'Employee Directory (all roles)',
+        screen: 'Employee Directory',
+        desc: 'Read-only directory available to every authenticated role: name, job title, email, phone, normal hours, Samsara Driver ID.',
+        uc: 'UC-09c'
+      },
+      {
+        name: 'Basic Edits & Password Reset *',
+        screen: 'Employee Grid',
+        desc: '* Dispatcher and above: inline-edit name, start date, Samsara ID; trigger Cognito password reset email. Record locking via SSE subscription.',
+        uc: 'UC-09c'
+      },
+      {
+        name: 'User Lifecycle & Role Assignment *',
+        screen: 'Employee Grid',
+        desc: '* it_user / tenant_admin only: create users (Cognito provisioning + temp password), assign roles (server-side ceiling — cannot assign higher than own role), disable/enable, delete. Note: Requesting Entity Management (UC-09f) is tenant_admin territory only.',
+        uc: 'UC-09c, UC-09f',
+        isFinal: true
+      }
+    ]
+  },
+
+  // ── DISPATCHER ────────────────────────────
+  {
+    id: 'intake-validation',
+    role: 'dispatcher',
+    icon: '📋',
+    iconBg: '#EEF2FF',
+    title: 'Intake & Request Validation',
+    subtitle: 'Dispatcher · Process incoming transport requests through to dispatch-ready — so that every incoming request is validated, confirmed, and properly routed before it reaches dispatch, eliminating data-quality fixes downstream.',
+    priority: 'p0',
+    week: 'W2–W4',
+    steps: [
+      {
+        name: 'Queue Monitoring View',
+        screen: 'Transport Requests Grid',
+        desc: 'AG Grid (server-side) showing all incoming TRs. Real-time record locking via tRPC SSE. Preset filters: In Progress, Dispatched, NULL-status. Search-first for high-volume views.',
+        uc: 'UC-02d'
+      },
+      {
+        name: 'Initial Intake Processing',
+        screen: 'Intake Queue',
+        desc: 'Split multi-leg trips, create return trips, route to dispatch type (secured vs. scheduled). Rebuilt on server-side AG Grid paging pattern.',
+        uc: 'UC-02a',
+        branch: {
+          label: 'Routing decision',
+          items: ['Secured transport → secured dispatch queue', 'Scheduled transport → scheduled queue', 'Crisis → immediate dispatch flow']
+        }
+      },
+      {
+        name: 'Eligibility Confirmation',
+        screen: 'Eligibility View',
+        desc: 'Confirm client eligibility. Duplicate client detection runs here. Red Alert warnings surfaced. Inline AG Grid filters with server-side paging.',
+        uc: 'UC-02b'
+      },
+      {
+        name: 'Final Confirmation',
+        screen: 'Confirmation View',
+        desc: 'Mark ride as fully confirmed. Client-side validation with immediate feedback. Server-side state-dependent checks.',
+        uc: 'UC-02c'
+      },
+      {
+        name: 'TR is Dispatch-Ready',
+        desc: 'Transport Request confirmed and queued. Dispatcher proceeds to Manual Dispatch or Bulk Optimization journey.',
+        uc: 'UC-02d',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'manual-dispatch',
+    role: 'dispatcher',
+    icon: '🚐',
+    iconBg: '#EEF2FF',
+    title: 'Manual Single Dispatch',
+    subtitle: 'Dispatcher · Assign one driver/vehicle to one transport request — so that urgent or ad hoc rides arriving outside the pre-planned schedule can be handled individually and immediately.',
+    priority: 'p0',
+    week: 'W4–W6',
+    steps: [
+      {
+        name: 'Select TR from Queue',
+        screen: 'Transport Requests Grid',
+        desc: 'Row-level dispatch action on the TR grid. Valkey lock acquired immediately to prevent concurrent edits.',
+        uc: 'UC-03a'
+      },
+      {
+        name: 'Information Verification Gate',
+        screen: 'Dispatch Form',
+        desc: 'Dispatcher checks a required verification checkbox confirming all client/transport info has been reviewed before the Dispatch button enables.',
+        uc: 'UC-03a'
+      },
+      {
+        name: 'Driver & Vehicle Selection',
+        screen: 'Dispatch Form',
+        desc: 'Driver dropdown (employed, Samsara ID required). Vehicle dropdown (In Service only, enabled after driver selected). Vehicle GPS fetched from Samsara on selection.',
+        uc: 'UC-03a'
+      },
+      {
+        name: 'Route & Map Review',
+        screen: 'Dispatch Map Panel',
+        desc: '3-stop route (Start → Pickup → Dropoff) on embedded Google Maps. Drive duration calculated. Real-time driver markers on map. "Dispatch in Samsara" toggle.',
+        uc: 'UC-03a',
+        branch: {
+          label: "Driver's Last Route flag",
+          items: ['Checked → includes ending location (driver home)', 'Unchecked → standard 3-stop route']
+        }
+      },
+      {
+        name: 'Confirm Dispatch',
+        screen: 'Dispatch Form',
+        desc: 'Captures dispatch intent as JSON. Creates Transport record. Marks TR as dispatched. Enqueues Samsara route creation async job (Graphile Worker). 6-leg distance calc with PostgreSQL cache.',
+        uc: 'UC-03a'
+      },
+      {
+        name: 'Transport Created & Driver Notified',
+        desc: 'Real-time grid refresh broadcast via Valkey pub/sub. Samsara route creation confirms async. Driver sees ride in upcoming rides view.',
+        uc: 'UC-03a',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'bulk-dispatch',
+    role: 'dispatcher',
+    icon: '📦',
+    iconBg: '#EEF2FF',
+    title: 'Bulk Dispatch via Route Optimization',
+    subtitle: "Dispatcher · NextBillion.ai VRP optimization for next day's routes — so that the full driver pool can be planned in one bulk operation without manually sequencing each route.",
+    priority: 'p0',
+    week: 'W5–W7',
+    steps: [
+      {
+        name: 'Route Optimization Page',
+        screen: 'Optimization Staging Grid',
+        desc: "AG Grid showing tomorrow's undispatched TRs. Filter test data. Mark TRs to exclude from optimization (prevent-optimization toggle). Edit transport notes inline.",
+        uc: 'UC-03b'
+      },
+      {
+        name: 'Configure Driver Pool',
+        screen: 'Driver Configuration Page',
+        desc: 'Set driver addresses (Google Places), vehicle assignment, vehicle capacity (1–8), shift times, day-of-week availability, and assignment toggle per driver.',
+        uc: 'UC-03b'
+      },
+      {
+        name: 'Run Optimization',
+        screen: 'Optimization Trigger',
+        desc: 'Triggers AWS Step Functions state machine → assembles NextBillion.ai VRP payload → calls optimization API → parses result into route windows.',
+        uc: 'UC-03b'
+      },
+      {
+        name: 'Review Optimization Results',
+        screen: 'Results Preview',
+        desc: 'Preview shows: number of routes, transports per route, estimated processing time. Dispatcher reviews before confirming import.',
+        uc: 'UC-03b'
+      },
+      {
+        name: 'Import & Create Transports',
+        screen: 'Import Confirmation',
+        desc: 'Step Functions Lambda creates Transport records with scheduled timestamps, driver/vehicle assignments, distance legs. Idempotent (re-runs safe). Samsara multi-route creation queued async.',
+        uc: 'UC-03b'
+      },
+      {
+        name: 'Routes Ready & Dispatched',
+        desc: 'All routes visible in Transport Operations. Drivers see upcoming rides on their mobile PWA.',
+        uc: 'UC-03b',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'ops-monitoring',
+    role: 'dispatcher',
+    icon: '🗺️',
+    iconBg: '#EEF2FF',
+    title: 'Monitor Active Operations',
+    subtitle: 'Dispatcher · Real-time view of in-progress transports and fleet location — so that dispatchers have a live picture of every active transport and can intervene the moment a trip goes off-plan.',
+    week: 'W5–W6',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Operations Dashboard / Transports Grid',
+        screen: 'Transports Grid',
+        desc: 'AG Grid with 7 column groups. Default filter: In Progress / Dispatched / NULL-status. Real-time row refresh via tRPC subscriptions. Column state persisted per user.',
+        uc: 'UC-04a'
+      },
+      {
+        name: 'Fleet Monitoring Map',
+        screen: 'Fleet Map Panel',
+        desc: 'Google Maps showing real-time GPS positions of all active drivers (Valkey #1 cache, 30s TTL). Each driver shows: status, ETA, projected end-of-route location, HOS data.',
+        uc: 'UC-04a'
+      },
+      {
+        name: 'Select Transport for Detail',
+        screen: 'Transport Detail Drawer',
+        desc: 'Click row → Transport detail panel. Full client info, scheduling, route, support files, issue count badge, communication audit trail.',
+        uc: 'UC-04b'
+      },
+      {
+        name: 'In-Flight Intervention (if needed)',
+        desc: 'Status updates, driver coordination, issue creation, click-to-call contacts.',
+        uc: 'UC-04b',
+        branch: {
+          label: 'Actions available',
+          items: ['Update transport status', 'Create issue ticket (→ Issue Tracking)', 'Click-to-call driver/client contacts', 'Send SMS/email communication', 'Transfer transport to different driver']
+        }
+      },
+      {
+        name: 'Routes Page',
+        screen: 'Routes Grid',
+        desc: 'Tab-filtered view: All / Upcoming / In Progress / Finished / Canceled / Voided. Samsara route progress visualization per route. Real-time Samsara webhook sync.',
+        uc: 'UC-03c'
+      }
+    ]
+  },
+
+  {
+    id: 'post-transport',
+    role: 'dispatcher',
+    icon: '✅',
+    iconBg: '#EEF2FF',
+    title: 'Post-Transport Processing',
+    subtitle: 'Dispatcher · Review completed transports, edits, billing prep — so that every completed transport is reviewed, corrected if needed, and billing-ready before the finance team picks it up.',
+    week: 'W6–W7',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Review Queue',
+        screen: 'Transports Grid (Review Filter)',
+        desc: 'Filter for completed transports in Pending Review state. AG Grid with review-status column.',
+        uc: 'UC-04c'
+      },
+      {
+        name: 'Transport Review',
+        screen: 'Transport Detail',
+        desc: 'Review workflow: Pending → Needs Attention → Processed. Data quality checks integrated. Fetch final Samsara route metrics (actual arrival/departure, mileage).',
+        uc: 'UC-04c',
+        branch: {
+          label: 'Review outcomes',
+          items: ['Processed → passes to billing', '"Needs Attention" → flag for follow-up', 'Void/Cancel with reason code → void causation tracked']
+        }
+      },
+      {
+        name: 'Transport Edit (if needed)',
+        screen: 'Transport Edit Drawer',
+        desc: 'Cancel/void with reason types. Role-based backdating with audit trail. Record lock acquired on open.',
+        uc: 'UC-04d'
+      },
+      {
+        name: 'Route Edit (if needed)',
+        screen: 'Route Edit Drawer',
+        desc: 'Transfer transports between drivers, reorder stops, modify layout, route cancel/void via Samsara.',
+        uc: 'UC-04e'
+      },
+      {
+        name: 'Transport Marked Processed',
+        desc: 'Transport passes into billing review queue. Processed status blocks further edits (unless status manually changed first).',
+        uc: 'UC-04c',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'billing',
+    role: 'finance',
+    icon: '💰',
+    iconBg: '#ECFEFF',
+    title: 'Billing & Claims',
+    subtitle: 'Finance Specialist · Full billing lifecycle: review, claims, 837P EDI, Waystar, payer management — so that every eligible transport reaches the correct payer in the right format, and outstanding claims can be tracked until they\'re resolved.',
+    week: 'W5–W7',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Billing Review',
+        screen: 'Billing Grid',
+        desc: '15+ filter options rebuilt on performant AG Grid. Review status workflow preserved. All numeric fields use proper numeric DB types (no float epsilon issues).',
+        uc: 'UC-05a'
+      },
+      {
+        name: 'Claims Processing',
+        screen: 'Claims View',
+        desc: 'ServiceLine grouping logic. Group transports into claim batches. Proper numeric types for billing calculations.',
+        uc: 'UC-05b'
+      },
+      {
+        name: 'Payer Management',
+        screen: 'Payer Config',
+        desc: 'Per-tenant payer configuration. Each tenant maintains their own payer list and insurance configs. NPI, TIN, payer IDs, clearinghouse credentials.',
+        uc: 'UC-05f'
+      },
+      {
+        name: 'Private Contract Export',
+        screen: 'Export Modal',
+        desc: 'CSV export for non-insurance contracts. Revenue-critical path — significant number of active private contracts.',
+        uc: 'UC-05e'
+      },
+      {
+        name: 'Electronic Claims Submission (837P)',
+        screen: 'EDI Submission',
+        desc: 'X12 837P EDI generation in TypeScript. Waystar SFTP upload via Step Functions. Per-tenant billing config applied.',
+        uc: 'UC-05c'
+      },
+      {
+        name: 'Claims Status Tracking',
+        desc: 'Manual mark complete/outstanding for tracking which claims are still pending.',
+        uc: 'UC-05g',
+        isFinal: true
+      }
+    ]
+  },
+
+
+  {
+    id: 'route-dispatch',
+    role: 'dispatcher',
+    icon: '🗺️',
+    iconBg: '#EEF2FF',
+    title: 'Route Dispatch (Manual Multi-Stop)',
+    subtitle: 'Dispatcher · Build and dispatch a custom multi-stop route from the Routes page — so that trips not captured in the overnight optimization run, or requiring manual override, can be grouped and dispatched to a single driver.',
+    priority: 'p0',
+    week: 'W5–W6',
+    steps: [
+      {
+        name: 'Open Routes Page',
+        screen: 'Routes Page AG Grid',
+        desc: 'Routes page shows all routes with status tabs (Upcoming, In Progress, Finished, Canceled, Voided). Real-time SSE updates. Click "Create" to open the RouteCreateDrawer.',
+        uc: 'UC-03c'
+      },
+      {
+        name: 'Select Transport Requests',
+        screen: 'TR Selector Grid (Drawer)',
+        desc: 'Embedded AG Grid inside the drawer shows undispatched, non-voided TRs with future pickup times. Dispatcher selects one or more TRs. Selection order tracked for stop-sequencing tie-breaks.',
+        uc: 'UC-03c'
+      },
+      {
+        name: 'Sequence Stops & Validate Schedule',
+        screen: 'RouteCreateDrawer',
+        desc: 'Auto-orders TRs by requested pickup time; places each Dropoff at the cheapest haversine-distance position after its Pickup. Drag-and-drop to override. Schedule calculator uses Google Directions API legs. Violation detector blocks dispatch if a pickup arrives late or stop order is invalid.',
+        uc: 'UC-03c',
+        branch: {
+          label: 'Schedule options',
+          items: [
+            'Time anchor: start departure OR first pickup arrival',
+            'Per-stop service time configurable',
+            '"Return to Start" toggle adds home leg to Samsara route'
+          ]
+        }
+      },
+      {
+        name: 'Assign Driver & Vehicle',
+        screen: 'RouteCreateDrawer',
+        desc: 'Real-time driver availability via SSE: HOS status, vehicle GPS proximity to route start, sorted by distance. Color markers: green = no active route, yellow = pre-route, red = active route.',
+        uc: 'UC-03c',
+        branch: {
+          label: "Driver's Last Route flag",
+          items: ["Toggle ON → activates Step 6 (Return Home / End of Day) in the driver's trip log"]
+        }
+      },
+      {
+        name: 'Dispatch to App & Samsara',
+        screen: 'RouteCreateDrawer',
+        desc: 'Pre-flight validation: driver + vehicle selected, ≥1 TR, schedule complete, no violations. Creates Transport records per TR via atomic DB transactions. Marks TRs dispatched. Enqueues Samsara multi-route creation via Graphile Worker (async, circuit breaker + retry).',
+        uc: 'UC-03c',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'admin-data',
+    role: 'dispatcher',
+    icon: '🗄️',
+    iconBg: '#EEF2FF',
+    title: 'Reference Data Management',
+    subtitle: 'Dispatcher · Manage clients and facilities (employee + entity management are handled by other roles — see All Roles panel) — so that the client and facility records every dispatch and billing decision depends on are always accurate and deduplicated.',
+    week: 'W3–W5',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Client Management',
+        screen: 'Clients Grid',
+        desc: 'Search-first (27,000+ records). Client CRUD via drawer form. Duplicate detection (daily background job). Red flag management. Soft/hard merge unified. Age computed at query time.',
+        uc: 'UC-09a'
+      },
+      {
+        name: 'Facility Management',
+        screen: 'Facilities Grid',
+        desc: 'Search-first (12,500+ records). Google Places autocomplete. Duplicate detection by proximity. Facility Type field. Merge with TransportRequest reassignment.',
+        uc: 'UC-09b'
+      },
+
+    ]
+  },
+
+  {
+    id: 'ops-reporting',
+    role: 'manager',
+    icon: '📊',
+    iconBg: '#F5F3FF',
+    title: 'Ops Reporting & Analytics',
+    subtitle: 'Operations Manager · Full operational reports + data export (Finance can also access) — so that leadership can track operational performance and pull compliance-ready data without touching the underlying database.',
+    week: 'W6–W7',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Operations Report',
+        screen: 'Reports Page',
+        desc: 'Basic operational analytics for leadership reporting. Data lives in Aurora — cannot run from V1. Rebuilt on Drizzle queries + Chart.js.',
+        uc: 'UC-08a'
+      },
+      {
+        name: 'Data Export',
+        screen: 'Export Query Builder',
+        desc: 'Query builder for table export. Trip log PDFs. Operators need to pull data — all data lives in Aurora.',
+        uc: 'UC-08d'
+      }
+    ]
+  },
+
+  // ── DRIVER ────────────────────────────────
+  {
+    id: 'driver-upcoming',
+    role: 'driver',
+    icon: '📅',
+    iconBg: '#ECFDF5',
+    title: "View Today's Upcoming Rides",
+    subtitle: 'Driver · Start of day: see assigned rides requiring action — so that drivers always know exactly which rides they\'re responsible for that day, even with poor rural connectivity.',
+    week: 'W4–W5',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Login (Mobile PWA)',
+        screen: 'Login Screen (Mobile)',
+        desc: 'Cognito auth. MFA optional for drivers. Role-based redirect → Driver dashboard. Session survives connectivity loss via Service Worker + retry queue.',
+        uc: 'UC-10a',
+        isMobile: true
+      },
+      {
+        name: 'Upcoming Rides Dashboard',
+        screen: 'Rides List (Mobile)',
+        desc: 'Mobile-optimized card layout. Loads transports where trip_log_status ≠ Complete or signature is missing. Grouped by route (multi-stop) or standalone. Sorted chronologically.',
+        uc: 'UC-06a',
+        isMobile: true
+      },
+      {
+        name: 'Ride Card Detail',
+        screen: 'Ride Card',
+        desc: 'Each card: pickup/dropoff addresses, transport notes, scheduled times, status. Tap to expand detail or start trip log.',
+        uc: 'UC-06a',
+        isMobile: true
+      },
+      {
+        name: 'Select Ride to Execute',
+        desc: 'Driver taps a ride to begin the trip log execution journey.',
+        uc: 'UC-06a',
+        isFinal: true,
+        isMobile: true
+      }
+    ]
+  },
+
+  {
+    id: 'driver-trip-prescheduled',
+    role: 'driver',
+    icon: '🗺️',
+    iconBg: '#ECFDF5',
+    title: 'Execute Pre-Scheduled Trip',
+    subtitle: 'Driver · 6-step trip log for assigned route stops — so that drivers can log each stop in sequence with a consistent, reliable workflow and dispatchers get a real-time status trail for every planned route.',
+    week: 'W5–W6',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Step 1 — Before Departing',
+        screen: 'Trip Log Step 1 (Mobile)',
+        desc: 'Enter starting mileage and departure time. Confirm client safety flags (fall risk, self-harm, violence, elopement) before departing.',
+        uc: 'UC-06c',
+        isMobile: true
+      },
+      {
+        name: 'Step 2 — Arrived at Pickup',
+        screen: 'Trip Log Step 2 (Mobile)',
+        desc: 'Log arrival time at pickup facility. View pickup notes and driver transport notes.',
+        uc: 'UC-06c',
+        isMobile: true
+      },
+      {
+        name: 'Step 3 — Client Loaded',
+        screen: 'Trip Log Step 3 (Mobile)',
+        desc: 'Confirm client is in vehicle. Safety flag review displayed. Click-to-call contacts (client, emergency contact, referrer).',
+        uc: 'UC-06c',
+        isMobile: true
+      },
+      {
+        name: 'Step 4 — En Route to Dropoff',
+        screen: 'Trip Log Step 4 (Mobile)',
+        desc: 'In-transit status. Real-time Samsara GPS tracking active. Driver can view dropoff contact info and click-to-call.',
+        uc: 'UC-06c',
+        isMobile: true
+      },
+      {
+        name: 'Step 5 — Arrived at Dropoff',
+        screen: 'Trip Log Step 5 (Mobile)',
+        desc: 'Log arrival at destination. View dropoff notes. Ending mileage entry.',
+        uc: 'UC-06c',
+        isMobile: true
+      },
+      {
+        name: 'Step 6 — Complete & Signature',
+        screen: 'Signature Capture (Mobile)',
+        desc: 'Capture client signature via touch/stylus. S3 upload via presigned URL. Transport marked complete. Ride disappears from upcoming rides list.',
+        uc: 'UC-06c',
+        isMobile: true,
+        isFinal: true,
+        branch: {
+          label: "If dispatcher flagged Driver's Last Route at dispatch time",
+          items: [
+            'Step 6b activates: Return Home / End of Day — driver records end-of-day time + final mileage (odometer reading at home)',
+            "This step is gated by the dispatcher's toggle at dispatch time — the driver does not initiate it"
+          ]
+        }
+      }
+    ]
+  },
+
+  {
+    id: 'driver-trip-crisis',
+    role: 'driver',
+    icon: '🚨',
+    iconBg: '#ECFDF5',
+    title: 'Execute Crisis Trip',
+    subtitle: 'Driver · On-demand single transport execution (same 6-step flow) — so that drivers can handle an unplanned urgent transport using the same familiar workflow as a pre-scheduled trip, without requiring dispatcher intervention to get started.',
+    week: 'W5–W6',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Crisis Trip Selected',
+        screen: 'Rides List (Mobile)',
+        desc: 'Crisis trips appear as standalone cards (no route grouping). Same card format as pre-scheduled.',
+        uc: 'UC-06b',
+        isMobile: true
+      },
+      {
+        name: 'Steps 1–6: Same as Pre-Scheduled',
+        screen: 'Trip Log (Mobile)',
+        desc: 'Unified trip log component handles both crisis (single transport) and pre-scheduled (multi-stop route) modes. Feature parity achieved in V2 — V1 had gaps in cancellation and form uploads for crisis.',
+        uc: 'UC-06b',
+        isMobile: true,
+        branch: {
+          label: 'Crisis-specific differences',
+          items: [
+            'No route grouping — single transport view',
+            'May be dispatched same-day or same-hour',
+            'Dispatcher initiates via Manual Dispatch flow'
+          ]
+        }
+      },
+      {
+        name: 'Step 3 — Client Intake (SPTHB & Insurance)',
+        screen: 'Trip Log Step 3 (Mobile)',
+        desc: 'Tribal status, tribe affiliations (multi-select), SSN (AES-256-GCM encrypted), ZIP, insurance type/policy. SPTHB form check: if client has not completed the Southern Plains Tribal Health Board mental health intake form, Survey.js renders it inline for driver to capture. Signature saved to S3.',
+        uc: 'UC-06b-04, UC-06b-12, UC-06b-13',
+        isMobile: true
+      },
+      {
+        name: 'Cancellation Request (driver submits)',
+        desc: 'Driver captures cancellation reason and pickup outcome code + current mileage, then submits a cancellation request. Async notification fires to dispatcher team (SES email via Graphile Worker). Dispatcher processes the actual transport state change. V1 gap fixed in V2.',
+        uc: 'UC-06b',
+        isMobile: true,
+        isFinal: true,
+        branch: {
+          label: 'Pickup outcome codes',
+          items: ['No Show', 'Refused', 'Facility Canceled', 'Weather', 'Other (free text)']
+        }
+      }
+    ]
+  },
+
+
+  {
+    id: 'driver-past-rides',
+    role: 'driver',
+    icon: '📜',
+    iconBg: '#ECFDF5',
+    title: 'View Past Rides',
+    subtitle: 'Driver · P1 — completed ride history — so that drivers can reference their completed trip history for accountability, mileage tracking, and dispute resolution.',
+    priority: 'p1',
+    steps: [
+      {
+        name: 'Past Rides View',
+        screen: 'Past Rides (Mobile)',
+        desc: 'Driver views completed ride history. Must be in V2 — data lives in Aurora (V1 app cannot read Aurora post-migration). P1 priority for post-May 15.',
+        uc: 'UC-06d',
+        isMobile: true,
+        isFinal: true
+      }
+    ]
+  },
+
+  // ── DISPATCHER: Communications ─────────────
+  {
+    id: 'comms',
+    role: 'dispatcher',
+    icon: '📡',
+    iconBg: '#EEF2FF',
+    title: 'Communications & Notifications',
+    subtitle: 'Dispatcher · SMS, email, and confirmation workflows with clients and drivers — so that clients and drivers receive timely messages at every stage of a transport, with a full audit trail of everything sent.',
+    week: 'W4–W5',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Outbound SMS — Client Notifications',
+        screen: 'Auto-trigger (Server)',
+        desc: '5 existing V1 SMS templates + 6 new V2 use cases: night-before TANF confirmations, 2-way confirmation/cancellation flows, driver ETA notifications, day-ahead cancellation alerts. All dispatched via Graphile Worker async tasks through AWS SNS. Tenant-aware origination number.',
+        uc: 'UC-11a'
+      },
+      {
+        name: 'Two-Way SMS Confirmation Session',
+        screen: 'SMS (Client Mobile)',
+        desc: 'Client receives confirmation SMS with reply instructions. Inbound reply routed via SNS to Graphile Worker task handler. Accepts or cancels the transport. Dispatcher notified of outcome. Session state tracked per transport.',
+        uc: 'UC-11a',
+        branch: {
+          label: 'Client reply outcomes',
+          items: ['Confirm → TR status updated, dispatcher notified', 'Cancel → TR cancelled, cancellation flow triggered', 'No reply → transport proceeds as scheduled']
+        }
+      },
+      {
+        name: 'Email Notifications',
+        screen: 'Auto-trigger (SES)',
+        desc: 'Submission confirmations to entities. Dispatch notifications. Cancellation notices. All SES-based (Outlook/SMTP stack removed). Password reset and welcome emails via Cognito-managed flows. Tenant-aware sender domains.',
+        uc: 'UC-11c'
+      },
+      {
+        name: 'Communication Audit Trail',
+        desc: 'Every outbound SMS and email is logged with delivery status. Dispatcher can view communication history from the Transport Detail drawer. Required for compliance and dispute resolution.',
+        uc: 'UC-11e (P2)',
+        isFinal: true
+      }
+    ]
+  },
+
+  // ── DISPATCHER: Issues (P1) ──────────────────
+  {
+    id: 'issues',
+    role: 'dispatcher',
+    icon: '🚩',
+    iconBg: '#EEF2FF',
+    title: 'Issue Tracking',
+    subtitle: 'Dispatcher / Manager · Create and manage issues linked to transport records — so that operational problems are documented, escalated if needed, and tied directly to the transport record they affect.',
+    week: 'Post May 15',
+    priority: 'p1',
+    steps: [
+      {
+        name: 'Create Issue from Transport Grid',
+        screen: 'Transport Grid — Issue Badge',
+        desc: 'Badge column on transport grid shows open issue count per transport. "New Issue" action opens creation form with transport pre-populated. Captures title, description, severity, and optional assignment. Issue linked via transport_id FK.',
+        uc: 'UC-14a'
+      },
+      {
+        name: 'Issue Detail & Comment Thread',
+        screen: 'Issue Drawer',
+        desc: 'Drawer-based view with comment thread, @mention notifications (triggers email to mentioned user). Dispatcher can comment, resolve, or escalate. Escalation triggers email to all managers and adds issue to escalation queue.',
+        uc: 'UC-14b, UC-14c'
+      },
+      {
+        name: 'Issues Page',
+        screen: '/issues',
+        desc: 'Dedicated page with tabbed views: Open, Escalated, Resolved. Searchable/filterable AG Grid. Managers see additional HR Records tab (not rendered in DOM for non-managers). Export to CSV.',
+        uc: 'UC-14d'
+      },
+      {
+        name: 'Manager: HR Record Creation',
+        screen: 'HR Record Drawer (Manager-only)',
+        desc: 'Managers can create private HR Records from any issue. HR Records have separate resolution workflow, private comment thread, and linkage to employee records. Only visible to manager role. State agency compliance requirement.',
+        uc: 'UC-14e',
+        isFinal: true
+      }
+    ]
+  },
+
+  // ── OPERATIONS MANAGER ───────────────────────
+  {
+    id: 'fleet-mgmt',
+    role: 'manager',
+    icon: '🚌',
+    iconBg: '#F5F3FF',
+    title: 'Fleet & Driver Management',
+    subtitle: 'Operations Manager · Vehicle CRUD, Samsara sync, driver scheduling & availability — so that the right drivers and vehicles are available when dispatch needs them, with scheduling data always in sync with Samsara.',
+    week: 'W5–W6',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Vehicle Management',
+        screen: 'Fleet Grid',
+        desc: 'AG Grid (server-side). Vehicle CRUD via drawer. Inline editing for quick updates. Fields: make/model, license plate, status (In Service / Out of Service), Samsara device ID, vehicle capacity. Tenant-scoped via RLS.',
+        uc: 'UC-07a'
+      },
+      {
+        name: 'Samsara Bidirectional Sync',
+        screen: 'Sync Status Panel',
+        desc: 'Unified Samsara service handles GPS caching (Valkey, 30s TTL), OBD odometer, vehicle stats, driver-vehicle assignment sync via Graphile Worker. Conflict resolution: diff view for app vs. Samsara field conflicts. GPS/odometer: Samsara authoritative.',
+        uc: 'UC-07a'
+      },
+      {
+        name: 'Driver Scheduling & Availability',
+        screen: 'Driver Scheduling Grid',
+        desc: 'Per-driver shift configuration: start/end times, flexibility windows, days of week, vehicle assignment, capacity overrides, home address (for last-route calculation). Fed into NextBillion.ai optimization payload.',
+        uc: 'UC-07b'
+      },
+      {
+        name: 'Fleet Data Feeds Dispatch Optimization',
+        desc: 'Scheduling grid data + Samsara GPS = input to Bulk Dispatch optimization. Manager configures driver pool; Dispatcher runs the optimization. Manager sees fleet utilization in Ops Reporting.',
+        uc: 'UC-07a, UC-07b',
+        isFinal: true
+      }
+    ]
+  },
+
+  // ── FINANCE SPECIALIST (manager also reads) ──
+  // billing journey is already defined above with role: 'finance'
+  // ops-reporting is already defined above with role: 'manager'
+
+  // ── CLIENT ADMIN (deferred, minimal) ─────────
+  {
+    id: 'client-portal',
+    role: 'client-admin',
+    icon: '🏢',
+    iconBg: '#FFF7ED',
+    title: 'Client Organization Portal',
+    subtitle: 'Client Administrator · View own org transport activity and manage portal settings — so that external client organizations can self-serve visibility into their transport activity without contacting RideCare staff.',
+    week: 'Post-launch',
+    priority: 'p1',
+    isOpenQuestion: false,
+    steps: [
+      {
+        name: 'Login (Client Admin)',
+        screen: 'Login Screen (Web)',
+        desc: 'Cognito auth. client_admin Cognito group. MFA optional. Post-login route: client portal (separate from ops dashboard). All data scoped to own requesting_entity_id via RLS.',
+        uc: 'UC-10a, UC-13a'
+      },
+      {
+        name: 'View Org Transport Activity',
+        screen: 'Client Portal Dashboard',
+        desc: 'Read-only view of transport requests for own organization. Status, scheduling, driver assignment visible. Client SSN, medical notes, and home address hidden. No other organization data accessible.',
+        uc: 'UC-13a'
+      },
+      {
+        name: '⚠ Deferred: Portal Settings & Self-Service',
+        desc: 'Full self-service capabilities (managing org preferences, submitter user management, detailed reporting) are explicitly post-launch. Personas doc states: "minimal feature set at launch — full self-service capabilities are post-launch." Not in May 15 scope.',
+        uc: 'UC-13b (deferred)',
+        isFinal: true
+      }
+    ]
+  },
+
+  // ── DRIVER: Ancillary Forms (P1) ─────────────
+  {
+    id: 'driver-ancillary',
+    role: 'driver',
+    icon: '📋',
+    iconBg: '#ECFDF5',
+    title: 'Ancillary Forms Submission',
+    subtitle: 'Driver · P1 — Incident reports, crash reports, fuel receipts, maintenance, mileage — so that drivers can submit required operational forms in-app, ensuring nothing falls through the cracks after a difficult trip.',
+    week: 'Post May 15',
+    priority: 'p1',
+    steps: [
+      {
+        name: 'Driver Form Directory',
+        screen: 'Forms Hub (Mobile)',
+        desc: 'Hub page listing all submitted driver forms with filters: form type, vehicle, submitter, date range. "Submit New Form" button opens form-type selection dialog.',
+        uc: 'UC-06e'
+      },
+      {
+        name: 'Incident Report',
+        screen: 'Incident Report Form',
+        desc: 'Survey.js form: vehicle, employee, incident type, date/time, location (Google Places), client involved (optional), two description fields, photo/video upload (S3, 50MB limit), dual signatures (employee + supervisor).',
+        uc: 'UC-06e-F03'
+      },
+      {
+        name: 'Crash Report',
+        screen: 'Crash Report Form',
+        desc: '360-degree damage photo uploads, driver/client injury flags, narrative, dual signatures. S3 presigned URLs for all uploads.',
+        uc: 'UC-06e-F04'
+      },
+      {
+        name: 'Fuel Receipt / Maintenance / Mileage',
+        screen: 'Form Variants (Mobile)',
+        desc: 'Fuel receipt: transaction ID, station, fuel type/amount/cost. Vehicle maintenance: mileage, issue description, photo. Mileage statement: required by customer even with Samsara telemetry available (CTO confirmed keep).',
+        uc: 'UC-06e-F05, F06, F07',
+        isFinal: true
+      }
+    ]
+  },
+
+
+  // ── SUBMITTER ─────────────────────────────
+  {
+    id: 'submit-tr',
+    role: 'requester',
+    icon: '📝',
+    iconBg: '#FFFBEB',
+    title: 'Submit Transport Request',
+    subtitle: 'External Requester · Social workers, agencies, tribal entities submitting ride requests — so that each organization can submit accurate ride requests through a form tailored to their entity, reducing intake errors and back-and-forth with dispatchers.',
+    week: 'W2–W4',
+    priority: 'p0',
+    steps: [
+      {
+        name: 'Navigate to Entity Form URL',
+        screen: 'Public Form (Web)',
+        desc: 'URL contains requesterId parameter → loads entity-specific Survey.js form definition. Tenant branding applied. No login required.',
+        uc: 'UC-01a'
+      },
+      {
+        name: 'Fill Client Information',
+        screen: 'Form — Section 1',
+        desc: 'Client name (auto title-cased), DOB, SSN, demographics, insurance type (from entity config). Safety flags (fall risk, violence, elopement, etc.).',
+        uc: 'UC-01a',
+        branch: {
+          label: 'Form mode',
+          items: [
+            'Full form: all sections (standard submissions)',
+            'Truncated form: name + destination only (dedicated driver + local area entities)'
+          ]
+        }
+      },
+      {
+        name: 'Enter Pickup & Destination',
+        screen: 'Form — Addresses',
+        desc: 'Google Places autocomplete + saved facility lookup. Rejects addresses without valid Place ID or facility reference. ETA feasibility check vs. appointment time.',
+        uc: 'UC-01a'
+      },
+      {
+        name: 'Transport Details & Scheduling',
+        screen: 'Form — Transport Info',
+        desc: 'Pickup time (30+ min future), appointment time, return trip (4+ hours future). Advanced types: multi-stop, parent/accompanying rider, return trips.',
+        uc: 'UC-01a, UC-01g'
+      },
+      {
+        name: 'Upload Support Files (optional)',
+        screen: 'Form — File Upload',
+        desc: 'Multi-file upload direct to S3 via presigned URLs. Temporary path renamed to submission number during async processing.',
+        uc: 'UC-01a'
+      },
+      {
+        name: 'SMS Opt-In & Submit',
+        screen: 'Form — Submit',
+        desc: 'Opt-in checkbox for SMS status updates. Client-side validation → single JSON payload write → async server-side TR creation (1–2 min SLA).',
+        uc: 'UC-01a, UC-01f'
+      },
+      {
+        name: 'Confirmation & Notifications',
+        screen: 'Confirmation Page',
+        desc: 'Form shows submission confirmation. Server-side async processing: entity notification email (SES), dispatch team notification email, SMS opt-in queued.',
+        uc: 'UC-01a',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'email-intake',
+    role: 'requester',
+    icon: '📧',
+    iconBg: '#FFFBEB',
+    title: 'Email-to-TR Intake (State Forms)',
+    subtitle: 'External Requester · State agency form emails routed automatically into V2 — so that the high daily volume of state agency form emails flows directly into V2 without manual re-entry, keeping the intake pipeline intact through the migration.',
+    priority: 'p0',
+    week: 'W4–W5',
+    steps: [
+      {
+        name: 'State Agency Sends Form Email',
+        desc: 'Existing state agencies submit transport requests via email (state-mandated form format). Significant daily volume — cannot defer.',
+        uc: 'UC-01c'
+      },
+      {
+        name: 'FlowRunner Routes to V2 API',
+        desc: 'P0 path: existing FlowRunner email processor redirected to point at the V2 API endpoint. No full rebuild required for May 15.',
+        uc: 'UC-01c'
+      },
+      {
+        name: 'TR Created in V2',
+        desc: 'Transport request appears in dispatcher intake queue, same as web form submission. All downstream dispatch/validation journeys apply.',
+        uc: 'UC-01c',
+        isFinal: true
+      }
+    ]
+  },
+
+  {
+    id: 'sms-cancel',
+    role: 'requester',
+    icon: '💬',
+    iconBg: '#FFFBEB',
+    title: 'Self-Service Cancellation via SMS',
+    subtitle: 'External Requester / Client · Cancel a scheduled transport via text reply — so that clients and riders can cancel a scheduled transport by replying to a text without calling dispatch, keeping this path working after the V1→V2 migration.',
+    priority: 'p0',
+    week: 'W4–W5',
+    steps: [
+      {
+        name: 'Receive SMS Confirmation',
+        screen: 'SMS (Mobile)',
+        desc: 'Client/submitter receives automated SMS confirmation when ride is booked (if opted in). Includes reply instructions.',
+        uc: 'UC-01e',
+        isMobile: true
+      },
+      {
+        name: 'Reply to Cancel',
+        screen: 'SMS (Mobile)',
+        desc: 'Two-way SMS session via AWS SNS. Client replies with cancellation keyword. Generalized beyond TANF-only (V1 limitation removed).',
+        uc: 'UC-01e',
+        isMobile: true
+      },
+      {
+        name: 'Cancellation Processed',
+        desc: 'Transport request updated to cancelled status. Dispatcher notified. Transport removed from dispatch queue.',
+        uc: 'UC-01e',
+        isFinal: true
+      }
+    ]
+  }
+
+];
+
+// ##COMPLETION_DATA_START##
+const DONE_UCS = new Set(["UC-00a", "UC-00c", "UC-00e", "UC-00g", "UC-00i", "UC-00j", "UC-00k", "UC-12b", "UC-12d"]);
+const DONE_JOURNEYS = new Set([]);
+const QA_UCS = new Set(["UC-00b", "UC-10a", "UC-10c"]);
+const OPEN_UCS = new Set(["UC-01a", "UC-01b", "UC-01c", "UC-01e", "UC-01f", "UC-01g", "UC-02a", "UC-02b", "UC-02c", "UC-02d", "UC-03a", "UC-03e", "UC-05a", "UC-05b", "UC-05c", "UC-05e", "UC-05f", "UC-05g", "UC-06a", "UC-07a", "UC-07b", "UC-09a", "UC-09b", "UC-09c", "UC-09f", "UC-10b", "UC-10d", "UC-10e", "UC-11a", "UC-11c", "UC-12c", "UC-13a", "UC-13b"]);  // tracked in ClickUp but not done/QA
+// ##COMPLETION_DATA_END##
+
+// ─────────────────────────────────────────────
+// Render engine
+// ─────────────────────────────────────────────
+function renderStep(step, color) {
+  const isMobile = step.isMobile;
+  const screenLabel = step.screen
+    ? `<div class="screen-label${isMobile ? ' mobile' : ''}">${step.screen}</div>`
+    : '';
+  const ucLabel = step.uc
+    ? `<div class="flow-step-uc">${step.uc}</div>`
+    : '';
+  const branch = step.branch
+    ? `<div class="flow-branch">
+        <div class="flow-branch-label">${step.branch.label}</div>
+        ${step.branch.items.map(i => `<div class="flow-branch-item">${i}</div>`).join('')}
+      </div>` : '';
+
+  return `
+    <div class="flow-step">
+      <div class="flow-rail">
+        <div class="flow-node-dot${step.isFinal ? ' filled' : ''}" style="color:${color}; ${step.isFinal ? `background:${color}; border-color:${color}` : `border-color:${color}`}"></div>
+        ${step.isFinal ? '' : '<div class="flow-line"></div>'}
+      </div>
+      <div class="flow-content">
+        <div class="flow-step-name">${step.name}</div>
+        ${screenLabel}
+        <div class="flow-step-desc">${step.desc}</div>
+        ${branch}
+        ${ucLabel}
+      </div>
+    </div>`;
+}
+
+function renderCard(journey) {
+  const colorMap = {
+    dispatcher:     '#0D9488',
+    driver:         '#BE185D',
+    requester:      '#F59E0B',
+    shared:         '#8B5CF6',
+    manager:        '#CA8A04',
+    finance:        '#16A34A',
+    'client-admin': '#2563EB',
+  };
+  const color = colorMap[journey.role] || '#6366F1';
+  const priorityTag = journey.priority === 'p0'
+    ? '<span class="tag tag-p0">P0</span>'
+    : '<span class="tag tag-p1">P1</span>';
+  const weekBadge = journey.week ? `<span class="week-badge">${journey.week}</span>` : '';
+
+  const steps = journey.steps.map(s => renderStep(s, color)).join('');
+
+  const oqClass = journey.isOpenQuestion ? ' open-question' : '';
+  const oqBanner = journey.isOpenQuestion
+    ? `<div class="oq-banner"><strong>⚠ Open question</strong> — this journey is not fully specified in the V2 specs. The steps below reflect what can be inferred, with explicit gaps called out.</div>`
+    : '';
+
+  return `
+    <div class="journey-card${oqClass}" data-journey-id="${journey.id}">
+      <div class="journey-header" onclick="this.closest('.journey-card').classList.toggle('open')">
+        <div class="journey-icon" style="background:${journey.iconBg}">${journey.icon}</div>
+        <div class="journey-meta">
+          <div class="journey-title">${journey.title}${priorityTag}${weekBadge}</div>
+          <div class="journey-subtitle">${journey.subtitle}</div>
+        </div>
+        <div class="journey-chevron">▼</div>
+      </div>
+      <div class="flow-panel">
+        ${oqBanner}
+        <div class="flow">${steps}</div>
+      </div>
+    </div>`;
+}
+
+// populate grids
+function populateGrids() {
+  const targets = {
+    shared:       ['shared-in-all',       'shared-panel-grid'],
+    dispatcher:   ['dispatcher-in-all',   'dispatcher-panel-grid'],
+    driver:       ['driver-in-all',       'driver-panel-grid'],
+    requester:    ['requester-in-all',    'requester-panel-grid'],
+    manager:      ['manager-in-all',      'manager-panel-grid'],
+    finance:      ['finance-in-all',      'finance-panel-grid'],
+    'client-admin': ['client-admin-in-all', 'client-admin-panel-grid'],
+  };
+
+  journeys.forEach(j => {
+    const gridIds = targets[j.role] || [];
+    const html = renderCard(j);
+    gridIds.forEach(gid => {
+      const el = document.getElementById(gid);
+      if (el) el.innerHTML += html;
+    });
+  });
+}
+
+function switchRole(role) {
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.role-tab[data-role="${role}"]`).classList.add('active');
+  document.querySelectorAll('.role-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + role).classList.add('active');
+  if (role === 'flowmap') requestAnimationFrame(drawArrows);
+}
+
+function navigateToJourney(journeyId, role) {
+  // Switch to the role-specific tab (or 'all' for shared)
+  const targetRole = (role === 'shared') ? 'shared' : role;
+  // client-admin → panel-client-admin, manager → panel-manager, finance → panel-finance
+  switchRole(targetRole);
+
+  // Find the card in the active panel and open + scroll to it
+  requestAnimationFrame(() => {
+    const panel = document.getElementById('panel-' + targetRole);
+    const card = panel ? panel.querySelector(`[data-journey-id="${journeyId}"]`) : null;
+    if (card) {
+      // Close any other open cards in the panel
+      panel.querySelectorAll('.journey-card.open').forEach(c => { if (c !== card) c.classList.remove('open'); });
+      card.classList.add('open');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+}
+
+// ── Draw SVG arrows for the flow map ──
+function drawArrows() {
+  const container = document.getElementById('flowmap-container');
+  const svg = document.getElementById('flowmap-arrows');
+  if (!container || !svg) return;
+
+  // Helper: get center point of a node relative to container
+  function center(jid) {
+    const el = container.querySelector(`[data-jid="${jid}"]`);
+    if (!el) return null;
+    return {
+      x: el.offsetLeft + el.offsetWidth / 2,
+      y: el.offsetTop  + el.offsetHeight / 2,
+      l: el.offsetLeft,
+      r: el.offsetLeft + el.offsetWidth,
+      t: el.offsetTop,
+      b: el.offsetTop  + el.offsetHeight
+    };
+  }
+
+  // Remove previously drawn paths
+  svg.querySelectorAll('.flow-arrow').forEach(e => e.remove());
+
+  // Arrow helper (straight or curved)
+  function arrow(x1, y1, x2, y2, marker, color, dashed) {
+    const dx = x2 - x1, dy = y2 - y1;
+    const cx1 = x1 + dx * 0.45, cy1 = y1;
+    const cx2 = x1 + dx * 0.55, cy2 = y2;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', color || '#94A3B8');
+    path.setAttribute('stroke-width', '1.8');
+    path.setAttribute('marker-end', `url(#${marker || 'arr'})`);
+    if (dashed) path.setAttribute('stroke-dasharray', '5,3');
+    path.classList.add('flow-arrow');
+    svg.appendChild(path);
+  }
+
+  const c = {};
+  const ids = ['auth','profile','submit-tr','email-intake','sms-cancel',
+                'intake-validation','admin-data','manual-dispatch','bulk-dispatch','route-dispatch',
+                'ops-monitoring','post-transport','comms','issues',
+                'fleet-mgmt','billing','ops-reporting','client-portal',
+                'driver-upcoming','driver-trip-prescheduled','driver-trip-crisis',
+                'driver-ancillary'];
+  ids.forEach(id => { c[id] = center(id); });
+
+  // Submit TR → Intake Validation (cross-role: requester→dispatcher)
+  if (c['submit-tr'] && c['intake-validation'])
+    arrow(c['submit-tr'].r, c['submit-tr'].y, c['intake-validation'].l, c['intake-validation'].t + 14, 'arr-cross', '#A5B4FC', true);
+
+  // Email Intake → Intake Validation (cross-role, downward)
+  if (c['email-intake'] && c['intake-validation'])
+    arrow(c['email-intake'].x, c['email-intake'].b, c['intake-validation'].x, c['intake-validation'].t, 'arr-cross', '#A5B4FC', true);
+
+  // Intake Validation → Manual Dispatch
+  if (c['intake-validation'] && c['manual-dispatch'])
+    arrow(c['intake-validation'].r, c['intake-validation'].t + 14, c['manual-dispatch'].l, c['manual-dispatch'].y, 'arr', '#94A3B8');
+
+  // Intake Validation → Bulk Dispatch
+  if (c['intake-validation'] && c['bulk-dispatch'])
+    arrow(c['intake-validation'].r, c['intake-validation'].b - 14, c['bulk-dispatch'].l, c['bulk-dispatch'].y, 'arr', '#94A3B8');
+
+  // Manual Dispatch → Ops Monitoring
+  if (c['manual-dispatch'] && c['ops-monitoring'])
+    arrow(c['manual-dispatch'].r, c['manual-dispatch'].y, c['ops-monitoring'].l, c['ops-monitoring'].t + 12, 'arr', '#94A3B8');
+
+  // Bulk Dispatch → Ops Monitoring
+  if (c['bulk-dispatch'] && c['ops-monitoring'])
+    arrow(c['bulk-dispatch'].r, c['bulk-dispatch'].y, c['ops-monitoring'].l, c['ops-monitoring'].b - 12, 'arr', '#94A3B8');
+
+  // Ops Monitoring → Post Transport
+  if (c['ops-monitoring'] && c['post-transport'])
+    arrow(c['ops-monitoring'].r, c['ops-monitoring'].y, c['post-transport'].l, c['post-transport'].y, 'arr', '#94A3B8');
+
+  // Post Transport → Billing (cross-role: dispatcher→finance)
+  if (c['post-transport'] && c['billing'])
+    arrow(c['post-transport'].r, c['post-transport'].y, c['billing'].l, c['billing'].y, 'arr-cross', '#A5B4FC', true);
+
+  // Fleet Mgmt → Driver Upcoming (cross-role: manager→driver, schedule feeds driver)
+  if (c['fleet-mgmt'] && c['driver-upcoming'])
+    arrow(c['fleet-mgmt'].r, c['fleet-mgmt'].y, c['driver-upcoming'].l, c['driver-upcoming'].y, 'arr-cross', '#C4B5FD', true);
+
+  // Ops Monitoring → Ops Reporting (manager sees reporting from monitoring data)
+  if (c['ops-monitoring'] && c['ops-reporting'])
+    arrow(c['ops-monitoring'].r, c['ops-monitoring'].b - 8, c['ops-reporting'].l, c['ops-reporting'].y, 'arr-cross', '#A5B4FC', true);
+
+
+  // Post Transport → Ops Reporting
+  if (c['post-transport'] && c['ops-reporting'])
+    arrow(c['post-transport'].r, c['post-transport'].b - 12, c['ops-reporting'].l, c['ops-reporting'].y, 'arr', '#94A3B8');
+
+  // Manual Dispatch → Driver Upcoming (cross-role: dispatcher→driver)
+  if (c['manual-dispatch'] && c['driver-upcoming'])
+    arrow(c['manual-dispatch'].x, c['manual-dispatch'].b, c['driver-upcoming'].l, c['driver-upcoming'].y, 'arr-cross', '#A5B4FC', true);
+
+  // Bulk Dispatch → Driver Upcoming (cross-role)
+  if (c['bulk-dispatch'] && c['driver-upcoming'])
+    arrow(c['bulk-dispatch'].x + 20, c['bulk-dispatch'].b, c['driver-upcoming'].x, c['driver-upcoming'].t, 'arr-cross', '#A5B4FC', true);
+
+  // Driver Upcoming → Pre-Scheduled
+  if (c['driver-upcoming'] && c['driver-trip-prescheduled'])
+    arrow(c['driver-upcoming'].r, c['driver-upcoming'].t + 12, c['driver-trip-prescheduled'].l, c['driver-trip-prescheduled'].y, 'arr-driver', '#6EE7B7');
+
+  // Driver Upcoming → Crisis
+  if (c['driver-upcoming'] && c['driver-trip-crisis'])
+    arrow(c['driver-upcoming'].r, c['driver-upcoming'].b - 12, c['driver-trip-crisis'].l, c['driver-trip-crisis'].y, 'arr-driver', '#6EE7B7');
+
+  // Pre-Scheduled → loop back to Upcoming Rides (arc above)
+  if (c['driver-trip-prescheduled'] && c['driver-upcoming']) {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const x1 = c['driver-trip-prescheduled'].x, y1 = c['driver-trip-prescheduled'].t;
+    const x2 = c['driver-upcoming'].x + 20,     y2 = c['driver-upcoming'].t;
+    p.setAttribute('d', `M${x1},${y1} C${x1},${y1-38} ${x2},${y2-38} ${x2},${y2}`);
+    p.setAttribute('fill','none'); p.setAttribute('stroke','#6EE7B7');
+    p.setAttribute('stroke-width','1.6'); p.setAttribute('stroke-dasharray','4,3');
+    p.setAttribute('marker-end','url(#arr-driver)');
+    p.classList.add('flow-arrow');
+    svg.appendChild(p);
+  }
+
+  // Crisis → loop back to Upcoming Rides (arc below)
+  if (c['driver-trip-crisis'] && c['driver-upcoming']) {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const x1 = c['driver-trip-crisis'].x,    y1 = c['driver-trip-crisis'].b;
+    const x2 = c['driver-upcoming'].x - 10,  y2 = c['driver-upcoming'].b;
+    p.setAttribute('d', `M${x1},${y1} C${x1},${y1+38} ${x2},${y2+38} ${x2},${y2}`);
+    p.setAttribute('fill','none'); p.setAttribute('stroke','#6EE7B7');
+    p.setAttribute('stroke-width','1.6'); p.setAttribute('stroke-dasharray','4,3');
+    p.setAttribute('marker-end','url(#arr-driver)');
+    p.classList.add('flow-arrow');
+    svg.appendChild(p);
+  }
+
+  // Intake Validation → Route Dispatch
+  if (c['intake-validation'] && c['route-dispatch'])
+    arrow(c['intake-validation'].r, c['intake-validation'].b + 4, c['route-dispatch'].l, c['route-dispatch'].y, 'arr', '#94A3B8');
+
+  // Route Dispatch → Ops Monitoring
+  if (c['route-dispatch'] && c['ops-monitoring'])
+    arrow(c['route-dispatch'].r, c['route-dispatch'].t + 12, c['ops-monitoring'].l, c['ops-monitoring'].b + 4, 'arr', '#94A3B8');
+
+  // Route Dispatch → Driver Upcoming (cross-role)
+  if (c['route-dispatch'] && c['driver-upcoming'])
+    arrow(c['route-dispatch'].x, c['route-dispatch'].b, c['driver-upcoming'].x - 24, c['driver-upcoming'].t, 'arr-cross', '#A5B4FC', true);
+}
+
+populateGrids();
+// ##POST_RENDER_DONE_START##
+// Apply .done / .qa to individual flow steps
+document.querySelectorAll('.flow-step-uc').forEach(function(el) {
+  var ucs = el.textContent.split(',').map(function(u) { return u.trim(); });
+  if (ucs.some(function(u) { return DONE_UCS.has(u); })) {
+    el.closest('.flow-step').classList.add('done');
+  } else if (ucs.some(function(u) { return QA_UCS.has(u); })) {
+    el.closest('.flow-step').classList.add('qa');
+  }
+});
+
+// Build journey status map from journey-card UC data
+var journeyStatusMap = {};
+document.querySelectorAll('.journey-card').forEach(function(card) {
+  var jid = card.dataset.journeyId;
+  if (!jid) return;
+  var ucSet = new Set();
+  card.querySelectorAll('.flow-step-uc').forEach(function(el) {
+    el.textContent.split(',').forEach(function(u) {
+      var t = u.trim(); if (t) ucSet.add(t);
+    });
+  });
+  if (ucSet.size === 0) return;
+  var hasOpen = false, hasQA = false, allDone = true;
+  ucSet.forEach(function(u) {
+    if (OPEN_UCS.has(u))       { hasOpen = true; allDone = false; }
+    else if (QA_UCS.has(u))    { hasQA   = true; allDone = false; }
+    else if (!DONE_UCS.has(u)) { allDone = false; }
+  });
+  var status = null;
+  if (allDone)                    status = 'complete';
+  else if (!hasOpen && hasQA)     status = 'qa';
+  else if (hasOpen || hasQA)      status = 'inprogress';
+  if (status) journeyStatusMap[jid] = status;
+});
+
+// Apply badges to journey card headers
+document.querySelectorAll('.journey-card').forEach(function(card) {
+  var jid = card.dataset.journeyId;
+  var status = jid && journeyStatusMap[jid];
+  if (!status) return;
+  var titleEl = card.querySelector('.journey-title');
+  if (titleEl && !titleEl.querySelector('.journey-status-badge')) {
+    var labels = { complete: '✓ Complete', qa: '🧪 In QA', inprogress: '● In Progress' };
+    var span = document.createElement('span');
+    span.className = 'journey-status-badge status-' + status;
+    span.textContent = labels[status];
+    titleEl.appendChild(span);
+  }
+});
+
+// Apply status classes + pill badges to system flow map nodes (fnodes)
+document.querySelectorAll('.fnode[data-jid]').forEach(function(node) {
+  var jid = node.dataset.jid;
+  var status = journeyStatusMap[jid];
+  if (DONE_JOURNEYS.has(jid)) status = 'complete';
+  if (!status) return;
+  node.classList.add(status === 'inprogress' ? 'inprogress' : status);
+  if (!node.querySelector('.fnode-status')) {
+    var labels = { complete: '✓ Complete', qa: '🧪 In QA', inprogress: '● In Progress' };
+    var pill = document.createElement('div');
+    pill.className = 'fnode-status status-' + status;
+    pill.textContent = labels[status];
+    node.appendChild(pill);
+  }
+});
+// ##POST_RENDER_DONE_END##
+</script>
+</body>
+</html>
