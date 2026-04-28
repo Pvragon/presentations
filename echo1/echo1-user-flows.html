@@ -290,7 +290,7 @@
 
 <div class="site-header">
   <h1>Echo1 · User Flows &amp; Role Journeys</h1>
-  <p>Derived from 86 UCs · 1,302 features · Spec v2 · Generated 2026-04-06</p>
+  <p>Derived from 86 UCs · 1,302 features · Spec v2 · Generated <span id="gen-date"></span></p>
 </div>
 
 <div class="main">
@@ -2136,6 +2136,14 @@ document.querySelectorAll('.fnode[data-jid]').forEach(function(node) {
   }
 });
 // ##POST_RENDER_DONE_END##
+
+// Dynamic dates — always show today
+(function() {
+  const today = new Date();
+  const iso = today.toISOString().slice(0, 10); // YYYY-MM-DD
+  const el = document.getElementById('gen-date');
+  if (el) el.textContent = iso;
+})();
 </script>
 </body>
 </html>
