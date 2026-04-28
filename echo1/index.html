@@ -385,7 +385,7 @@
                     <a class="prez-card" href="echo1-user-flows.html" data-search="user flows journeys dispatch billing driver auth uc status qa in progress done role map">
                         <div class="prez-title">Echo1 User Flows <i class="fa-solid fa-arrow-right arrow"></i></div>
                         <div class="prez-desc">End-to-end user journey map with live QA/completion status</div>
-                        <div class="prez-meta">Apr 23, 2026</div>
+                        <div class="prez-meta"><span id="flows-date"></span></div>
                     </a>
                 </li>
                 </ul>
@@ -524,6 +524,9 @@
             }
             draw();
         })();
-    </script>
+    
+// Dynamic date for user flows card
+document.getElementById('flows-date').textContent = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+</script>
 </body>
 </html>
