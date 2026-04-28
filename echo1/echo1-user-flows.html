@@ -263,16 +263,16 @@
     font-size: 13px; line-height: 1; pointer-events: none;
   }
   .flow-step.qa .flow-step-name { color: #b45309; }
-  /* Fnode status pill (bottom of map node) — sole status indicator on map */
+  /* Fnode status pill (bottom of map node) */
   .fnode-status {
     display: inline-block; margin-top: 5px;
     font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
     padding: 1px 6px; border-radius: 8px; text-transform: uppercase;
   }
   .fnode-status.status-complete    { background: #d1fae5; color: #065f46; }
-  .fnode-status.status-qa         { background: #fef3c7; color: #92400e; }
-  .fnode-status.status-inprogress { background: #ede9fe; color: #5b21b6; }
-  /* Journey-level status badges (user flow card headers) */
+  .fnode-status.status-qa          { background: #fef3c7; color: #92400e; }
+  .fnode-status.status-inprogress  { background: #ede9fe; color: #5b21b6; }
+  /* Journey-level status badges (journey card headers) */
   .journey-status-badge {
     display: inline-flex; align-items: center;
     font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
@@ -281,8 +281,8 @@
     text-transform: uppercase;
   }
   .status-complete    { background: #d1fae5; color: #065f46; }
-  .status-qa         { background: #fef3c7; color: #92400e; }
-  .status-inprogress { background: #ede9fe; color: #5b21b6; }
+  .status-qa          { background: #fef3c7; color: #92400e; }
+  .status-inprogress  { background: #ede9fe; color: #5b21b6; }
   /* ##DONE_STATE_END## */
 </style>
 </head>
@@ -1792,8 +1792,8 @@ const journeys = [
 // ##COMPLETION_DATA_START##
 const DONE_UCS = new Set(["UC-00a", "UC-00c", "UC-00e", "UC-00g", "UC-00i", "UC-00j", "UC-00k", "UC-09f", "UC-12b", "UC-12d", "UC-13a"]);
 const DONE_JOURNEYS = new Set([]);
-const QA_UCS = new Set(["UC-00b", "UC-09a", "UC-09c", "UC-10a", "UC-10b", "UC-10c"]);
-const OPEN_UCS = new Set(["UC-00d", "UC-00f", "UC-00h", "UC-01a", "UC-01b", "UC-01c", "UC-01e", "UC-01f", "UC-01g", "UC-02a", "UC-02b", "UC-02c", "UC-02d", "UC-03a", "UC-03e", "UC-05a", "UC-05b", "UC-05c", "UC-05e", "UC-05f", "UC-05g", "UC-06a", "UC-07a", "UC-07b", "UC-10d", "UC-10e", "UC-11a", "UC-11c", "UC-12c", "UC-13b"]);  // tracked in ClickUp but not done/QA
+const QA_UCS = new Set(["UC-00b", "UC-08a", "UC-09a", "UC-09c", "UC-10a", "UC-10b", "UC-10c"]);
+const OPEN_UCS = new Set(["UC-00d", "UC-00f", "UC-00h", "UC-00l", "UC-01a", "UC-01b", "UC-01c", "UC-01e", "UC-01f", "UC-01g", "UC-02a", "UC-02b", "UC-02c", "UC-02d", "UC-03a", "UC-03b", "UC-03c", "UC-03d", "UC-03e", "UC-04a", "UC-04b", "UC-04c", "UC-04d", "UC-04e", "UC-05a", "UC-05b", "UC-05c", "UC-05e", "UC-05f", "UC-05g", "UC-06a", "UC-06b", "UC-06c", "UC-07a", "UC-07b", "UC-08b", "UC-08c", "UC-09b", "UC-09d", "UC-09e", "UC-10d", "UC-10e", "UC-11a", "UC-11c", "UC-12c", "UC-13b"]);  // tracked in ClickUp but not done/QA
 // ##COMPLETION_DATA_END##
 
 // ─────────────────────────────────────────────
@@ -2071,14 +2071,16 @@ populateGrids();
 // Apply .done / .qa to individual flow steps
 document.querySelectorAll('.flow-step-uc').forEach(function(el) {
   var ucs = el.textContent.split(',').map(function(u) { return u.trim(); });
+  var step = el.closest('.flow-step');
+  if (!step) return;
   if (ucs.some(function(u) { return DONE_UCS.has(u); })) {
-    el.closest('.flow-step').classList.add('done');
+    step.classList.add('done');
   } else if (ucs.some(function(u) { return QA_UCS.has(u); })) {
-    el.closest('.flow-step').classList.add('qa');
+    step.classList.add('qa');
   }
 });
 
-// Build journey status map from journey-card UC data
+// Build journey status map from UC mix in each journey card
 var journeyStatusMap = {};
 document.querySelectorAll('.journey-card').forEach(function(card) {
   var jid = card.dataset.journeyId;
@@ -2097,20 +2099,20 @@ document.querySelectorAll('.journey-card').forEach(function(card) {
     else if (!DONE_UCS.has(u)) { allDone = false; }
   });
   var status = null;
-  if (allDone)                    status = 'complete';
-  else if (!hasOpen && hasQA)     status = 'qa';
-  else if (hasOpen || hasQA)      status = 'inprogress';
+  if (allDone)                 status = 'complete';
+  else if (!hasOpen && hasQA)  status = 'qa';
+  else if (hasOpen || hasQA)   status = 'inprogress';
   if (status) journeyStatusMap[jid] = status;
 });
 
-// Apply badges to journey card headers
+// Inject status badge into journey card headers
 document.querySelectorAll('.journey-card').forEach(function(card) {
   var jid = card.dataset.journeyId;
   var status = jid && journeyStatusMap[jid];
   if (!status) return;
   var titleEl = card.querySelector('.journey-title');
   if (titleEl && !titleEl.querySelector('.journey-status-badge')) {
-    var labels = { complete: '✓ Complete', qa: '🧪 In QA', inprogress: '● In Progress' };
+    var labels = { complete: '\u2713 Complete', qa: '\uD83E\uDDEA In QA', inprogress: '\u25CF In Progress' };
     var span = document.createElement('span');
     span.className = 'journey-status-badge status-' + status;
     span.textContent = labels[status];
@@ -2118,7 +2120,7 @@ document.querySelectorAll('.journey-card').forEach(function(card) {
   }
 });
 
-// Apply status classes + pill badges to system flow map nodes (fnodes)
+// Apply status class + pill to system flow map nodes (fnodes)
 document.querySelectorAll('.fnode[data-jid]').forEach(function(node) {
   var jid = node.dataset.jid;
   var status = journeyStatusMap[jid];
@@ -2126,7 +2128,7 @@ document.querySelectorAll('.fnode[data-jid]').forEach(function(node) {
   if (!status) return;
   node.classList.add(status === 'inprogress' ? 'inprogress' : status);
   if (!node.querySelector('.fnode-status')) {
-    var labels = { complete: '✓ Complete', qa: '🧪 In QA', inprogress: '● In Progress' };
+    var labels = { complete: '\u2713 Complete', qa: '\uD83E\uDDEA In QA', inprogress: '\u25CF In Progress' };
     var pill = document.createElement('div');
     pill.className = 'fnode-status status-' + status;
     pill.textContent = labels[status];
