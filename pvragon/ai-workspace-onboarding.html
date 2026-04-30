@@ -210,14 +210,19 @@
             margin-bottom: 2.5rem;
             filter: brightness(1.1);
         }
-
-        .logo-corner {
+        /* Faded Pvragon wordmark watermark, centered along the bottom of
+           the slide card. Subtle brand presence on every slide — sits
+           above the controls bar in the otherwise-empty bottom padding.
+           Pointer-events: none so it never blocks navigation clicks. */
+        .logo-watermark {
             position: absolute;
-            top: 18px;
-            right: 24px;
-            height: 46px;
-            opacity: 0.45;
-            z-index: 30;
+            bottom: 72px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 22px;
+            opacity: 0.18;
+            z-index: 10;
+            pointer-events: none;
         }
 
         /* DOE diagram */
@@ -483,6 +488,29 @@
             z-index: 30;
             mix-blend-mode: screen;
         }
+        /* "Back to Pvragon presentations" link in the top-right corner.
+           Mirrors slide-counter positioning. Subtle but always accessible. */
+        .back-link {
+            position: absolute;
+            top: 28px;
+            right: 32px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-subtle);
+            text-decoration: none;
+            z-index: 30;
+            opacity: 0.65;
+            transition: opacity 0.2s ease, color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .back-link:hover {
+            opacity: 1;
+            color: var(--accent-orange);
+        }
+        .back-link i { font-size: 0.75rem; }
+
 
         /* Controls */
         .controls {
@@ -613,8 +641,11 @@
 
         <div class="interior-glow"></div>
         <div class="slide-counter" id="slideCounter">1 / 13</div>
+        <a class="back-link" href="index.html" title="Back to all Pvragon presentations">
+            <i class="fa-solid fa-arrow-left"></i> Presentations
+        </a>
 
-        <img src="https://cdn.pvragon.com/pvragon-logo-teal.svg" alt="Pvragon" class="logo-corner" id="logoCorner">
+        <img class="logo-watermark" src="https://cdn.pvragon.com/pvragon-logo-teal.svg" alt="Pvragon">
 
         <!-- Slide 1: Title -->
         <div class="slide active">
@@ -1004,7 +1035,6 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const slideCounter = document.getElementById('slideCounter');
-        const logoCorner = document.getElementById('logoCorner');
 
         function updateUI() {
             slides.forEach((slide, index) => {
@@ -1018,7 +1048,6 @@
             const progress = (currentSlide / (slides.length - 1)) * 100;
             progressBar.style.width = `${progress}%`;
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            logoCorner.style.display = (currentSlide === 0 || currentSlide === slides.length - 1) ? 'none' : 'block';
             prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
 
             if (currentSlide === slides.length - 1) {
