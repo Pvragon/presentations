@@ -743,26 +743,16 @@
            phone. Restores horizontal layout (overrides the stacking rules
            above). The canvas resize() handler swaps its drawing buffer
            dimensions to match. */
-        /* PHONE-SIZED LANDSCAPE — applies BOTH when the phone is held
-           portrait (we rotate via the transform below) AND when the phone
-           is held in actual landscape. Both have a short vertical viewport
-           (~393px) that needs aggressive content scaling. The first selector
-           catches portrait-held; the second catches landscape-held. */
-        @media (max-width: 600px) and (orientation: portrait),
-               (max-height: 500px) and (orientation: landscape) {
-            /* Reclaim vertical real estate */
-            #presentation {
-                height: 94vh;
-                width: 96%;
-                border-radius: 14px;
-            }
-            .controls { bottom: 14px; padding: 0 18px; }
-            .btn { padding: 6px 16px; font-size: 0.8rem; }
-            .progress-container { border-radius: 0 0 14px 14px; }
-
-            /* Horizontal layouts (overriding any portrait-stacking from
-               the @media (max-width: 768px) and (orientation: portrait)
-               block above) */
+        /* PHONE in actual LANDSCAPE — short vertical viewport (~393px),
+           needs aggressive content scaling so slides fit. We do NOT
+           force-rotate when the phone is held portrait; users rotate
+           themselves. The first selector targets phones in landscape
+           by their short height; iPad landscape has height 768+ and
+           does not match. */
+        @media (max-height: 500px) and (orientation: landscape) {
+            /* Horizontal layouts — diagrams, grids, equations stay in row
+               regardless of any portrait-stacking rules earlier in the
+               cascade. */
             .diagram-container { flex-direction: row; gap: 0.5rem; margin-top: 0.5rem; }
             .arrow { transform: none; font-size: 1rem; }
             .node { width: 130px; max-width: none; min-width: 110px; padding: 0.5rem 0.4rem; }
@@ -774,7 +764,7 @@
             .equation-part { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
             .equation-op { font-size: 1.1rem; }
 
-            /* Aggressive typography downscale */
+            /* Aggressive typography downscale to fit ~322px content area */
             .slide { padding: 0.5rem 1.25rem 3rem; }
             h1 { font-size: 1.6rem; margin-bottom: 0.3rem; line-height: 1.15; }
             h2 { font-size: 1.3rem; margin-bottom: 0.4rem; }
@@ -805,30 +795,14 @@
             .cta-btn { font-size: 0.95rem; padding: 8px 22px; }
             .cta-subtext { font-size: 0.75rem; margin-top: 0.4rem; }
 
-            /* Smaller slide-counter + back-link to match the new scale */
+            /* Smaller controls + nav badges to match the scale */
+            .controls { bottom: 14px; padding: 0 18px; }
+            .btn { padding: 6px 16px; font-size: 0.8rem; }
             .slide-counter { top: 14px; left: 18px; font-size: 0.75rem; }
             .back-link { top: 14px; right: 18px; font-size: 0.7rem; }
 
             /* Watermark too low / too small at this size — hide it */
             .logo-watermark { display: none !important; }
-        }
-
-        /* Phone PORTRAIT only: visually rotate the deck so users see
-           landscape content even when holding the phone portrait.
-           Rules above already provide the tight content layout — this
-           block adds only the rotation transform. */
-        @media (max-width: 600px) and (orientation: portrait) {
-            body {
-                width: 100vh;
-                height: 100vw;
-                overflow: hidden;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin-top: -50vw;
-                margin-left: -50vh;
-                transform: rotate(-90deg);
-            }
         }
     </style>
 </head>
@@ -1142,19 +1116,8 @@
             let w, h, time = 0;
 
             function resize() {
-                // When the deck is visually rotated (phone portrait via the
-                // CSS transform in the responsive block), the body's CSS
-                // dimensions are swapped — so the canvas needs the swapped
-                // values too, otherwise the waves get distorted.
-                const isPhonePortrait = window.innerWidth <= 600
-                    && window.innerHeight > window.innerWidth;
-                if (isPhonePortrait) {
-                    w = canvas.width = window.innerHeight;
-                    h = canvas.height = window.innerWidth;
-                } else {
-                    w = canvas.width = window.innerWidth;
-                    h = canvas.height = window.innerHeight;
-                }
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
             }
             window.addEventListener('resize', resize);
             window.addEventListener('orientationchange', resize);
