@@ -744,6 +744,37 @@
             .node h3 { font-size: 0.75rem; margin-bottom: 0.05rem; }
             .node p, .node span { font-size: 0.6rem; line-height: 1.15; }
             .arrow { font-size: 0.85rem; }
+
+            /* Custom-component overrides for landscape phone */
+            .slide > i.fa-solid:first-child,
+            .slide > i.fa-brands:first-child { font-size: 1.4rem !important; margin-bottom: 0.2rem !important; }
+
+            /* dir-columns (workspace-on-disk style directory listing) */
+            .dir-columns { gap: 0.4rem; margin-top: 0.3rem; }
+            .dir-columns .dir-col { padding: 0.3rem 0.4rem; font-size: 0.65rem; }
+            .dir-columns .dir-col h3 { font-size: 0.7rem; margin-bottom: 0.1rem; }
+            .dir-columns .dir-col p,
+            .dir-columns .dir-col li { font-size: 0.6rem; line-height: 1.2; }
+
+            /* stack-grid (8 cards in a grid) — 4 columns, tight cells */
+            .stack-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 0.25rem; margin-top: 0.3rem; }
+            .stack-grid .stack-card { padding: 0.3rem 0.4rem; font-size: 0.65rem; }
+            .stack-grid .stack-card h3 { font-size: 0.7rem; margin-bottom: 0.05rem; }
+            .stack-grid .stack-card p,
+            .stack-grid .stack-card span { font-size: 0.55rem; line-height: 1.15; }
+
+            /* tier-stack (4 vertical tier rows) — tight padding */
+            .tier-stack { gap: 0.3rem; margin-top: 0.3rem; }
+            .tier-stack > * { padding: 0.3rem 0.6rem !important; gap: 0.5rem !important; }
+            .tier-stack > * h3 { font-size: 0.75rem; margin-bottom: 0.1rem; }
+            .tier-stack > * p { font-size: 0.65rem; line-height: 1.25; }
+            .tier-stack > * i { font-size: 1rem; }
+
+            /* flow-visual (vertical flow with N steps) — go horizontal */
+            .flow-visual { flex-direction: row !important; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
+            .flow-row { gap: 0.3rem; }
+            .flow-box { padding: 0.3rem 0.6rem !important; font-size: 0.65rem !important; }
+            .flow-arrow-down { display: none; }
         }
     </style>
 </head>
