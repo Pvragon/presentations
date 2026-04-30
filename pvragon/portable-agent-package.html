@@ -453,6 +453,8 @@
             color: var(--accent-orange);
             margin-top: 0.2rem;
             flex-shrink: 0;
+            width: 1.6em;
+            text-align: center;
         }
 
         .memory-item .item-text {
@@ -739,7 +741,7 @@
     <div id="presentation">
 
         <div class="interior-glow"></div>
-        <div class="slide-counter" id="slideCounter">1 / 11</div>
+        <div class="slide-counter" id="slideCounter">1 / 12</div>
         <a class="back-link" href="index.html" title="Back to all Pvragon presentations">
             <i class="fa-solid fa-arrow-left"></i> Presentations
         </a>
@@ -781,24 +783,28 @@
             </div>
         </div>
         <div class="slide">
-            <h2>Five load-bearing <span class="highlight">principles</span></h2>
-            <p>If an agent only remembers five things from this package, these are them. Everything else operationalizes one of these.</p>
+            <h2>Six core <span class="highlight">principles</span></h2>
+            <p>Ordered by impact &mdash; how much each shapes outcomes when applied vs. skipped. Everything else in the package operationalizes one of these.</p>
             <div class="memory-list">
                 <div class="memory-item">
                     <i class="fa-solid fa-layer-group"></i>
-                    <div class="item-text"><strong>DOE architecture</strong> &mdash; push deterministic work into code, never into the LLM</div>
+                    <div class="item-text"><strong>DOE architecture</strong> &mdash; push deterministic work into code, not the LLM</div>
+                </div>
+                <div class="memory-item">
+                    <i class="fa-solid fa-file-pen"></i>
+                    <div class="item-text"><strong>File-first output</strong> &mdash; files are the canonical state, not conversation</div>
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-database"></i>
                     <div class="item-text"><strong>Layered memory</strong> &mdash; memory has lifetimes; don&rsquo;t flatten them</div>
                 </div>
                 <div class="memory-item">
-                    <i class="fa-solid fa-eye"></i>
-                    <div class="item-text"><strong>Progressive disclosure</strong> &mdash; surface area is on-demand, not always-on</div>
+                    <i class="fa-solid fa-rotate"></i>
+                    <div class="item-text"><strong>Quantized iteration</strong> &mdash; small units, durable state, fresh context each loop</div>
                 </div>
                 <div class="memory-item">
-                    <i class="fa-solid fa-rotate"></i>
-                    <div class="item-text"><strong>Ralph-loop harness</strong> &mdash; long-running work is a structured loop, not a single shot</div>
+                    <i class="fa-solid fa-eye"></i>
+                    <div class="item-text"><strong>Progressive disclosure</strong> &mdash; surface area is on-demand, not always-on</div>
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-wrench"></i>
@@ -808,8 +814,8 @@
         </div>
 
         <div class="slide">
-            <h2>1. <span class="highlight">DOE</span> &mdash; deterministic work in code</h2>
-            <p>Three layers, separated by what kind of computation each one trusts.</p>
+            <h2><span class="highlight">DOE</span></h2>
+            <p class="subtitle">Directive &middot; Orchestration &middot; Execution</p>
             <div class="diagram-container">
                 <div class="node node-orange">
                     <i class="fa-solid fa-file-lines"></i>
@@ -835,8 +841,22 @@
         </div>
 
         <div class="slide">
-            <h2>2. <span class="highlight">Layered memory</span> &mdash; lifetimes, not a flat blob</h2>
-            <p>Agent memory splits across four lifetimes &mdash; each with different storage, retrieval, and decay.</p>
+            <h2><span class="highlight">File-first output</span></h2>
+            <p class="subtitle">Files are the canonical state, not conversation</p>
+            <ul class="bullet-list">
+                <li>Every <strong>decision, plan, intermediate result, and deliverable</strong> lives in a known location</li>
+                <li>Conversation context is volatile; the <strong>filesystem is durable</strong> &mdash; survives compaction, vendor switches, team handoffs</li>
+                <li>Structured directories with conventions: <code>runtime/.tmp/</code>, <code>runtime/deliverables/</code>, <code>directives/</code>, <code>executions/</code></li>
+                <li>It&rsquo;s the <strong>substrate</strong> that makes layered memory and progressive disclosure work</li>
+            </ul>
+            <div class="quote-block" style="margin-top: 1.5rem;">
+                <p>If it&rsquo;s worth doing, it&rsquo;s worth writing down. Conversation forgets; files don&rsquo;t.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2><span class="highlight">Layered memory</span></h2>
+            <p class="subtitle">Lifetimes, not a flat blob</p>
             <div class="memory-list">
                 <div class="memory-item">
                     <i class="fa-solid fa-archive"></i>
@@ -858,47 +878,49 @@
         </div>
 
         <div class="slide">
-            <h2>3. <span class="highlight">Progressive disclosure</span> &mdash; load only what you need</h2>
-            <ul class="bullet-list">
-                <li>Every agent-consumable file carries a one-line <strong>summary</strong> in YAML frontmatter</li>
-                <li>Index files <strong>aggregate</strong> those summaries into a discovery table</li>
-                <li>Agents <strong>scan the index</strong>, decide relevance, then load only the files that matter for this turn</li>
-                <li>No &ldquo;just-in-case&rdquo; loading &mdash; context windows are finite and expensive</li>
-            </ul>
-            <div class="quote-block" style="margin-top: 1.5rem;">
-                <p>Human-pre-selected tags beat LLM-search-every-time. The summary is a <em>cheap</em> relevance signal.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h2>4. <span class="highlight">Ralph-loop harness</span> &mdash; structured, not single-shot</h2>
-            <p>For multi-hour autonomous work, the runtime is a loop with three roles &mdash; never one prompt doing it all.</p>
+            <h2><span class="highlight">Quantized iteration</span></h2>
+            <p class="subtitle">Small units &middot; durable state &middot; fresh context each loop</p>
             <div class="diagram-container">
                 <div class="node node-orange">
-                    <i class="fa-solid fa-list-check"></i>
-                    <h3>Planner</h3>
-                    <span>Builds a machine-checkable feature list</span>
+                    <i class="fa-solid fa-cube"></i>
+                    <h3>Bound</h3>
+                    <span>Define one small, discrete unit of work</span>
                 </div>
                 <i class="fa-solid fa-caret-right arrow"></i>
                 <div class="node node-white">
-                    <i class="fa-solid fa-hammer"></i>
-                    <h3>Generator</h3>
-                    <span>Implements one feature at a time</span>
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <h3>Execute + persist</h3>
+                    <span>Do it; write status to a durable file</span>
                 </div>
                 <i class="fa-solid fa-caret-right arrow"></i>
                 <div class="node node-teal">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <h3>Evaluator</h3>
-                    <span>Independently verifies with concrete signals</span>
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <h3>Clear + resume</h3>
+                    <span>Fresh context; read the file; next unit</span>
                 </div>
             </div>
             <div class="quote-block" style="margin-top: 1.5rem;">
-                <p>&ldquo;Claimed done, actually broken&rdquo; is the dominant failure mode. Skeptical, browser-driven verification by a separate agent is the only reliable signal.</p>
+                <p>The MAKER finding plus Anthropic&rsquo;s harness papers (and Huntley&rsquo;s Ralph loop before them): &ldquo;claimed done, actually broken&rdquo; comes from compounding error in long contexts. Bound the unit, persist the state, reset the context &mdash; then iterate.</p>
             </div>
         </div>
 
         <div class="slide">
-            <h2>5. <span class="highlight">Self-annealing</span> &mdash; errors are instruction updates</h2>
+            <h2><span class="highlight">Progressive disclosure</span></h2>
+            <p class="subtitle">Load only what you need</p>
+            <ul class="bullet-list">
+                <li>Every agent-consumable file carries <strong>standardized YAML frontmatter</strong> &mdash; summary, version, last_updated, and more</li>
+                <li>The agent maintains <strong>registry index files</strong> that aggregate those summaries</li>
+                <li>When the agent needs something, it scans the registry first, then loads only the file that matters</li>
+                <li>No &ldquo;just-in-case&rdquo; loading &mdash; context windows are finite</li>
+            </ul>
+            <div class="quote-block" style="margin-top: 1.5rem;">
+                <p>Pre-summarized agent-curated indexes beat search-every-time.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2><span class="highlight">Self-annealing</span></h2>
+            <p class="subtitle">Errors are instruction updates</p>
             <ul class="bullet-list">
                 <li>When something breaks, fix it &mdash; <strong>then update</strong> the directive or skill so the next agent doesn&rsquo;t repeat the failure</li>
                 <li>Every directive carries a <strong>version</strong> + <strong>last_updated</strong>; every fix bumps it</li>
@@ -917,8 +939,8 @@
                 <li><strong>AGENT-OPERATING-MODEL.md</strong> &mdash; entry point; the <em>why</em> and the topic index</li>
                 <li><strong>REVIEWER-RUBRIC.md</strong> &mdash; 10-dimension anchored 1-5 rubric for convergence reviews</li>
                 <li><strong>references/00-primitive-translation.md</strong> &mdash; maps primitives across Claude Code, Codex, Cursor, Aider, MCP-only, in-house</li>
-                <li><strong>references/01-09</strong> &mdash; one deep-dive per principle: DOE, memory, harness, disclosure, multi-agent, skills, anti-rot, recipes, behavioral rules</li>
-                <li><strong>12 starter templates</strong> &mdash; AGENTS.md, MEMORY.md, SKILL.md, feature_list.json, council rubric, Ralph-loop pseudocode, and more</li>
+                <li><strong>references/01-09</strong> &mdash; one deep-dive per principle plus skills, anti-rot, recipes, behavioral rules</li>
+                <li><strong>12 starter templates</strong> &mdash; AGENTS.md, MEMORY.md, SKILL.md, feature_list.json, council rubric, loop-harness pseudocode, and more</li>
             </ul>
         </div>
 
