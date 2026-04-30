@@ -216,7 +216,7 @@
            Pointer-events: none so it never blocks navigation clicks. */
         .logo-watermark {
             position: absolute;
-            bottom: 72px;
+            bottom: 35px;
             left: 50%;
             transform: translateX(-50%);
             height: 22px;
@@ -1035,6 +1035,7 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const slideCounter = document.getElementById('slideCounter');
+        const logoWatermark = document.querySelector('.logo-watermark');
 
         function updateUI() {
             slides.forEach((slide, index) => {
@@ -1048,6 +1049,11 @@
             const progress = (currentSlide / (slides.length - 1)) * 100;
             progressBar.style.width = `${progress}%`;
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+
+            // Hide watermark on title and final slides (they show the full logo-header)
+            if (logoWatermark) {
+                logoWatermark.style.display = (currentSlide === 0 || currentSlide === slides.length - 1) ? 'none' : 'block';
+            }
             prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
 
             if (currentSlide === slides.length - 1) {
