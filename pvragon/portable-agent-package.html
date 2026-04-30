@@ -743,29 +743,14 @@
            phone. Restores horizontal layout (overrides the stacking rules
            above). The canvas resize() handler swaps its drawing buffer
            dimensions to match. */
-        @media (max-width: 600px) and (orientation: portrait) {
-            body {
-                /* Force-landscape via CSS rotation. Body is sized landscape
-                   (width: 100vh, height: 100vw), positioned at viewport
-                   center via top/left 50% + half-dimension margin offsets,
-                   then rotated -90deg around its own center. Result: body
-                   visually fills the portrait viewport with content laid
-                   out in landscape orientation. */
-                width: 100vh;
-                height: 100vw;
-                overflow: hidden;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin-top: -50vw;
-                margin-left: -50vh;
-                transform: rotate(-90deg);
-            }
-
-            /* Reclaim vertical real estate — the rotated landscape phone
-               viewport is short (~393px tall after rotation). Make the
-               slide card take nearly the full body and shrink the bottom
-               controls so they don't eat into content space. */
+        /* PHONE-SIZED LANDSCAPE — applies BOTH when the phone is held
+           portrait (we rotate via the transform below) AND when the phone
+           is held in actual landscape. Both have a short vertical viewport
+           (~393px) that needs aggressive content scaling. The first selector
+           catches portrait-held; the second catches landscape-held. */
+        @media (max-width: 600px) and (orientation: portrait),
+               (max-height: 500px) and (orientation: landscape) {
+            /* Reclaim vertical real estate */
             #presentation {
                 height: 94vh;
                 width: 96%;
@@ -775,8 +760,9 @@
             .btn { padding: 6px 16px; font-size: 0.8rem; }
             .progress-container { border-radius: 0 0 14px 14px; }
 
-            /* Restore horizontal layout (suppresses the narrow-portrait
-               stacking rules from the previous media query). */
+            /* Horizontal layouts (overriding any portrait-stacking from
+               the @media (max-width: 768px) and (orientation: portrait)
+               block above) */
             .diagram-container { flex-direction: row; gap: 0.5rem; margin-top: 0.5rem; }
             .arrow { transform: none; font-size: 1rem; }
             .node { width: 130px; max-width: none; min-width: 110px; padding: 0.5rem 0.4rem; }
@@ -795,8 +781,6 @@
             h3 { font-size: 0.95rem; margin-bottom: 0.2rem; }
             p { font-size: 0.85rem; line-height: 1.4; margin-bottom: 0.4rem; max-width: 100%; }
             .subtitle { font-size: 0.95rem; margin-bottom: 0.5rem; }
-
-            /* Smaller logo header on title + closing slides */
             .logo-header { height: 24px; margin-bottom: 0.5rem; }
 
             /* Tighter list components */
@@ -827,6 +811,24 @@
 
             /* Watermark too low / too small at this size — hide it */
             .logo-watermark { display: none !important; }
+        }
+
+        /* Phone PORTRAIT only: visually rotate the deck so users see
+           landscape content even when holding the phone portrait.
+           Rules above already provide the tight content layout — this
+           block adds only the rotation transform. */
+        @media (max-width: 600px) and (orientation: portrait) {
+            body {
+                width: 100vh;
+                height: 100vw;
+                overflow: hidden;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -50vw;
+                margin-left: -50vh;
+                transform: rotate(-90deg);
+            }
         }
     </style>
 </head>
