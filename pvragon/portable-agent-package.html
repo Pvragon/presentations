@@ -720,16 +720,59 @@
         /* ============================================================
            RESPONSIVE
            ============================================================ */
+        /* Narrow viewports (phones, small tablets): tighter typography */
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
             h2 { font-size: 1.8rem; }
             p { font-size: 1.05rem; }
             .slide { padding: 2rem 1.5rem; }
+        }
+
+        /* Narrow PORTRAIT (no rotation regime): vertical stacking for diagrams.
+           Used by tablets in portrait (e.g. iPad) which we don't auto-rotate. */
+        @media (max-width: 768px) and (orientation: portrait) {
             .diagram-container { flex-direction: column; gap: 0.8rem; }
             .arrow { transform: rotate(90deg); }
             .node { width: 100%; max-width: 280px; }
             .workspace-grid { grid-template-columns: 1fr; }
             .equation { flex-direction: column; }
+        }
+
+        /* Phone PORTRAIT (max 600px wide): visually rotate the deck so users
+           always see content in landscape, regardless of how they hold the
+           phone. Restores horizontal layout (overrides the stacking rules
+           above). The canvas resize() handler swaps its drawing buffer
+           dimensions to match. */
+        @media (max-width: 600px) and (orientation: portrait) {
+            body {
+                /* Force-landscape via CSS rotation. Body is sized landscape
+                   (width: 100vh, height: 100vw), positioned at viewport
+                   center via top/left 50% + half-dimension margin offsets,
+                   then rotated -90deg around its own center. Result: body
+                   visually fills the portrait viewport with content laid
+                   out in landscape orientation. */
+                width: 100vh;
+                height: 100vw;
+                overflow: hidden;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -50vw;
+                margin-left: -50vh;
+                transform: rotate(-90deg);
+            }
+            .diagram-container { flex-direction: row; gap: 1rem; }
+            .arrow { transform: none; }
+            .node { width: 180px; max-width: none; }
+            .workspace-grid { grid-template-columns: repeat(2, 1fr); }
+            .equation { flex-direction: row; }
+            /* Even tighter typography because rotated phone is short vertically */
+            h1 { font-size: 2.0rem; }
+            h2 { font-size: 1.5rem; }
+            p { font-size: 1rem; }
+            .slide { padding: 1.5rem 1.5rem 3rem; }
+            /* Watermark too low / too small at this size — hide it */
+            .logo-watermark { display: none !important; }
         }
     </style>
 </head>
@@ -1008,7 +1051,7 @@
 
             prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
             nextBtn.style.visibility = currentSlide === slides.length - 1 ? 'hidden' : 'visible';
-            nextBtn.innerHTML = 'Next <i class=\"fa-solid fa-arrow-right\"></i>';
+            nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
             nextBtn.onclick = () => changeSlide(1);
         }
 
@@ -1043,10 +1086,22 @@
             let w, h, time = 0;
 
             function resize() {
-                w = canvas.width = window.innerWidth;
-                h = canvas.height = window.innerHeight;
+                // When the deck is visually rotated (phone portrait via the
+                // CSS transform in the responsive block), the body's CSS
+                // dimensions are swapped — so the canvas needs the swapped
+                // values too, otherwise the waves get distorted.
+                const isPhonePortrait = window.innerWidth <= 600
+                    && window.innerHeight > window.innerWidth;
+                if (isPhonePortrait) {
+                    w = canvas.width = window.innerHeight;
+                    h = canvas.height = window.innerWidth;
+                } else {
+                    w = canvas.width = window.innerWidth;
+                    h = canvas.height = window.innerHeight;
+                }
             }
             window.addEventListener('resize', resize);
+            window.addEventListener('orientationchange', resize);
             resize();
 
             function drawWave(yBase, amplitude, wavelength, speed, color) {
