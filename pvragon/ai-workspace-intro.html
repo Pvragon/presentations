@@ -677,6 +677,54 @@
             .back-link { top: 14px; right: 18px; font-size: 0.7rem; }
 
             .logo-watermark { display: none !important; }
+
+            /* Slide content max-out — bring per-component heights down */
+            h1 { font-size: 1.4rem; margin-bottom: 0.2rem; line-height: 1.1; }
+            h2 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+            h3 { font-size: 0.85rem; margin-bottom: 0.15rem; }
+            p { font-size: 0.75rem; line-height: 1.3; margin-bottom: 0.3rem; max-width: 100%; }
+            .subtitle { font-size: 0.85rem; margin-bottom: 0.4rem; }
+            .slide { padding: 0.4rem 1rem 2.5rem; }
+            .logo-header { height: 22px; margin-bottom: 0.4rem; }
+
+            /* Bullet list */
+            .bullet-list li { font-size: 0.75rem; line-height: 1.3; margin-bottom: 0.05rem; padding-left: 0.7rem; }
+            .bullet-list li::before { width: 3px; height: 3px; top: 0.5em; }
+
+            /* Memory list (Four Tiers of Memory, Layers, etc.) */
+            .memory-item { gap: 0.4rem; margin-bottom: 0.15rem; }
+            .memory-item i { font-size: 0.85rem; width: 1em; margin-top: 0; }
+            .memory-item .item-text { font-size: 0.7rem; line-height: 1.25; }
+
+            /* Workspace grid: 2x2 → single row of 4 (Four Ways to Work etc.) */
+            .workspace-grid { grid-template-columns: repeat(4, 1fr); gap: 0.3rem; margin-top: 0.3rem; }
+            .workspace-card { padding: 0.4rem 0.5rem; border-radius: 6px; }
+            .workspace-card .card-icon { font-size: 0.95rem; margin-bottom: 0.15rem; }
+            .workspace-card h3 { font-size: 0.75rem; margin-bottom: 0.05rem; }
+            .workspace-card p { font-size: 0.6rem; line-height: 1.2; }
+
+            /* Stack-grid (onboarding-specific 2-col): also flatten to 4 */
+            .stack-grid { grid-template-columns: repeat(4, 1fr); gap: 0.3rem; }
+
+            /* Equation row */
+            .equation-part { padding: 0.3rem 0.5rem; font-size: 0.7rem; }
+            .equation-op { font-size: 0.95rem; }
+
+            /* Stat callout */
+            .stat-callout { padding: 0.3rem 0.7rem; margin-top: 0.3rem; }
+            .stat-callout p { font-size: 0.75rem; }
+            .stat-callout .stat-number { font-size: 1rem; }
+
+            /* Quote block */
+            .quote-block { padding: 0.25rem 0.6rem; margin-top: 0.3rem !important; }
+            .quote-block p { font-size: 0.7rem; }
+
+            /* Diagram nodes */
+            .node { width: 110px; min-width: 90px; padding: 0.4rem 0.3rem; }
+            .node i { font-size: 0.95rem; margin-bottom: 0.1rem; }
+            .node h3 { font-size: 0.75rem; margin-bottom: 0.05rem; }
+            .node p, .node span { font-size: 0.6rem; line-height: 1.15; }
+            .arrow { font-size: 0.85rem; }
         }
 
         /* Dependency flow visual */
