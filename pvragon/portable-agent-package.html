@@ -750,6 +750,17 @@
            by their short height; iPad landscape has height 768+ and
            does not match. */
         @media (max-height: 500px) and (orientation: landscape) {
+            /* Lock the card to the desktop aspect ratio (1280/738 ≈
+               1.73:1) instead of letting it stretch to the viewport's
+               wider 2.17:1+ ratio. Height-bounded by 82vh so card
+               heights match the existing scale. */
+            #presentation {
+                height: 82vh;
+                width: auto;
+                aspect-ratio: 1280 / 738;
+                max-width: 92%;
+            }
+
             /* Horizontal layouts — diagrams, grids, equations stay in row
                regardless of any portrait-stacking rules earlier in the
                cascade. */
