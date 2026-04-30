@@ -61,7 +61,8 @@
         .topic-group { margin-bottom: 1.5rem; }
         .topic-label { font-size: 0.78rem; color: var(--text-subtle); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; padding-left: 0.2rem; }
         .prez-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.7rem; list-style: none; }
-        .prez-card { display: block; padding: 1rem 1.3rem; background: rgba(248, 250, 252, 0.03); border: 1px solid rgba(248, 250, 252, 0.08); border-radius: 12px; color: var(--text-muted); text-decoration: none; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .prez-grid > li { display: flex; }
+        .prez-card { display: flex; flex-direction: column; flex: 1; min-height: 7.5rem; padding: 1rem 1.3rem; background: rgba(248, 250, 252, 0.03); border: 1px solid rgba(248, 250, 252, 0.08); border-radius: 12px; color: var(--text-muted); text-decoration: none; transition: all 0.3s ease; position: relative; overflow: hidden; }
         .prez-card::before { content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%; background: var(--accent-orange); opacity: 0; transition: opacity 0.3s ease; }
         .prez-card:hover { background: rgba(248, 250, 252, 0.06); border-color: rgba(231, 81, 31, 0.25); transform: translateX(4px); box-shadow: 0 4px 20px -6px rgba(231, 81, 31, 0.15); }
         .prez-card:hover::before { opacity: 1; }
@@ -117,7 +118,7 @@
                     <li>
                         <a class="prez-card" href="portable-agent-package.html" data-search="agent operating model handoff DOE Ralph harness council memory progressive disclosure behavioral rules Karpathy templates">
                             <div class="prez-title">Portable Agent Operating-Model <i class="fa-solid fa-arrow-right arrow"></i></div>
-                            <div class="prez-desc">Best-practice handoff package: DOE, Ralph-loop harness, multi-agent council, layered memory, behavioral rules &mdash; with 12 starter templates</div>
+                            <div class="prez-desc">Handoff package: DOE, harness, council, memory + 12 templates</div>
                             <div class="prez-meta">Apr 29, 2026</div>
                         </a>
                     </li>
@@ -129,14 +130,14 @@
                     <li>
                         <a class="prez-card" href="marketing-machine-presentation.html" data-search="marketing automation machine presentation deck slides baseline p0 methodology distribution">
                             <div class="prez-title">Marketing Automation Machine — Walkthrough <i class="fa-solid fa-arrow-right arrow"></i></div>
-                            <div class="prez-desc">23-slide deck: why distribution is the new moat, the methodology, and the 11-step baseline build order</div>
+                            <div class="prez-desc">Why distribution is the new moat &mdash; methodology + 11-step build</div>
                             <div class="prez-meta">Apr 20, 2026</div>
                         </a>
                     </li>
                     <li>
                         <a class="prez-card" href="marketing-machine.html" data-search="marketing automation machine channels capabilities go-to-market gtm scenarios inputs outputs interactive explorer">
                             <div class="prez-title">Marketing Automation Machine — Explorer <i class="fa-solid fa-arrow-right arrow"></i></div>
-                            <div class="prez-desc">Interactive explorer: 120 marketing channels, 51 automation capabilities, input-to-output flows, and 11 business-scenario presets</div>
+                            <div class="prez-desc">Explore 120 channels, 51 capabilities, 11 GTM scenarios</div>
                             <div class="prez-meta">Apr 19, 2026</div>
                         </a>
                     </li>
