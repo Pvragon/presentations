@@ -754,16 +754,86 @@
         /* ============================================================
            RESPONSIVE
            ============================================================ */
+        /* Narrow viewports (phones, small tablets): tighter typography */
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
             h2 { font-size: 1.8rem; }
             p { font-size: 1.05rem; }
             .slide { padding: 2rem 1.5rem; }
+        }
+
+        /* Narrow PORTRAIT (no rotation regime): vertical stacking for diagrams.
+           Used by tablets in portrait (e.g. iPad) which we don't auto-rotate. */
+        @media (max-width: 768px) and (orientation: portrait) {
             .diagram-container { flex-direction: column; gap: 0.8rem; }
             .arrow { transform: rotate(90deg); }
             .node { width: 100%; max-width: 280px; }
             .workspace-grid { grid-template-columns: 1fr; }
             .equation { flex-direction: column; }
+        }
+
+        /* PHONE in actual LANDSCAPE — short vertical viewport (~393px),
+           needs aggressive content scaling so slides fit. iPad landscape
+           (height 768+) does not match this query. */
+        @media (max-height: 500px) and (orientation: landscape) {
+            /* Lock the card to the desktop aspect ratio (1280/738 ≈
+               1.73:1) instead of letting it stretch to the viewport's
+               wider 2.17:1+ ratio. Height-bounded by 82vh so card
+               heights match the existing scale. */
+            #presentation {
+                height: 82vh;
+                width: auto;
+                aspect-ratio: 1280 / 738;
+                max-width: 92%;
+            }
+
+            /* Horizontal layouts (override the portrait-stacking rules) */
+            .diagram-container { flex-direction: row; gap: 0.5rem; margin-top: 0.5rem; }
+            .arrow { transform: none; font-size: 1rem; }
+            .node { width: 130px; max-width: none; min-width: 110px; padding: 0.5rem 0.4rem; }
+            .node i { font-size: 1.1rem; margin-bottom: 0.2rem; }
+            .node h3 { font-size: 0.85rem; margin-bottom: 0.1rem; }
+            .node p, .node span { font-size: 0.7rem; line-height: 1.2; }
+            .workspace-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.5rem; }
+            .equation { flex-direction: row; gap: 0.4rem; margin: 0.5rem 0; }
+            .equation-part { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+            .equation-op { font-size: 1.1rem; }
+
+            /* Aggressive typography downscale */
+            .slide { padding: 0.5rem 1.25rem 3rem; }
+            h1 { font-size: 1.6rem; margin-bottom: 0.3rem; line-height: 1.15; }
+            h2 { font-size: 1.3rem; margin-bottom: 0.4rem; }
+            h3 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+            p { font-size: 0.85rem; line-height: 1.4; margin-bottom: 0.4rem; max-width: 100%; }
+            .subtitle { font-size: 0.95rem; margin-bottom: 0.5rem; }
+            .logo-header { height: 24px; margin-bottom: 0.5rem; }
+
+            .bullet-list { margin-top: 0.3rem; max-width: 100%; }
+            .bullet-list li { font-size: 0.85rem; line-height: 1.4; margin-bottom: 0.15rem; padding-left: 0.9rem; }
+            .bullet-list li::before { width: 4px; height: 4px; top: 0.45em; }
+
+            .memory-list { margin-top: 0.3rem; max-width: 100%; }
+            .memory-item { gap: 0.5rem; margin-bottom: 0.3rem; }
+            .memory-item i { font-size: 0.95rem; width: 1.2em; margin-top: 0.05rem; }
+            .memory-item .item-text { font-size: 0.8rem; line-height: 1.35; }
+
+            .stat-callout { padding: 0.4rem 0.9rem; margin-top: 0.4rem; max-width: 100%; }
+            .stat-callout p { font-size: 0.85rem; }
+            .stat-callout .stat-number { font-size: 1.2rem; }
+
+            .quote-block { padding: 0.3rem 0.7rem; margin-top: 0.4rem !important; max-width: 100%; }
+            .quote-block p { font-size: 0.8rem; }
+
+            .cta-container { margin-top: 0.6rem; }
+            .cta-btn { font-size: 0.95rem; padding: 8px 22px; }
+            .cta-subtext { font-size: 0.75rem; margin-top: 0.4rem; }
+
+            .controls { bottom: 14px; padding: 0 18px; }
+            .btn { padding: 6px 16px; font-size: 0.8rem; }
+            .slide-counter { top: 14px; left: 18px; font-size: 0.75rem; }
+            .back-link { top: 14px; right: 18px; font-size: 0.7rem; }
+
+            .logo-watermark { display: none !important; }
         }
     </style>
 </head>
