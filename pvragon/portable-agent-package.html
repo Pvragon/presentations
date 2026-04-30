@@ -258,13 +258,14 @@
             filter: brightness(1.1);
         }
 
-        /* Faded Pvragon wordmark watermark, centered along the bottom of
-           the slide card. Subtle brand presence on every slide — sits
-           above the controls bar in the otherwise-empty bottom padding.
+        /* Faded Pvragon wordmark watermark, centered horizontally and
+           vertically aligned with the Back/Next buttons. Subtle brand
+           presence on content slides (auto-hidden on the title and
+           closing slides where the full logo-header already appears).
            Pointer-events: none so it never blocks navigation clicks. */
         .logo-watermark {
             position: absolute;
-            bottom: 72px;
+            bottom: 35px;
             left: 50%;
             transform: translateX(-50%);
             height: 22px;
@@ -752,13 +753,13 @@
         <div class="slide">
             <h2>What it <span class="highlight">is</span></h2>
             <ul class="bullet-list">
-                <li>A <strong>documentation-only handoff package</strong> &mdash; 12 markdown files, no install, no dependencies</li>
-                <li>Distills the patterns we use in practice for building <strong>reliable AI agents</strong></li>
-                <li>Reads as a <strong>primer</strong>, not as a runtime &mdash; pure conceptual transfer</li>
-                <li><strong>Public, free, fork-friendly</strong> &mdash; one entry-point file, references go deep</li>
+                <li>A 12-file <strong>handoff package</strong> &mdash; pure markdown, no install</li>
+                <li>Distills the patterns we use for <strong>reliable AI agents</strong></li>
+                <li>Reads as a <strong>primer</strong>, not a runtime &mdash; pure conceptual transfer</li>
+                <li><strong>Public, free, fork-friendly</strong> &mdash; one entry doc; references go deep</li>
             </ul>
             <div class="stat-callout">
-                <p>Goal: an agent reads this and can rebuild the operating model in <span class="stat-number">its own runtime</span>.</p>
+                <p>An agent reads it and rebuilds the model in <span class="stat-number" style="white-space: nowrap;">its own runtime</span>.</p>
             </div>
         </div>
         <div class="slide">
@@ -771,7 +772,7 @@
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-robot"></i>
-                    <div class="item-text"><strong>Hand it to your agent</strong> &mdash; point at the public repo, say &ldquo;emulate this setup as best you can within your harness.&rdquo;</div>
+                    <div class="item-text"><strong>Hand it to your agent</strong> &mdash; point at the public repo, say &ldquo;emulate this setup as best you can within your environment.&rdquo;</div>
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-arrows-rotate"></i>
@@ -963,6 +964,7 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const slideCounter = document.getElementById('slideCounter');
+        const logoWatermark = document.querySelector('.logo-watermark');
 
         function updateUI() {
             slides.forEach((slide, index) => {
@@ -976,6 +978,11 @@
             const progress = (currentSlide / (slides.length - 1)) * 100;
             progressBar.style.width = `${progress}%`;
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+
+            // Hide watermark on title and final slides (they show the full logo-header)
+            if (logoWatermark) {
+                logoWatermark.style.display = (currentSlide === 0 || currentSlide === slides.length - 1) ? 'none' : 'block';
+            }
 
             prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
 
