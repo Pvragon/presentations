@@ -933,13 +933,9 @@
             prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
 
             // Next button state
-            if (currentSlide === slides.length - 1) {
-                nextBtn.innerHTML = 'Done <i class="fa-solid fa-check"></i>';
-                nextBtn.onclick = () => { window.open('https://github.com/pvragon/pvragon-ai-library', '_blank'); };
-            } else {
-                nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
-                nextBtn.onclick = () => changeSlide(1);
-            }
+            nextBtn.style.visibility = currentSlide === slides.length - 1 ? 'hidden' : 'visible';
+            nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
+            nextBtn.onclick = () => changeSlide(1);
         }
 
         function changeSlide(direction) {

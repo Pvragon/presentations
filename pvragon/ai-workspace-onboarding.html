@@ -1058,14 +1058,9 @@
                 logoWatermark.style.display = (currentSlide === 0 || currentSlide === slides.length - 1) ? 'none' : 'block';
             }
             prevBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
-
-            if (currentSlide === slides.length - 1) {
-                nextBtn.innerHTML = 'Done <i class="fa-solid fa-check"></i>';
-                nextBtn.onclick = () => { changeSlide(0); };
-            } else {
-                nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
-                nextBtn.onclick = () => changeSlide(1);
-            }
+            nextBtn.style.visibility = currentSlide === slides.length - 1 ? 'hidden' : 'visible';
+            nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
+            nextBtn.onclick = () => changeSlide(1);
         }
 
         function changeSlide(direction) {
