@@ -1599,26 +1599,7 @@ const journeys = [
     week: 'Post-launch',
     priority: 'p1',
     isOpenQuestion: false,
-    steps: [
-      {
-        name: 'Login (Client Admin)',
-        screen: 'Login Screen (Web)',
-        desc: 'Cognito auth. client_admin Cognito group. MFA optional. Post-login route: client portal (separate from ops dashboard). All data scoped to own requesting_entity_id via RLS.',
-        uc: 'UC-10a, UC-13a'
-      },
-      {
-        name: 'View Org Transport Activity',
-        screen: 'Client Portal Dashboard',
-        desc: 'Read-only view of transport requests for own organization. Status, scheduling, driver assignment visible. Client SSN, medical notes, and home address hidden. No other organization data accessible.',
-        uc: 'UC-13a'
-      },
-      {
-        name: '⚠ Deferred: Portal Settings & Self-Service',
-        desc: 'Full self-service capabilities (managing org preferences, submitter user management, detailed reporting) are explicitly post-launch. Personas doc states: "minimal feature set at launch — full self-service capabilities are post-launch." Not in May 15 scope.',
-        uc: 'UC-13b (deferred)',
-        isFinal: true
-      }
-    ]
+    steps: []
   },
 
   // ── DRIVER: Ancillary Forms (P1) ─────────────
