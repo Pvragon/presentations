@@ -263,26 +263,26 @@
     font-size: 13px; line-height: 1; pointer-events: none;
   }
   .flow-step.qa .flow-step-name { color: #b45309; }
-  /* Fnode status pill (bottom of map node) */
+  /* Fnode status pill (bottom of map node) — sole status indicator on map */
   .fnode-status {
     display: inline-block; margin-top: 5px;
     font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
     padding: 1px 6px; border-radius: 8px; text-transform: uppercase;
   }
   .fnode-status.status-complete    { background: #d1fae5; color: #065f46; }
-  .fnode-status.status-qa          { background: #fef3c7; color: #92400e; }
-  .fnode-status.status-inprogress  { background: #ede9fe; color: #5b21b6; }
-  /* Journey-level status badges (journey card headers) */
+  .fnode-status.status-qa         { background: #fef3c7; color: #92400e; }
+  .fnode-status.status-inprogress { background: #ede9fe; color: #5b21b6; }
+  /* Journey-level status badges (user flow card headers) */
   .journey-status-badge {
     display: inline-flex; align-items: center;
     font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
     padding: 2px 8px; border-radius: 10px;
     margin-left: 7px; vertical-align: middle;
-    text-transform: uppercase; pointer-events: none;
+    text-transform: uppercase;
   }
   .status-complete    { background: #d1fae5; color: #065f46; }
-  .status-qa          { background: #fef3c7; color: #92400e; }
-  .status-inprogress  { background: #ede9fe; color: #5b21b6; }
+  .status-qa         { background: #fef3c7; color: #92400e; }
+  .status-inprogress { background: #ede9fe; color: #5b21b6; }
   /* ##DONE_STATE_END## */
 </style>
 </head>
@@ -1771,8 +1771,8 @@ const journeys = [
 ];
 
 // ##COMPLETION_DATA_START##
-const DONE_UCS = new Set(["UC-00a", "UC-00c", "UC-00d", "UC-00e", "UC-00f", "UC-00g", "UC-00h", "UC-00i", "UC-00j", "UC-00l", "UC-01b", "UC-01c", "UC-01g", "UC-02a", "UC-02b", "UC-02c", "UC-02d", "UC-03a", "UC-03b", "UC-04a", "UC-04b", "UC-04c", "UC-04d", "UC-04e", "UC-05b", "UC-05e", "UC-05h", "UC-06a", "UC-06e", "UC-08b", "UC-08c", "UC-09a", "UC-09b", "UC-09c", "UC-09d", "UC-09e", "UC-09f", "UC-10c", "UC-10d", "UC-10e", "UC-11a", "UC-11c", "UC-12b", "UC-12d", "UC-13a", "UC-13b"]);
-const DONE_JOURNEYS = new Set(["admin-data", "bulk-dispatch", "comms", "email-intake", "employee-mgmt", "intake-validation", "manual-dispatch", "ops-monitoring", "post-transport"]);
+const DONE_UCS = new Set(["UC-00a", "UC-00c", "UC-00d", "UC-00e", "UC-00f", "UC-00g", "UC-00h", "UC-00i", "UC-00j", "UC-00l", "UC-01b", "UC-01c", "UC-01g", "UC-02a", "UC-02b", "UC-02c", "UC-02d", "UC-03a", "UC-03b", "UC-04a", "UC-04b", "UC-04c", "UC-04d", "UC-04e", "UC-05b", "UC-05e", "UC-05h", "UC-06a", "UC-06e", "UC-08b", "UC-08c", "UC-09a", "UC-09b", "UC-09c", "UC-09d", "UC-09e", "UC-09f", "UC-10b", "UC-10c", "UC-10d", "UC-10e", "UC-11a", "UC-11c", "UC-12b", "UC-12d", "UC-13a", "UC-13b"]);
+const DONE_JOURNEYS = new Set([]);
 const QA_UCS = new Set(["UC-00b", "UC-00k", "UC-01a", "UC-01f", "UC-03c", "UC-06b", "UC-07a", "UC-07b", "UC-08a", "UC-10a", "UC-12c"]);
 const OPEN_UCS = new Set(["UC-01e", "UC-03e", "UC-05a", "UC-05c", "UC-05d", "UC-05f", "UC-05g", "UC-06c"]);  // tracked in ClickUp but not done/QA
 // ##COMPLETION_DATA_END##
@@ -2061,7 +2061,7 @@ document.querySelectorAll('.flow-step-uc').forEach(function(el) {
   }
 });
 
-// Build journey status map from UC mix in each journey card
+// Build journey status map from journey-card UC data
 var journeyStatusMap = {};
 document.querySelectorAll('.journey-card').forEach(function(card) {
   var jid = card.dataset.journeyId;
@@ -2080,13 +2080,13 @@ document.querySelectorAll('.journey-card').forEach(function(card) {
     else if (!DONE_UCS.has(u)) { allDone = false; }
   });
   var status = null;
-  if (allDone)                 status = 'complete';
-  else if (!hasOpen && hasQA)  status = 'qa';
-  else if (hasOpen || hasQA)   status = 'inprogress';
+  if (allDone)                    status = 'complete';
+  else if (!hasOpen && hasQA)     status = 'qa';
+  else if (hasOpen || hasQA)      status = 'inprogress';
   if (status) journeyStatusMap[jid] = status;
 });
 
-// Inject status badge into journey card headers
+// Apply badges to journey card headers
 document.querySelectorAll('.journey-card').forEach(function(card) {
   var jid = card.dataset.journeyId;
   var status = jid && journeyStatusMap[jid];
@@ -2101,7 +2101,7 @@ document.querySelectorAll('.journey-card').forEach(function(card) {
   }
 });
 
-// Apply status class + pill to system flow map nodes (fnodes)
+// Apply status classes + pill badges to system flow map nodes (fnodes)
 document.querySelectorAll('.fnode[data-jid]').forEach(function(node) {
   var jid = node.dataset.jid;
   var status = journeyStatusMap[jid];
