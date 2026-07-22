@@ -71,6 +71,13 @@
   .gcard .gc span{font-size:.82rem;color:var(--muted)}
   .note{margin-top:18px;color:var(--muted);font-size:.9rem}
 
+  /* click-to-zoom lightbox */
+  main img{cursor:zoom-in}
+  .lightbox{position:fixed;inset:0;background:rgba(29,22,26,.93);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;cursor:zoom-out}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:96vw;max-height:94vh;width:auto;height:auto;border-radius:10px;box-shadow:0 12px 48px rgba(0,0,0,.55)}
+  .lightbox .x{position:fixed;top:16px;right:22px;color:var(--bone);font-size:2rem;line-height:1;font-family:var(--display);cursor:pointer;opacity:.85}
+
   /* placeholder galleries */
   .ph{display:flex;align-items:center;gap:16px;color:var(--muted)}
   .ph .dot{width:12px;height:12px;border-radius:50%;background:var(--brass);flex:none;animation:pulse 2s infinite}
@@ -189,5 +196,18 @@
   <span>ONE Mahjong · a Pvragon brand · internal &amp; unreleased</span>
   <span><a href="/">Back to Presentations</a></span>
 </footer>
+
+<div class="lightbox" id="lb"><span class="x" aria-hidden="true">&times;</span><img id="lbimg" alt="Zoomed product image"></div>
+<script>
+  (function(){
+    var lb=document.getElementById('lb'),lbimg=document.getElementById('lbimg');
+    document.querySelectorAll('main img').forEach(function(img){
+      img.addEventListener('click',function(){lbimg.src=img.currentSrc||img.src;lbimg.alt=img.alt||'';lb.classList.add('open');});
+    });
+    function close(){lb.classList.remove('open');lbimg.removeAttribute('src');}
+    lb.addEventListener('click',close);
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  })();
+</script>
 </body>
 </html>
