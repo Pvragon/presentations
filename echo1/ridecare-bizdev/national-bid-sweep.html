@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RideCare &mdash; Government Bid Opportunities (National Sweep)</title>
+<style>
+  :root{
+    --bg:#eaeff0; --panel:#ffffff; --panel-2:#f4f8f9; --ink:#0e1c1e; --ink-2:#3c5154;
+    --muted:#697d81; --line:#dbe4e5; --line-2:#e9eff0;
+    --accent:#067f8d; --accent-2:#e3f1f2;
+    --nemt:#0699AB; --rhtp:#5257D6; --beh:#C0356B;
+    --nemt-bg:#e2f2f4; --rhtp-bg:#e9eafb; --beh-bg:#f9e6ee;
+    --ok:#2E7D5B; --warn:#B4690E; --crit:#C0392B;
+    --chip:#eef3f4; --chip-line:#d8e2e3;
+    --shadow:0 1px 2px rgba(16,40,42,.05),0 2px 10px rgba(16,40,42,.04);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0a1113; --panel:#111e21; --panel-2:#0d181a; --ink:#e8eff0; --ink-2:#aebdbf;
+      --muted:#7d9296; --line:#213130; --line-2:#1a2a2b;
+      --accent:#26aab8; --accent-2:#122a2d;
+      --nemt:#1B9AA8; --rhtp:#7C82F0; --beh:#D65A8E;
+      --nemt-bg:#0f2b2f; --rhtp-bg:#1c1f3d; --beh-bg:#33172380;
+      --ok:#49b487; --warn:#d9973b; --crit:#e5675a;
+      --chip:#172527; --chip-line:#243637;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 2px 12px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a1113; --panel:#111e21; --panel-2:#0d181a; --ink:#e8eff0; --ink-2:#aebdbf;
+    --muted:#7d9296; --line:#213130; --line-2:#1a2a2b;
+    --accent:#26aab8; --accent-2:#122a2d;
+    --nemt:#1B9AA8; --rhtp:#7C82F0; --beh:#D65A8E;
+    --nemt-bg:#0f2b2f; --rhtp-bg:#1c1f3d; --beh-bg:#331723;
+    --ok:#49b487; --warn:#d9973b; --crit:#e5675a;
+    --chip:#172527; --chip-line:#243637;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 2px 12px rgba(0,0,0,.25);
+  }
+  :root[data-theme="light"]{
+    --bg:#eaeff0; --panel:#ffffff; --panel-2:#f4f8f9; --ink:#0e1c1e; --ink-2:#3c5154;
+    --muted:#697d81; --line:#dbe4e5; --line-2:#e9eff0;
+    --accent:#067f8d; --accent-2:#e3f1f2;
+    --nemt:#0699AB; --rhtp:#5257D6; --beh:#C0356B;
+    --nemt-bg:#e2f2f4; --rhtp-bg:#e9eafb; --beh-bg:#f9e6ee;
+    --ok:#2E7D5B; --warn:#B4690E; --crit:#C0392B;
+    --chip:#eef3f4; --chip-line:#d8e2e3;
+    --shadow:0 1px 2px rgba(16,40,42,.05),0 2px 10px rgba(16,40,42,.04);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:15px; line-height:1.5; letter-spacing:-.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+  .wrap{max-width:1040px; margin:0 auto; padding:28px 20px 80px}
+  a{color:inherit}
+
+  /* ---- header ---- */
+  header{margin:8px 0 22px}
+  .eyebrow{font:600 11.5px/1 ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:9px; margin-bottom:14px}
+  .eyebrow::before{content:""; width:22px; height:2px; background:var(--accent); border-radius:2px}
+  h1{font-size:clamp(25px,4.4vw,36px); line-height:1.08; margin:0 0 12px; font-weight:680;
+    letter-spacing:-.02em; text-wrap:balance; max-width:20ch}
+  .lede{color:var(--ink-2); max-width:66ch; margin:0 0 16px; font-size:15.5px}
+  .lede b{color:var(--ink); font-weight:640}
+  .runbar{display:flex; flex-wrap:wrap; gap:6px 18px; color:var(--muted);
+    font:500 12.5px/1.4 ui-monospace,monospace; padding-top:4px; border-top:1px solid var(--line-2)}
+  .runbar span{white-space:nowrap}
+  .runbar b{color:var(--ink-2); font-weight:600}
+
+  /* ---- kpi tiles ---- */
+  .tiles{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin:22px 0}
+  .tile{background:var(--panel); border:1px solid var(--line); border-radius:13px;
+    padding:15px 15px 14px; box-shadow:var(--shadow); position:relative; overflow:hidden}
+  .tile .n{font:700 30px/1 ui-monospace,monospace; letter-spacing:-.03em; display:block}
+  .tile .lab{font-size:12px; color:var(--muted); margin-top:5px; line-height:1.3}
+  .tile .sub{font:500 11px/1 ui-monospace,monospace; color:var(--ink-2); margin-top:7px}
+  .tile.act .n{color:var(--warn)} .tile.strong .n{color:var(--accent)}
+  .tile.rec .n{color:var(--rhtp)} .tile.terr .n{color:var(--nemt)}
+
+  /* ---- panels ---- */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:13px;
+    padding:16px 17px; box-shadow:var(--shadow)}
+  .card h2{font:600 11.5px/1 ui-monospace,monospace; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 14px}
+
+  /* distribution bars */
+  .bar{display:grid; grid-template-columns:118px 1fr 30px; align-items:center; gap:11px; margin:9px 0}
+  .bar .k{font-size:12.5px; color:var(--ink-2); display:flex; align-items:center; gap:7px; min-width:0}
+  .bar .k .dot{width:9px; height:9px; border-radius:3px; flex:none}
+  .bar .k span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .track{height:9px; background:var(--panel-2); border:1px solid var(--line-2); border-radius:6px; overflow:hidden}
+  .track i{display:block; height:100%; border-radius:5px 3px 3px 5px}
+  .bar .v{font:600 12.5px/1 ui-monospace,monospace; color:var(--ink-2); text-align:right}
+
+  /* closing segmented bar */
+  .seg{display:flex; height:16px; border-radius:6px; overflow:hidden; gap:2px; margin:6px 0 14px}
+  .seg i{display:block; height:100%}
+  .seglegend{display:flex; flex-wrap:wrap; gap:5px 14px}
+  .seglegend .li{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--ink-2)}
+  .seglegend .li .sw{width:9px; height:9px; border-radius:3px; flex:none}
+  .seglegend .li b{font-family:ui-monospace,monospace; color:var(--ink); font-weight:600}
+
+  /* geo chips */
+  .geochips{display:flex; flex-wrap:wrap; gap:7px}
+  .geochip{display:inline-flex; align-items:center; gap:6px; background:var(--panel-2);
+    border:1px solid var(--line-2); border-radius:7px; padding:4px 8px; font-size:12px; color:var(--ink-2)}
+  .geochip b{font-family:ui-monospace,monospace; color:var(--ink); font-weight:650}
+  .geochip.tt{border-color:var(--nemt); background:var(--nemt-bg); color:var(--nemt)}
+  .geochip.tt b{color:var(--nemt)}
+
+  /* ---- controls ---- */
+  .controls{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin:26px 0 14px;
+    position:sticky; top:0; z-index:5; background:linear-gradient(var(--bg) 72%,transparent);
+    padding:10px 0 11px}
+  .chip{appearance:none; cursor:pointer; border:1px solid var(--chip-line); background:var(--chip);
+    color:var(--ink-2); border-radius:20px; padding:7px 13px; font-size:12.5px; font-weight:550;
+    display:inline-flex; align-items:center; gap:7px; transition:background .12s,border-color .12s,color .12s}
+  .chip .c{font:600 11px/1 ui-monospace,monospace; color:var(--muted)}
+  .chip[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:var(--shadow)}
+  .chip[aria-pressed="true"] .c{color:#ffffffcc}
+  .chip:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .spacer{flex:1 1 auto; min-width:12px}
+  .sort{display:inline-flex; gap:2px; background:var(--chip); border:1px solid var(--chip-line);
+    border-radius:20px; padding:3px}
+  .sort button{appearance:none; cursor:pointer; border:0; background:transparent; color:var(--muted);
+    border-radius:16px; padding:5px 11px; font-size:12px; font-weight:600; font-family:ui-monospace,monospace}
+  .sort button[aria-pressed="true"]{background:var(--panel); color:var(--ink); box-shadow:var(--shadow)}
+  .sort button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* ---- list ---- */
+  .tierlegend{display:flex; flex-wrap:wrap; align-items:center; gap:7px 15px; margin:2px 2px 13px;
+    padding:11px 13px; background:var(--panel); border:1px solid var(--line); border-radius:11px; box-shadow:var(--shadow)}
+  .tierlegend .tl-lab{font:600 10.5px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .tierlegend .tl{display:inline-flex; align-items:baseline; gap:8px; color:var(--ink-2); font-size:12.5px}
+  .tierlegend .tl b{font:700 12px/1 ui-monospace,monospace}
+  .tierlegend .tl .rng{font:500 11.5px/1 ui-monospace,monospace; color:var(--muted)}
+  .tierlegend .tl.t3 b{color:var(--accent)} .tierlegend .tl.t2 b{color:var(--ink)} .tierlegend .tl.t1 b{color:var(--ink-2)}
+  .tierlegend .sep{width:1px; height:14px; background:var(--line); align-self:center}
+  .tierlegend .note{font-size:12px; color:var(--muted)}
+  .count{font:500 12.5px/1 ui-monospace,monospace; color:var(--muted); margin:2px 2px 12px}
+  .list{display:flex; flex-direction:column; gap:9px}
+  .row{position:relative; display:grid; grid-template-columns:52px 1fr auto; gap:14px;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:13px 15px 13px 16px; box-shadow:var(--shadow); overflow:hidden}
+  .row::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--lane)}
+  .row.l-nemt{--lane:var(--nemt)} .row.l-rhtp{--lane:var(--rhtp)} .row.l-beh{--lane:var(--beh)}
+  .score{font:700 19px/1 ui-monospace,monospace; letter-spacing:-.03em; align-self:start; padding-top:1px}
+  .score.s3{color:var(--accent)} .score.s2{color:var(--ink)} .score.s1{color:var(--ink-2)}
+  .score .st{display:block; font:600 9px/1 ui-monospace,monospace; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--muted); margin-top:4px}
+  .main{min-width:0}
+  .ttl{font-size:14.5px; font-weight:600; line-height:1.3; margin:0 0 7px; color:var(--ink);
+    text-decoration:none; display:inline-block}
+  .ttl:hover{color:var(--accent); text-decoration:underline; text-underline-offset:2px}
+  .meta{display:flex; flex-wrap:wrap; gap:6px 7px; align-items:center; margin-bottom:6px}
+  .pill{font:600 11px/1 ui-monospace,monospace; padding:4px 8px; border-radius:6px; white-space:nowrap;
+    letter-spacing:.01em; display:inline-flex; align-items:center; gap:5px}
+  .pill.lane-nemt{background:var(--nemt-bg); color:var(--nemt)}
+  .pill.lane-rhtp{background:var(--rhtp-bg); color:var(--rhtp)}
+  .pill.lane-beh{background:var(--beh-bg); color:var(--beh)}
+  .pill.geo{background:var(--chip); color:var(--ink-2); border:1px solid var(--chip-line)}
+  .pill.geo.tt{border-color:var(--nemt); color:var(--nemt)}
+  .pill.plat{background:transparent; color:var(--muted); padding-left:0}
+  .pill.walled{background:transparent; color:var(--warn); border:1px dashed var(--warn); padding:3px 7px}
+  .why{font-size:12.5px; color:var(--muted); line-height:1.4; margin:0}
+  .why b{color:var(--ink-2); font-weight:600}
+  .close{align-self:start; text-align:right; white-space:nowrap; padding-top:2px}
+  .close .d{font:700 13px/1 ui-monospace,monospace}
+  .close .lbl{font:500 10px/1 ui-monospace,monospace; color:var(--muted); margin-top:4px; display:block}
+  .close.crit .d{color:var(--crit)} .close.warn .d{color:var(--warn)}
+  .close.ok .d{color:var(--ink-2)} .close.far .d{color:var(--muted)}
+  .flag{display:inline-block; margin-left:7px; font:600 9.5px/1 ui-monospace,monospace;
+    letter-spacing:.05em; color:var(--rhtp); border:1px solid var(--rhtp); border-radius:5px;
+    padding:3px 5px; vertical-align:middle; text-transform:uppercase}
+
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--line-2);
+    color:var(--muted); font-size:12px; line-height:1.55}
+  footer b{color:var(--ink-2)}
+
+  @media (max-width:820px){
+    .tiles{grid-template-columns:repeat(2,1fr)}
+    .tiles .tile:last-child{grid-column:1 / -1}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .wrap{padding:20px 14px 60px}
+    .row{grid-template-columns:44px 1fr; }
+    .close{grid-column:2; text-align:left; margin-top:2px}
+    .bar{grid-template-columns:96px 1fr 26px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">RideCare &middot; Government bid discovery</div>
+    <h1>National sweep: 45 live opportunities</h1>
+    <p class="lede">One pass of the RideCare profile across the <b>entire discovery fleet</b> &mdash;
+      every state, DC, the territories and federal. These are the open solicitations that fit
+      RideCare's lane: non-emergency medical transport, behavioral/secured transport, and the
+      RHTP-funded contracts that signal where more will come.</p>
+    <div class="runbar" id="runbar"></div>
+  </header>
+
+  <section class="tiles" id="tiles"></section>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>By lane</h2>
+      <div id="lanes"></div>
+    </div>
+    <div class="card">
+      <h2>Closing window</h2>
+      <div class="seg" id="seg"></div>
+      <div class="seglegend" id="seglegend"></div>
+      <h2 style="margin-top:18px">Where</h2>
+      <div class="geochips" id="geo"></div>
+    </div>
+  </div>
+
+  <div class="controls" id="controls">
+    <div id="filters" style="display:flex;flex-wrap:wrap;gap:9px"></div>
+    <div class="spacer"></div>
+    <div class="sort" role="group" aria-label="Sort">
+      <button data-sort="score" aria-pressed="true">Score</button>
+      <button data-sort="soon" aria-pressed="false">Soonest</button>
+    </div>
+  </div>
+  <div class="tierlegend">
+    <span class="tl-lab">Fit score</span>
+    <span class="tl t3"><b>STRONG</b> <span class="rng">&ge; 0.80</span></span>
+    <span class="tl t2"><b>GOOD</b> <span class="rng">0.67 &ndash; 0.79</span></span>
+    <span class="tl t1"><b>FAIR</b> <span class="rng">0.50 &ndash; 0.66</span></span>
+    <span class="sep"></span>
+    <span class="note">0&ndash;1 relevance to RideCare's bid profile &middot; left stripe &amp; pill = lane &middot; everything shown cleared 0.50</span>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="list" id="list"></div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script id="data" type="application/json">{"recs":[{"score":0.85,"title":"V226--Saginaw | Non Emergent Patient Transportation  Follow-on Base 4 Start 2/1/2027","dfid":"general-nemt","agency":"VETERANS AFFAIRS, DEPARTMENT OF.VETERANS AFFAIRS, DEPARTMENT OF.250-NETWORK CONTRACT OFFICE 10 (36C250)","juris":"US","level":"federal","closes":"2026-09-10T13:00:00-04:00","access":"public","platform":"SAM.gov","why":"Saginaw VA non-emergent patient transportation \u2014 NEMT (5-yr follow-on)","url":"https://sam.gov/workspace/contract/opp/8b4f8a5b477b4e95bbb381b6548ab615/view"},{"score":0.85,"title":"Non-Emergent Wheelchair Transportation Services","dfid":"general-nemt","agency":"VETERANS AFFAIRS, DEPARTMENT OF.VETERANS AFFAIRS, DEPARTMENT OF.256-NETWORK CONTRACT OFFICE 16 (36C256)","juris":"US","level":"federal","closes":"2026-07-29T13:00:00-05:00","access":"public","platform":"SAM.gov","why":"VA non-emergent wheelchair transport \u2014 direct NEMT service contract","url":"https://sam.gov/workspace/contract/opp/8a8ed87d345342c8a769cbf0138d9656/view"},{"score":0.85,"title":"V999--Non-emergent Wheelchair Transportation Services  for Orlando VA Healthcare System facilities","dfid":"general-nemt","agency":"","juris":"FL","level":"local","closes":"2026-07-24","access":"public","platform":"BidNet","why":"Orlando VA non-emergent wheelchair transportation \u2014 NEMT","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/2707366922/abstract?purchasingGroupId=8408751"},{"score":0.83,"title":"NON-EMERGENCY MEDICAL TRANSPORTATION (NEMT) SERVICE PROVIDER FOR RIDES2WELLNESS SERVICES","dfid":"general-nemt","agency":"","juris":"ID","level":"state","closes":"2026-07-31","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444090017818/abstract?purchasingGroupId=388534401"},{"score":0.83,"title":"Non-Emergency Medical Transportation Coordinator Services (NEMT)","dfid":"general-nemt","agency":"","juris":"SC","level":"state","closes":"2026-09-14","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444078128911/abstract?purchasingGroupId=388534401"},{"score":0.8,"title":"V129--Washington DC VA Medical Center Wheelchair Van Services","dfid":"general-nemt","agency":"VETERANS AFFAIRS, DEPARTMENT OF.VETERANS AFFAIRS, DEPARTMENT OF.245-NETWORK CONTRACT OFFICE 5 (36C245)","juris":"US","level":"federal","closes":"2026-07-15T15:00:00-04:00","access":"public","platform":"SAM.gov","why":"DC VA Medical Center wheelchair van services \u2014 NEMT","url":"https://sam.gov/workspace/contract/opp/0ddda2b4a6c74cc382a589cabfac2dab/view"},{"score":0.8,"title":"Q999--KC Wheelchair/COT Special Mode Transportation (SMT)Mission  Critical  (VA-25-00102304)","dfid":"general-nemt","agency":"VETERANS AFFAIRS, DEPARTMENT OF.VETERANS AFFAIRS, DEPARTMENT OF.255-NETWORK CONTRACT OFFICE 15 (36C255)","juris":"US","level":"federal","closes":"2026-07-06T15:00:00-05:00","access":"public","platform":"SAM.gov","why":"VA Kansas City wheelchair/cot Special Mode Transportation \u2014 NEMT","url":"https://sam.gov/workspace/contract/opp/8ba9f414db9340d3b3ed72c7931621bd/view"},{"score":0.8,"title":"Medical Assistance Transportation Program (#HS-000022 AFS)","dfid":"general-nemt","agency":"Delaware County","juris":"PA","level":"local","closes":"?","access":"public","platform":"Custom boards","why":"PA Medical Assistance Transportation Program (MATP) \u2014 PA Medicaid NEMT, Delaware County","url":"https://www.delcopa.gov/sites/default/files/2026-05/RFP_MATP_March_2026_AFS_REISSUE_HybridVendorModel.pdf"},{"score":0.75,"title":"Request For Application For DMH's Group Transportation Master Agreement","dfid":"secured-behavioral-transport","agency":"Department of Mental Health","juris":"MA","level":"state","closes":"2035-06-01","access":"public","platform":"Jaggaer/Periscope","why":"MA Dept of Mental Health group transportation master agreement \u2014 behavioral-health transport (tier 1)","url":"https://www.commbuys.com/bso/external/bidDetail.sda?docId=BD-25-1022-DMH07-7120-108311"},{"score":0.75,"title":"RFP 88-26 The MBTA's Paratransit Dedicated Service Providers","dfid":"general-nemt","agency":"Massachusetts Bay Transportation Authority","juris":"MA","level":"state","closes":"2026-08-19","access":"public","platform":"Jaggaer/Periscope","why":"MBTA paratransit dedicated service providers \u2014 ADA demand-response (not fixed-route)","url":"https://www.commbuys.com/bso/external/bidDetail.sda?docId=BD-26-1206-MBTA-MBTA-130845"},{"score":0.7,"title":"OMH01-C203063-3650771 - Transportation Services at NYCCC - Facility Wide","dfid":"secured-behavioral-transport","agency":"New York State Contract Reporter (NYSCR)","juris":"NY","level":"state","closes":"2026-08-13","access":"walled","platform":"NYS Contract Reporter","why":"NY Office of Mental Health facility transportation services \u2014 behavioral transport (tier 1)","url":"https://www.nyscr.ny.gov/Ads/Search?Status=Open&DateFilter=All"},{"score":0.7,"title":"902752 - On-Demand Client Transportation Services","dfid":"general-nemt","agency":"Alameda County \u2014 General Services Agency-Procurement","juris":"CA","level":"local","closes":"2026-07-31","access":"public","platform":"OpenGov","why":"Alameda County on-demand client transportation services \u2014 NEMT/paratransit","url":"https://procurement.opengov.com/portal/acgov/projects/278927"},{"score":0.67,"title":"V212--New: 5-year Indefinite Quantity Contract: 7/1/2026 through  06/30/2031. Non-Emergency Medical Transportation Services at  the William S Middleton VA Hospital in Madison, WI, and its  affiliated Clinics.","dfid":"general-nemt","agency":"VETERANS AFFAIRS, DEPARTMENT OF.VETERANS AFFAIRS, DEPARTMENT OF.252-NETWORK CONTRACT OFFICE 12 (36C252)","juris":"US","level":"federal","closes":"2026-08-03T10:00:00-05:00","access":"public","platform":"SAM.gov","why":"keyword match","url":"https://sam.gov/workspace/contract/opp/b2d9b8bb243148869acca7370593a25a/view"},{"score":0.67,"title":"Non-Emergent Medical Transportation Services - Phoenix VA Healthcare System","dfid":"rhtp-funded-contracts","agency":"VETERANS AFFAIRS, DEPARTMENT OF.VETERANS AFFAIRS, DEPARTMENT OF.262-NETWORK CONTRACT OFFICE 22 (36C262)","juris":"US","level":"federal","closes":"2026-08-05T10:00:00-06:00","access":"public","platform":"SAM.gov","why":"keyword match","url":"https://sam.gov/workspace/contract/opp/b0d4be2c428044789ad7de56bbb1221d/view"},{"score":0.67,"title":"CSU NON-EMERGENCY MEDICAL TRANSPORTATION SERVICES","dfid":"general-nemt","agency":"HEALTH AND HUMAN SERVICES, DEPARTMENT OF.INDIAN HEALTH SERVICE.INDIAN HEALTH SERVICE","juris":"US","level":"federal","closes":"2026-07-31T14:30:00-05:00","access":"public","platform":"SAM.gov","why":"keyword match","url":"https://sam.gov/workspace/contract/opp/a1728c4dbd4d42d39d89356a57e913a1/view"},{"score":0.67,"title":"Medicaid Fee for Service; Children with Special Health Care Needs; Transportation for Indigent Cancer Patients | Medical Transportation Services Demand Response Transportation Services","dfid":"rhtp-funded-contracts","agency":"","juris":"TX","level":"state","closes":"2026-09-15","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/443670280303/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"Non-Emergent Medical Transportation Services - Phoenix VA Healthcare System","dfid":"rhtp-funded-contracts","agency":"","juris":"AZ","level":"state","closes":"2026-08-05","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/2645622752/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"Community Paramedicine Curriculum","dfid":"rhtp-funded-contracts","agency":"Oklahoma State University / A&M System","juris":"OK","level":"state","closes":"?","access":"public","platform":"Jaggaer SciQuest","why":"keyword match","url":"https://app01.jaggaer.com/apps/Router/ViewSourcingEvent?AuthToken=1%3AAES2%23CHalwvPVKOUxfLHKSevNk%2BtwEfVg0taWYxiL0C1GVpBuJwQfu56yU0sKwBKCUNe%2Ft3qeunwmye5HF7l4%2FskQevpDR72ofNhkCSlc7SccaLHjFd%2B0oC8EfUDPf8HWbZGUMPETxm2vbu6MOJV8eR48pJXrfKuQ%2B11HTg%3D%3D&tmstmp=1784667349515"},{"score":0.67,"title":"CSU NON-EMERGENCY MEDICAL TRANSPORTATION SERVICES","dfid":"general-nemt","agency":"","juris":"OK","level":"local","closes":"2026-07-31","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/2709229442/abstract?purchasingGroupId=93598201"},{"score":0.67,"title":"Technology Assessment - RHTP","dfid":"rhtp-funded-contracts","agency":"","juris":"ID","level":"state","closes":"2026-08-21","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444094189486/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"RHTP Support of Community & Clinical Linkages","dfid":"rhtp-funded-contracts","agency":"","juris":"MN","level":"state","closes":"2026-08-07","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444087044685/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"Third Party Administrator - Ladder Payments - RHTP","dfid":"rhtp-funded-contracts","agency":"","juris":"ID","level":"state","closes":"2026-08-17","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444081087921/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"Project Management Integration Services - RHTP","dfid":"rhtp-funded-contracts","agency":"","juris":"ID","level":"state","closes":"2026-07-31","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444064227019/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"Data Analytics and Outcomes Evaluation - RHTP","dfid":"rhtp-funded-contracts","agency":"","juris":"ID","level":"state","closes":"2026-07-28","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444059075517/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"Rural Health Transformation Program \u2013 Provider Technology Fund","dfid":"rhtp-funded-contracts","agency":"","juris":"WA","level":"state","closes":"2026-08-13","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444098517712/abstract?purchasingGroupId=388534401"},{"score":0.67,"title":"Non-Emergency Medical Transport (NEMT) Technology System","dfid":"general-nemt","agency":"","juris":"WY","level":"state","closes":"2026-07-31","access":"public","platform":"BidNet","why":"keyword match","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444095375253/abstract?purchasingGroupId=8409951"},{"score":0.67,"title":"EMS Capacity Assessment","dfid":"rhtp-funded-contracts","agency":"Mississippi State Dept of Health (MSDH) \u2014 Office of State Health Officer","juris":"MS","level":"state","closes":"2026-07-24","access":"public","platform":"OpenGov","why":"keyword match","url":"https://procurement.opengov.com/portal/msdh/projects/280029"},{"score":0.67,"title":"RHTP Support of Community & Clinical Linkages","dfid":"rhtp-funded-contracts","agency":"Health Department","juris":"MN","level":"state","closes":"2026-08-07","access":"public","platform":"Oracle PeopleSoft","why":"keyword match","url":"https://guest.supplier.systems.state.mn.us/psc/fmssupap/SUPPLIER/ERP/c/SCP_PUBLIC_MENU_FL.SCP_PUB_BID_CMP_FL.GBL"},{"score":0.67,"title":"RFP #0010-N - Non-Emergency Medical Transport (NEMT) Technology System","dfid":"general-nemt","agency":"Wyoming Department of Health","juris":"WY","level":"state","closes":"2026-07-31","access":"public","platform":"Public Purchase","why":"keyword match","url":"https://www.publicpurchase.com/gems/wyominggsd,wy/bid/bidView?bidId=214188"},{"score":0.67,"title":"RFP #0001-N - Rural Health Transformation Program Make Wyoming Health Again Community Programing Grant Administration","dfid":"rhtp-funded-contracts","agency":"Wyoming Department of Health","juris":"WY","level":"state","closes":"2026-08-03","access":"public","platform":"Public Purchase","why":"keyword match","url":"https://www.publicpurchase.com/gems/wyominggsd,wy/bid/bidView?bidId=213947"},{"score":0.67,"title":"DOH Rural Health Transformation Grant & Project Management","dfid":"rhtp-funded-contracts","agency":"South Dakota State Government (OPM)","juris":"SD","level":"state","closes":"2026-08-04","access":"public","platform":"ESM Solutions","why":"keyword match","url":"https://postingboard.esmsolutions.com/3444a404-3818-494f-84c5-2a850acd7779/events/19888"},{"score":0.67,"title":"RHTP Preventive Care and Care-at-Home (Bundle One)","dfid":"rhtp-funded-contracts","agency":"Agency for Health Care Administration (AHCA)","juris":"FL","level":"state","closes":"2026-08-01","access":"public","platform":"FL VBS","why":"keyword match","url":"https://vendor.myfloridamarketplace.com/search/bids/detail/15709"},{"score":0.67,"title":"RHTP Specialty and Acute Care Bundle (Bundle Two)","dfid":"rhtp-funded-contracts","agency":"Agency for Health Care Administration (AHCA)","juris":"FL","level":"state","closes":"2026-08-01","access":"public","platform":"FL VBS","why":"keyword match","url":"https://vendor.myfloridamarketplace.com/search/bids/detail/15710"},{"score":0.67,"title":"RHTP Value-Based Purchasing (Initiative 11)","dfid":"rhtp-funded-contracts","agency":"Agency for Health Care Administration (AHCA)","juris":"FL","level":"state","closes":"2026-08-01","access":"public","platform":"FL VBS","why":"keyword match","url":"https://vendor.myfloridamarketplace.com/search/bids/detail/15712"},{"score":0.67,"title":"RHTP Workforce Development (Initiative 8)","dfid":"rhtp-funded-contracts","agency":"Agency for Health Care Administration (AHCA)","juris":"FL","level":"state","closes":"2026-08-01","access":"public","platform":"FL VBS","why":"keyword match","url":"https://vendor.myfloridamarketplace.com/search/bids/detail/15713"},{"score":0.67,"title":"RHTP Rural Satellite Clinics (Initiative 1)","dfid":"rhtp-funded-contracts","agency":"Agency for Health Care Administration (AHCA)","juris":"FL","level":"state","closes":"2026-08-01","access":"public","platform":"FL VBS","why":"keyword match","url":"https://vendor.myfloridamarketplace.com/search/bids/detail/15725"},{"score":0.67,"title":"RHTP Health and Lifestyle (Initiative 9)","dfid":"rhtp-funded-contracts","agency":"Agency for Health Care Administration (AHCA)","juris":"FL","level":"state","closes":"2026-08-01","access":"public","platform":"FL VBS","why":"keyword match","url":"https://vendor.myfloridamarketplace.com/search/bids/detail/15726"},{"score":0.65,"title":"TO PROVIDE TRANSPORTATION SERVICES for OLDER ADULTS","dfid":"general-nemt","agency":"","juris":"NY","level":"state","closes":"2026-08-28","access":"public","platform":"BidNet","why":"NY transportation services for older adults \u2014 senior NEMT-adjacent","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444103159842/abstract?purchasingGroupId=8411151"},{"score":0.65,"title":"Transportation Services","dfid":"general-nemt","agency":"MassAbility","juris":"MA","level":"state","closes":"2035-06-30","access":"public","platform":"Jaggaer/Periscope","why":"MassAbility (disability services agency) transportation services","url":"https://www.commbuys.com/bso/external/bidDetail.sda?docId=BD-25-1071-DDS-MEDR1-108403"},{"score":0.65,"title":"2019-009 - 2019-009 RFA for Transportation Services for Eligible Ryan White Program Clients in Los Angeles County - Clos","dfid":"general-nemt","agency":"Los Angeles County","juris":"CA","level":"local","closes":"2026-09-27","access":"public","platform":"RAMP (rampla.org)","why":"LA County Ryan White (HIV) client transportation services \u2014 medical transport","url":"https://www.rampla.org/s/opportunity/006Ql00000DtVJrIAN"},{"score":0.6,"title":"Nutrition and Transportation Services - Wharton, Colorado, and Walker Counties","dfid":"general-nemt","agency":"","juris":"TX","level":"local","closes":"2026-08-13","access":"public","platform":"BidNet","why":"TX (Wharton/Colorado/Walker Cos) senior nutrition & transportation \u2014 in-territory","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444081951800/abstract?purchasingGroupId=8407551"},{"score":0.6,"title":"Transportation Provider Network","dfid":"general-nemt","agency":"","juris":"MI","level":"state","closes":"2026-07-30","access":"public","platform":"BidNet","why":"MI transportation provider network \u2014 NEMT network/provider build","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444051214088/abstract?purchasingGroupId=8412351"},{"score":0.6,"title":"On-Demand Transportation Services","dfid":"general-nemt","agency":"","juris":"FL","level":"local","closes":"2026-08-06","access":"public","platform":"BidNet","why":"FL on-demand transportation services \u2014 NEMT/paratransit","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444079324478/abstract?purchasingGroupId=8408751"},{"score":0.6,"title":"RFA for Disaster Response Transportation of People","dfid":"general-nemt","agency":"Oregon Department of Human Services","juris":"OR","level":"state","closes":"2026-12-31","access":"public","platform":"Jaggaer/Periscope","why":"OR Dept of Human Services disaster-response transportation of people","url":"https://oregonbuys.gov/bso/external/bidDetail.sda?docId=S-10000-00015204"},{"score":0.5,"title":"Bus Transportation for DHS Shelter Clients","dfid":"general-nemt","agency":"","juris":"NY","level":"state","closes":"2026-08-03","access":"public","platform":"BidNet","why":"NYC transportation of DHS shelter clients \u2014 human-services transport (borderline)","url":"https://www.bidnetdirect.com/public/supplier/solicitations/statewide/444091067838/abstract?purchasingGroupId=8411151"}],"stats":{"total":45,"by_def":{"general-nemt":23,"secured-behavioral-transport":2,"rhtp-funded-contracts":20},"by_level":{"federal":7,"local":7,"state":31},"by_platform":{"BidNet":18,"SAM.gov":7,"FL VBS":6,"Jaggaer/Periscope":4,"OpenGov":2,"Public Purchase":2,"Custom boards":1,"NYS Contract Reporter":1,"Jaggaer SciQuest":1,"Oracle PeopleSoft":1,"ESM Solutions":1,"RAMP (rampla.org)":1},"by_juris":{"FL":8,"US":7,"ID":5,"MA":3,"NY":3,"WY":3,"CA":2,"TX":2,"OK":2,"MN":2,"SC":1,"PA":1,"AZ":1,"WA":1,"MS":1,"SD":1,"MI":1,"OR":1},"band":{"0.80+":8,"0.67-0.79":29,"0.50-0.66":8},"in_territory":4,"expansion":41,"closing":{"past":2,"7d":3,"30d":29,"later":9,"unknown":2},"automated":27,"semantic":18},"target_states":["LA","KS","TX","IN","OK"],"run":{"date":"2026-07-21","tenants":879,"candidates":9278,"profile":"RideCare"}}</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const RECS = D.recs, S = D.stats, TARGET = new Set(D.target_states);
+const LANE = {
+  'general-nemt':{k:'nemt',short:'Direct NEMT',cls:'lane-nemt'},
+  'rhtp-funded-contracts':{k:'rhtp',short:'RHTP signal',cls:'lane-rhtp'},
+  'secured-behavioral-transport':{k:'beh',short:'Behavioral &middot; tier 1',cls:'lane-beh'},
+};
+const LVL = {federal:'FED',state:'ST',local:'LOC'};
+const NOW = new Date();
+const esc = s => (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function closeInfo(iso){
+  if(!iso || iso==='?') return {cls:'far', d:'&mdash;', lbl:'undated'};
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m) return {cls:'far', d:'&mdash;', lbl:'undated'};
+  const dt = new Date(+m[1], +m[2]-1, +m[3]);
+  const days = Math.round((dt - NOW)/86400000);
+  const ds = dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  if(days < 0)  return {cls:'crit', d:'CLOSED', lbl:ds, days};
+  if(days > 400)return {cls:'far',  d:'open',  lbl:'master agmt', days};
+  if(days<=7)   return {cls:'crit', d:days+'d', lbl:'closes '+ds, days};
+  if(days<=30)  return {cls:'warn', d:days+'d', lbl:'closes '+ds, days};
+  return {cls:'ok', d:days+'d', lbl:'closes '+ds, days};
+}
+function scoreTier(v){ return v>=0.80?3 : v>=0.67?2 : 1; }
+
+/* run bar */
+document.getElementById('runbar').innerHTML =
+  `<span><b>${D.run.date}</b> &middot; profile ${D.run.profile}</span>`+
+  `<span><b>${S.total}</b> matches &ge; 0.50</span>`+
+  `<span><b>${D.run.tenants}</b> portals swept</span>`+
+  `<span><b>${D.run.candidates.toLocaleString()}</b> solicitations scanned</span>`;
+
+/* tiles */
+const act = S.closing.past + S.closing['7d'];
+document.getElementById('tiles').innerHTML = [
+  {n:S.total, lab:'Opportunities scored &ge; 0.50', sub:`${S.by_level.federal} federal &middot; ${S.by_level.state} state &middot; ${S.by_level.local} local`, c:''},
+  {n:S.band['0.80+'], lab:'Strong fit (score &ge; 0.80)', sub:'top-priority to pull', c:'strong'},
+  {n:act, lab:'Act now &mdash; closing &le; 7 days', sub:`${S.closing.past} already past &middot; move first`, c:'act'},
+  {n:S.in_territory, lab:'In home territory', sub:'LA&middot;KS&middot;TX&middot;IN&middot;OK &mdash; rest = expansion', c:'terr'},
+  {n:S.semantic, lab:'Recovered by the semantic pass', sub:`of ${S.total} &mdash; keyword-only would miss these`, c:'rec'},
+].map(t=>`<div class="tile ${t.c}"><span class="n">${t.n}</span><span class="lab">${t.lab}</span><span class="sub">${t.sub}</span></div>`).join('');
+
+/* lanes */
+const laneMax = Math.max(...Object.values(S.by_def));
+const laneOrder = ['general-nemt','rhtp-funded-contracts','secured-behavioral-transport'];
+document.getElementById('lanes').innerHTML = laneOrder.map(k=>{
+  const v=S.by_def[k]||0, L=LANE[k];
+  return `<div class="bar"><div class="k"><span class="dot" style="background:var(--${L.k})"></span>
+    <span>${L.short}</span></div>
+    <div class="track"><i style="width:${Math.max(4,v/laneMax*100)}%;background:var(--${L.k})"></i></div>
+    <div class="v">${v}</div></div>`;
+}).join('');
+
+/* closing segmented */
+const segs = [
+  {k:'past', v:S.closing.past, c:'var(--crit)', lab:'past'},
+  {k:'7d',   v:S.closing['7d'], c:'var(--warn)', lab:'&le; 7 days'},
+  {k:'30d',  v:S.closing['30d'], c:'var(--accent)', lab:'8&ndash;30 days'},
+  {k:'later',v:S.closing.later, c:'var(--ok)', lab:'31 days +'},
+  {k:'unk',  v:S.closing.unknown, c:'var(--muted)', lab:'undated'},
+];
+const segTot = segs.reduce((a,s)=>a+s.v,0);
+document.getElementById('seg').innerHTML = segs.filter(s=>s.v).map(s=>
+  `<i style="width:${s.v/segTot*100}%;background:${s.c}" title="${s.lab}: ${s.v}"></i>`).join('');
+document.getElementById('seglegend').innerHTML = segs.map(s=>
+  `<span class="li"><span class="sw" style="background:${s.c}"></span>${s.lab} <b>${s.v}</b></span>`).join('');
+
+/* geo */
+document.getElementById('geo').innerHTML = Object.entries(S.by_juris).map(([j,v])=>{
+  const tt = TARGET.has(j);
+  const name = j==='US' ? 'Federal' : j;
+  return `<span class="geochip${tt?' tt':''}">${name} <b>${v}</b></span>`;
+}).join('');
+
+/* ---- filters + list ---- */
+const FILTERS = [
+  {id:'all', lab:'All', c:S.total, test:()=>true},
+  {id:'nemt', lab:'Direct NEMT', c:S.by_def['general-nemt'], test:r=>r.dfid==='general-nemt'},
+  {id:'rhtp', lab:'RHTP signal', c:S.by_def['rhtp-funded-contracts'], test:r=>r.dfid==='rhtp-funded-contracts'},
+  {id:'beh', lab:'Behavioral', c:S.by_def['secured-behavioral-transport'], test:r=>r.dfid==='secured-behavioral-transport'},
+  {id:'terr', lab:'In territory', c:S.in_territory, test:r=>TARGET.has(r.juris)},
+  {id:'soon', lab:'Closing &le; 7d', c:S.closing.past+S.closing['7d'], test:r=>{const d=closeInfo(r.closes).days; return d!=null&&d<=7;}},
+];
+let active='all', sortMode='score';
+document.getElementById('filters').innerHTML = FILTERS.map(f=>
+  `<button class="chip" data-f="${f.id}" aria-pressed="${f.id==='all'}">${f.lab} <span class="c">${f.c}</span></button>`).join('');
+
+function render(){
+  const f = FILTERS.find(x=>x.id===active);
+  let rows = RECS.filter(f.test);
+  rows.sort((a,b)=> sortMode==='score'
+    ? b.score-a.score || (closeInfo(a.closes).days??9e9)-(closeInfo(b.closes).days??9e9)
+    : (closeInfo(a.closes).days??9e9)-(closeInfo(b.closes).days??9e9) || b.score-a.score);
+  document.getElementById('count').innerHTML =
+    `${rows.length} ${rows.length===1?'opportunity':'opportunities'}`+(active==='all'?'':` &middot; ${f.lab.toLowerCase()}`)+
+    ` &middot; sorted by ${sortMode==='score'?'fit score':'soonest close'}`;
+  document.getElementById('list').innerHTML = rows.map(r=>{
+    const L=LANE[r.dfid], ci=closeInfo(r.closes), tt=TARGET.has(r.juris);
+    const tier=scoreTier(r.score), st=tier===3?'STRONG':tier===2?'GOOD':'FAIR';
+    const geoName = r.juris==='US'?'US':r.juris;
+    const semantic = r.why && r.why!=='keyword match';
+    return `<article class="row l-${L.k}">
+      <div class="score s${tier}">${r.score.toFixed(2)}<span class="st">${st}</span></div>
+      <div class="main">
+        <a class="ttl" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
+        <div class="meta">
+          <span class="pill ${L.cls}">${L.short}</span>
+          <span class="pill geo${tt?' tt':''}">${geoName} &middot; ${LVL[r.level]||r.level}</span>
+          ${r.access==='walled'?'<span class="pill walled">login</span>':''}
+          <span class="pill plat">${esc(r.platform)}</span>
+        </div>
+        <p class="why">${r.agency?`<b>${esc(r.agency.split('.').pop().slice(0,54))}</b> &mdash; `:''}${semantic?esc(r.why):'keyword match'}${semantic?'<span class="flag">semantic</span>':''}</p>
+      </div>
+      <div class="close ${ci.cls}"><span class="d">${ci.d}</span><span class="lbl">${ci.lbl}</span></div>
+    </article>`;
+  }).join('');
+}
+document.getElementById('filters').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b)return;
+  active=b.dataset.f;
+  document.querySelectorAll('#filters .chip').forEach(c=>c.setAttribute('aria-pressed', c===b));
+  render();
+});
+document.querySelector('.sort').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  sortMode=b.dataset.sort;
+  document.querySelectorAll('.sort button').forEach(x=>x.setAttribute('aria-pressed', x===b));
+  render();
+});
+render();
+
+document.getElementById('foot').innerHTML =
+  `<b>Method.</b> Automated keyword + RHTP-watchlist scoring across ${D.run.tenants} portals `+
+  `(${D.run.candidates.toLocaleString()} open solicitations), then an interactive semantic fit-pass &mdash; `+
+  `the <b>${S.semantic}</b> flagged <span style="color:var(--rhtp)">semantic</span> scored 0.0 on keywords `+
+  `and would have been missed. Disqualifiers applied: school/pupil/charter transport, courier-of-goods, `+
+  `ambulance-only, Medicaid IT/admin, vehicle purchases. Days-to-close computed live from today; `+
+  `"master agmt" = long-horizon standing agreements. Snapshot of the ${D.run.date} sweep &mdash; always confirm on the source portal.`;
+</script>
+
+<script src="/prez-header.js" defer></script>
+</body>
+</html>
