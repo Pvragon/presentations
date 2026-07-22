@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="omf-title omf-desc">
+<title id="omf-title">ONE Mahjong Tile Mark</title>
+<desc id="omf-desc">ONE Mahjong Tile Mark (favicon / app / stamp). Bone #F5EFE3 tile with Ink #221E1A border and
+rings, Lacquer #A62639 center disc. Auto-switches to the dark variant (Ink tile, Bone border and rings, disc stays
+Lacquer) under prefers-color-scheme: dark. Uses the intentionally compensated sub-48px ratios from identity.md
+section 6 (disc ~21%, stroke 12.5% of outer ring diameter) - NOT the section 7 canonical ratios, which apply only
+at larger sizes.</desc>
+<!--
+  GEOMETRY ARITHMETIC (identity.md §6 Tile Mark - compensated spec, viewBox 100x100)
+  Tile: rounded rect x=4 y=4 w=92 h=92 rx=16, fill Bone, stroke Ink width 5
+        (stroke centered: outer edge at 4-2.5 = 1.5, inner at 6.5 - fits 0..100 with bleed margin)
+  Dot Glyph centered at (50,50):
+    outer ring: outer dia 56, stroke 7 -> SVG circle r = (56-7)/2 = 24.5, stroke-width 7
+                (edges: outer 28, inner 21)
+    inner ring: outer dia 30, stroke 7 -> r = (30-7)/2 = 11.5 (edges: outer 15, inner 8)
+    center disc: dia 12 -> r = 6, Lacquer
+    clearances: 21-15 = 6 (outer->inner), 8-6 = 2 (inner->disc) - positive at every step
+  Compensation check vs spec: disc 12/56 = 21.4% (~21% target), stroke 7/56 = 12.5% (target) - matches;
+    §7 canon (19% disc / 11% stroke) deliberately NOT used here.
+  32px render: 1 unit = 0.32px -> ring strokes 7*0.32 = 2.24px, tile stroke 5*0.32 = 1.6px (the thinnest
+    stroke, per spec "at 32px the thinnest stroke renders ~1.6px"), disc dia 12*0.32 = 3.84px. Legible.
+  1200px render: pure circles + one rounded rect - resolution-independent, clean.
+-->
+<style>
+  .tile { fill: #F5EFE3; stroke: #221E1A; }
+  .ring { fill: none; stroke: #221E1A; }
+  @media (prefers-color-scheme: dark) {
+    .tile { fill: #221E1A; stroke: #F5EFE3; }
+    .ring { stroke: #F5EFE3; }
+  }
+</style>
+  <rect class="tile" x="4" y="4" width="92" height="92" rx="16" stroke-width="5"/>
+  <circle class="ring" cx="50" cy="50" r="24.5" stroke-width="7"/>
+  <circle class="ring" cx="50" cy="50" r="11.5" stroke-width="7"/>
+  <circle cx="50" cy="50" r="6" fill="#A62639"/>
+</svg>

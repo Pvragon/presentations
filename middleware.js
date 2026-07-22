@@ -11,11 +11,12 @@
  */
 
 export const config = {
-  matcher: ['/echo1', '/echo1/:path*'],
+  matcher: ['/echo1', '/echo1/:path*', '/one-mahjong', '/one-mahjong/:path*'],
 };
 
 const PROTECTED_PATHS = {
   '/echo1': 'PREZ_PW_ECHO1',
+  '/one-mahjong': 'PREZ_PW_ONE_MAHJONG',
 };
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
