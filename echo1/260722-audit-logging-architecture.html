@@ -242,7 +242,7 @@
           <tr><td><span class="rid br">BR-2</span></td><td><b>Satisfy HIPAA.</b> ePHI moves through intake → dispatch → transport → billing. Every access and change must be accountable.</td><td class="src">HIPAA 164.312(b)</td></tr>
           <tr><td><span class="rid br">BR-3</span></td><td><b>Per-tenant isolation &amp; review.</b> Multi-tenant SaaS — each tenant's trail must be isolated and independently reviewable by that tenant's admins.</td><td class="src">Tenant isolation; checklist §5</td></tr>
           <tr><td><span class="rid br">BR-4</span></td><td><b>Operational timeline for the front line.</b> Dispatch/QA/supervisors need a human-readable "what happened to this ride, and who did it" view — distinct from the compliance trail.</td><td class="src">Tier 8 design principles</td></tr>
-          <tr><td><span class="rid br">BR-5</span></td><td><b>Breach investigation &amp; accounting of disclosures.</b> Reconstruct who touched which record, when, and how.</td><td class="src">Breach Rule; NIST IR-6</td></tr>
+          <tr><td><span class="rid br">BR-5</span></td><td><b>Breach, mistakes &amp; misconduct.</b> Reconstruct who touched which record, when, and how — to investigate a suspected breach, trace an honest operational mistake, or surface staff misconduct.</td><td class="src">Breach Rule; AU-6; IR-6</td></tr>
           <tr><td><span class="rid br">BR-6</span></td><td><b>Do not repeat V1's failure mode.</b> Synchronous audit triggers + Samsara webhook bursts + bulk dispatch were a primary source of V1 instability. Fix the pattern, not just the ceiling.</td><td class="src">Tier 7 §audit_log</td></tr>
         </tbody>
       </table>
