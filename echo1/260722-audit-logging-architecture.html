@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Echo1 V2 — Audit Logging Architecture</title>
+<style>
+  :root {
+    --green:#00B74F; --green-deep:#00913F;
+    --magenta:#C5299B; --magenta-deep:#A31F80;
+    --err:#9D2D0B; --err-bg:#FBE3DC;
+    --amber:#8A6400; --amber-bg:#FBF1D6;
+    --ground:#F6FAF7; --surface:#FFFFFF; --surface-2:#F0F5F1;
+    --ink:#0E1512; --ink-soft:#54615B; --ink-faint:#7C8A83;
+    --line:#E3EAE5; --line-soft:#EEF3EF;
+    --code-bg:#0E1512; --code-ink:#D7E4DB; --code-key:#7FD3A0; --code-str:#E7A9D2; --code-com:#6D7B73;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --measure: 68ch;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --green:#22C55E; --green-deep:#34D27E;
+      --magenta:#E24FB4; --magenta-deep:#EE7BC9;
+      --err:#F0714B; --err-bg:#2A130C;
+      --amber:#D9A93A; --amber-bg:#241C08;
+      --ground:#0B100D; --surface:#141B17; --surface-2:#0F1512;
+      --ink:#E9F1EB; --ink-soft:#9FB1A8; --ink-faint:#71827A;
+      --line:#26312B; --line-soft:#1C2620;
+      --code-bg:#05100A; --code-ink:#CFE0D5; --code-key:#7FD3A0; --code-str:#E7A9D2; --code-com:#5E6C64;
+    }
+  }
+  :root[data-theme="light"] {
+    --green:#00B74F; --green-deep:#00913F; --magenta:#C5299B; --magenta-deep:#A31F80;
+    --err:#9D2D0B; --err-bg:#FBE3DC; --amber:#8A6400; --amber-bg:#FBF1D6;
+    --ground:#F6FAF7; --surface:#FFFFFF; --surface-2:#F0F5F1;
+    --ink:#0E1512; --ink-soft:#54615B; --ink-faint:#7C8A83; --line:#E3EAE5; --line-soft:#EEF3EF;
+    --code-bg:#0E1512; --code-ink:#D7E4DB; --code-key:#7FD3A0; --code-str:#E7A9D2; --code-com:#6D7B73;
+  }
+  :root[data-theme="dark"] {
+    --green:#22C55E; --green-deep:#34D27E; --magenta:#E24FB4; --magenta-deep:#EE7BC9;
+    --err:#F0714B; --err-bg:#2A130C; --amber:#D9A93A; --amber-bg:#241C08;
+    --ground:#0B100D; --surface:#141B17; --surface-2:#0F1512;
+    --ink:#E9F1EB; --ink-soft:#9FB1A8; --ink-faint:#71827A; --line:#26312B; --line-soft:#1C2620;
+    --code-bg:#05100A; --code-ink:#CFE0D5; --code-key:#7FD3A0; --code-str:#E7A9D2; --code-com:#5E6C64;
+  }
+
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } * { transition:none !important; } }
+  body {
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--sans); line-height:1.62;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap { max-width:880px; margin:0 auto; padding:clamp(1.6rem,4vw,4.2rem) clamp(1.2rem,4vw,2.4rem) 6rem; }
+
+  /* masthead */
+  .eyebrow {
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--green-deep); font-weight:600; margin:0 0 1.1rem; display:flex; align-items:center; gap:.6rem;
+  }
+  .eyebrow::before { content:""; width:1.7rem; height:2px; background:var(--green); display:inline-block; }
+  h1 {
+    font-size:clamp(2rem,5vw,3.1rem); line-height:1.06; letter-spacing:-.024em;
+    font-weight:730; margin:0 0 1rem; text-wrap:balance; max-width:20ch;
+  }
+  .standfirst { font-size:1.14rem; color:var(--ink-soft); max-width:var(--measure); margin:0 0 2rem; }
+  .standfirst b { color:var(--ink); font-weight:600; }
+
+  .meta {
+    display:flex; flex-wrap:wrap; gap:.4rem 2.4rem; border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line); padding:1rem 0; margin-bottom:1.4rem;
+  }
+  .meta div { display:flex; flex-direction:column; gap:.15rem; padding:.2rem 0; }
+  .meta dt { font-family:var(--mono); font-size:.64rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); }
+  .meta dd { margin:0; font-size:.9rem; font-weight:560; font-variant-numeric:tabular-nums; }
+  .meta dd a { color:var(--green-deep); text-decoration:none; }
+  .meta dd a:hover { text-decoration:underline; }
+
+  .authority {
+    font-size:.88rem; color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line-soft);
+    border-radius:9px; padding:.85rem 1.1rem; margin:0 0 2.8rem; max-width:var(--measure);
+  }
+  .authority b { color:var(--ink); font-weight:640; }
+
+  /* sections */
+  .part {
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--magenta-deep); font-weight:600; margin:3.4rem 0 1.2rem;
+    padding-bottom:.5rem; border-bottom:1.5px solid var(--magenta);
+  }
+  section { margin:0 0 2.4rem; }
+  h2 {
+    font-size:1.4rem; letter-spacing:-.014em; font-weight:700; margin:2.2rem 0 .5rem;
+    display:flex; align-items:baseline; gap:.7rem; scroll-margin-top:1.5rem;
+  }
+  h2 .n { font-family:var(--mono); font-size:.82rem; color:var(--green-deep); font-weight:600; flex:none; }
+  h3 { font-size:1.04rem; font-weight:660; margin:1.9rem 0 .5rem; letter-spacing:-.006em; }
+  h4.phase {
+    font-family:var(--mono); font-size:.82rem; font-weight:600; letter-spacing:.01em;
+    margin:1.9rem 0 .2rem; color:var(--green-deep); display:flex; align-items:center; gap:.5rem;
+  }
+  .feature {
+    background:var(--surface); border:1px solid var(--line); border-top:3px solid var(--green);
+    border-radius:12px; padding:1.15rem 1.35rem; margin:1.5rem 0;
+    box-shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 40px -26px rgba(0,0,0,.35);
+  }
+  .feature .ftag { font-family:var(--mono); font-size:.67rem; letter-spacing:.11em; text-transform:uppercase; color:var(--green-deep); font-weight:600; margin:0 0 .45rem; }
+  .feature p { margin:.2rem 0; max-width:none; }
+  p { max-width:var(--measure); margin:.7rem 0; }
+  .lead { color:var(--ink-soft); max-width:var(--measure); margin:.2rem 0 1.3rem; }
+  strong { font-weight:650; }
+  a { color:var(--green-deep); text-underline-offset:2px; }
+  code:not(pre code) {
+    font-family:var(--mono); font-size:.86em; background:var(--surface-2); border:1px solid var(--line-soft);
+    padding:.08em .38em; border-radius:5px; color:var(--ink); overflow-wrap:anywhere; word-break:break-word;
+  }
+
+  /* layer stack diagram */
+  .stack { display:flex; flex-direction:column; gap:.55rem; margin:1.6rem 0 .6rem; }
+  .layer {
+    background:var(--surface); border:1px solid var(--line); border-left-width:4px; border-radius:11px;
+    padding:1rem 1.2rem; position:relative;
+    box-shadow:0 1px 2px rgba(0,0,0,.04), 0 10px 34px -22px rgba(0,0,0,.3);
+  }
+  .layer.l3 { border-left-color:var(--ink-faint); }
+  .layer.l2 { border-left-color:var(--magenta); }
+  .layer.l1 { border-left-color:var(--green); }
+  .layer .lhead { display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap; margin-bottom:.35rem; }
+  .layer .ltag { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600; }
+  .layer.l3 .ltag { color:var(--ink-faint); }
+  .layer.l2 .ltag { color:var(--magenta-deep); }
+  .layer.l1 .ltag { color:var(--green-deep); }
+  .layer .lname { font-weight:660; font-size:1.02rem; }
+  .layer .ltech { font-family:var(--mono); font-size:.82rem; color:var(--ink-soft); margin:.15rem 0 .4rem; line-height:1.5; }
+  .layer .lans { font-size:.9rem; color:var(--ink); margin:0; }
+  .layer .lans b { color:var(--ink); }
+
+  /* tables */
+  .tbl-scroll { overflow-x:auto; margin:1.2rem 0; border:1px solid var(--line); border-radius:11px; }
+  table { border-collapse:collapse; width:100%; font-size:.9rem; background:var(--surface); }
+  thead th {
+    text-align:left; font-family:var(--mono); font-size:.66rem; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:600; padding:.7rem .9rem; border-bottom:1.5px solid var(--line);
+    background:var(--surface-2); white-space:nowrap;
+  }
+  tbody td { padding:.62rem .9rem; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  tbody tr:last-child td { border-bottom:none; }
+  tbody td:first-child { white-space:nowrap; }
+  table code { white-space:nowrap; }
+  .rid { font-family:var(--mono); font-size:.78rem; font-weight:600; color:var(--green-deep); white-space:nowrap; }
+  .rid.br { color:var(--magenta-deep); }
+  .src { font-family:var(--mono); font-size:.76rem; color:var(--ink-faint); }
+
+  /* callout */
+  .callout {
+    border:1px solid var(--line); border-left:3px solid var(--magenta);
+    background:var(--surface); border-radius:10px; padding:1.1rem 1.3rem; margin:1.5rem 0;
+  }
+  .callout.warn { border-left-color:var(--err); }
+  .callout.rule { border-left-color:var(--green); }
+  .callout .tag {
+    font-family:var(--mono); font-size:.67rem; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--magenta-deep); font-weight:600; margin:0 0 .45rem;
+  }
+  .callout.warn .tag { color:var(--err); }
+  .callout.rule .tag { color:var(--green-deep); }
+  .callout p { margin:.35rem 0; max-width:none; }
+  .callout .invariant { font-size:1.02rem; font-weight:560; color:var(--ink); font-style:italic; }
+
+  /* ordered mitigation / caveat list */
+  ol.steps { counter-reset:s; list-style:none; padding:0; margin:1.1rem 0; display:flex; flex-direction:column; gap:.7rem; }
+  ol.steps li {
+    position:relative; padding:.15rem 0 .15rem 2.4rem; max-width:var(--measure);
+  }
+  ol.steps li::before {
+    counter-increment:s; content:counter(s); position:absolute; left:0; top:.05rem;
+    width:1.65rem; height:1.65rem; border-radius:7px; background:var(--surface-2); border:1px solid var(--line);
+    font-family:var(--mono); font-size:.8rem; font-weight:600; color:var(--green-deep);
+    display:flex; align-items:center; justify-content:center;
+  }
+  ul.items { list-style:none; padding:0; margin:1rem 0; display:flex; flex-direction:column; gap:.6rem; }
+  ul.items li { padding-left:1.4rem; position:relative; max-width:var(--measure); }
+  ul.items li::before { content:""; position:absolute; left:.1rem; top:.62rem; width:.42rem; height:.42rem; border-radius:2px; background:var(--amber); }
+
+  /* code block */
+  pre {
+    background:var(--code-bg); color:var(--code-ink); border-radius:11px; padding:1.1rem 1.2rem;
+    overflow-x:auto; margin:1.2rem 0; font-family:var(--mono); font-size:.82rem; line-height:1.6;
+    border:1px solid color-mix(in srgb, var(--code-ink) 12%, transparent);
+  }
+  pre .k { color:var(--code-key); } pre .s { color:var(--code-str); } pre .c { color:var(--code-com); }
+
+  /* appendix pill */
+  .apx { font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--magenta-deep); font-weight:600; }
+  .audit-flag { display:inline-flex; align-items:center; gap:.35rem; font-family:var(--mono); font-size:.72rem; font-weight:600; padding:.2rem .55rem; border-radius:999px; }
+  .audit-flag.no { color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line); }
+
+  .footer { margin-top:4rem; padding-top:1.4rem; border-top:1px solid var(--line); font-size:.82rem; color:var(--ink-faint); font-family:var(--mono); }
+
+  /* theme toggle */
+  .themebtn {
+    position:fixed; bottom:1.1rem; right:1.1rem; z-index:40; width:2.5rem; height:2.5rem; border-radius:9px;
+    background:var(--surface); border:1px solid var(--line); color:var(--ink-soft); cursor:pointer;
+    font-size:1.05rem; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 20px -10px rgba(0,0,0,.4);
+  }
+  .themebtn:hover { border-color:var(--green); color:var(--green-deep); }
+  :focus-visible { outline:2px solid var(--green); outline-offset:2px; border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Echo1 V2 · Architecture Reference</p>
+  <h1>Audit Logging Architecture</h1>
+  <p class="standfirst">How Echo1 V2 records, protects, and reviews every change to data — enumerated <b>requirements-first</b>, then the <b>three-layer design</b> that satisfies them, with schema appendices for each audit store.</p>
+
+  <dl class="meta">
+    <div><dt>Status</dt><dd>Draft · v1.0.0</dd></div>
+    <div><dt>Canonical tier</dt><dd>5 — reference synthesis</dd></div>
+    <div><dt>Updated</dt><dd>2026-07-22</dd></div>
+    <div><dt>Maintainer</dt><dd>Pvragon</dd></div>
+    <div><dt>Repo source</dt><dd>specs/architecture/260722-audit-logging-architecture.md</dd></div>
+  </dl>
+
+  <p class="authority"><b>Canonical authority.</b> This is a <b>reference synthesis</b>. It does not override its sources. On any conflict, the <b>tier-1 architecture spec</b> and the <b>tier-2 schema contracts</b> win and this document is corrected against them — never the reverse. It is a map, not a source of truth.</p>
+
+  <!-- ============ PART I ============ -->
+  <p class="part">Part I — Business &amp; Compliance Requirements</p>
+
+  <p class="lead">Written requirements-first so every mechanism in Part II traces back to a driver, and so gaps stay visible. IDs are local to this document — <span class="rid br">BR-*</span> business drivers, <span class="rid">REQ-AUDIT-*</span> derived technical/compliance requirements.</p>
+
+  <section>
+    <h2><span class="n">1</span> Business drivers — the "why"</h2>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>ID</th><th>Driver</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rid br">BR-1</span></td><td><b>Win &amp; retain government contracts.</b> State-agency customers (NE, CO, KS, LA in pipeline) require the system to survive a government CTO/CISO audit. Audit defensibility is a sales gate.</td><td class="src">Arch spec §1</td></tr>
+          <tr><td><span class="rid br">BR-2</span></td><td><b>Satisfy HIPAA.</b> ePHI moves through intake → dispatch → transport → billing. Every access and change must be accountable.</td><td class="src">HIPAA 164.312(b)</td></tr>
+          <tr><td><span class="rid br">BR-3</span></td><td><b>Per-tenant isolation &amp; review.</b> Multi-tenant SaaS — each tenant's trail must be isolated and independently reviewable by that tenant's admins.</td><td class="src">Tenant isolation; checklist §5</td></tr>
+          <tr><td><span class="rid br">BR-4</span></td><td><b>Operational timeline for the front line.</b> Dispatch/QA/supervisors need a human-readable "what happened to this ride, and who did it" view — distinct from the compliance trail.</td><td class="src">Tier 8 design principles</td></tr>
+          <tr><td><span class="rid br">BR-5</span></td><td><b>Breach investigation &amp; accounting of disclosures.</b> Reconstruct who touched which record, when, and how.</td><td class="src">Breach Rule; NIST IR-6</td></tr>
+          <tr><td><span class="rid br">BR-6</span></td><td><b>Do not repeat V1's failure mode.</b> Synchronous audit triggers + Samsara webhook bursts + bulk dispatch were a primary source of V1 instability. Fix the pattern, not just the ceiling.</td><td class="src">Tier 7 §audit_log</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span> Derived requirements — the "what"</h2>
+
+    <h3>Compliance / regulatory</h3>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>ID</th><th>Requirement</th><th>Mandated by</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rid">REQ-01</span></td><td>Record every create/update/delete to PHI-bearing &amp; business-critical data with <b>who, what, when, where (IP/source), outcome</b>.</td><td class="src">HIPAA 164.312(b); AU-2, AU-3</td></tr>
+          <tr><td><span class="rid">REQ-02</span></td><td>Audit records <b>tamper-evident &amp; immutable</b> — no update/delete at any privilege level in normal operation.</td><td class="src">AU-9; 164.312(c)(1)</td></tr>
+          <tr><td><span class="rid">REQ-03</span></td><td>Retain <b>≥ 6 years</b> (HIPAA minimum). Echo1 target: <b>7 years</b> (86 mo) via hot + WORM cold.</td><td class="src">HIPAA; AU-11</td></tr>
+          <tr><td><span class="rid">REQ-04</span></td><td>Timestamps <b>UTC &amp; time-synchronized</b> to an authoritative source.</td><td class="src">AU-8</td></tr>
+          <tr><td><span class="rid">REQ-05</span></td><td><b>Alert on audit-logging failures</b> — the system must not silently proceed if the audit path breaks.</td><td class="src">AU-5</td></tr>
+          <tr><td><span class="rid">REQ-06</span></td><td>Support <b>review &amp; anomaly detection</b> — queryable by entity, actor, time window.</td><td class="src">AU-6</td></tr>
+          <tr><td><span class="rid">REQ-07</span></td><td><b>Generate at every PHI access path</b> — no mutating code path may bypass the audit mechanism.</td><td class="src">AU-12</td></tr>
+          <tr><td><span class="rid">REQ-08</span></td><td><b>Minimum-necessary read access</b> — audit data (contains PHI) readable only by tenant/platform-admin/compliance roles.</td><td class="src">164.312(a)(1); AC-6</td></tr>
+          <tr><td><span class="rid">REQ-09</span></td><td><b>Protect PHI inside the audit data</b> — encryption, tenant isolation, log-scrubbing, controlled redaction/purge that preserves the record structure.</td><td class="src">Minimum Necessary; ENC-04/05</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Operational</h3>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>ID</th><th>Requirement</th><th>Driver</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rid">REQ-10</span></td><td><b>Human-readable ride lifecycle timeline</b> keyed to a single ride, request → completion, usable by non-technical staff.</td><td class="src">BR-4</td></tr>
+          <tr><td><span class="rid">REQ-11</span></td><td><b>Attribution survives personnel changes</b> — a historical actor must always resolve, even after the user leaves.</td><td class="src">BR-5; Tier 8</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Non-functional — performance &amp; scale</h3>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>ID</th><th>Requirement</th><th>Driver</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rid">REQ-12</span></td><td>Audit writes must <b>not destabilize under high-frequency load</b> (120 vehicles × ~30s telemetry; bulk dispatch bursts).</td><td class="src">BR-6</td></tr>
+          <tr><td><span class="rid">REQ-13</span></td><td>Scale to <b>10K+ rides/month/tenant</b> with <b>clean archival</b> that never violates immutability.</td><td class="src">Arch §scaling</td></tr>
+          <tr><td><span class="rid">REQ-14</span></td><td>All audit stores <b>tenant-scoped</b>, isolation enforced at the DB layer (RLS <code>FORCE ROW LEVEL SECURITY</code>), except explicitly non-PHI shared caches.</td><td class="src">BR-3</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ PART II ============ -->
+  <p class="part">Part II — The Plan</p>
+
+  <section>
+    <h2><span class="n">3</span> The three-layer model</h2>
+    <p class="lead">Echo1 answers the requirements with three complementary layers. They overlap by design — a single change is often recorded in more than one. Read the stack top-down (broad infra) to bottom (specific, human).</p>
+
+    <div class="stack">
+      <div class="layer l3">
+        <div class="lhead"><span class="ltag">Layer 3 · Infrastructure</span><span class="lname">DB / API-level, managed</span></div>
+        <p class="ltech">pg_audit (DDL + writes; reads on PHI tables) · RDS audit logs · CloudTrail → CloudWatch → Kinesis Firehose → S3 Object Lock (WORM) → Athena → QuickSight</p>
+        <p class="lans"><b>Answers:</b> "was the database or API itself touched — including PHI <i>reads</i>?"</p>
+      </div>
+      <div class="layer l2">
+        <div class="lhead"><span class="ltag">Layer 2 · Compliance</span><span class="lname">audit_log · merge_log</span></div>
+        <p class="ltech">Trigger-written, INSERT-only, partitioned, PHI-bearing. The HIPAA / NIST-AU record of truth for data <i>changes</i>.</p>
+        <p class="lans"><b>Answers:</b> "who changed which row, from what value to what, and when?"</p>
+      </div>
+      <div class="layer l1">
+        <div class="lhead"><span class="ltag">Layer 1 · Operational</span><span class="lname">transport_history</span></div>
+        <p class="ltech">App/worker-written typed events, append-only, human-readable — a first-class dispatch feature.</p>
+        <p class="lans"><b>Answers:</b> "what happened to <i>this ride</i>, in plain language?"</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:1rem">The two pillars engineers touch daily are <b>Layer 2 <code>audit_log</code></b> (compliance) and <b>Layer 1 <code>transport_history</code></b> (operational). They are deliberately separate tables with separate purposes — see §7.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span> Layer 3 — Infrastructure audit</h2>
+    <p>Provided largely by managed AWS + PostgreSQL primitives; little application code. This is the layer that satisfies "log PHI <em>access</em>," not just PHI <em>changes</em>.</p>
+    <ul class="items">
+      <li><b>pg_audit</b> — DDL + all write operations on every table, plus <b>read</b> operations on PHI tables (<code>client</code>, <code>transport</code>, <code>claim</code>).</li>
+      <li><b>RDS/Aurora audit logs</b> → published to CloudWatch Logs.</li>
+      <li><b>CloudTrail</b> — forensic trail of all AWS API activity, with log-file integrity validation.</li>
+      <li><b>Log pipeline</b> — Fargate audit middleware → CloudWatch (KMS-encrypted) → Kinesis Firehose → <b>S3 Object Lock</b> (6-year+) → Athena → QuickSight.</li>
+    </ul>
+    <p class="src">Satisfies primarily REQ-01 (access side), REQ-02, REQ-03, REQ-05.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">5</span> Layer 2 — Compliance trail (<code>audit_log</code>)</h2>
+    <p class="lead">The blanket, polymorphic change log — the HIPAA/NIST-AU record of truth for data changes.</p>
+    <ul class="items">
+      <li><b>Trigger-written, in-transaction.</b> A PostgreSQL trigger writes to <code>audit_log</code> on every INSERT/UPDATE/DELETE of an audited entity, in the same transaction. Application code cannot forget it.</li>
+      <li><b>Polymorphic.</b> One table covers ~30+ entities via <code>entity_type</code> + <code>entity_id</code>.</li>
+      <li><b>INSERT-only, forever.</b> No UPDATE/DELETE grants at any privilege level. A dedicated <code>audit_writer</code> role (trigger-only, <code>SECURITY DEFINER</code>) is the sole writer.</li>
+      <li><b>Scoped, not blanket.</b> Each entity carries an explicit <code>Audit: Yes/No</code>. Exempt: (1) tables that <i>are</i> audit trails, (2) cache/UI state, (3) operational tooling &amp; reconstructible aggregates.</li>
+      <li><b>Partitioned monthly</b> on <code>created_at</code>, with a DEFAULT partition + PagerDuty alert as a safety net.</li>
+      <li><b>Retention</b> — seal at month+7, 37 mo hot, 49 mo cold (S3 Object Lock, compliance mode) = <b>7 years</b>.</li>
+      <li><b>Read access</b> — RLS restricts to the tenant; tRPC further gates to <code>tenant_admin</code> / <code>platform_admin</code>.</li>
+    </ul>
+
+    <h3>Performance mitigations — the V1 lesson (REQ-12)</h3>
+    <ol class="steps">
+      <li><b>Changed-columns-only payloads (Sprint 1).</b> The trigger diffs OLD vs NEW and writes only changed columns to <code>old_data</code>/<code>new_data</code> (mirrored by <code>changed_columns</code> TEXT[]), not full-row snapshots — ~90%+ smaller rows for typical single-field updates.</li>
+      <li><b>Samsara telemetry exemption (Sprint 1).</b> If <i>only</i> telemetry columns changed on <code>stop</code> (<code>actual_arrival_at</code>, <code>actual_departure_at</code>, <code>odometer</code>, <code>en_route_at</code>, <code>stop_status</code>, <code>samsara_stop_id</code>), skip the INSERT — the data already lives on <code>stop</code> and in <code>transport_history</code>, so no audit gap. Human edits still audit.</li>
+      <li><b>Async escape hatch (evaluate at 10+ tenants).</b> If 1+2 are insufficient, replace the synchronous INSERT with <code>pg_notify</code> + a dedicated Graphile Worker listener. Only if trigger latency exceeds <b>5ms p95</b>.</li>
+    </ol>
+
+    <div class="callout">
+      <p class="tag">Controlled PHI purge · REQ-09</p>
+      <p>A separate <code>audit_purger</code> role holds <code>UPDATE (old_data, new_data)</code> <b>only</b> — it can redact PHI within the JSONB payloads (human-approval-gated, externally logged) while the who / when / what-entity / what-action structure is preserved and immutability holds for every other role.</p>
+    </div>
+
+    <div class="callout">
+      <p class="tag">Sibling immutable log · merge_log</p>
+      <p>Same INSERT-only controls as <code>audit_log</code>, dedicated to client/facility de-duplication merges. Stores full pre-merge snapshots of everything merged away (keyed by entity UUID), FK-repointing logs, and outcome — so a merge is fully reconstructible even after source rows are soft-deleted.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">6</span> Layer 1 — the ride timeline (<code>transport_history</code>)</h2>
+    <p class="lead">This is the table you were picturing — the append-only <b>ride lifecycle</b> event log (<code>transport_events</code> / <code>transport_history</code>). It is the heart of the operational half of the audit story, and the one place where "what happened to this ride" is told as a human-readable sequence. Its job is REQ-10 — <b>a first-class dispatch feature, not a compliance artifact.</b></p>
+
+    <div class="feature">
+      <p class="ftag">One log per ride</p>
+      <p>Keyed on <code>transport_request_id</code>, <b>not</b> <code>transport_id</code>. A ride is one logical entity that moves through stages — <b>request → dispatch → execution → completion</b> — and since <code>transport_request → transport</code> is 1:1, the whole chronological story lives in a single keyed log. Pre-dispatch events (confirmations, void) and post-dispatch events (status changes, trip-log steps, reassignments, cancellation) share one timeline. Open a ride, read top to bottom, and you have its life.</p>
+    </div>
+
+    <h3>Why it exists <em>separately</em> from <code>audit_log</code></h3>
+    <p>The single most important thing to understand about the audit design: <code>transport_history</code> and <code>audit_log</code> are <b>not redundant</b>. They record overlapping moments for opposite reasons, aimed at opposite audiences. Collapsing them into one table would break both jobs at once.</p>
+
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Dimension</th><th>audit_log · Layer 2</th><th>transport_history · Layer 1</th></tr></thead>
+        <tbody>
+          <tr><td>Purpose</td><td>Legal / compliance record of change</td><td>Operational feature — the ride story</td></tr>
+          <tr><td>Audience</td><td>Auditors, CISO, compliance admins</td><td>Dispatchers, drivers, QA, supervisors</td></tr>
+          <tr><td>Shape</td><td>Polymorphic <b>column diffs</b> (generic, machine-shaped)</td><td>Typed <b>domain events</b> (semantic, human-shaped)</td></tr>
+          <tr><td>Write path</td><td>DB trigger — automatic, unbypassable, generic</td><td>App/worker — an explicit, intentional typed <code>insert</code></td></tr>
+          <tr><td>Query pattern</td><td>"Full change history of row X" (forensics)</td><td>"Timeline of ride Y, in order" (UX)</td></tr>
+          <tr><td>Read access</td><td>Admin / compliance only (PHI-heavy raw snapshots)</td><td>Role-scoped to ops — drivers see only their own transports</td></tr>
+          <tr><td>Can it hold non-row-change events?</td><td>No — it only exists when a row's columns change</td><td>Yes — a trip-log step or an escalation is a first-class event</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p class="tag">If you tried to serve the timeline from audit_log</p>
+      <p>You would expose raw, PHI-laden column diffs to dispatchers; force them to reverse-engineer meaning from column names; be unable to represent events that aren't a single-row column change (a trip-log step, an escalation, a duplicate-lineage marker); and couple a user-facing feature to the immutable compliance store. The separation is what lets each store be excellent at its one job.</p>
+    </div>
+
+    <h3>Exactly what must be tracked — the lifecycle event catalog</h3>
+    <p class="lead">The 17 event types are engineered to cover the full ride lifecycle. Read them as the answer to "what in the lifecycle needs to be an event?" Grouped below by the stage they belong to. Every one carries the standard <code>actor_user_id</code> + <code>occurred_at</code>; the <code>detail</code> column adds event-specific, Zod-validated fields.</p>
+
+    <h4 class="phase">① Request stage — before a ride is dispatched</h4>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Event</th><th>Fires when…</th><th>Key detail</th></tr></thead>
+        <tbody>
+          <tr><td><code>voided</code></td><td>A dispatcher voids a transport request as a clerical error (pre-dispatch)</td><td><code>{}</code> — actor + time on standard columns</td></tr>
+          <tr><td><code>duplicated_from</code></td><td>A new TR is created by duplicating an existing one (e.g. a return trip)</td><td><code>source_tr_id</code>, <code>variant</code> (<code>exact</code> | <code>return_trip</code>)</td></tr>
+          <tr><td><code>eligibility_check_set</code> / <code>_cleared</code></td><td>The eligibility-confirmation toggle is set or cleared — populates / NULLs <code>transport_request.eligibility_confirmed_at</code></td><td><code>{}</code></td></tr>
+          <tr><td><code>qa_check_set</code> / <code>_cleared</code></td><td>The QA-confirmation toggle is set or cleared — populates / NULLs <code>transport_request.qa_confirmed_at</code></td><td><code>{}</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="phase">② Dispatch — the ride becomes a transport</h4>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Event</th><th>Fires when…</th><th>Key detail</th></tr></thead>
+        <tbody>
+          <tr><td><code>dispatched</code></td><td>The TR is dispatched — a <code>transport</code> row is materialized with a driver, vehicle, and route</td><td><code>transport_id</code>, <code>driver_id</code>, <code>vehicle_id</code>, <code>route_id</code>, <code>dispatch_type</code>, <code>dispatch_method</code>, <code>step_functions_execution_arn</code>, <code>route_position</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="phase">③ Execution — the ride is underway</h4>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Event</th><th>Fires when…</th><th>Key detail</th></tr></thead>
+        <tbody>
+          <tr><td><code>status_change</code></td><td>The transport moves between lifecycle statuses (e.g. dispatched → in_progress)</td><td><code>previous_status</code>, <code>new_status</code>, <code>reason?</code></td></tr>
+          <tr><td><code>trip_log_step</code></td><td>The driver completes a trip-log step in the mobile app (arrive_pickup, etc.)</td><td><code>step_name</code>, <code>completed_at</code>, <code>location?</code> (GPS lat/lng — <b>PHI</b>)</td></tr>
+          <tr><td><code>eta_update</code></td><td>The estimated arrival changes</td><td><code>previous_eta</code>, <code>new_eta</code>, <code>source</code> (<code>samsara</code> | <code>manual</code> | <code>routing_engine</code>)</td></tr>
+          <tr><td><code>route_change</code></td><td>The transport is moved to a different route</td><td><code>previous_route_id</code>, <code>new_route_id</code>, <code>reason?</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="phase">④ Edits &amp; reassignments — a human changes the plan</h4>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Event</th><th>Fires when…</th><th>Key detail</th></tr></thead>
+        <tbody>
+          <tr><td><code>driver_reassignment</code></td><td>The assigned driver changes (e.g. original driver called out)</td><td><code>previous_driver_id</code>, <code>new_driver_id</code>, <code>reason?</code></td></tr>
+          <tr><td><code>vehicle_reassignment</code></td><td>The assigned vehicle changes (e.g. wheelchair van needed)</td><td><code>previous_vehicle_id</code>, <code>new_vehicle_id</code>, <code>reason?</code></td></tr>
+          <tr><td><code>notes_update</code></td><td>A free-text notes field is edited — captures field-level change history</td><td><code>field</code>, <code>previous_value?</code>, <code>new_value</code> (<b>PHI</b>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="phase">⑤ Exceptions &amp; closure — the ride ends (or the system ends it)</h4>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Event</th><th>Fires when…</th><th>Key detail</th></tr></thead>
+        <tbody>
+          <tr><td><code>escalation</code></td><td>An issue is raised against the ride (e.g. driver no-show after 15 min)</td><td><code>issue_id?</code>, <code>severity</code>, <code>description</code></td></tr>
+          <tr><td><code>cancellation</code></td><td>A dispatched transport is cancelled, with party attribution</td><td><code>reason</code>, <code>sub_reason?</code>, <code>cancelled_by</code> (<b>PHI in reason</b>)</td></tr>
+          <tr><td><code>system_auto_transition</code></td><td>A timer/rule moves the ride automatically — <b>actor is NULL</b> (Graphile Worker). Covers auto-complete-after-dropoff and stale-TR auto-miss</td><td><code>trigger</code>, <code>rule_name?</code>, <code>previous_status</code>, <code>new_status</code>, <code>reason?</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout rule">
+      <p class="tag">The rule that makes the catalog binding</p>
+      <p>The event list is not advisory. Per the <a href="#covrule">coverage rule</a> (§7): any flow that mutates transport lifecycle state <b>must</b> emit the matching event here, in the same operation. A flow that changes a ride's state without writing <code>transport_history</code> is a spec violation — the timeline is only trustworthy if it is complete.</p>
+    </div>
+
+    <h3>Enforcement, retention &amp; access</h3>
+    <ul class="items">
+      <li><b>Append-only, three enforcement layers</b> (all required for CISO sign-off): (1) tRPC exposes only an <code>insert</code> procedure; (2) <code>history_writer</code> role has INSERT+SELECT only; (3) a <code>BEFORE UPDATE OR DELETE</code> trigger raises an exception. See Appendix B.</li>
+      <li><b>Partitioned monthly</b> on <code>occurred_at</code>; 36-month hot retention; detach → archive to S3 → drop (no DELETE needed — archival respects append-only).</li>
+      <li><b>Role-gated reads</b> — RLS for tenant isolation; drivers see only events for their assigned transports; dispatchers and managers see all tenant events.</li>
+      <li><b>PHI-aware</b> — GPS coordinates and free-text reasons live in <code>detail</code>; sub-fields registered in the PHI Field Registry (ENC-04) with Sentry scrubbing and log exclusion.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="covrule"><span class="n">7</span> The coverage rule — how the layers stay in sync</h2>
+    <div class="callout rule">
+      <p class="tag">Load-bearing invariant</p>
+      <p class="invariant">Any UPDATE to a transport row (or related lifecycle-bearing row: transport_request, route, stop, billing fields) by an application flow MUST emit a corresponding transport_history event in the same logical operation.</p>
+    </div>
+    <p>So a single state-changing flow produces <b>both</b> records: the <code>transport_history</code> event (operational) <i>and</i> the trigger-fired <code>audit_log</code> row (compliance). A flow that mutates transport state without writing <code>transport_history</code> violates the rule. "audit_log is the compliance trail; transport_history is the operational timeline; both must coexist for state-changing flows."</p>
+    <p><b>Carve-out:</b> external-system sync-target columns (<code>route.samsara_route_id</code>, <code>route.route_polyline</code>, <code>route.external_ids</code>, <code>stop.samsara_stop_id</code>, owned by the Samsara Outbound queue) are exempt — they capture cross-system mirror state, a separate concern with its own observability, not human-actor lifecycle actions.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">8</span> Attribution integrity (REQ-11)</h2>
+    <p>Both pillars carry a nullable <code>actor_user_id</code> (NULL = system/worker/trigger-initiated). Correct attribution over time depends on a hard invariant: <b>users are never hard-deleted</b> (<code>is_active = false</code> + <code>deactivated_at</code>). If hard-deletion of users is ever proposed, this dependency must be re-evaluated. <code>audit_log</code> additionally always carries <code>trigger_source</code>, so every record has at least one attribution vector even when the actor is NULL.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">9</span> Requirements traceability</h2>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Requirement</th><th>Primary mechanism(s)</th><th>Layer</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rid">REQ-01</span> who/what/when/where/outcome</td><td><code>audit_log</code> (changes) + <code>pg_audit</code> (PHI reads)</td><td>2, 3</td></tr>
+          <tr><td><span class="rid">REQ-02</span> immutable / tamper-evident</td><td>INSERT-only grants + trigger guard + S3 Object Lock + CloudTrail integrity</td><td>1, 2, 3</td></tr>
+          <tr><td><span class="rid">REQ-03</span> ≥6yr → 7yr retention</td><td>Universal partition retention (37mo hot + 49mo cold WORM)</td><td>2, 3</td></tr>
+          <tr><td><span class="rid">REQ-04</span> UTC / time-sync</td><td><code>TIMESTAMPTZ</code>; <code>occurred_at</code> vs <code>created_at</code> split; NTP</td><td>all</td></tr>
+          <tr><td><span class="rid">REQ-05</span> alert on failure</td><td>PagerDuty on DEFAULT-partition rows; CloudWatch on lifecycle-job failure</td><td>2, 3</td></tr>
+          <tr><td><span class="rid">REQ-06</span> review / anomaly</td><td>Entity/actor/time indexes; Athena + QuickSight; GuardDuty / Security Hub</td><td>2, 3</td></tr>
+          <tr><td><span class="rid">REQ-07</span> generate at every path</td><td>DB triggers (unbypassable) + CI test asserting every HIPAA-scoped table has a trigger</td><td>2</td></tr>
+          <tr><td><span class="rid">REQ-08</span> min-necessary reads</td><td>RLS tenant isolation + tRPC role gating (tenant/platform admin)</td><td>2</td></tr>
+          <tr><td><span class="rid">REQ-09</span> protect/redact PHI</td><td>KMS at rest + Sentry scrub + <code>audit_purger</code> scoped redaction</td><td>2</td></tr>
+          <tr><td><span class="rid">REQ-10</span> human ride timeline</td><td><code>transport_history</code> typed events</td><td>1</td></tr>
+          <tr><td><span class="rid">REQ-11</span> attribution survives</td><td>user soft-delete-only invariant + <code>trigger_source</code></td><td>1, 2</td></tr>
+          <tr><td><span class="rid">REQ-12</span> no destabilization</td><td>changed-columns-only + Samsara exemption + async escape hatch</td><td>2</td></tr>
+          <tr><td><span class="rid">REQ-13</span> scale + clean archival</td><td>monthly partitioning + detach → archive → drop</td><td>1, 2</td></tr>
+          <tr><td><span class="rid">REQ-14</span> tenant-scoped</td><td>RLS <code>FORCE ROW LEVEL SECURITY</code> on all audit stores</td><td>1, 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">10</span> Known open items &amp; caveats</h2>
+    <ul class="items">
+      <li><b>PG version.</b> On PG 15, FK constraints on partitioned tables (<code>audit_log</code>, <code>transport_history</code>, <code>merge_log</code>, <code>db_health_finding</code>) are application-layer enforced with CI tests; intent to restore DB-enforced FKs on PG 17+.</li>
+      <li><b>WORM backup deadline.</b> <code>audit_log</code> → S3 Object Lock export was earmarked pre-production (target 2026-07-01, owner Farhan). Confirm status.</li>
+      <li><b>GIN on <code>detail</code>.</b> Deferred on both JSONB payload columns (write amplification on high-write append-only tables). Revisit post-launch with <code>CREATE INDEX CONCURRENTLY</code> if query patterns demand it.</li>
+      <li><b>AU-6 automated review.</b> Anomaly detection is currently "Planned" — surfacing PHI-access anomalies from <code>pg_audit</code>/<code>audit_log</code> is not yet built.</li>
+    </ul>
+  </section>
+
+  <!-- ============ APPENDICES ============ -->
+  <p class="part">Appendices — Schema Contracts</p>
+  <p class="lead">Condensed from the tier-2 schema contracts. On any discrepancy, the linked tier contract is authoritative.</p>
+
+  <section>
+    <h2><span class="n">A</span> <code>audit_log</code> <span class="apx">Tier 7</span></h2>
+    <p>Polymorphic, trigger-written, INSERT-only, monthly-partitioned. <span class="audit-flag no">Audit: No — self-referential</span></p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Column</th><th>Type</th><th>Null</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>UUID</td><td>No</td><td>PK (composite with <code>created_at</code>)</td></tr>
+          <tr><td><code>tenant_id</code></td><td>UUID</td><td>No</td><td>RLS discriminator (app-layer RI on PG 15)</td></tr>
+          <tr><td><code>actor_user_id</code></td><td>UUID</td><td>Yes</td><td>NULL for system/trigger changes</td></tr>
+          <tr><td><code>action</code></td><td>enum</td><td>No</td><td><code>INSERT</code> / <code>UPDATE</code> / <code>DELETE</code></td></tr>
+          <tr><td><code>actor_ip</code></td><td>INET</td><td>Yes</td><td>From <code>app.client_ip</code> GUC; NULL if unset</td></tr>
+          <tr><td><code>trigger_source</code></td><td>VARCHAR(100)</td><td>No</td><td>Always populated (<code>audit_trigger_fn</code>, <code>merge_job</code>…)</td></tr>
+          <tr><td><code>changed_columns</code></td><td>TEXT[]</td><td>Yes</td><td>Columns modified on UPDATE (diff OLD/NEW)</td></tr>
+          <tr><td><code>entity_id</code></td><td>UUID</td><td>No</td><td>PK of changed row (polymorphic)</td></tr>
+          <tr><td><code>entity_type</code></td><td>VARCHAR(100)</td><td>No</td><td>Table name of changed entity</td></tr>
+          <tr><td><code>new_data</code></td><td>JSONB</td><td>Yes</td><td>Changed cols only; full row on INSERT. May contain PHI</td></tr>
+          <tr><td><code>old_data</code></td><td>JSONB</td><td>Yes</td><td>Changed cols only; full row on DELETE. May contain PHI</td></tr>
+          <tr><td><code>created_at</code></td><td>TIMESTAMPTZ</td><td>No</td><td>Immutable; partition key</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">No <code>updated_at</code> (append-only). Indexes: entity <code>(tenant_id, entity_type, entity_id, created_at DESC)</code>, actor <code>(tenant_id, actor_user_id, created_at DESC)</code>, time <code>(tenant_id, created_at DESC)</code>.</p>
+    <h3>Immutability &amp; roles</h3>
+<pre><span class="k">CREATE TYPE</span> audit_action_enum <span class="k">AS ENUM</span> (<span class="s">'INSERT'</span>, <span class="s">'UPDATE'</span>, <span class="s">'DELETE'</span>);
+
+<span class="k">CREATE ROLE</span> audit_writer NOLOGIN;
+<span class="k">GRANT INSERT ON</span> audit_log <span class="k">TO</span> audit_writer;
+<span class="k">REVOKE ALL ON</span> audit_log <span class="k">FROM</span> PUBLIC;      <span class="c">-- no UPDATE/DELETE/TRUNCATE. Ever.</span>
+
+<span class="c">-- Scoped PHI-redaction role (human-approval-gated, externally logged)</span>
+<span class="k">CREATE ROLE</span> audit_purger NOLOGIN;
+<span class="k">GRANT UPDATE</span> (old_data, new_data) <span class="k">ON</span> audit_log <span class="k">TO</span> audit_purger;
+
+<span class="k">CREATE FUNCTION</span> audit_trigger_fn() <span class="k">RETURNS TRIGGER</span>
+  <span class="k">SECURITY DEFINER SET ROLE</span> = <span class="s">'audit_writer'</span> ... ;</pre>
+    <p class="src">RLS: <code>FORCE ROW LEVEL SECURITY</code>; SELECT <code>tenant_id = current_setting('app.tenant_id')</code>, further gated to admin at tRPC. Partition: <code>PARTITION BY RANGE (created_at)</code> + DEFAULT partition (PagerDuty alert).</p>
+  </section>
+
+  <section>
+    <h2><span class="n">B</span> <code>transport_history</code> <span class="apx">Tier 8</span></h2>
+    <p>Append-only ride lifecycle log, keyed on <code>transport_request_id</code>. <span class="audit-flag no">Audit: No — IS the audit trail for transport events</span></p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Column</th><th>Type</th><th>Null</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>UUID</td><td>No</td><td>PK (composite with <code>occurred_at</code>)</td></tr>
+          <tr><td><code>tenant_id</code></td><td>UUID</td><td>No</td><td>RLS discriminator</td></tr>
+          <tr><td><code>sequence_number</code></td><td>BIGINT</td><td>No</td><td><code>GENERATED ALWAYS AS IDENTITY</code>; tiebreaker for same-<code>occurred_at</code> ordering</td></tr>
+          <tr><td><code>actor_user_id</code></td><td>UUID</td><td>Yes</td><td>NULL for system events; depends on user soft-delete invariant</td></tr>
+          <tr><td><code>transport_request_id</code></td><td>UUID</td><td>No</td><td>All events for a ride keyed here (TR→transport 1:1)</td></tr>
+          <tr><td><code>detail</code></td><td>JSONB</td><td>No</td><td><code>'{}'</code> default; per-event payload (Zod discriminated union). May contain PHI</td></tr>
+          <tr><td><code>event_type</code></td><td>VARCHAR(100)</td><td>No</td><td>option_set <code>transport_history_event_type</code>; Zod-authoritative</td></tr>
+          <tr><td><code>occurred_at</code></td><td>TIMESTAMPTZ</td><td>No</td><td>When it happened. <b>Partition key</b></td></tr>
+          <tr><td><code>created_at</code></td><td>TIMESTAMPTZ</td><td>No</td><td>Row insertion time</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src"><b>PHI sub-fields</b> (registered per ENC-04): <code>cancellation.reason/sub_reason</code>, <code>notes_update.previous_value/new_value</code>, <code>trip_log_step.location</code> (GPS lat/lng).</p>
+    <h3>Append-only enforcement — three layers</h3>
+<pre><span class="k">CREATE ROLE</span> history_writer;
+<span class="k">GRANT INSERT, SELECT ON</span> transport_history <span class="k">TO</span> history_writer;   <span class="c">-- no UPDATE/DELETE</span>
+
+<span class="k">CREATE OR REPLACE FUNCTION</span> prevent_transport_history_mutation()
+<span class="k">RETURNS TRIGGER AS</span> $$
+<span class="k">BEGIN</span>
+  <span class="k">RAISE EXCEPTION</span> <span class="s">'transport_history is append-only: % not permitted'</span>, TG_OP;
+<span class="k">END</span>; $$ <span class="k">LANGUAGE</span> plpgsql;
+
+<span class="k">CREATE TRIGGER</span> transport_history_no_mutation
+  <span class="k">BEFORE UPDATE OR DELETE ON</span> transport_history
+  <span class="k">FOR EACH ROW EXECUTE FUNCTION</span> prevent_transport_history_mutation();</pre>
+    <p class="src">Indexes: ride timeline <code>(tenant_id, transport_request_id, occurred_at)</code>, event-type <code>(tenant_id, event_type, occurred_at)</code>, actor partial <code>… WHERE actor_user_id IS NOT NULL</code>. Partition: <code>PARTITION BY RANGE (occurred_at)</code>, monthly, 36mo hot. Custom autovacuum (DO-HIGH-2).</p>
+  </section>
+
+  <section>
+    <h2><span class="n">C</span> <code>merge_log</code> <span class="apx">Tier 7</span></h2>
+    <p>Client/facility de-duplication audit trail. Immutable, same controls as <code>audit_log</code>. <span class="audit-flag no">Audit: No — IS the audit trail for merges</span> Partitioned on <code>performed_at</code>.</p>
+    <p>Key columns: <code>entity_type</code> (<code>client</code>|<code>facility</code>), <code>keep_entity_id</code>, <code>keep_snapshot</code> (JSONB master pre-merge), <code>remove_entity_ids</code> (UUID[]), <code>remove_snapshots</code> (JSONB, UUID-keyed pre-merge snapshots), <code>relation_changes</code> (FK repointing log), <code>is_hard_merge</code>, <code>merge_status</code> (<code>started</code>/<code>applied</code>/<code>failed</code>/<code>applied_with_warnings</code>), <code>deleted_count</code>, <code>skipped_count</code>, <code>performed_by_user_id</code>, <code>performed_at</code>. Grants: INSERT-only to <code>audit_writer</code>; SELECT gated to admin (PHI snapshots).</p>
+  </section>
+
+  <section>
+    <h2><span class="n">D</span> <code>db_health_finding</code> <span class="apx">Tier 7</span></h2>
+    <p>Automated DB integrity-check results (orphaned FKs, anomalies). <span class="audit-flag no">Audit: No — operational tooling</span> <b>Mutable</b> — findings transition through a status lifecycle, so the partition seal revokes INSERT only, not UPDATE.</p>
+    <p>Key columns: <code>check_name</code>, <code>description</code>, <code>detail</code> (JSONB — must be PHI-redacted; CI pattern-scan enforced), <code>severity</code> (<code>P1</code>/<code>P2</code>), <code>finding_status</code> (<code>open</code>/<code>acknowledged</code>/<code>resolved</code>/<code>wont_fix</code>), <code>entity_type</code>/<code>entity_id</code> (polymorphic, nullable), <code>resolved_by_user_id</code>, <code>resolved_at</code>, <code>notes_resolution</code>. Partitioned on <code>created_at</code>. Written by Graphile Worker health-check jobs (definitions in UC-12).</p>
+  </section>
+
+  <p class="footer">Echo1 V2 · Audit Logging Architecture · reference synthesis of arch-spec §HIPAA Audit Logging + tier-7 + tier-8 schema · draft v1.0.0 · 2026-07-22</p>
+
+</div>
+
+<button class="themebtn" id="themebtn" aria-label="Toggle light/dark theme" title="Toggle theme">◐</button>
+<script>
+  (function(){
+    var btn = document.getElementById('themebtn');
+    btn.addEventListener('click', function(){
+      var root = document.documentElement;
+      var cur = root.getAttribute('data-theme');
+      if(!cur){ cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+      root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+    });
+  })();
+</script>
+<script src="/prez-header.js" defer></script>
+</body>
+</html>
