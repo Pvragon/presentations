@@ -1,8 +1,13 @@
 # Pvragon Presentations
 
-Branded HTML presentations, auto-deployed via Vercel.
+Branded HTML presentations **and self-contained agent-generated HTML artifacts**, auto-deployed via Vercel.
 
-**Live at:** [prez.pvragon.com](https://prez.pvragon.com)
+**Live at:** [prez.pvragon.com](https://prez.pvragon.com) / [prez.prgn.ai](https://prez.prgn.ai)
+
+> **Agents / automated publishing:** for the full flow — publishing a self-contained HTML
+> artifact, embedding mermaid diagrams as inlined Excalidraw SVG, the password/protected-path
+> mechanism, and deploy + verify — use the **`publish-to-prez`** skill
+> (`team-lib/skills/publish-to-prez/`). This README covers the branded-deck + category-index flow.
 
 ## Structure
 
@@ -23,7 +28,7 @@ presentations/
 ## How to Add a Presentation to an Existing Category
 
 1. Create a `.md` source file with slide content.
-2. Generate the `.html` using the Pvragon branded HTML presentation template (see `team-lib/skills/brand-guidelines/pvragon/templates/html-presentation.html`).
+2. Generate the `.html` using the Pvragon branded HTML presentation template (see `team-lib/context/indexed/companies/pvragon/brand/assets/templates/html-presentation.html`).
 3. Place both `.md` and `.html` files in the category folder (e.g., `echo1/`).
 4. Add a `<li>` entry to the category's `index.html` inside the appropriate `<ul class="prez-grid">` within a topic group:
 
