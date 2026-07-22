@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RideCare Transport Pipeline — Handoff</title>
+</head>
+<body>
+<title>RideCare Transport Pipeline — Handoff</title>
+<style>
+  :root {
+    --green:#00B74F; --green-deep:#00913F;
+    --magenta:#C5299B;
+    --err:#9D2D0B; --err-bg:#FBE3DC;
+    --amber:#B8860B;
+    --ground:#F6FAF7; --surface:#FFFFFF;
+    --ink:#0E1512; --ink-soft:#54615B; --ink-faint:#7C8A83;
+    --line:#E3EAE5; --line-soft:#EEF3EF;
+    --grey-term:#7C837F;
+    --canvas:#FBFCFB;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --measure: 66ch;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --green:#22C55E; --green-deep:#16A34A;
+      --magenta:#E24FB4;
+      --err:#F0714B; --err-bg:#2A130C;
+      --amber:#D9A93A;
+      --ground:#0B100D; --surface:#141B17;
+      --ink:#E9F1EB; --ink-soft:#9FB1A8; --ink-faint:#71827A;
+      --line:#26312B; --line-soft:#1C2620;
+      --grey-term:#8A928D;
+      --canvas:#F4F7F5;
+    }
+  }
+  :root[data-theme="light"] {
+    --green:#00B74F; --green-deep:#00913F; --magenta:#C5299B;
+    --err:#9D2D0B; --err-bg:#FBE3DC; --amber:#B8860B;
+    --ground:#F6FAF7; --surface:#FFFFFF; --ink:#0E1512; --ink-soft:#54615B;
+    --ink-faint:#7C8A83; --line:#E3EAE5; --line-soft:#EEF3EF; --grey-term:#7C837F; --canvas:#FBFCFB;
+  }
+  :root[data-theme="dark"] {
+    --green:#22C55E; --green-deep:#16A34A; --magenta:#E24FB4;
+    --err:#F0714B; --err-bg:#2A130C; --amber:#D9A93A;
+    --ground:#0B100D; --surface:#141B17; --ink:#E9F1EB; --ink-soft:#9FB1A8;
+    --ink-faint:#71827A; --line:#26312B; --line-soft:#1C2620; --grey-term:#8A928D; --canvas:#F4F7F5;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--sans); line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap { max-width:840px; margin:0 auto; padding:clamp(1.5rem,4vw,4rem) clamp(1.2rem,4vw,2.4rem) 5rem; }
+
+  /* ---- masthead ---- */
+  .eyebrow {
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--green-deep); font-weight:600; margin:0 0 1rem;
+    display:flex; align-items:center; gap:.6rem;
+  }
+  .eyebrow::before { content:""; width:1.6rem; height:2px; background:var(--green); display:inline-block; }
+  h1 {
+    font-size:clamp(1.9rem,4.5vw,2.9rem); line-height:1.08; letter-spacing:-.022em;
+    font-weight:700; margin:0 0 .9rem; text-wrap:balance; max-width:18ch;
+  }
+  .standfirst { font-size:1.12rem; color:var(--ink-soft); max-width:var(--measure); margin:0 0 1.8rem; }
+
+  .meta {
+    display:flex; flex-wrap:wrap; gap:0 2.2rem; border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line); padding:.9rem 0; margin-bottom:2.6rem;
+  }
+  .meta div { display:flex; flex-direction:column; gap:.15rem; padding:.2rem 0; }
+  .meta dt { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
+  .meta dd { margin:0; font-size:.92rem; font-weight:550; font-variant-numeric:tabular-nums; }
+
+  /* ---- sections ---- */
+  section { margin:0 0 3rem; }
+  h2 {
+    font-size:1.34rem; letter-spacing:-.012em; font-weight:680; margin:0 0 .3rem;
+    display:flex; align-items:baseline; gap:.7rem;
+  }
+  h2 .n { font-family:var(--mono); font-size:.8rem; color:var(--green-deep); font-weight:600; }
+  h3 { font-size:1.02rem; font-weight:640; margin:1.8rem 0 .5rem; letter-spacing:-.005em; }
+  p { max-width:var(--measure); margin:.7rem 0; }
+  .lead-line { color:var(--ink-soft); max-width:var(--measure); margin:.2rem 0 1.4rem; }
+  strong { font-weight:660; }
+  a { color:var(--green-deep); text-underline-offset:2px; }
+
+  /* ---- diagram canvas ---- */
+  .canvas {
+    background:var(--canvas); border:1px solid var(--line); border-radius:12px;
+    padding:1rem; overflow-x:auto; margin:1.4rem 0 .8rem; position:relative; cursor:zoom-in;
+    box-shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 30px -18px rgba(0,0,0,.25);
+    transition:border-color .15s ease;
+  }
+  .canvas:hover { border-color:var(--green); }
+  .zoombadge {
+    position:absolute; top:.7rem; right:.7rem; background:var(--surface); border:1px solid var(--line);
+    border-radius:6px; font-family:var(--mono); font-size:.66rem; padding:.25rem .55rem;
+    color:var(--ink-soft); pointer-events:none; opacity:.9; z-index:2; display:inline-flex; gap:.35rem; align-items:center;
+  }
+  .canvas pre.mermaid { margin:0; min-width:760px; text-align:center; background:transparent; }
+  .cap { font-size:.82rem; color:var(--ink-faint); font-family:var(--mono); margin:.4rem 0 0; }
+
+  /* ---- callout ---- */
+  .callout {
+    border:1px solid var(--line); border-left:3px solid var(--magenta);
+    background:var(--surface); border-radius:10px; padding:1.1rem 1.3rem; margin:1.4rem 0;
+  }
+  .callout.warn { border-left-color:var(--err); }
+  .callout .tag {
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--magenta); font-weight:600; margin:0 0 .4rem;
+  }
+  .callout.warn .tag { color:var(--err); }
+  .callout p { margin:.3rem 0; }
+
+  /* ---- ledger (checksums) ---- */
+  .ledger { display:flex; flex-direction:column; gap:.7rem; margin:1.3rem 0; }
+  .row {
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:.9rem 1.1rem; display:grid; grid-template-columns:1fr auto; gap:.5rem 1rem; align-items:center;
+  }
+  .row .rlabel { font-weight:620; font-size:.96rem; }
+  .row .rsub { grid-column:1 / -1; font-family:var(--mono); font-size:.85rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; letter-spacing:-.01em; overflow-x:auto; }
+  .row .rsub b { color:var(--ink); font-weight:600; }
+  .pill {
+    font-family:var(--mono); font-size:.7rem; font-weight:600; letter-spacing:.03em;
+    padding:.22rem .6rem; border-radius:999px; white-space:nowrap; display:inline-flex; align-items:center; gap:.35rem;
+  }
+  .pill.ok { color:var(--green-deep); background:color-mix(in srgb, var(--green) 15%, transparent); }
+  .pill.bad { color:var(--err); background:var(--err-bg); }
+
+  .key-eq {
+    font-family:var(--mono); font-size:.9rem; background:var(--surface); border:1px dashed var(--line);
+    border-radius:8px; padding:.8rem 1rem; margin:1.1rem 0; color:var(--ink-soft);
+    overflow-x:auto; font-variant-numeric:tabular-nums;
+  }
+  .key-eq b { color:var(--err); }
+
+  /* ---- terminal legend ---- */
+  .legend { display:flex; flex-wrap:wrap; gap:.5rem .5rem; margin:1rem 0 0; }
+  .chip {
+    font-size:.8rem; padding:.3rem .65rem; border-radius:7px; border:1px solid var(--line);
+    display:inline-flex; align-items:center; gap:.45rem; background:var(--surface);
+  }
+  .chip .sw { width:.7rem; height:.7rem; border-radius:3px; flex:none; }
+
+  /* ---- open items ---- */
+  ul.items { list-style:none; padding:0; margin:1rem 0; display:flex; flex-direction:column; gap:.7rem; }
+  ul.items li {
+    padding-left:1.6rem; position:relative; max-width:var(--measure);
+  }
+  ul.items li::before {
+    content:""; position:absolute; left:.2rem; top:.62em; width:.5rem; height:.5rem;
+    border:2px solid var(--green); border-radius:2px;
+  }
+  ul.items li b { font-weight:640; }
+
+  .files { font-family:var(--mono); font-size:.83rem; }
+  .files dt { color:var(--ink-faint); margin-top:.9rem; }
+  .files dd { margin:.15rem 0 0; word-break:break-all; }
+
+  /* ---- lightbox ---- */
+  .lb-overlay { position:fixed; inset:0; z-index:1000; background:rgba(6,10,8,.87); display:none; align-items:center; justify-content:center; }
+  .lb-overlay.open { display:flex; }
+  .lb-stage { position:relative; width:96vw; height:92vh; overflow:hidden; background:#FBFCFB; border-radius:12px; box-shadow:0 24px 80px rgba(0,0,0,.55); cursor:grab; touch-action:none; }
+  .lb-stage svg { position:absolute; top:0; left:0; transform-origin:0 0; max-width:none; }
+  .lb-controls { position:absolute; top:.8rem; right:.8rem; display:flex; gap:.4rem; z-index:3; }
+  .lb-btn { font-family:var(--mono); font-size:.9rem; line-height:1; min-width:2.3rem; height:2.3rem; padding:0 .7rem; border:1px solid rgba(0,0,0,.14); background:#fff; color:#0E1512; border-radius:8px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.16); }
+  .lb-btn:hover { background:#EEF3EF; }
+  .lb-btn:focus-visible { outline:2px solid #00B74F; outline-offset:2px; }
+  .lb-hint { position:absolute; bottom:.8rem; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:.7rem; color:#54615B; background:rgba(255,255,255,.92); padding:.3rem .75rem; border-radius:999px; z-index:3; pointer-events:none; }
+
+  footer { border-top:1px solid var(--line); margin-top:3rem; padding-top:1.2rem; font-size:.82rem; color:var(--ink-faint); }
+  footer .mono { font-family:var(--mono); }
+
+  @media (max-width:560px) {
+    .meta { gap:0 1.4rem; }
+  }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Engineering handoff · for Trever</p>
+  <h1>RideCare Transport Status Pipeline</h1>
+  <p class="standfirst">Where every FY26 ride sits in the billing pipeline — and the one reason this is a <em>count inventory</em>, not a true Sankey flow. Read the limitation before trusting it as a flow diagram.</p>
+
+  <dl class="meta">
+    <div><dt>Cohort</dt><dd>97,595 transports</dd></div>
+    <div><dt>Window</dt><dd>FY26 · pickup ≥ 2025-07-01 CT</dd></div>
+    <div><dt>Snapshot</dt><dd>live, 2026-05-30</dd></div>
+    <div><dt>Branch</dt><dd>feat/transport-status-inventory-260529</dd></div>
+  </dl>
+
+  <section>
+    <h2><span class="n">01</span> The diagram</h2>
+    <p class="lead-line">One ride followed through the real decision gates in lifecycle order — <strong>Status → Trip documented? → Reviewed? → Billed?</strong> — with each unbilled ride dropping out to its owning team, terminals for voided / non-billable, and an honest call-out for rides that were billed in error.</p>
+
+    <div class="canvas" id="pipeCanvas">
+      <span class="zoombadge">⤢ click to zoom</span>
+<svg version="1.1" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3992.640625 664.375" width="3992.640625" height="664.375"><!-- svg-source:excalidraw --><metadata/><defs><style class="style-fonts">
+      @font-face { font-family: Excalifont; src: url(data:font/woff2;base64,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); }</style></defs><rect x="0" y="0" width="3992.640625" height="664.375" fill="#ffffff"/><g stroke-linecap="round" transform="translate(16 84.75) rotate(0 109.3671875 36.5)"><path d="M18.25 0 C81.84 2.41, 152.56 2.46, 200.48 0 C215.52 2.32, 217.04 9.09, 218.73 18.25 C220.18 25.88, 218.44 30.13, 218.73 54.75 C216.29 64.6, 212.08 76.08, 200.48 73 C135.72 69.22, 63.95 74.12, 18.25 73 C2.77 70.84, -3.5 65.39, 0 54.75 C-2.6 45.4, 3.55 40.42, 0 18.25 C2.75 4.37, 8.36 1.01, 18.25 0" stroke="none" stroke-width="0" fill="#00B74F"/><path d="M18.25 0 C63.4 0.7, 109.21 -2.02, 200.48 0 M18.25 0 C60.72 0.79, 102.07 0.72, 200.48 0 M200.48 0 C213.48 -1.83, 219.8 5.37, 218.73 18.25 M200.48 0 C211.33 -2.18, 220.04 4.29, 218.73 18.25 M218.73 18.25 C219.01 28.25, 219.08 39.94, 218.73 54.75 M218.73 18.25 C217.56 30.43, 219.3 45.03, 218.73 54.75 M218.73 54.75 C220.05 68.22, 211.65 73.41, 200.48 73 M218.73 54.75 C217.79 65.58, 212.49 75, 200.48 73 M200.48 73 C129.39 73.64, 61.56 71.62, 18.25 73 M200.48 73 C158.3 74.23, 116.84 75.31, 18.25 73 M18.25 73 C7.29 73.24, -1.92 67.92, 0 54.75 M18.25 73 C4.93 72.49, 1.84 65.55, 0 54.75 M0 54.75 C-0.22 39.98, 1.22 26.29, 0 18.25 M0 54.75 C-1.01 42.05, 0.71 29.35, 0 18.25 M0 18.25 C1.89 4.79, 5.41 0.3, 18.25 0 M0 18.25 C-1 8.18, 7.43 -1.81, 18.25 0" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(56.4462890625 96.25) rotate(0 68.9208984375 25)"><text x="68.9208984375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">FY26 transports</text><text x="68.9208984375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">97,595</text></g><g stroke-linecap="round" transform="translate(284.734375 52.7734375) rotate(0 68.4765625 68.4765625)"><path d="M69 0 C86.3 17.43, 99.16 30.02, 136.95 69 M69 0 C90.41 21.06, 111.09 41.99, 136.95 69 M136.95 69 C122 81.02, 110.11 95.54, 69 136.95 M136.95 69 C117.38 88.79, 97.6 109.13, 69 136.95 M69 136.95 C43.36 111.19, 22.45 90.57, 0 69 M69 136.95 C43.52 111.33, 17.49 86.81, 0 69 M0 69 C25.28 41.7, 54.19 17.59, 69 0 M0 69 C19.89 50.97, 37.03 33.33, 69 0" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(326.21484375 96.01171875) rotate(0 26.7578125 25)"><text x="26.7578125" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Status</text><text x="26.7578125" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">?</text></g><g stroke-linecap="round" transform="translate(860.84375 16) rotate(0 106.578125 36.5)"><path d="M1.21 0.24 L211.24 1.01 L212.15 72.55 L1.6 71.82" stroke="none" stroke-width="0" fill="#EEEEEE"/><path d="M0 0 C74.11 -2.47, 143.8 -1.25, 213.16 0 M0 0 C63.26 -0.75, 125.92 -2.1, 213.16 0 M213.16 0 C211 26.92, 211.34 51.4, 213.16 73 M213.16 0 C213.16 23.45, 213.69 47.17, 213.16 73 M213.16 73 C164.27 72.82, 119.6 72.49, 0 73 M213.16 73 C134.99 72.88, 57.48 74.15, 0 73 M0 73 C-0.6 46.18, 1.99 15.94, 0 0 M0 73 C0.49 55.61, 1.35 39.73, 0 0" stroke="#808080" stroke-width="2" fill="none"/></g><g transform="translate(889.453125 27.5) rotate(0 77.96875 25)"><text x="77.96875" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#808080" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Ops: confirm void</text><text x="77.96875" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#808080" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">(terminal)</text></g><g stroke-linecap="round" transform="translate(830.453125 139) rotate(0 136.96875 36.5)"><path d="M0.24 -1.92 L274.94 -1 L273.49 74.6 L-1.18 74.9" stroke="none" stroke-width="0" fill="#EEEEEE"/><path d="M0 0 C89.03 -3.02, 180.14 -2, 273.94 0 M0 0 C105.49 -0.85, 209.3 -0.76, 273.94 0 M273.94 0 C274.65 17.73, 273.35 38.96, 273.94 73 M273.94 0 C274.15 25.36, 274.54 49.55, 273.94 73 M273.94 73 C206.31 73.01, 137.07 72.49, 0 73 M273.94 73 C204.97 72.07, 137.58 72.79, 0 73 M0 73 C1.69 53.65, -0.34 29.09, 0 0 M0 73 C-1.11 55.65, -0.03 36.92, 0 0" stroke="#808080" stroke-width="2" fill="none"/></g><g transform="translate(870.068359375 150.5) rotate(0 97.353515625 25)"><text x="97.353515625" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#808080" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">still moving</text><text x="97.353515625" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#808080" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">(104 active · 107 stale)</text></g><g stroke-linecap="round" transform="translate(849.375 262) rotate(0 118.046875 118.046875)"><path d="M119 0 C162.17 45.1, 207.02 90.9, 236.09 119 M119 0 C163.31 42.3, 206.67 86.8, 236.09 119 M236.09 119 C205.04 147.88, 178.6 177.33, 119 236.09 M236.09 119 C199.61 156, 162.34 191.29, 119 236.09 M119 236.09 C96.7 213.71, 70.92 186.69, 0 119 M119 236.09 C81.25 198.72, 44.02 160.21, 0 119 M0 119 C33.15 86.71, 60.7 55.54, 119 0 M0 119 C47.47 73.53, 93.71 26.38, 119 0" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(917.330078125 342.5234375) rotate(0 50.068359375 37.5)"><text x="50.068359375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Trip</text><text x="50.068359375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">documente</text><text x="50.068359375" y="67.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">d?</text></g><g stroke-linecap="round" transform="translate(1396.109375 256.6640625) rotate(0 124.25 36.5)"><path d="M1.01 -1 L248.05 1.6 L247.32 74.9 L-1.4 72.29" stroke="none" stroke-width="0" fill="#ffffff"/><path d="M0 0 C96.97 1.37, 195.12 2.59, 248.5 0 M0 0 C87.46 -0.41, 176.12 -1.32, 248.5 0 M248.5 0 C248.74 15.36, 249.81 30.14, 248.5 73 M248.5 0 C249.13 18.78, 248.12 38.2, 248.5 73 M248.5 73 C192.72 76.07, 133.97 75.34, 0 73 M248.5 73 C184.91 73.56, 119.83 72.52, 0 73 M0 73 C-1.14 52.16, -1.48 35.86, 0 0 M0 73 C0.96 50.75, 0.45 26.33, 0 0" stroke="#C5299B" stroke-width="2" fill="none"/></g><g transform="translate(1429.6171875 268.1640625) rotate(0 90.7421875 25)"><text x="90.7421875" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#C5299B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">DRIVERS</text><text x="90.7421875" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#C5299B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">finish log / signature</text></g><g stroke-linecap="round" transform="translate(1433.09375 379.6640625) rotate(0 87.265625 87.265625)"><path d="M88 0 C107.66 22.37, 129.56 42.55, 174.53 88 M88 0 C120.26 32.33, 150.51 63.62, 174.53 88 M174.53 88 C143.39 119.67, 112.35 148.99, 88 174.53 M174.53 88 C146.79 115.13, 119.52 142.05, 88 174.53 M88 174.53 C54.61 140.84, 19.88 107.74, 0 88 M88 174.53 C67.63 154.27, 45.05 133.08, 0 88 M0 88 C30.3 54.8, 66 23.53, 88 0 M0 88 C22.24 65.05, 43.19 42.92, 88 0" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1484.4453125 441.796875) rotate(0 35.78125 25)"><text x="35.78125" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Reviewe</text><text x="35.78125" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">d?</text></g><g stroke-linecap="round" transform="translate(1883.484375 354.234375) rotate(0 85.3046875 36.5)"><path d="M-0.45 1.6 L169.43 1.9 L169.21 72.29 L-0.48 72.64" stroke="none" stroke-width="0" fill="#ffffff"/><path d="M0 0 C40.65 1.48, 79.06 1.34, 170.61 0 M0 0 C57.91 -1.48, 115.58 -0.34, 170.61 0 M170.61 0 C171.44 16.42, 169.9 32.71, 170.61 73 M170.61 0 C170.52 22.51, 170.29 47.65, 170.61 73 M170.61 73 C101.64 74.52, 33.84 72.95, 0 73 M170.61 73 C120.55 74.07, 70.33 75.17, 0 73 M0 73 C-0.74 45.89, 0.49 14.23, 0 0 M0 73 C-0.34 42.89, 0.04 14.2, 0 0" stroke="#C5299B" stroke-width="2" fill="none"/></g><g transform="translate(1902.7099609375 365.734375) rotate(0 66.0791015625 25)"><text x="66.0791015625" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#C5299B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">DISPATCH-OPS</text><text x="66.0791015625" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#C5299B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">process / QA</text></g><g stroke-linecap="round" transform="translate(1902.8984375 477.234375) rotate(0 65.890625 65.890625)"><path d="M66 0 C87.44 20.71, 107.39 40.59, 131.78 66 M66 0 C79.49 13.05, 94.35 26.98, 131.78 66 M131.78 66 C112.93 84.83, 93.83 105.06, 66 131.78 M131.78 66 C107.15 88.21, 85.64 113.15, 66 131.78 M66 131.78 C41.84 106.56, 16.12 83.17, 0 66 M66 131.78 C39.49 105.94, 15.05 81.79, 0 66 M0 66 C19.98 48.89, 34.96 32.91, 66 0 M0 66 C22.66 42.41, 47.13 17.67, 66 0" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1944.7275390625 518.1796875) rotate(0 24.1162109375 25)"><text x="24.1162109375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Billed</text><text x="24.1162109375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">?</text></g><g stroke-linecap="round" transform="translate(2539.1328125 329.375) rotate(0 99.4140625 36.5)"><path d="M-1.18 1.9 L197.43 -0.71 L198.35 72.64 L0.96 73.36" stroke="none" stroke-width="0" fill="#ffffff"/><path d="M0 0 C59.66 -0.13, 117.94 -3.21, 198.83 0 M0 0 C69.29 1.71, 139.69 1.06, 198.83 0 M198.83 0 C198.51 23.59, 199.57 47.7, 198.83 73 M198.83 0 C197.76 17.16, 199.46 33.29, 198.83 73 M198.83 73 C125.43 72.25, 53.53 75.15, 0 73 M198.83 73 C121.66 72.88, 46.11 71.87, 0 73 M0 73 C0.62 55.16, 2.34 40.37, 0 0 M0 73 C0.41 46.19, -0.31 21.19, 0 0" stroke="#C5299B" stroke-width="2" fill="none"/></g><g transform="translate(2567.9072265625 340.875) rotate(0 70.6396484375 25)"><text x="70.6396484375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#C5299B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">BILLING</text><text x="70.6396484375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#C5299B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">submit / resolve</text></g><g stroke-linecap="round" transform="translate(2530.21875 452.375) rotate(0 108.328125 36.5)"><path d="M1.9 -1.4 L215.94 -0.48 L216.3 73.96 L0.36 73.98" stroke="none" stroke-width="0" fill="#EEEEEE"/><path d="M0 0 C84.14 -0.31, 164.5 -0.11, 216.66 0 M0 0 C57.74 1.12, 114.41 1.96, 216.66 0 M216.66 0 C217 25.57, 217.8 48.79, 216.66 73 M216.66 0 C216.85 19.36, 216.67 37.4, 216.66 73 M216.66 73 C161.46 72.1, 109.79 73.73, 0 73 M216.66 73 C154.11 73.22, 90.08 71.78, 0 73 M0 73 C-1.55 56.64, 0.61 37.52, 0 0 M0 73 C0.2 49.98, 1.5 26.82, 0 0" stroke="#808080" stroke-width="2" fill="none"/></g><g transform="translate(2560.8564453125 463.875) rotate(0 77.6904296875 25)"><text x="77.6904296875" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#808080" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Correctly unbilled</text><text x="77.6904296875" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#808080" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">(terminal)</text></g><g stroke-linecap="round" transform="translate(2593.46875 575.375) rotate(0 45.078125 22)"><path d="M-1.4 -0.71 L89.68 -0.36 L91.12 44.36 L0.98 45.43" stroke="none" stroke-width="0" fill="#E6F9EE"/><path d="M0 0 C34.12 -2.39, 67.65 -1.28, 90.16 0 M0 0 C21.08 -0.59, 43.91 -0.06, 90.16 0 M90.16 0 C90.43 14.71, 88.48 26.32, 90.16 44 M90.16 0 C90.83 9.94, 90.49 18.07, 90.16 44 M90.16 44 C61.1 45.22, 34.06 43.31, 0 44 M90.16 44 C67.76 44.31, 42.76 44.14, 0 44 M0 44 C1.93 28.04, 1.15 9.76, 0 0 M0 44 C-0.44 35.81, -0.81 26.98, 0 0" stroke="#00B74F" stroke-width="2" fill="none"/></g><g transform="translate(2608.6689453125 584.875) rotate(0 29.8779296875 12.5)"><text x="29.8779296875" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#00B74F" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">BILLED</text></g><g stroke-linecap="round" transform="translate(3423.71875 546.375) rotate(0 276.4609375 51)"><path d="M-0.71 -0.48 L552.56 0.96 L553.28 102.98 L1.43 100.26" stroke="none" stroke-width="0" fill="#FBE3DC"/><path d="M0 0 C195.53 -0.49, 392.23 -1.38, 552.92 0 M0 0 C113.33 1.8, 226.9 1.76, 552.92 0 M552.92 0 C554.13 25.78, 552.1 52.84, 552.92 102 M552.92 0 C554.44 23.99, 553.29 46.88, 552.92 102 M552.92 102 C410.55 102.54, 266.71 101.52, 0 102 M552.92 102 C405.2 103.86, 257.53 104.5, 0 102 M0 102 C1.73 71.27, 0.7 36.21, 0 0 M0 102 C1.31 65.67, 1.46 29.82, 0 0" stroke="#9D2D0B" stroke-width="2" fill="none"/></g><g transform="translate(3500.6337890625 559.875) rotate(0 199.5458984375 37.5)"><text x="199.5458984375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#9D2D0B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">FIX THE MISTAKES</text><text x="199.5458984375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#9D2D0B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">backfill the missing records, or</text><text x="199.5458984375" y="67.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#9D2D0B" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">reverse the claims that should not have billed</text></g><g stroke-linecap="round"><g transform="translate(235.234 121.75) rotate(0 22.100499999999997 -0.3019999999999996)"><path d="M-0.5 0.29 C3.49 0.12, 16.94 -0.72, 24.3 -0.82 C31.67 -0.91, 40.43 -0.32, 43.68 -0.29 M0.24 -0.03 C4.11 -0.16, 16.36 -0.09, 23.77 -0.28 C31.19 -0.47, 41.41 -1.22, 44.73 -1.2" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(235.234 121.75) rotate(0 22.100499999999997 -0.3019999999999996)"><path d="M35.59 2.48 C39.15 1.01, 41.92 -0.61, 44.73 -1.2 M35.59 2.48 C38.91 1.28, 42.14 -0.22, 44.73 -1.2" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(235.234 121.75) rotate(0 22.100499999999997 -0.3019999999999996)"><path d="M35.36 -4.26 C39.02 -3.28, 41.87 -2.46, 44.73 -1.2 M35.36 -4.26 C38.74 -3.05, 42.05 -2.15, 44.73 -1.2" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask/><g mask="url(#mask-p8Z_n3JmCqcS15NQcmfLd)" stroke-linecap="round"><g transform="translate(408.906 107.969) rotate(0 223.069 -27.734499999999997)"><path d="M0.64 -0.43 C36.63 -9.68, 142.11 -47.28, 216.47 -56.61 C290.84 -65.94, 408.56 -56.63, 446.82 -56.4 M-0.48 -1.7 C35.86 -10.75, 144.34 -46.69, 218.82 -55.67 C293.3 -64.65, 408.51 -55.85, 446.41 -55.58" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(408.906 107.969) rotate(0 223.069 -27.734499999999997)"><path d="M422.63 -47.86 C430.1 -51.78, 437.04 -52.13, 446.41 -55.58 M422.63 -47.86 C428.36 -49.52, 432.88 -51.2, 446.41 -55.58" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(408.906 107.969) rotate(0 223.069 -27.734499999999997)"><path d="M423.23 -64.95 C430.35 -63.03, 437.08 -57.54, 446.41 -55.58 M423.23 -64.95 C428.82 -62.82, 433.2 -60.7, 446.41 -55.58" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-p8Z_n3JmCqcS15NQcmfLd"><rect x="0" y="0" fill="#fff" width="955.0439999999999" height="263.438"/><rect x="558.4332812500002" y="40" fill="#000" width="135.2734375" height="25" opacity="1"/></mask><g transform="translate(558.43328125 40) rotate(0 73.63879821044384 37.378011038799286)"><text x="67.63671875" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Voided · 11,405</text></g><g mask="url(#mask-rfocE487BWxb3gKOJtqwT)" stroke-linecap="round"><g transform="translate(411.331 133.107) rotate(0 206.661 21.1965)"><path d="M-0.43 -0.69 C35.35 6.38, 144.8 35.91, 213.6 43.07 C282.4 50.24, 379.06 42.32, 412.39 42.29 M1.55 1.56 C37.78 8.23, 146.84 34.31, 215.71 41.31 C284.59 48.3, 381.76 43.66, 414.79 43.56" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(411.331 133.107) rotate(0 206.661 21.1965)"><path d="M391.47 52.57 C395.14 48.88, 402.28 47.34, 414.79 43.56 M391.47 52.57 C398.36 49.52, 405.19 47.42, 414.79 43.56" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(411.331 133.107) rotate(0 206.661 21.1965)"><path d="M391.13 35.47 C394.96 35.34, 402.17 37.37, 414.79 43.56 M391.13 35.47 C398.15 37.4, 405.08 40.29, 414.79 43.56" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-rfocE487BWxb3gKOJtqwT"><rect x="0" y="0" fill="#fff" width="924.653" height="275.5"/><rect x="494.89812500000005" y="162.99999999999997" fill="#000" width="262.34375" height="25" opacity="1"/></mask><g transform="translate(494.89812500000005 163) rotate(0 123.61402137816697 -7.203423176313763)"><text x="131.171875" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Dispatched / In Progress · 211</text></g><g mask="url(#mask-mglP1vjta-UJZYFMhX40Q)" stroke-linecap="round"><g transform="translate(389.355 155.583) rotate(0 227.36 112.23200000000001)"><path d="M-0.69 -1.14 C38.77 36.19, 161.51 185.89, 237.39 223.53 C313.28 261.17, 418.31 224.51, 454.62 224.68 M1.15 0.88 C40.45 38.36, 161.36 187.04, 236.8 224.58 C312.24 262.12, 417.3 225.93, 453.8 226.12" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(389.355 155.583) rotate(0 227.36 112.23200000000001)"><path d="M431.69 237.79 C437.64 234.93, 445.79 229.51, 453.8 226.12 M431.69 237.79 C438.37 234.18, 445.97 230.85, 453.8 226.12" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(389.355 155.583) rotate(0 227.36 112.23200000000001)"><path d="M429.36 220.84 C436.08 223.98, 445.05 224.55, 453.8 226.12 M429.36 220.84 C436.87 222.64, 445.2 224.73, 453.8 226.12" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-mglP1vjta-UJZYFMhX40Q"><rect x="0" y="0" fill="#fff" width="944.075" height="480.047"/><rect x="485.61101562500005" y="367.547" fill="#000" width="280.91796875" height="25" opacity="1"/></mask><g transform="translate(485.61101562500005 367.547) rotate(0 130.70773707635698 -91.71976297294871)"><text x="140.458984375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Completed + Cancelled · 85,979</text></g><g mask="url(#mask-bNKUycVxjnzo-9jmeIMaF)" stroke-linecap="round"><g transform="translate(1058.727 352.806) rotate(0 165.79099999999994 -29.820999999999998)"><path d="M-1.14 0.68 C30.7 -9.16, 135.1 -49.78, 190.59 -59.74 C246.08 -69.71, 308.3 -59.06, 331.81 -59.11 M0.46 -0.01 C32.71 -9.6, 137.69 -48.07, 192.81 -58.26 C247.93 -68.45, 307.97 -61.02, 331.17 -61.17" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1058.727 352.806) rotate(0 165.79099999999994 -29.820999999999998)"><path d="M307.34 -53.6 C314.81 -56.93, 319.81 -56.98, 331.17 -61.17 M307.34 -53.6 C315.69 -55.93, 324.29 -59.5, 331.17 -61.17" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1058.727 352.806) rotate(0 165.79099999999994 -29.820999999999998)"><path d="M308.05 -70.69 C315.24 -69.51, 320.05 -65.05, 331.17 -61.17 M308.05 -70.69 C316.17 -67.13, 324.53 -64.82, 331.17 -61.17" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-bNKUycVxjnzo-9jmeIMaF"><rect x="0" y="0" fill="#fff" width="1490.309" height="512.448"/><rect x="1155.0791015624998" y="268.16400000000004" fill="#000" width="190.341796875" height="50" opacity="1"/></mask><g transform="translate(1155.0791015625 268.164) rotate(0 68.98554564158621 52.97997024946605)"><text x="95.1708984375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">no · 406 unbilled</text><text x="95.1708984375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">359 log · 47 signature</text></g><g mask="url(#mask-vZ1t98D_BSnntj86AcrjO)" stroke-linecap="round"><g transform="translate(1058.727 408.788) rotate(0 184.5335 29.070999999999998)"><path d="M0.68 -0.93 C32.7 8.99, 129.93 48.51, 191.42 58.37 C252.91 68.24, 340.06 58.26, 369.6 58.25 M-0.42 1.19 C31.49 10.82, 128.83 46.63, 190.42 56.37 C252.01 66.11, 339.4 59.11, 369.12 59.63" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1058.727 408.788) rotate(0 184.5335 29.070999999999998)"><path d="M345.83 68.71 C350 66.21, 357.59 65.07, 369.12 59.63 M345.83 68.71 C353.28 66.4, 359.53 62.56, 369.12 59.63" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1058.727 408.788) rotate(0 184.5335 29.070999999999998)"><path d="M345.44 51.61 C349.55 53.25, 357.23 56.26, 369.12 59.63 M345.44 51.61 C352.96 54.6, 359.33 56.07, 369.12 59.63" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-vZ1t98D_BSnntj86AcrjO"><rect x="0" y="0" fill="#fff" width="1527.794" height="566.9300000000001"/><rect x="1235.9873046874998" y="454.43000000000006" fill="#000" width="28.525390625" height="25" opacity="1"/></mask><g transform="translate(1235.9873046875 454.43) rotate(0 7.3290119600316075 -14.74446015028343)"><text x="14.2626953125" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">yes</text></g><g mask="url(#mask-lWOCrg8ScHKuq6lky9hIN)" stroke-linecap="round"><g transform="translate(1587.839 446.643) rotate(0 144.9225 -27.954499999999996)"><path d="M-0.93 -0.1 C28.66 -9.44, 127.96 -46.01, 176.44 -55.37 C224.92 -64.74, 271.04 -56.25, 289.97 -56.3 M0.78 -1.2 C30.34 -10.96, 127.53 -48.22, 175.62 -57.21 C223.7 -66.21, 270.14 -55.65, 289.26 -55.18" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1587.839 446.643) rotate(0 144.9225 -27.954499999999996)"><path d="M265.05 -48.97 C269.81 -49.66, 275.84 -51.12, 289.26 -55.18 M265.05 -48.97 C272.06 -51.44, 277.52 -53.23, 289.26 -55.18" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1587.839 446.643) rotate(0 144.9225 -27.954499999999996)"><path d="M266.72 -65.99 C271.23 -63.21, 276.92 -61.18, 289.26 -55.18 M266.72 -65.99 C273.3 -63.9, 278.32 -61.14, 289.26 -55.18" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-lWOCrg8ScHKuq6lky9hIN"><rect x="0" y="0" fill="#fff" width="1977.684" height="602.5519999999999"/><rect x="1690.3897734375" y="365.734" fill="#000" width="147.314453125" height="50" opacity="1"/></mask><g transform="translate(1690.3897734375 365.734) rotate(0 41.96511712376764 50.442505498567044)"><text x="73.6572265625" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">no · 123 unbilled</text><text x="73.6572265625" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">(documented)</text></g><g mask="url(#mask-QncKWV7jZGU5GFj0qIBtD)" stroke-linecap="round"><g transform="translate(1587.839 488.716) rotate(0 154.8795 27.204499999999996)"><path d="M-0.1 0.23 C29.24 9.48, 125.16 45.48, 176.74 54.53 C228.32 63.58, 287.16 54.47, 309.37 54.56 M-1.61 -0.69 C27.56 8.85, 124.41 46.69, 176.08 56.13 C227.75 65.57, 286.02 56.51, 308.4 55.96" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1587.839 488.716) rotate(0 154.8795 27.204499999999996)"><path d="M285.59 66.17 C294.19 63.44, 302.14 58.26, 308.4 55.96 M285.59 66.17 C291.96 62.36, 298.99 58.93, 308.4 55.96" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(1587.839 488.716) rotate(0 154.8795 27.204499999999996)"><path d="M284.36 49.12 C293.27 52.47, 301.65 53.37, 308.4 55.96 M284.36 49.12 C291.15 50.65, 298.57 52.57, 308.4 55.96" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-QncKWV7jZGU5GFj0qIBtD"><rect x="0" y="0" fill="#fff" width="1997.598" height="643.125"/><rect x="1749.7843046875" y="530.625" fill="#000" width="28.525390625" height="25" opacity="1"/></mask><g transform="translate(1749.7843046875 530.625) rotate(0 -8.066266717104327 -12.050918243012205)"><text x="14.2626953125" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">yes</text></g><g mask="url(#mask-kM_MpOsztbCGByruPU_0m)" stroke-linecap="round"><g transform="translate(2012.35 520.296) rotate(0 260.4915000000001 -77.2105)"><path d="M0.23 0.54 C47.04 -25.25, 193.11 -129.02, 279.93 -154.81 C366.75 -180.59, 480.87 -154.09, 521.15 -154.17 M-1.1 -0.23 C45.64 -25.83, 192.11 -128.06, 279.04 -153.47 C365.97 -178.89, 479.94 -152.52, 520.47 -152.73" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(2012.35 520.296) rotate(0 260.4915000000001 -77.2105)"><path d="M496.3 -146.34 C502.57 -147.6, 506.4 -148.95, 520.47 -152.73 M496.3 -146.34 C503.53 -149.09, 511.05 -149.4, 520.47 -152.73" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(2012.35 520.296) rotate(0 260.4915000000001 -77.2105)"><path d="M497.85 -163.37 C503.76 -160.85, 507.25 -158.41, 520.47 -152.73 M497.85 -163.37 C504.67 -160.68, 511.7 -155.53, 520.47 -152.73" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-kM_MpOsztbCGByruPU_0m"><rect x="0" y="0" fill="#fff" width="2633.333" height="774.7170000000001"/><rect x="2130.1345156249995" y="340.87500000000006" fill="#000" width="324.04296875" height="50" opacity="1"/></mask><g transform="translate(2130.134515625 340.875) rotate(0 142.23758595667027 96.64545580577905)"><text x="162.021484375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">ready · 3,001</text><text x="162.021484375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">1,986 submit · 543 verify · 472 review</text></g><g mask="url(#mask-q0Y5mlwCRPBzmivJEWRJt)" stroke-linecap="round"><g transform="translate(2026.214 534.159) rotate(0 249.10249999999996 -22.641999999999996)"><path d="M0.54 0.12 C44.81 -7.44, 182.57 -37.66, 265.56 -45.12 C348.54 -52.58, 459.83 -44.52, 498.45 -44.64 M-0.64 -0.86 C43.45 -8.22, 181.33 -35.86, 264.4 -43.49 C347.48 -51.13, 459.04 -46.39, 497.82 -46.65" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(2026.214 534.159) rotate(0 249.10249999999996 -22.641999999999996)"><path d="M474.22 -38.39 C481.28 -41.55, 488.24 -42.9, 497.82 -46.65 M474.22 -38.39 C481.73 -41.91, 491.8 -43.13, 497.82 -46.65" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(2026.214 534.159) rotate(0 249.10249999999996 -22.641999999999996)"><path d="M474.43 -55.49 C481.47 -53.66, 488.36 -50.03, 497.82 -46.65 M474.43 -55.49 C481.74 -52.97, 491.73 -48.15, 497.82 -46.65" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-q0Y5mlwCRPBzmivJEWRJt"><rect x="0" y="0" fill="#fff" width="2624.419" height="679.443"/><rect x="2149.6218203125" y="463.875" fill="#000" width="285.068359375" height="50" opacity="1"/></mask><g transform="translate(2149.6218203125 463.875) rotate(0 125.49686110466894 46.19921155406544)"><text x="142.5341796875" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">non-billable · 1,358</text><text x="142.5341796875" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">1,105 late cancel · 253 unbillable</text></g><g mask="url(#mask-Qf6AmQX76pCMbEhnYrQyL)" stroke-linecap="round"><g transform="translate(2026.214 553.091) rotate(0 280.72749999999996 22.141999999999996)"><path d="M0.12 -0.39 C44.43 6.95, 172.44 37.24, 266.11 44.53 C359.77 51.82, 512.97 43.59, 562.09 43.37 M-1.27 -1.64 C42.87 5.27, 171.42 34.9, 265.25 42.54 C359.07 50.18, 512.4 44, 561.66 44.2" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(2026.214 553.091) rotate(0 280.72749999999996 22.141999999999996)"><path d="M538.3 53.09 C545.08 50.51, 553.6 48.46, 561.66 44.2 M538.3 53.09 C542.85 52.16, 549.77 49.99, 561.66 44.2" stroke="#1e1e1e" stroke-width="2" fill="none"/></g><g transform="translate(2026.214 553.091) rotate(0 280.72749999999996 22.141999999999996)"><path d="M538.05 36 C544.98 38.87, 553.58 42.28, 561.66 44.2 M538.05 36 C542.58 38.89, 549.55 40.53, 561.66 44.2" stroke="#1e1e1e" stroke-width="2" fill="none"/></g></g><mask id="mask-Qf6AmQX76pCMbEhnYrQyL"><rect x="0" y="0" fill="#fff" width="2687.669" height="697.375"/><rect x="2241.1257265625" y="584.8749999999999" fill="#000" width="102.060546875" height="25" opacity="1"/></mask><g transform="translate(2241.1257265625 584.875) rotate(0 65.4981942126825 -8.833123857501334)"><text x="51.0302734375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">yes · 81,091</text></g><g mask="url(#mask-QwNlV7Ho9_kDZsqba1qvz)" stroke-linecap="round"><g transform="translate(2684.125 597.375) rotate(0 366.89699999999993 0)"><path d="M-0.39 0.17 C66.43 0.25, 279.21 0.76, 401.42 0.64 C523.63 0.52, 677.66 -0.33, 732.88 -0.58" stroke="#1e1e1e" stroke-width="2.5" fill="none" stroke-dasharray="8 10"/></g><g transform="translate(2684.125 597.375) rotate(0 366.89699999999993 0)"><path d="M709.42 8.08 C717.77 5.58, 726.65 0.66, 732.88 -0.58" stroke="#1e1e1e" stroke-width="2.5" fill="none"/></g><g transform="translate(2684.125 597.375) rotate(0 366.89699999999993 0)"><path d="M709.34 -9.02 C717.74 -5.62, 726.64 -4.66, 732.88 -0.58" stroke="#1e1e1e" stroke-width="2.5" fill="none"/></g></g><mask id="mask-QwNlV7Ho9_kDZsqba1qvz"><rect x="0" y="0" fill="#fff" width="3517.919" height="697.375"/><rect x="2848.2071562500005" y="559.875" fill="#000" width="474.1796875" height="75" opacity="1"/></mask><g transform="translate(2848.20715625 559.875) rotate(0 202.16242288835338 37.539556080447085)"><text x="237.08984375" y="17.619999999999997" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">7,078 billed in error — must be fixed</text><text x="237.08984375" y="42.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">2,345 missing trip log · 2,293 missing signature</text><text x="237.08984375" y="67.62" font-family="Excalifont, Xiaolai, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="middle" style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">39 never reviewed · 2,401 billed after the cancel cutoff</text></g></svg>
+    </div>
+    <p class="cap">Diagram foots to 97,595 · billable funnel foots to 85,979</p>
+
+    <div class="legend">
+      <span class="chip"><span class="sw" style="background:#00B74F"></span>Billed (done)</span>
+      <span class="chip"><span class="sw" style="background:#fff;border:1px solid #C5299B"></span>Waiting on a team</span>
+      <span class="chip"><span class="sw" style="background:#EEEEEE;border:1px solid #808080"></span>Terminal</span>
+      <span class="chip"><span class="sw" style="background:#FBE3DC;border:1px solid #9D2D0B"></span>Billed in error</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">02</span> The one limitation you must carry</h2>
+    <p class="lead-line">This reads like a flow, but it is a <strong>count inventory</strong>. A true Sankey requires that every ride sit in exactly one lane — and that breaks in exactly one place.</p>
+
+    <div class="callout warn">
+      <p class="tag">Why mutual exclusivity breaks</p>
+      <p><strong>7,078 rides are billed in error.</strong> They sit in the <strong>Billed</strong> terminal <em>and</em> belong to an upstream gate they never actually cleared — 2,345 missing a trip log, 2,293 missing a signature, 39 never reviewed, 2,401 billed after the cancel cutoff. In a real Sankey, a ride that fails "Trip documented?" flows <em>out</em> to the DRIVERS lane and cannot reappear downstream. Here it does both. That double membership is the leak.</p>
+    </div>
+
+    <h3>Two checksums — one holds, one doesn't</h3>
+    <div class="ledger">
+      <div class="row">
+        <span class="rlabel">Partition / conservation checksum</span>
+        <span class="pill ok">✓ HOLDS</span>
+        <span class="rsub">top split&nbsp; <b>11,405 + 211 + 85,979 = 97,595</b><br/>funnel&nbsp;&nbsp;&nbsp;&nbsp; <b>406 + 123 + 3,001 + 1,358 + 81,091 = 85,979</b><br/>terminals&nbsp; <b>Σ 7 buckets = 97,595</b></span>
+      </div>
+      <div class="row">
+        <span class="rlabel">Flow / gate-pass checksum</span>
+        <span class="pill bad">✗ BREAKS</span>
+        <span class="rsub">rides that <b>truly</b> passed each gate ≠ the Billed terminal, off by exactly <b>7,078</b> — the billed-in-error set</span>
+      </div>
+    </div>
+    <p>Every ride lands in exactly one terminal, so the endpoints <em>must</em> re-foot to the cohort — that's your build-integrity gate. The flow checksum fails by precisely the billed-in-error count, which gives you a bonus invariant:</p>
+    <div class="key-eq">Σ(clean gate-pass flow) − Σ(partition Billed) = <b>−7,078</b>&nbsp;&nbsp;// if a rebuild's error overlay ≠ this delta, something is mis-bucketed</div>
+  </section>
+
+  <section>
+    <h2><span class="n">03</span> Going forward — when the Sankey becomes real</h2>
+    <p>The billed-in-error set is the <em>entire</em> source of the break — it isn't intrinsic to the lifecycle. The gates are meant to be strictly sequential: reaching "Billed" is only legitimate if the ride already cleared Trip-documented → Reviewed → valid cancel state. When the system <strong>enforces</strong> that (you physically cannot bill without complete docs, a review, and a valid cancel state), then every ride occupies one lane, the two checksums converge, and a genuine Sankey is valid.</p>
+    <p>So <strong>"no logic issues" is equivalent to "the state machine is enforced."</strong> The billed-in-error count is precisely a <em>metric of state-machine violations</em> — zero by construction in a clean-forward world. That's what the Echo1 freeze-gradient (<span style="font-family:var(--mono);font-size:.85em">TR → Transport → Trip Log → Billing Review → Claim → Paid</span>) is designed to guarantee.</p>
+    <div class="callout">
+      <p class="tag">Keep this honest</p>
+      <p>Even with perfect enforcement, model the <strong>legitimate</strong> transitions as their own states or they'll read as violations: <strong>recoupments / reversals</strong> (billed then clawed back — needs its own terminal) and <strong>late-arriving evidence</strong> (a held ride that correctly re-enters the flow). Mutual exclusivity holds <em>as long as every legitimate transition is a modeled state.</em></p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">04</span> What you're inheriting</h2>
+    <ul class="items">
+      <li><b>The remaining job:</b> the message to <b>Jeff Mitchell</b> was never drafted or sent — this whole audit was built to answer his "where does every ride stand" question with no surprises.</li>
+      <li><b>Refresh the counts</b> against a current snapshot (this is 2026-05-30) before any re-send.</li>
+      <li><b>Rebuild gates</b> — enforce both on any refresh: (a) the 7 terminals re-foot to the cohort total; (b) the billed-in-error overlay equals the flow-vs-partition delta above.</li>
+      <li><b>Likely drill-downs</b> Jeff may ask for: ready-to-bill 3,001 (which riders / payers?), the trip-log backlog (oldest outstanding, by driver / dispatcher?), late-cancel-billed 2,401 (refund-risk exposure), billed-not-processed 39 (data-quality root cause).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="n">05</span> Where the files live</h2>
+    <dl class="files">
+      <dt>Diagrams (source + rendered PNG/.mmd)</dt>
+      <dd>ridecare-main-worktrees/transport-status-inventory/docs/investigations/260531-transport-status-audit/260531-pipeline-diagrams.md</dd>
+      <dt>Full audit deliverable + count trees</dt>
+      <dd>same folder → 260531-transport-status-audit.md (branded Google Doc + 7-tab Excel in Ride Care › Presentations drive)</dd>
+      <dt>Snapshot (gitignored)</dt>
+      <dd>my-lib/runtime/.tmp/260529-transport-status-snapshot/</dd>
+      <dt>Locked domain rules + numbers</dt>
+      <dd>memory: project_ridecare-billing-status-audit.md</dd>
+    </dl>
+  </section>
+
+  <footer>
+    <p>RideCare FY26 Transport Status Audit · handoff prepared by <span class="mono">Rowan 🤖</span> · snapshot 2026-05-30 · diagram source lives on <span class="mono">feat/transport-status-inventory-260529</span>. Numbers are a point-in-time inventory, not a live feed — re-pull before re-sending.</p>
+  </footer>
+</div>
+
+<div class="lb-overlay" id="lbOverlay" role="dialog" aria-modal="true" aria-label="Zoomed pipeline diagram">
+  <div class="lb-stage" id="lbStage">
+    <div class="lb-controls">
+      <button class="lb-btn" id="lbOut" aria-label="Zoom out" type="button">&minus;</button>
+      <button class="lb-btn" id="lbIn" aria-label="Zoom in" type="button">+</button>
+      <button class="lb-btn" id="lbReset" type="button">Fit</button>
+      <button class="lb-btn" id="lbClose" aria-label="Close" type="button">&times;</button>
+    </div>
+    <div class="lb-hint">drag to pan &middot; scroll to zoom &middot; Esc to close</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var canvas = document.getElementById('pipeCanvas');
+  var overlay = document.getElementById('lbOverlay');
+  var stage = document.getElementById('lbStage');
+  if (!canvas || !overlay || !stage) return;
+
+  var svg = null, scale = 1, tx = 0, ty = 0, natW = 0, natH = 0;
+  var dragging = false, lastX = 0, lastY = 0;
+
+  function apply() { if (svg) svg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')'; }
+
+  function fit() {
+    var r = stage.getBoundingClientRect();
+    var pad = 0.96;
+    var s = Math.min(r.width / natW, r.height / natH) * pad;
+    if (!isFinite(s) || s <= 0) s = 1;
+    scale = s; tx = (r.width - natW * s) / 2; ty = (r.height - natH * s) / 2; apply();
+  }
+
+  function open() {
+    var src = canvas.querySelector('svg');
+    if (!src) return; // mermaid not yet rendered
+    var clone = src.cloneNode(true);
+    var vb = (src.getAttribute('viewBox') || '').split(/[\s,]+/).map(Number);
+    if (vb.length === 4 && vb[2] && vb[3]) { natW = vb[2]; natH = vb[3]; }
+    else { var b = src.getBoundingClientRect(); natW = b.width; natH = b.height; }
+    clone.removeAttribute('style');
+    clone.setAttribute('width', natW); clone.setAttribute('height', natH);
+    clone.style.maxWidth = 'none';
+    var old = stage.querySelector('svg'); if (old) old.remove();
+    stage.appendChild(clone); svg = clone;
+    overlay.classList.add('open'); document.body.style.overflow = 'hidden';
+    fit();
+  }
+
+  function close() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+
+  function zoomAt(cx, cy, factor) {
+    var r = stage.getBoundingClientRect();
+    var px = cx - r.left, py = cy - r.top;
+    var ns = Math.min(Math.max(scale * factor, 0.1), 14);
+    tx = px - (px - tx) * (ns / scale); ty = py - (py - ty) * (ns / scale); scale = ns; apply();
+  }
+
+  canvas.addEventListener('click', open);
+  document.getElementById('lbClose').addEventListener('click', close);
+  document.getElementById('lbReset').addEventListener('click', fit);
+  document.getElementById('lbIn').addEventListener('click', function () { var r = stage.getBoundingClientRect(); zoomAt(r.left + r.width / 2, r.top + r.height / 2, 1.25); });
+  document.getElementById('lbOut').addEventListener('click', function () { var r = stage.getBoundingClientRect(); zoomAt(r.left + r.width / 2, r.top + r.height / 2, 0.8); });
+  document.querySelector('.lb-controls').addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) close(); });
+
+  stage.addEventListener('wheel', function (e) { e.preventDefault(); zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.12 : 0.89); }, { passive: false });
+  stage.addEventListener('pointerdown', function (e) { dragging = true; lastX = e.clientX; lastY = e.clientY; try { stage.setPointerCapture(e.pointerId); } catch (x) {} stage.style.cursor = 'grabbing'; });
+  stage.addEventListener('pointermove', function (e) { if (!dragging) return; tx += e.clientX - lastX; ty += e.clientY - lastY; lastX = e.clientX; lastY = e.clientY; apply(); });
+  stage.addEventListener('pointerup', function () { dragging = false; stage.style.cursor = 'grab'; });
+  stage.addEventListener('pointercancel', function () { dragging = false; stage.style.cursor = 'grab'; });
+  window.addEventListener('resize', function () { if (overlay.classList.contains('open')) fit(); });
+})();
+</script>
+
+</body>
+</html>
