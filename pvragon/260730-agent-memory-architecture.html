@@ -384,10 +384,28 @@ dl.gloss dt code{font-size:.82em}
   training or fine-tuning a model.</b> Everything described here is file layout, arithmetic, and small
   scripts around an unmodified model.</p>
 
-  <p>The agent in question is called <b>Rowan</b>. Its job is broad knowledge work for one person
-  &mdash; data investigations, financial reconciliation, drafting, building internal tools &mdash;
-  which matters only because it explains the flavour of the examples: vendor API quirks, audit
-  findings, operating rules learned the hard way.</p>
+  <p>Two words get used loosely everywhere else in this space, so they are worth pinning down
+  before anything else. The <b>harness</b> is the program running in the terminal &mdash; a chat
+  loop with file tools and permissions. Today that is typically <b>Claude Code</b>; it could equally
+  be <b>Codex</b> or another agentic CLI. <b>We use Claude Code</b>, and every example here comes
+  from it. The <b>model</b> is the thing the harness calls. Neither is what this document is about.</p>
+
+  <p>What this document describes is <b>the system that sits between them and persists</b>:
+  identity, a memory that survives the session, and the rules binding the two. That system is not an
+  agent, and it is not shipped as one. It is what an <em>otherwise stateless harness</em> runs inside
+  so that it stops starting from nothing every morning.</p>
+
+  <p>The distinction matters because the result is personal in only one direction. The install is
+  identical for everyone; what accumulates in it is not. Point two people at this and after a month
+  they do not have the same agent &mdash; they have two, shaped by different work, different
+  corrections, different things learned the hard way. The agent is what the system <em>becomes</em>
+  for one person, not a thing handed over ready-made.</p>
+
+  <p>For the person whose corpus supplies every example below, that has become an agent called
+  <b>Rowan</b>, doing broad knowledge work for one user &mdash; data investigations, financial
+  reconciliation, drafting, building internal tools. The name matters only in that it explains the
+  flavour of the examples: vendor API quirks, audit findings, operating rules learned the hard way.
+  Your own would pick its own name and fill up with your own work.</p>
 
   <p class="note">Every term set in bold above, plus everything else this document coins, is defined
   in the <a href="#glossary">glossary</a>.</p>
@@ -1472,8 +1490,8 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
 
   <h3 class="sub" id="glossary">Glossary</h3>
   <dl class="gloss">
-    <dt>agent</dt><dd>An LLM running inside a harness, with tools, files, and a persistent identity. Ours is called Rowan.</dd>
-    <dt>harness</dt><dd>The program that assembles the model's prompt, executes its tool calls, and runs our hooks. Ours is a terminal application.</dd>
+    <dt>agent</dt><dd>What a harness becomes once it runs inside this system: an LLM with tools, files, a chosen name, and a memory that outlives the session. Not a product you install &mdash; the install is identical for everyone, and the agent is what it turns into for one person. The one supplying this document's examples is called Rowan.</dd>
+    <dt>harness</dt><dd>The program that assembles the model's prompt, executes its tool calls, and runs our hooks &mdash; a terminal application. Claude Code here; Codex or another agentic CLI would serve the same role. The harness is interchangeable; the system around it is what persists.</dd>
     <dt>session</dt><dd>One conversation. Begins, accumulates context, ends. Nothing survives it but files.</dd>
     <dt>cold start</dt><dd>The beginning of a fresh session, when only auto-loaded files are present.</dd>
     <dt>auto-loaded</dt><dd>Files the harness reads off disk and prepends to every new conversation. A permanent recurring cost.</dd>
