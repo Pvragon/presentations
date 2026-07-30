@@ -1013,7 +1013,7 @@
     <div id="presentation">
 
         <div class="interior-glow"></div>
-        <div class="slide-counter" id="slideCounter">1 / 13</div>
+        <div class="slide-counter" id="slideCounter">1 / 14</div>
         <a class="back-link" href="index.html" title="Back to all Pvragon presentations">
             <i class="fa-solid fa-arrow-left"></i> Presentations
         </a>
@@ -1221,18 +1221,18 @@
 
         <!-- Slide 6: Memory Tiers -->
         <div class="slide">
-            <h2>Four Tiers of <span class="highlight">Memory</span></h2>
-            <p>The workspace solves context amnesia with a layered memory system. Each tier has a different lifetime and loading strategy.</p>
+            <h2>Four Tiers of <span class="highlight">Context</span></h2>
+            <p>Every workspace artifact has a retention tier &mdash; how long it lives and when it is cleared. (Memory itself is layered on a <em>second</em>, independent axis: see the next slide.)</p>
             <div class="tier-stack">
                 <div class="tier-row tier-long">
                     <i class="fa-solid fa-mountain"></i>
                     <span class="tier-label">Long-term</span>
-                    <span class="tier-desc">Versioned context files, brand guidelines, identity &mdash; loaded on-demand via registry index</span>
+                    <span class="tier-desc">Versioned context files, brand guidelines, identity, situational lenses &mdash; loaded on-demand via registry index</span>
                 </div>
                 <div class="tier-row tier-mid">
                     <i class="fa-solid fa-brain"></i>
                     <span class="tier-label">Mid-term</span>
-                    <span class="tier-desc">Agent memory topics, lessons learned &mdash; curated across sessions, pruned by distillation</span>
+                    <span class="tier-desc">Agent memory topics, lessons learned &mdash; curated at debrief, then ranked and rolled off by a decay policy. Nothing is deleted</span>
                 </div>
                 <div class="tier-row tier-near">
                     <i class="fa-solid fa-clipboard-list"></i>
@@ -1242,9 +1242,43 @@
                 <div class="tier-row tier-session">
                     <i class="fa-solid fa-comment-dots"></i>
                     <span class="tier-label">Session</span>
-                    <span class="tier-desc">Active context window contents &mdash; volatile, subject to auto-compaction</span>
+                    <span class="tier-desc">Active context window contents &mdash; volatile. Compaction is disabled by policy; sessions rotate deliberately and reload from disk</span>
                 </div>
             </div>
+        </div>
+
+        <!-- Slide 6b: Memory tiers (Axis B) -->
+        <div class="slide">
+            <h2>Five Tiers of <span class="highlight">Memory</span></h2>
+            <p>The second axis. Not "how long does it live?" but <strong>what kind of memory is it, and what does promotion cost?</strong> Modeled on human memory systems.</p>
+            <div class="tier-stack">
+                <div class="tier-row tier-session">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span class="tier-label">T0 Working</span>
+                    <span class="tier-desc">Active attention &mdash; dies with the session</span>
+                </div>
+                <div class="tier-row tier-near">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <span class="tier-label">T1 Episodic</span>
+                    <span class="tier-desc">Dated facts with provenance &mdash; "when did I learn X?" Hippocampal analogue</span>
+                </div>
+                <div class="tier-row tier-mid">
+                    <i class="fa-solid fa-brain"></i>
+                    <span class="tier-label">T2 Semantic</span>
+                    <span class="tier-desc">Decontextualized patterns &mdash; "what's true of X?" Graduated from T1 by abstraction, not summary</span>
+                </div>
+                <div class="tier-row tier-long">
+                    <i class="fa-solid fa-crosshairs"></i>
+                    <span class="tier-label">T3 Lens</span>
+                    <span class="tier-desc">Rules injected only when narrow triggers match &mdash; pay per fire, not always</span>
+                </div>
+                <div class="tier-row tier-long">
+                    <i class="fa-solid fa-glasses"></i>
+                    <span class="tier-label">T4 Always-on</span>
+                    <span class="tier-desc">Shapes interpretation of every input. Promotion into T3/T4 is <strong>always a human decision</strong></span>
+                </div>
+            </div>
+            <p style="margin-top:1rem;font-size:0.85em;opacity:0.85;">The axes cross rather than stack: a T1 fact is <em>long-term</em> on the retention axis (git-backed, never deleted) but <em>episodic</em> here.</p>
         </div>
 
         <!-- Slide 7: Agent Identity -->

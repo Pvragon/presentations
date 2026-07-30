@@ -1,4 +1,4 @@
-# How Rowan Works — Presentation Outline (v0.1 draft)
+# How Rowan Works — Presentation Outline (v0.2, memory section updated 2026-07-30)
 
 One slide per concept. Each slide: the concept in one sentence, then how we implemented it. Ordered as a narrative arc: problem → constitution → architecture → context → memory → lifecycle → improvement loop.
 
@@ -51,9 +51,11 @@ The agent doesn't scrape a website by improvising — it reads `directives/scrap
 
 **Implementation:**
 - One fact = one file, with frontmatter (type: user / feedback / project / reference), stored canonically in the agent's own directory (`agents/rowan-anicca/memory/`).
-- `MEMORY.md` is the index — auto-loaded every cold start, one line per memory. Progressive disclosure again: scan the table, open only relevant topics.
+- `MEMORY.md` is the index — auto-loaded every cold start, but **character-budgeted**: a Hot band (auto-loaded) plus a Cold band, with the low-relevance tail rolled off to `MEMORY-archive.md`. Bounded regardless of corpus size. Progressive disclosure again: scan the table, open only relevant topics.
 - Memories cross-link (`[[wiki-style]]`), get updated or deleted when wrong, and are committed to git for backup.
 - Wrong facts get corrected in place — memory is *curated*, not accumulated.
+- **Retrieval is ranked by a two-strength model** (Bjork & Bjork 1992): storage strength never decays, retrieval strength does, and the decay *rate* slows with spaced reuse. A nightly "dream cycle" grooms the substrate and graduates episodic residue into semantic topics. Nothing is ever deleted — only the access cost shifts.
+- Full architecture: see the *Agent Memory Architecture* page.
 
 ---
 

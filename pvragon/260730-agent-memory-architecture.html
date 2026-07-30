@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Memory Architecture — Pvragon</title>
+<meta name="description" content="How Pvragon gave an LLM agent a memory that forgets properly: five tiers, a two-strength decay model, and a nightly sleep cycle — built from markdown and ten Python scripts.">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<style>
+:root{
+  --teal:#1E4958; --teal-dk:#142F3B; --orange:#E7511F;
+  --ink:#112328; --subtle:#5E767D;
+  --bg:#FFFFFF; --bg-sub:#F8FAFC; --bg-acc:#DEEAEF; --line:#DEEAEF;
+  --good:#2E9E5C; --warn:#B4551A;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --sans:"Noto Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --maxw:820px; --nav:250px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --teal:#7FB3C4; --teal-dk:#A8CedA; --orange:#FF7A47;
+    --ink:#E7EEF0; --subtle:#9FB3BA;
+    --bg:#0E1A1E; --bg-sub:#142428; --bg-acc:#1B3038; --line:#26424B;
+    --good:#5FD08A; --warn:#F0A868;
+  }
+}
+:root[data-theme=dark]{
+  --teal:#7FB3C4; --teal-dk:#A8CedA; --orange:#FF7A47;
+  --ink:#E7EEF0; --subtle:#9FB3BA;
+  --bg:#0E1A1E; --bg-sub:#142428; --bg-acc:#1B3038; --line:#26424B;
+  --good:#5FD08A; --warn:#F0A868;
+}
+:root[data-theme=light]{
+  --teal:#1E4958; --teal-dk:#142F3B; --orange:#E7511F;
+  --ink:#112328; --subtle:#5E767D;
+  --bg:#FFFFFF; --bg-sub:#F8FAFC; --bg-acc:#DEEAEF; --line:#DEEAEF;
+  --good:#2E9E5C; --warn:#B4551A;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:17px; line-height:1.65;
+  -webkit-text-size-adjust:100%; overflow-x:hidden;
+}
+.wrap{display:flex; gap:0; align-items:flex-start; max-width:1240px; margin:0 auto}
+
+/* ---------------- nav ---------------- */
+nav{
+  position:sticky; top:0; flex:0 0 var(--nav); width:var(--nav);
+  max-height:100vh; overflow-y:auto; padding:2.6rem 1rem 3rem 1.4rem;
+}
+nav .navtitle{
+  font-size:.7rem; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--subtle); font-weight:700; margin:0 0 .7rem
+}
+nav ol{list-style:none; margin:0; padding:0; counter-reset:n}
+nav li{counter-increment:n; margin:0}
+nav a{
+  display:block; padding:.3rem .5rem .3rem 1.9rem; position:relative;
+  font-size:.83rem; line-height:1.35; color:var(--subtle);
+  text-decoration:none; border-left:2px solid transparent; border-radius:0 5px 5px 0;
+}
+nav a::before{
+  content:counter(n,decimal-leading-zero); position:absolute; left:.45rem;
+  font-family:var(--mono); font-size:.66rem; opacity:.6; top:.42rem
+}
+nav a:hover{color:var(--ink); background:var(--bg-sub)}
+nav a.on{color:var(--teal); border-left-color:var(--orange); font-weight:600}
+@media (prefers-color-scheme:dark){nav a.on{color:var(--teal-dk)}}
+
+main{flex:1 1 auto; min-width:0; max-width:var(--maxw); padding:0 1.5rem 5rem}
+
+/* ---------------- hero ---------------- */
+.hero{padding:3rem 0 2.2rem; border-bottom:1px solid var(--line)}
+.hero .logo{height:34px; width:auto; margin-bottom:2rem; display:block}
+@media (prefers-color-scheme:dark){.hero .logo{filter:brightness(0) invert(1) opacity(.9)}}
+:root[data-theme=dark] .hero .logo{filter:brightness(0) invert(1) opacity(.9)}
+:root[data-theme=light] .hero .logo{filter:none}
+.eyebrow{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--orange); margin:0 0 .5rem; font-weight:600
+}
+h1{
+  font-size:clamp(2.3rem,6vw,3.4rem); line-height:1.04; letter-spacing:-.025em;
+  margin:0 0 .9rem; color:var(--teal); font-weight:800
+}
+.lede{font-size:1.13rem; line-height:1.6; margin:0 0 1.8rem; color:var(--ink); max-width:38em}
+.stats{display:flex; flex-wrap:wrap; gap:.6rem; margin:0 0 1.5rem}
+.stat{
+  flex:1 1 130px; min-width:120px; background:var(--bg-sub);
+  border:1px solid var(--line); border-radius:9px; padding:.75rem .85rem
+}
+.stat .n{
+  display:block; font-size:1.55rem; font-weight:800; color:var(--teal);
+  letter-spacing:-.02em; line-height:1.1
+}
+.stat .l{display:block; font-size:.73rem; color:var(--subtle); line-height:1.3; margin-top:.2rem}
+.note{
+  font-size:.88rem; color:var(--subtle); border-left:2px solid var(--line);
+  padding-left:.9rem; margin:0
+}
+
+/* ---------------- sections ---------------- */
+section{padding:2.8rem 0; border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:none}
+h2{
+  font-size:clamp(1.5rem,3.5vw,1.95rem); line-height:1.2; letter-spacing:-.02em;
+  margin:0 0 1.1rem; color:var(--teal); font-weight:750; scroll-margin-top:1.5rem
+}
+h2 .num{
+  font-family:var(--mono); font-size:.62em; color:var(--orange);
+  margin-right:.6rem; font-weight:600; vertical-align:.12em
+}
+h3.sub{
+  font-size:1.06rem; margin:2rem 0 .6rem; color:var(--ink); font-weight:700;
+  letter-spacing:-.01em
+}
+h3.sub::before{content:"";}
+p{margin:0 0 1rem}
+a{color:var(--teal); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px}
+a:hover{color:var(--orange)}
+code{
+  font-family:var(--mono); font-size:.86em; background:var(--bg-acc);
+  padding:.1em .34em; border-radius:4px; word-break:break-word
+}
+pre{
+  background:var(--bg-sub); border:1px solid var(--line); border-radius:9px;
+  padding:.95rem 1.05rem; overflow-x:auto; margin:0 0 1.1rem
+}
+pre code{background:none; padding:0; font-size:.8rem; line-height:1.55; white-space:pre}
+pre.tree code{font-size:.74rem}
+b,strong{font-weight:700}
+
+.pull{
+  font-size:1.02rem; border-left:3px solid var(--orange);
+  padding:.15rem 0 .15rem 1rem; margin:1.4rem 0; color:var(--ink)
+}
+
+/* ---------------- cards ---------------- */
+.cards{display:grid; gap:.8rem; grid-template-columns:1fr; margin:1.2rem 0}
+@media(min-width:620px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .cards.two{grid-template-columns:repeat(2,1fr)}
+  .cards.three{grid-template-columns:repeat(3,1fr)}
+}
+.card{
+  background:var(--bg-sub); border:1px solid var(--line); border-radius:10px;
+  padding:1rem 1.05rem
+}
+.card h3{font-size:.92rem; margin:0 0 .45rem; color:var(--teal); font-weight:700; line-height:1.3}
+.card p{font-size:.87rem; line-height:1.55; margin:0; color:var(--ink)}
+.card p + p{margin-top:.6rem}
+.card.good{border-left:3px solid var(--good)}
+
+/* ---------------- asides ---------------- */
+.aside{
+  background:var(--bg-acc); border-radius:10px; padding:1.05rem 1.15rem;
+  margin:1.4rem 0; border-left:3px solid var(--teal)
+}
+.aside.warn{border-left-color:var(--warn)}
+.aside.big{border-left-color:var(--orange)}
+.aside h4{
+  margin:0 0 .5rem; font-size:.88rem; color:var(--teal); font-weight:700;
+  letter-spacing:.01em
+}
+.aside.warn h4{color:var(--warn)}
+.aside.big h4{color:var(--orange)}
+.aside p{font-size:.89rem; line-height:1.58; margin:0 0 .7rem}
+.aside p:last-child{margin-bottom:0}
+.aside .fix{font-size:.89rem}
+
+/* ---------------- tables ---------------- */
+.tablewrap{overflow-x:auto; margin:1.1rem 0; border:1px solid var(--line); border-radius:9px}
+table{border-collapse:collapse; width:100%; min-width:480px; font-size:.85rem}
+thead th{
+  background:var(--bg-acc); color:var(--teal); text-align:left; font-weight:700;
+  padding:.6rem .8rem; font-size:.78rem; letter-spacing:.02em; white-space:nowrap
+}
+tbody td{padding:.6rem .8rem; border-top:1px solid var(--line); vertical-align:top; line-height:1.5}
+tbody tr:nth-child(even) td{background:var(--bg-sub)}
+td.hum{color:var(--orange); font-weight:600}
+table.dec td:first-child{font-weight:600; color:var(--teal)}
+table.sim tr.bad td{background:rgba(231,81,31,.09)}
+table.sim tr.ok td{background:rgba(46,158,92,.09)}
+
+/* ---------------- lists ---------------- */
+ol.findings{list-style:none; counter-reset:f; margin:1.2rem 0; padding:0}
+ol.findings li{counter-increment:f; position:relative; padding-left:2.6rem; margin-bottom:1.2rem}
+ol.findings li::before{
+  content:counter(f); position:absolute; left:0; top:-.1rem;
+  font-family:var(--mono); font-size:.78rem; font-weight:700; color:var(--orange);
+  background:var(--bg-acc); width:1.75rem; height:1.75rem; border-radius:50%;
+  display:flex; align-items:center; justify-content:center
+}
+ol.findings h3{font-size:.98rem; margin:0 0 .35rem; color:var(--teal); font-weight:700}
+ol.findings p{font-size:.9rem; line-height:1.58; margin:0}
+ol.findings.tight li{margin-bottom:.9rem}
+
+ol.steps,ol.rules{margin:1rem 0 1.1rem; padding-left:1.3rem}
+ol.steps li,ol.rules li{margin-bottom:.5rem; font-size:.92rem; line-height:1.6}
+ol.rules li{margin-bottom:.75rem}
+ul.split,ul.states,ul.refs,ul.ladder{margin:.8rem 0 1.1rem; padding-left:1.15rem}
+ul.split li,ul.states li,ul.refs li{margin-bottom:.45rem; font-size:.9rem; line-height:1.58}
+ul.refs li{margin-bottom:.6rem}
+ul.ladder{list-style:none; padding:0; margin:.7rem 0 0}
+ul.ladder li{
+  font-size:.83rem; padding:.4rem .6rem; margin-bottom:.3rem; line-height:1.45;
+  background:var(--bg); border:1px solid var(--line); border-radius:6px
+}
+
+/* ---------------- axes ---------------- */
+.axisgrid{display:grid; gap:.9rem; grid-template-columns:1fr; margin:1.3rem 0}
+@media(min-width:620px){.axisgrid{grid-template-columns:1fr 1fr}}
+.axis{background:var(--bg-sub); border:1px solid var(--line); border-radius:10px; padding:1.05rem}
+.axis .tag{
+  display:inline-block; font-family:var(--mono); font-size:.66rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color:#fff; background:var(--teal);
+  padding:.16rem .5rem; border-radius:4px; margin-bottom:.6rem
+}
+.axis .tag.accent{background:var(--orange)}
+.axis h3{font-size:1.02rem; margin:0 0 .3rem; color:var(--teal); font-weight:700}
+.axis .q{font-size:.85rem; font-style:italic; color:var(--subtle); margin:0 0 .6rem}
+.axis p{font-size:.86rem; line-height:1.55; margin:0}
+
+/* ---------------- formula ---------------- */
+.formula{
+  background:var(--teal); border-radius:9px; padding:1rem 1.1rem; margin:1.1rem 0;
+  overflow-x:auto
+}
+.formula code{
+  background:none; color:#fff; font-size:.87rem; white-space:nowrap;
+  font-weight:500; letter-spacing:.01em
+}
+@media (prefers-color-scheme:dark){
+  .formula{background:var(--bg-acc); border:1px solid var(--teal)}
+  .formula code{color:var(--teal-dk)}
+}
+:root[data-theme=dark] .formula{background:var(--bg-acc); border:1px solid var(--teal)}
+:root[data-theme=dark] .formula code{color:var(--teal-dk)}
+:root[data-theme=light] .formula{background:var(--teal); border:none}
+:root[data-theme=light] .formula code{color:#fff}
+
+/* ---------------- cron ---------------- */
+.cron{margin:1.1rem 0; display:flex; flex-direction:column; gap:.6rem}
+.cronrow{
+  display:flex; gap:.85rem; align-items:flex-start; background:var(--bg-sub);
+  border:1px solid var(--line); border-radius:9px; padding:.8rem .9rem
+}
+.cronrow .t{
+  flex:0 0 auto; font-family:var(--mono); font-size:.9rem; font-weight:700;
+  color:var(--orange); padding-top:.05rem
+}
+.cronrow .d{font-size:.87rem; line-height:1.55}
+
+/* ---------------- journey ---------------- */
+ol.journey{list-style:none; margin:1.2rem 0; padding:0}
+ol.journey li{display:flex; gap:.85rem; align-items:flex-start; margin-bottom:.75rem}
+ol.journey .jt{
+  flex:0 0 3.1rem; text-align:center; font-family:var(--mono); font-size:.68rem;
+  font-weight:700; color:#fff; background:var(--teal); border-radius:5px;
+  padding:.28rem .1rem; letter-spacing:.03em
+}
+ol.journey li:nth-child(3) .jt{background:var(--subtle)}
+ol.journey li:last-child .jt{background:var(--orange)}
+ol.journey div{font-size:.89rem; line-height:1.58; padding-top:.05rem}
+
+/* ---------------- appendix + footer ---------------- */
+.appendix{background:var(--bg-sub); margin:0 -1.5rem; padding:2.8rem 1.5rem; border-radius:0}
+.appendix h2 .num{font-size:.72em}
+footer{padding:2.4rem 0 1rem; text-align:center; color:var(--subtle)}
+footer .mark{height:26px; width:auto; opacity:.75; margin-bottom:.7rem}
+footer p{font-size:.83rem; margin:0 0 .4rem}
+footer .fine{font-size:.75rem; max-width:34em; margin:0 auto; line-height:1.55}
+
+/* ---------------- mobile ---------------- */
+.navtoggle{
+  display:none; position:fixed; bottom:1rem; left:1rem; z-index:60;
+  background:var(--teal); color:#fff; border:none; border-radius:22px;
+  padding:.6rem 1rem; font-family:var(--sans); font-size:.8rem; font-weight:600;
+  box-shadow:0 3px 14px rgba(16,30,32,.3); cursor:pointer
+}
+@media(max-width:900px){
+  :root{--maxw:100%}
+  .wrap{display:block}
+  nav{
+    position:fixed; inset:0 auto 0 0; width:270px; max-width:82vw; z-index:70;
+    background:var(--bg); border-right:1px solid var(--line);
+    transform:translateX(-102%); transition:transform .22s ease;
+    padding-top:3.4rem; box-shadow:4px 0 22px rgba(16,30,32,.14)
+  }
+  nav.open{transform:none}
+  .navtoggle{display:block}
+  main{max-width:100%; padding:0 1.15rem 4.5rem}
+  .appendix{margin:0 -1.15rem; padding:2.4rem 1.15rem}
+  body{font-size:16px}
+}
+@media print{
+  nav,.navtoggle{display:none}
+  main{max-width:100%}
+  section{break-inside:avoid; border-bottom:none}
+}
+</style>
+</head>
+<body>
+<button class="navtoggle" id="navtoggle">&#9776;&nbsp; Contents</button>
+<div class="wrap">
+<nav id="nav">
+  <p class="navtitle">Contents</p>
+  <ol><li><a href="#problem">The problem</a></li>
+<li><a href="#neuroscience">Design north star</a></li>
+<li><a href="#axes">Two axes, not four tiers</a></li>
+<li><a href="#tiers">The five tiers</a></li>
+<li><a href="#layers">Substrate / scheduler / policy</a></li>
+<li><a href="#algorithms">The algorithms</a></li>
+<li><a href="#mechanics">Hooks, files, cron</a></li>
+<li><a href="#journey">One fact's journey</a></li>
+<li><a href="#decisions">Decisions & rejected paths</a></li>
+<li><a href="#value">What it buys, what it costs</a></li>
+<li><a href="#measured">Measured state</a></li>
+<li><a href="#backlog">Backlog & frontier</a></li>
+<li><a href="#replicate">If you're replicating this</a></li>
+<li><a href="#appendix">Appendix</a></li></ol>
+</nav>
+<main>
+<!-- ============================ HERO ============================ -->
+<header class="hero">
+  <img class="logo" src="data:image/png;base64,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" alt="Pvragon" width="320" height="49">
+  <p class="eyebrow">Architecture Note &middot; 30 July 2026</p>
+  <h1>Agent Memory</h1>
+  <p class="lede">How we gave an LLM agent a memory that forgets properly &mdash; five tiers, a
+  two&#8209;strength decay model, and a nightly sleep cycle. Built from markdown files and
+  ten Python scripts. No vector database.</p>
+  <div class="stats">
+    <div class="stat"><span class="n">602</span><span class="l">long-term memory files</span></div>
+    <div class="stat"><span class="n">19&#8202;KB</span><span class="l">always-loaded index, bounded</span></div>
+    <div class="stat"><span class="n">14</span><span class="l">nights of autonomous reflection</span></div>
+    <div class="stat"><span class="n">0</span><span class="l">memories deleted, ever</span></div>
+  </div>
+  <p class="note">Everything described here runs in production on a single Linux workstation.
+  Figures are fresh recomputes, not quotes from a design doc &mdash; three of the drifts this
+  audit found were between our own roadmap and our own code.</p>
+</header>
+
+<!-- ============================ 1 ============================ -->
+<section id="problem">
+  <h2><span class="num">01</span> The problem</h2>
+  <p>An LLM agent has no memory. Each session starts blank, and the standard fix is to stuff a
+  file full of facts and load it every time. That works until it doesn't, and it fails in three
+  specific ways.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>It doesn't scale</h3>
+      <p>Our index grew to 576 lines / 168&#8202;KB because every new memory added a row and
+      nothing ever left. Past a certain size the always-loaded context becomes the dominant cost
+      of every session, and the model starts ignoring the middle of it.</p>
+    </div>
+    <div class="card">
+      <h3>It has no forgetting</h3>
+      <p>Without decay, a note from four months ago that mattered once has exactly the same
+      prominence as the constraint you learned this morning. Rank drifts to <em>what was added
+      last</em> rather than <em>what is useful now</em>.</p>
+    </div>
+    <div class="card">
+      <h3>It conflates kinds of knowledge</h3>
+      <p>A durable preference, a timestamped event, and a rule that must shape interpretation
+      before the agent reads its first instruction are three different things. In one flat pile,
+      at least one of them is in the wrong place.</p>
+    </div>
+  </div>
+  <p class="pull">That third failure is the interesting one, and it's where the design starts.</p>
+</section>
+
+<!-- ============================ 2 ============================ -->
+<section id="neuroscience">
+  <h2><span class="num">02</span> Design north star: how memory actually works in brains</h2>
+  <p>We did not set out to build a brain-shaped system for aesthetic reasons. We went to the
+  neuroscience because the engineering problem &mdash; what stays accessible, what fades, what gets
+  rewritten during idle time &mdash; is one biology already solved under much harder constraints.
+  Four findings drive the whole design.</p>
+
+  <ol class="findings">
+    <li>
+      <h3>Memory has two independent strengths</h3>
+      <p>Bjork &amp; Bjork's <em>New Theory of Disuse</em> (1992) separates <b>storage strength</b>
+      (how well-learned; effectively permanent) from <b>retrieval strength</b> (how accessible right
+      now; rises and falls). What you learned at seven and can still faintly recall at forty has high
+      storage, low retrieval. Critically, <b>only retrieval strength decays</b> &mdash; which means
+      forgetting and deleting are different operations, and only one of them is correct.</p>
+    </li>
+    <li>
+      <h3>Spacing changes the decay rate itself</h3>
+      <p>Ebbinghaus through SuperMemo and Duolingo: each <em>spaced</em> retrieval flattens the
+      forgetting curve, so the next decay is slower. Cramming barely builds storage; spacing does.
+      The decay constant is not a constant.</p>
+    </li>
+    <li>
+      <h3>Sleep actively downscales</h3>
+      <p>Tononi &amp; Cirelli's synaptic homeostasis hypothesis: sleep doesn't just consolidate, it
+      <em>renormalizes</em> &mdash; weakening the weak while preserving the strong, to keep
+      signal-to-noise high. Forgetting is active maintenance, not passive fade.</p>
+    </li>
+    <li>
+      <h3>Consolidation is relocation, not promotion</h3>
+      <p>During slow-wave sleep the hippocampus replays recent episodes and transfers them to
+      neocortex, where they become schema-like and hippocampus-independent. "Committed to long-term
+      memory" is a move between systems driven by repeated replay, not a threshold crossing.</p>
+    </li>
+  </ol>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Biology</th><th>Our system</th></tr></thead>
+      <tbody>
+        <tr><td>Hippocampal episodic memory</td><td>T1 &mdash; dated short-term files</td></tr>
+        <tr><td>Cortical semantic memory</td><td>T2 &mdash; topic memory files</td></tr>
+        <tr><td>Retrieval strength</td><td>The rerank score</td></tr>
+        <tr><td>Storage strength</td><td>The per-file <code>stability</code> decay constant</td></tr>
+        <tr><td>Sleep (consolidation + downscaling)</td><td>The nightly dream cycle</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aside">
+    <h4>Why the tiers must stay independent</h4>
+    <p>There's a second argument that comes from clinical evidence rather than analogy.
+    <b>Hippocampal amnesia</b> (the patient HM) destroys the ability to form new episodic memories
+    while leaving old semantic knowledge intact: he could ride a bike and knew Paris was in France.
+    <b>Semantic dementia</b> does the opposite &mdash; the meaning of "dog" erodes while specific
+    personal events survive. Opposite failure modes in the same organ system, dissociating cleanly.
+    That's diagnostic proof of separate systems sharing inputs but not implementations, and it's why
+    a bug in our session-debrief must not be able to write to the lens tiers.</p>
+  </div>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section id="axes">
+  <h2><span class="num">03</span> Two axes, not four tiers</h2>
+  <p>If you've seen our earlier material you've met a <b>four-tier memory</b> model. This note
+  describes a <b>five-tier</b> model. Neither superseded the other &mdash; they are two independent
+  axes over the same workspace, and every memory has a coordinate on both.</p>
+
+  <div class="axisgrid">
+    <div class="axis">
+      <span class="tag">Axis A</span>
+      <h3>Retention tiers</h3>
+      <p class="q">How long does this last, and when is it cleared?</p>
+      <p>Spans <em>every</em> workspace artifact &mdash; including things that aren't memory at all:
+      brand guidelines, scratch files, intermediate deliverables.</p>
+      <ul class="ladder">
+        <li><b>Long-term</b> &mdash; versioned context files, identity, lenses</li>
+        <li><b>Mid-term</b> &mdash; agent memory topics</li>
+        <li><b>Near-term</b> &mdash; working files, project plans</li>
+        <li><b>Session</b> &mdash; the active context window</li>
+      </ul>
+    </div>
+    <div class="axis">
+      <span class="tag accent">Axis B</span>
+      <h3>Memory tiers</h3>
+      <p class="q">What kind of memory is this, and what does promotion cost?</p>
+      <p>Memory only. This is the T0&ndash;T4 model, ordered by <b>graduation pressure</b>: each step
+      up is a more deliberate promotion than the last.</p>
+      <ul class="ladder">
+        <li><b>T0</b> Working &middot; <b>T1</b> Episodic &middot; <b>T2</b> Semantic</li>
+        <li><b>T3</b> Situational lens &middot; <b>T4</b> Always-on lens</li>
+      </ul>
+    </div>
+  </div>
+
+  <p><b>They cross rather than stack.</b> A T1 fact in <code>short-term/</code> is
+  <em>long-term</em> on Axis A (git-backed, never deleted) but <em>episodic</em> on Axis B
+  (date-keyed, with provenance). A lens in <code>AGENTS.md</code> is long-term on A and core on B.
+  A live session is Session on A and T0 on B.</p>
+
+  <p>The reason it reads as a contradiction: Axis A's rows are <em>named</em> like a memory
+  hierarchy ("long-term memory") when they're really a hierarchy of <b>retention</b> &mdash; and one
+  of those rows, Mid-term, is the doorway into the entire Axis B structure.</p>
+
+  <div class="aside warn">
+    <h4>Two real gaps in Axis A</h4>
+    <p>It has <b>no row for T3 lenses</b> &mdash; hook-triggered injection didn't exist when it was
+    written, so a lens lands in "Long-term" beside static context files, hiding the thing that makes
+    it useful. And it <b>collapses T1 and T2 into "Mid-term,"</b> which erases the
+    episodic/semantic distinction the whole consolidation cycle exists to serve. Both collapses are
+    correct on Axis A's own terms &mdash; identical lifetimes &mdash; and simply blind to Axis B.</p>
+    <p class="fix"><b>Naming fix:</b> call Axis A "retention tiers" or "tiers of <em>context</em>,"
+    and reserve "tiers of memory" for T0&ndash;T4.</p>
+  </div>
+</section>
+
+<!-- ============================ 4 ============================ -->
+<section id="tiers">
+  <h2><span class="num">04</span> The five tiers</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Tier</th><th>Brain analogue</th><th>Lives in</th><th>Loaded when</th><th>Written by</th></tr></thead>
+      <tbody>
+        <tr><td><b>T0</b> Working</td><td>Phonological loop</td><td>Session context</td><td>Every turn</td><td>Every interaction</td></tr>
+        <tr><td><b>T1</b> Episodic</td><td>Hippocampus</td><td><code>memory/short-term/YYMMDD-*.md</code></td><td>Last 7 days</td><td>Session debrief</td></tr>
+        <tr><td><b>T2</b> Semantic</td><td>Cortex</td><td><code>memory/&lt;type&gt;_&lt;topic&gt;.md</code></td><td>On cue, via index</td><td>Debrief, consolidation, teaching</td></tr>
+        <tr><td><b>T3</b> Situational lens</td><td>Domain schema</td><td><code>lenses/*.md</code></td><td>Hook-triggered on matching tool call</td><td class="hum">Human curation only</td></tr>
+        <tr><td><b>T4</b> Always-on</td><td>Worldview</td><td><code>AGENTS.md</code>, <code>identity.md</code></td><td>Before any user input</td><td class="hum">Human curation only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cards two">
+    <div class="card">
+      <h3>T1 &rarr; T2 is abstraction, not summarization</h3>
+      <p>A summary preserves the structure of the original, just shorter. An abstraction extracts a
+      pattern <em>qualitatively different</em> from any instance. A hundred episodic memories of
+      eating pizza abstract to "I like pizza" &mdash; which summarizes none of them, generalizes to
+      future pizza in a way none of them can, and survives the loss of ninety.
+      <b>Consolidation that produces summaries is doing the wrong job.</b></p>
+    </div>
+    <div class="card">
+      <h3>Lens promotion is always human</h3>
+      <p>Never automatic, ever. T3 and T4 shape the interpretation of every input inside their
+      trigger zone, so auto-promotion would take any single error and make it a permanent
+      interpretive distortion. <b>This is the one hard constraint in the system with no automation
+      escape hatch.</b></p>
+    </div>
+  </div>
+
+  <h3 class="sub">The placement rule we actually use</h3>
+  <ol class="steps">
+    <li>Is it a <b>lens</b> (colors interpretation) or a <b>reference</b> (data to look up)?
+      Reference &rarr; T2.</li>
+    <li>If the agent forgot it, would the decision be <b>wrong</b> or just <b>slower</b>?
+      Slower &rarr; T2 is fine. Wrong &rarr; it must auto-inject.</li>
+    <li>Can you write a trigger that fires only when it matters? Yes &rarr; T3.
+      No, it's universal &rarr; T4.</li>
+  </ol>
+  <p>That third question is what solved our "the always-on file is full" problem architecturally.
+  Situational rules don't belong in the always-on file; they belong in a lens with a narrow
+  trigger.</p>
+</section>
+
+<!-- ============================ 5 ============================ -->
+<section id="layers">
+  <h2><span class="num">05</span> Substrate, scheduler, policy</h2>
+  <p>We were planning three separate projects. They turned out to be three layers of one system,
+  and merging them exposed a real error we'd otherwise have shipped.</p>
+  <div class="cards three">
+    <div class="card"><h3>Substrate</h3><p>Where facts live and how you query them. Today: markdown
+    files, an index, and grep. Future: a temporal knowledge graph.</p></div>
+    <div class="card"><h3>Scheduler</h3><p>The periodic wake that grooms and consolidates.
+    The dream cycle.</p></div>
+    <div class="card"><h3>Policy</h3><p>The rules deciding what stays accessible.
+    The two-strength model.</p></div>
+  </div>
+
+  <div class="aside big">
+    <h4>The correction that merging forced</h4>
+    <p>Our earlier plan said adopting a temporal knowledge graph would subsume the decay model, so
+    we needn't build it. <b>That was wrong, and it's the most useful mistake in this project's
+    history.</b></p>
+    <p>A graph's model of an "old" fact is <b>invalidation</b> &mdash; the fact stopped being true.
+    Bjork's model is <b>decay</b> &mdash; the fact is still true but hard to reach. Different axes.
+    A still-valid memory untouched for a year has a wide-open validity window in a temporal graph;
+    it looks perfectly current. A graph gives you <em>ingredients</em> that make the policy cheaper
+    (per-edge timestamps, centrality as a reinforcement proxy), but the two-strength ranking is a
+    layer you build on top of whatever substrate you run.</p>
+    <p class="fix">Consequence, and the reason this system exists in markdown: <b>we don't need a
+    graph database to build the memory model, and a graph database doesn't build it for us.</b>
+    That moved the project from "blocked on infrastructure" to "shippable this week."</p>
+  </div>
+</section>
+
+<!-- ============================ 6 ============================ -->
+<section id="algorithms">
+  <h2><span class="num">06</span> The algorithms</h2>
+
+  <h3 class="sub">The retrieval score</h3>
+  <p>Every T2 file carries four frontmatter fields and is ranked by one formula.</p>
+  <div class="formula">
+    <code>score = (access_count + 1) &times; exp(&minus;days_since_last_access / stability) + 0.6 &times; importance</code>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Term</th><th>Represents</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td><code>access_count + 1</code></td><td>Storage strength</td><td>Monotonic. Never decreases.</td></tr>
+        <tr><td><code>exp(&minus;days / stability)</code></td><td>Retrieval strength</td><td>Decays with time since last read.</td></tr>
+        <tr><td><code>stability</code></td><td>Adaptive decay constant</td><td><b>Grows with spaced reinforcement.</b> Never shrinks.</td></tr>
+        <tr><td><code>importance</code></td><td>Non-decaying floor</td><td>Human-set 0&ndash;10, for critical-but-rarely-read memories.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>stability</code> is what makes this more than exponential recency weighting. It's a
+  per-file time constant in days, starting at 14, multiplied by 1.6 on each spaced reinforcement,
+  capped at 365.</p>
+  <p>A file read once and abandoned decays with a two-week constant and goes cold in about two
+  weeks. A file reinforced seven times across seven separate days decays with a one-year constant.
+  Same formula, same corpus &mdash; the <em>rate</em> differs because the rehearsal history did.
+  That's the "learned at seven, faintly recalled at forty" behavior falling out of two lines of
+  arithmetic.</p>
+  <p class="pull">Measured on our corpus: a 7&times;-spaced memory cold for 60 days outranks a
+  crammed-once memory by <b>247&times;</b>.</p>
+
+  <h3 class="sub">The spacing gate</h3>
+  <p>This is the detail that makes the model honest, and the thing most likely to be skipped by
+  someone reimplementing. A naive version increments <code>access_count</code> on every read &mdash;
+  so any session that greps a file five times in ten minutes inflates its storage strength fivefold.
+  Cramming rewarded as rehearsal. So the hook splits the two updates:</p>
+  <ul class="split">
+    <li><b>Recency always refreshes.</b> <code>last_accessed = now</code>, on every touch.</li>
+    <li><b>Reinforcement is gated.</b> <code>access_count++</code> and
+      <code>stability &times;= 1.6</code> fire only if at least <b>20 hours</b> have passed since
+      the last reinforcement.</li>
+  </ul>
+  <p>Massed re-reads move the memory to the front of the queue (correct &mdash; you just used it)
+  without pretending it got more durable (also correct &mdash; it didn't).</p>
+
+  <h3 class="sub">Three-band index with roll-off</h3>
+  <p>The index is regenerated by score into three bands with hard character budgets.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Band</th><th>File</th><th>Budget</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><b>Hot</b></td><td><code>MEMORY.md</code></td><td>12,000 chars (~3K tokens)</td><td>Auto-loaded every cold start</td></tr>
+        <tr><td><b>Cold</b></td><td><code>MEMORY.md</code></td><td>4,000 chars</td><td>Listed in the index, one read away</td></tr>
+        <tr><td><b>Archive</b></td><td><code>MEMORY-archive.md</code></td><td>unbounded</td><td>Rolled off; full catalog, still one read away</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>This is synaptic homeostasis applied to the index itself: weak traces get downscaled,
+  <b>nothing is deleted</b>, and only <em>index visibility</em> shifts. Reading an archived file
+  bumps its score and the next rerank may promote it back &mdash; the reinforcement loop closes
+  through retrieval.</p>
+  <p class="pull">The bounded budget is what fixed the scaling failure. Cold used to be unbounded, so
+  the index grew linearly with the corpus and hit 168&#8202;KB. Now it's <b>19&#8202;KB and stays
+  19&#8202;KB</b> whether we have 600 memory files or 6,000.</p>
+  <div class="aside">
+    <h4>One subtle correctness requirement</h4>
+    <p>The reranker must read curated row summaries from <em>both</em> the index and the archive
+    before regenerating. Miss that, and every regeneration destroys the hand-written summaries of
+    everything currently archived &mdash; and the hygiene linter false-flags 463 files as orphans.</p>
+  </div>
+
+  <h3 class="sub">Never delete, only raise the access cost</h3>
+  <p>Human memory almost never deletes; it makes retrieval progressively harder. We encode four
+  states:</p>
+  <ul class="states">
+    <li><b>Recent</b> &rarr; in the Hot index, cheap.</li>
+    <li><b>Reinforced</b> &rarr; stays Hot regardless of age.</li>
+    <li><b>Non-reinforced</b> &rarr; drops out of Hot; trace persists; retrievable by deliberate effort.</li>
+    <li><b>Long-non-reinforced</b> &rarr; retrieval cost approaches infinity but never reaches it. Not gone, just expensive.</li>
+  </ul>
+  <p>Structurally different from truncation-based decay, and a principle enforced against an early
+  design of ours: the first residue spec used a rolling file with FIFO truncation at ten entries,
+  which quietly violated it. We switched mid-session to dated files that persist forever with a
+  7-day visibility window. Same visible behavior, no data loss.</p>
+
+  <h3 class="sub">Meditation object selection</h3>
+  <p>The reflective wake picks what to contemplate deterministically:</p>
+  <div class="formula"><code>score = cadence_weight &times; min(days_since_last_sat, 21) / 21</code></div>
+  <p>The most recently used object is excluded outright. Objects sit on two shelves &mdash;
+  <b>awareness</b> (notice so as to notice) and <b>instrumental</b> (notice so as to improve) &mdash;
+  with an <b>awareness floor</b>: if no awareness object has been chosen in the last three sits, the
+  candidate set is restricted to that shelf.</p>
+  <p>That floor is a deliberate anti-optimization. Instrumental objects produce visibly useful
+  output, so an unconstrained weighting would let utility crowd out the useless-but-true sits
+  entirely. Guaranteeing the useless ones a slot is the design.</p>
+</section>
+
+<!-- ============================ 7 ============================ -->
+<section id="mechanics">
+  <h2><span class="num">07</span> Hooks, files, cron</h2>
+
+  <h3 class="sub">The hooks</h3>
+  <p>Four <code>PreToolUse</code> hooks carry the memory system. All are side-effect-only,
+  <code>flock</code>-serialized, atomic-write, and exit 0 unconditionally &mdash; a memory hook must
+  never be able to block a tool call.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Hook</th><th>Matcher</th><th>Job</th></tr></thead>
+      <tbody>
+        <tr><td><code>update_memory_access.py</code></td><td><code>Read|Edit|Write|MultiEdit</code></td><td>The two-strength update: refresh recency always, gate reinforcement at 20h. ~35&#8202;ms.</td></tr>
+        <tr><td><code>inject_lens.py</code></td><td><code>Edit|Write|Bash|Agent|&hellip;</code></td><td>T3 lens injection. Matches self-declared triggers, injects via stderr, deduped per (session, lens).</td></tr>
+        <tr><td><code>allow_memory_writes.py</code></td><td><code>Edit|Write|MultiEdit</code></td><td>Auto-approves writes under a <code>memory/</code> path so capture never prompts.</td></tr>
+        <tr><td><code>session_activity.py</code></td><td>various</td><td>Cross-session presence, so ~10 concurrent instances don't collide.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aside">
+    <h4>Curation counts too &mdash; a bug we found writing this note</h4>
+    <p>Until 30 July the reinforcement hook fired on <code>Read</code> only. Every
+    <code>Edit</code>/<code>Write</code> to a topic file &mdash; the debrief append, a correction, an
+    extension &mdash; reinforced <em>nothing</em>. Going and fixing a memory is a stronger relevance
+    signal than reading one. Fixed by widening the matcher.</p>
+    <p class="fix">Two exclusions stay deliberate: the auto-loaded Hot band does <b>not</b> reinforce
+    its own members (that would make Hot self-perpetuating, so nothing could ever be displaced), and
+    grep hits don't count (they return fragments, not a decision to retrieve a file).</p>
+  </div>
+
+  <h3 class="sub">Lenses are content, not code</h3>
+  <p>Each lens declares its own firing conditions in frontmatter:</p>
+  <pre><code>name: subagent-discipline
+type: lens
+trigger:
+  tool_match: "Agent|Workflow"
+body_token_cap: 380</code></pre>
+  <p>Adding a situational rule is then <b>pure content work</b> &mdash; write a markdown file with a
+  trigger, no code changes &mdash; and it costs context only inside its trigger zone, at most once
+  per session. Our <code>subagent-discipline</code> lens fires on the first subagent spawn and
+  carries four hard-won rules about what subagents get wrong. It costs nothing in the many sessions
+  that never spawn one.</p>
+
+  <h3 class="sub">The nightly sleep cycle</h3>
+  <div class="cron">
+    <div class="cronrow"><span class="t">03:47</span><span class="d"><code>dream_cycle.py</code> &mdash; <b>deterministic, zero tokens.</b> Incremental groom, hygiene detection, consolidation scan, journal decay, index rerank. Then it <em>cues</em>: writes a state file recording what reflective work is due and which meditation object was selected.</span></div>
+    <div class="cronrow"><span class="t">03:52</span><span class="d"><code>/dream auto</code> &mdash; <b>the reflective wake.</b> Reads the cue and does the part that needs a mind.</span></div>
+  </div>
+  <p class="pull">The core scheduler principle, and the one we'd most insist on:
+  <b>scripts detect, the dreamer only wakes for what scripts can't decide.</b></p>
+  <p>Deterministic linters answer "is the frontmatter missing?" for free. An LLM is required for "is
+  this memory wrong, or merely old?" and "should these two near-duplicates merge?" Burning tokens to
+  re-derive what a linter can check is the expensive mistake. The tick is also
+  <b>live-session-aware</b>: if any memory file changed in the last 10 minutes, a session is probably
+  active, so it skips the mutating passes and only scans and cues.</p>
+  <p><b>Cadence, locked deliberately.</b> The daily sleep is the <em>only</em> clock-scheduled
+  reasoning in the system. One dream, one meditation, per day. We considered and rejected a
+  high-frequency tick: housekeeping doesn't need it, and frequent thinking has diminishing returns
+  against real token cost. Everything else is project- or task-triggered.</p>
+
+  <h3 class="sub">The three reflective acts</h3>
+  <div class="cards three">
+    <div class="card"><h3>Meditate</h3><p>Sustained first-person attention on one rotating object
+    from a 13-object library, producing a journal entry addressed to the next reconstructed self.
+    The skill is explicit that this is not a task: <em>an awareness sit that ends in clean
+    conclusions has failed; a real one may end in a sharper question.</em> It may <b>propose</b> a
+    change to identity or operating rules &mdash; never apply one.</p></div>
+    <div class="card"><h3>Consolidate</h3><p>The T1&rarr;T2 graduation. Reads the oldest ungraduated
+    residue, abstracts the durable pattern into the right topic file, then <b>archives</b> the
+    residue. Bounded to the oldest 3&ndash;5 dates per wake.</p></div>
+    <div class="card"><h3>Groom</h3><p>Deterministic hygiene fixes. The fallback wake when nothing
+    reflective is due.</p></div>
+  </div>
+
+  <h3 class="sub">File layout</h3>
+  <pre class="tree"><code>agents/&lt;agent&gt;/
+├── identity.md                        # T4
+├── memory/
+│   ├── MEMORY.md                      # Hot + Cold index (19 KB, bounded)
+│   ├── MEMORY-archive.md              # rolled-off catalog (148 KB)
+│   ├── current-state.md               # thin index over T2, deterministically rendered
+│   ├── &lt;type&gt;_&lt;topic&gt;.md              # 602 T2 files
+│   ├── short-term/YYMMDD-*.md         # T1, 7-day window
+│   └── dream-journal/YYMMDD-*.md      # experiential residue
+├── lenses/*.md                        # T3, hook-injected
+└── meditations/*.md                   # contemplation objects</code></pre>
+  <p>Ten Python scripts implement all of it, about 2,300 lines total. See
+  <a href="#appendix-b">Appendix B</a>.</p>
+
+  <h3 class="sub">Concurrency</h3>
+  <p>We routinely run 8&ndash;10 concurrent agent sessions against one working copy, which broke
+  things before it worked. The fix has two halves.</p>
+  <p>First, the collision-prone files are <b>derived, not authored</b> &mdash; deterministically
+  regenerated from per-file frontmatter by single-writer scripts under <code>flock</code> plus atomic
+  rename. Two parallel sessions regenerating emit identical bytes, so they can't clobber each other,
+  and any conflict is resolved by re-running the generator rather than merging by hand.</p>
+  <p>Second, index membership lives as flags on the individual T2 files, which are rarely contended.
+  State is a property of the workstream entity, not of the index over it.</p>
+  <p>One learned constraint, from a real incident: an autonomous wake that commits must use
+  <b>scoped</b> <code>git add</code>, never <code>git add -A</code>. Peer sessions have uncommitted
+  edits, and <code>-A</code> sweeps their work into your commit.</p>
+</section>
+
+<!-- ============================ 8 ============================ -->
+<section id="journey">
+  <h2><span class="num">08</span> Following one fact through the system</h2>
+  <p>The tiers only make sense in motion.</p>
+  <ol class="journey">
+    <li><span class="jt">T0</span><div><b>Mid-session discovery.</b> A vendor's relation endpoint
+      silently caps at 10 records, not the documented 100. It sits in context and dies with the
+      session.</div></li>
+    <li><span class="jt">T1</span><div><b>At debrief</b> it lands in a dated facts file with full
+      provenance &mdash; date, source, the 29 false verification failures it caused.</div></li>
+    <li><span class="jt">gap</span><div><b>For six days it sits there.</b> Recorded but not yet
+      knowledge: retrievable only if someone greps the right date.</div></li>
+    <li><span class="jt">T2</span><div><b>A nightly consolidation wake</b> reaches that date,
+      recognizes the durable pattern, and rewrites the pagination section of the relevant reference
+      topic file. The residue is archived. The fact is now findable by <em>topic</em> instead of by
+      date.</div></li>
+    <li><span class="jt">+</span><div><b>Reinforcement.</b> The next related task reads that file.
+      Recency refreshes; because it's a new day, <code>stability</code> grows 14 &rarr; 22.4 days.
+      It gets harder to forget.</div></li>
+    <li><span class="jt">stop</span><div><b>T3/T4? No.</b> It's a reference, not a lens &mdash;
+      forgetting it makes you <em>slower</em>, not <em>wrong</em>, and you'd notice within a query.
+      It stays in T2 correctly.</div></li>
+  </ol>
+  <p>Compare a fact that <em>did</em> graduate: a hard rule about which tool to use for a given
+  integration. Forgetting that produces a <b>wrong action</b> every time, in any session, with no
+  natural trigger. It lives in T4 and is additionally enforced by a deny rule.
+  <b>The tier is chosen by the cost of forgetting, not by how important the fact feels.</b></p>
+</section>
+
+<!-- ============================ 9 ============================ -->
+<section id="decisions">
+  <h2><span class="num">09</span> Decisions and rejected paths</h2>
+  <div class="tablewrap">
+    <table class="dec">
+      <thead><tr><th>Decision</th><th>Alternative rejected</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Markdown + grep substrate</td><td>Graph / vector DB first</td><td>Policy is substrate-agnostic. Building the graph first blocks the valuable part on infrastructure with no urgency.</td></tr>
+        <tr><td>Adaptive per-file <code>stability</code></td><td>Fixed 14-day half-life</td><td>A global half-life can't distinguish a well-rehearsed memory from a crammed one. That distinction is the model.</td></tr>
+        <tr><td>Spacing gate on reinforcement</td><td>Increment on every read</td><td>Without it, one grep-heavy session fabricates durability.</td></tr>
+        <tr><td>Bounded index + roll-off</td><td>Unbounded cold list</td><td>Unbounded grew to 168&#8202;KB and scaled linearly with the corpus.</td></tr>
+        <tr><td>Dated files, permanent</td><td>Rolling file, FIFO truncation</td><td>Truncation deletes. The principle is never delete, only shift access cost.</td></tr>
+        <tr><td>Human-only T3/T4 promotion</td><td>Auto-promote on access frequency</td><td>Auto-promotion turns any single error into a permanent interpretive distortion.</td></tr>
+        <tr><td>One daily wake</td><td>High-frequency tick</td><td>Housekeeping doesn't need it; frequent thinking has diminishing returns against real cost.</td></tr>
+        <tr><td>Scripts detect, LLM judges</td><td>LLM does the whole pass</td><td>Tokens spent re-deriving what a linter checks for free.</td></tr>
+        <tr><td>Lenses with declared triggers</td><td>More rules in the always-on file</td><td>Always-on context is a scarce shared resource; narrow triggers are nearly free.</td></tr>
+        <tr><td>Derived index, regenerate on conflict</td><td>Hand-merge conflicts</td><td>Derived files have a generator; hand-merging generated output is strictly worse.</td></tr>
+        <tr><td>Borrow patterns from agent frameworks</td><td>Adopt one as the platform</td><td>Replaces the whole agent stack and duplicates persistence we already have.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>We also rejected a heavyweight version of the maintenance cycle that we ourselves had designed
+  months earlier &mdash; it came from a period when the system was much less mature, and the
+  lightweight hybrid was the right shape. Worth saying plainly: <b>the backlog is not a queue of
+  commitments.</b> Several items in it are best resolved by deletion.</p>
+</section>
+
+<!-- ============================ 10 ============================ -->
+<section id="value">
+  <h2><span class="num">10</span> What it buys, what it costs</h2>
+  <div class="cards two">
+    <div class="card good"><h3>Bounded cold-start cost</h3><p>19&#8202;KB of index regardless of
+      corpus size. Cost is a function of the budget, not of how much we remember.</p></div>
+    <div class="card good"><h3>Automatic relevance</h3><p>Nobody curates the Hot band. It's a
+      byproduct of use, and it re-sorts nightly.</p></div>
+    <div class="card good"><h3>Real forgetting, no data loss</h3><p>546 of 602 files are currently
+      rolled off. All 602 are on disk, indexed, and one read from returning.</p></div>
+    <div class="card good"><h3>Rules that fire without being remembered</h3><p>Lens content shapes
+      interpretation whether or not the agent thinks to look. A rule that must be recalled to be
+      applied is unreliable by construction.</p></div>
+    <div class="card good"><h3>Cross-session durability</h3><p>~10 concurrent instances share one
+      memory without clobbering it.</p></div>
+    <div class="card good"><h3>It maintains itself</h3><p>14 consecutive nights of autonomous
+      reflection, including consolidation that produced genuinely new memories nobody asked
+      for.</p></div>
+  </div>
+
+  <div class="aside">
+    <h4>An unexpected benefit: honest self-observation</h4>
+    <p>The reflective wake produces criticism we would not have generated on request. One recent sit
+    noticed that a <code>172/172 = 100%</code> verification gate was green <em>because its
+    denominator made failure impossible</em>, and generalized it: <b>"I build the verifier out of the
+    same material as the claim."</b> Another observed that the cold-start procedure in our own index
+    file prescribes steps that never actually get performed, and proposed trimming the doc to match
+    reality rather than building a gate to enforce the fiction. Neither was prompted.</p>
+  </div>
+
+  <div class="aside warn">
+    <h4>The costs</h4>
+    <p>Roughly 2,300 lines of Python to maintain. Nightly token spend on the reflective wake.
+    Frontmatter that must stay well-formed &mdash; hence the linter. And one real failure mode:
+    <b>documentation drift</b>, which this audit demonstrated on our own docs.</p>
+  </div>
+</section>
+
+<!-- ============================ 11 ============================ -->
+<section id="measured">
+  <h2><span class="num">11</span> Measured state</h2>
+  <p>Fresh recompute, not quoted from docs.</p>
+  <div class="tablewrap">
+    <table>
+      <tbody>
+        <tr><td>T2 topic files</td><td><b>602</b> &mdash; 253 feedback &middot; 168 project &middot; 145 reference &middot; 24 process &middot; 12 user</td></tr>
+        <tr><td>Hot band</td><td>38 rows / 11,993 chars</td></tr>
+        <tr><td>Cold band</td><td>18 rows / 3,994 chars</td></tr>
+        <tr><td>Rolled to archive</td><td>546</td></tr>
+        <tr><td>Index size</td><td>19.4&#8202;KB (was 168&#8202;KB)</td></tr>
+        <tr><td>Stability distribution</td><td>489 at base (&lt;30d) &middot; 61 mid &middot; 7 high &middot; 2 at the 365d cap</td></tr>
+        <tr><td>T1 short-term files</td><td>27 active</td></tr>
+        <tr><td>Dream-journal entries</td><td>15 (14 consecutive nights)</td></tr>
+        <tr><td>T3 lenses / meditation objects</td><td>9 / 13</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Three findings from auditing our own system</h3>
+  <p>Verifying against the live system rather than the roadmap turned up drift, which is worth
+  reporting rather than quietly fixing.</p>
+  <ol class="findings tight">
+    <li><h3>The roadmap understated what shipped</h3><p>Autonomous LLM meditation was listed
+      "decision pending." It had been running nightly via cron for two weeks. The roadmap was never
+      updated.</p></li>
+    <li><h3>Two constants were misdocumented</h3><p>The roadmap documented a Cold budget of 28K and
+      a resulting index of 43&#8202;KB. The code says 4,000 and the file is 19.4&#8202;KB &mdash; it
+      was tightened after the doc was written, because the bands have to fit inside the auto-load
+      read limit or tail entries silently drop.</p></li>
+    <li><h3>Curation wasn't counted as reinforcement</h3><p>The hook fired on read only, so every
+      edit to a topic file reinforced nothing. <b>Fixed.</b></p></li>
+  </ol>
+
+  <div class="aside big">
+    <h4>The finding that survived scrutiny, and the fix that didn't</h4>
+    <p>Finding 3 started as a broader claim: that <code>stability</code> was "barely exercised" (488
+    of 602 files at base) and the strength model was doing little work. That was two claims wearing
+    one coat, and only one held.</p>
+    <p><b>The math is sound.</b> 600 of 602 files have <code>stability</code> exactly equal to
+    <code>14 &times; 1.6^access_count</code>. Nothing is broken in the policy layer.</p>
+    <p><b>The distribution is honest, not degenerate.</b> 81% of files had no reinforcement because
+    they genuinely hadn't been retrieved in the 17 days since the backfill. A 602-file corpus with a
+    ~114-file working set should look exactly like that.</p>
+    <p>So the obvious remedy &mdash; <b>backfill reinforcement history from four months of git
+    commits</b>, treating each distinct commit day as one spaced reinforcement &mdash; looked
+    compelling. It would have moved 556 files. We simulated it against the real 38-slot Hot band
+    before applying, and it was a <b>measurable regression</b>:</p>
+    <div class="tablewrap">
+      <table class="sim">
+        <thead><tr><th>Backfill variant</th><th>Hot slots displaced</th><th>Behavioral rules pushed out</th><th>Stalest file in Hot</th></tr></thead>
+        <tbody>
+          <tr class="bad"><td>Uncapped (git days)</td><td>15 of 38</td><td><b>8</b></td><td>62 days</td></tr>
+          <tr class="ok"><td>Capped at 3</td><td>1 of 38</td><td>0</td><td>18 days</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The uncapped version evicted eight behavioral rules &mdash; including live operating
+    constraints &mdash; and replaced them with <em>completed</em> work: a closed audit at 48 days, a
+    finished setup task at 82 days, a contact record at 94 days.</p>
+    <p class="fix">The reason is structural, and it's the useful lesson. <b>Git commit volume
+    measures how much work a file consumed, not how relevant it is now.</b> A four-month
+    investigation generates dozens of commits; a one-line behavioral rule that governs every session
+    generates one. Backfilling from write history would systematically promote verbose project churn
+    over concise rules &mdash; close to the opposite of what the index is for. We rejected it.</p>
+  </div>
+</section>
+
+<!-- ============================ 12 ============================ -->
+<section id="backlog">
+  <h2><span class="num">12</span> Backlog and frontier</h2>
+
+  <h3 class="sub">Buildable now, no new infrastructure</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Item</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td><b>Tune the policy against real data</b></td><td>Every constant &mdash; base 14d, growth 1.6, cap 365d, spacing 20h, importance weight 0.6 &mdash; is a guess that has never been fitted. We now have months of data.</td></tr>
+        <tr><td><b>More linters</b></td><td>Registry-vs-filesystem diff, index staleness, <code>last_updated</code> drift. The hygiene arm is the cheapest value in the system.</td></tr>
+        <tr><td><b>Fix the legacy-naming blind spot</b></td><td>~19 files predate the naming convention, so the linter can't see them: links report dead, they never appear in the index, and auto-repair correctly declines because it sees no candidate.</td></tr>
+        <tr><td><b>Token-dense memory style</b></td><td>Memory is LLM-consumed. Dropping prose filler and validating abbreviations against the tokenizer is an estimated 40&ndash;55% reduction on prose-heavy memories. Chat and deliverables keep human conventions.</td></tr>
+        <tr><td><b>Optional: capped stability backfill</b></td><td>Seeds <code>stability</code> from a truthful floor rather than zero. Nearly ranking-neutral, so low priority. The uncapped version was simulated and rejected.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">The substrate upgrade</h3>
+  <p>Sequenced and deliberately not urgent: stand up the temporal graph locally &rarr; dual-write
+  ingestion with markdown remaining source of truth &rarr; <b>port the existing policy onto the
+  graph</b> (<code>stability</code> and <code>access_count</code> become edge metadata; recency comes
+  from bi-temporal timestamps; reinforcement can use centrality) &rarr; query integration &rarr;
+  multi-agent shared graph &rarr; full async consolidator.</p>
+  <p>The trigger to start is a <b>felt need</b> for semantic or temporal retrieval &mdash; "what did
+  we decide about X, and had it changed by June?" &mdash; not a schedule. Same two-strength math,
+  richer signals.</p>
+
+  <h3 class="sub">The bigger frontier</h3>
+  <div class="cards two">
+    <div class="card"><h3>Always-on local heart, frontier model as tool</h3><p>Today's architecture
+      makes the frontier model the agent and everything else scaffolding. When the session closes the
+      agent stops existing, and continuity is faked by reloading files. The inversion: a dedicated
+      always-on machine runs a capable local model whose job is <em>continuity rather than maximal
+      intelligence</em> &mdash; holding the self-model, running the heartbeats, and deciding when a
+      problem is hard enough to summon frontier reasoning as a tool call. Whether a local model is
+      <em>enough</em> on its own is the gating empirical question.</p></div>
+    <div class="card"><h3>Duty-cycle split</h3><p>Decided, not built: keep the strong workstation
+      session-based for deep work; add a modest always-on host for the clock-scheduled sleep cycle.
+      The second machine earns its place through <b>uptime, not horsepower</b> &mdash; running the
+      agent harness doesn't move your compute, since the thinking is remote. Coordination via git
+      with disjoint write domains.</p></div>
+    <div class="card"><h3>Threshold-triggered reflection</h3><p>Reflection is currently purely
+      scheduled. The Generative Agents pattern fires it when accumulated importance crosses a
+      threshold, so high-signal days consolidate sooner instead of waiting for 3:47am.</p></div>
+    <div class="card"><h3>Self-directed archival judgment</h3><p>A standing instruction rather than a
+      script: <em>"use your judgement about when something is time to be archived &mdash; it's not
+      that we'll never come back to it, it's that it clearly isn't useful in your near-term context
+      any longer. Meditate on how to detect this on your own."</em> It became a recurring meditation
+      object, which is the right shape: the decision needs judgment, and the confidence has to be
+      earned before the automation is trusted.</p></div>
+  </div>
+</section>
+
+<!-- ============================ 13 ============================ -->
+<section id="replicate">
+  <h2><span class="num">13</span> If you're replicating this</h2>
+  <p>Seven things, in order of how much time they'll save you.</p>
+  <ol class="rules">
+    <li><b>Start with policy, not substrate.</b> The ranking model is 200 lines of Python over
+      markdown files. Building a graph database first blocks the valuable part on infrastructure you
+      don't yet need &mdash; and the graph won't build the policy for you. Decay and invalidation are
+      different axes.</li>
+    <li><b>Bound the always-loaded index by characters, and roll off the tail.</b> Single
+      highest-leverage change. Everything else is refinement.</li>
+    <li><b>Separate storage strength from retrieval strength, and gate reinforcement on
+      spacing.</b> Without the gate you're rewarding cramming and the adaptive decay constant means
+      nothing.</li>
+    <li><b>Never delete. Shift access cost.</b> Files persist; only index visibility moves. Costs
+      nothing, and makes a wrong archival decision recoverable.</li>
+    <li><b>Split detection from judgment.</b> Linters are free and run constantly. Wake the model
+      only for what a linter can't decide. Getting this backwards is the expensive mistake.</li>
+    <li><b>Keep lens-tier promotion human, permanently.</b> Anything that shapes interpretation of
+      every input must be deliberately placed. Auto-promotion makes one error permanent.</li>
+    <li><b>Verify against the running system, never the design doc.</b> This audit found three
+      drifts between our own roadmap and our own code &mdash; including a shipped feature the roadmap
+      still listed as pending. Source outranks summary; regenerate before quoting.</li>
+  </ol>
+  <p class="pull">The deepest lesson took longest. Memory is not storage &mdash; it's an
+  <b>access-cost function over a permanent substrate</b>. Once you see it that way, "what should the
+  agent forget?" stops being a deletion question and becomes a ranking question: tractable, tunable,
+  and reversible.</p>
+</section>
+
+<!-- ============================ APPENDIX ============================ -->
+<section id="appendix" class="appendix">
+  <h2><span class="num">A</span> Appendix</h2>
+
+  <h3 class="sub" id="appendix-a">A &middot; Research and prior art</h3>
+  <p><b>Neuroscience</b></p>
+  <ul class="refs">
+    <li><b>Bjork &amp; Bjork (1992)</b>, <em>A New Theory of Disuse and an Old Theory of Stimulus
+      Fluctuation</em> &mdash; the two-strength model. Directly implemented as the score formula.</li>
+    <li><b>Tononi &amp; Cirelli</b> &mdash; synaptic homeostasis hypothesis. Implemented as index
+      roll-off.</li>
+    <li><b>Ebbinghaus &rarr; SuperMemo / Duolingo</b> &mdash; the spacing effect. Implemented as the
+      20-hour gate and multiplicative stability growth.</li>
+    <li><b>Systems-consolidation literature</b> (hippocampal replay &rarr; neocortex) &mdash; the
+      nightly T1&rarr;T2 wake.</li>
+    <li><b>Dissociation evidence</b> (hippocampal amnesia vs. semantic dementia) &mdash; the argument
+      for tier independence.</li>
+  </ul>
+  <p><b>Agent architectures</b></p>
+  <ul class="refs">
+    <li><b>Generative Agents</b> &mdash; Park et al., UIST 2023.
+      <a href="https://arxiv.org/abs/2304.03442" rel="noopener">arXiv:2304.03442</a>.
+      Recency + importance + relevance retrieval scoring, and threshold-triggered reflection. We
+      borrowed the scoring shape and specifically the idea that <b>importance is annotated at write
+      time, not query time</b> &mdash; computed once, pays off on every retrieval.</li>
+    <li><b>MemGPT</b> &mdash; Packer et al.
+      <a href="https://arxiv.org/abs/2310.08560" rel="noopener">arXiv:2310.08560</a>.
+      Agent-editable core-memory slots and explicit paging. Partially adopted; the slot pattern is
+      still future work.</li>
+    <li><b>Letta</b> &mdash; <a href="https://github.com/letta-ai/letta" rel="noopener">github.com/letta-ai/letta</a>.
+      "Sleep-time compute": async consolidation decoupled from the agent loop. We'd independently
+      derived the same design, which was useful convergent evidence. Reference architecture
+      only.</li>
+    <li><b>Graphiti</b> &mdash; <a href="https://github.com/getzep/graphiti" rel="noopener">github.com/getzep/graphiti</a>.
+      Bi-temporal edges, entity resolution, contradiction handling by edge invalidation. Chosen as
+      the eventual substrate for temporal queries and contradiction handling.</li>
+  </ul>
+  <p><b>What's ours.</b> The tier model with its independence properties, and the synthesis: Bjork's
+  two-strength policy as a substrate-agnostic layer over any storage backend, with Park's importance
+  as a non-decaying floor. The tension between Park (passive importance-weighted retrieval) and
+  MemGPT (active agent-controlled paging) dissolves once you layer them &mdash; passive ranking
+  always on, explicit retrieval on top.</p>
+
+  <h3 class="sub" id="appendix-b">B &middot; Script map</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Script</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td><code>update_memory_access.py</code></td><td>PreToolUse hook. The two-strength update + spacing gate.</td></tr>
+        <tr><td><code>rerank_memory_index.py</code></td><td>Single writer of the index. Scores, bands, rolls off.</td></tr>
+        <tr><td><code>dream_cycle.py</code></td><td>Nightly deterministic driver. Runs safe passes, cues reflective ones.</td></tr>
+        <tr><td><code>dream_select.py</code></td><td>Weighted meditation rotation with the awareness floor.</td></tr>
+        <tr><td><code>dream_journal.py</code></td><td>Residue store: write / recent / decay.</td></tr>
+        <tr><td><code>consolidation_scan.py</code></td><td>Detects ungraduated T1 residue and weak/stale T2.</td></tr>
+        <tr><td><code>memory_self_check.py</code></td><td>Hygiene linter. Detection + deterministic safe fixes.</td></tr>
+        <tr><td><code>inject_lens.py</code></td><td>T3 lens matcher and injector.</td></tr>
+        <tr><td><code>regen_current_state.py</code></td><td>Single writer of the current-state index.</td></tr>
+        <tr><td><code>sweep_workstreams.py</code></td><td>Close-detection and age-out for project memories.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub" id="appendix-c">C &middot; The constants</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Constant</th><th>Value</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>BASE_STABILITY</code></td><td>14 d</td><td>Decay constant for a never-reinforced memory</td></tr>
+        <tr><td><code>STABILITY_GROWTH</code></td><td>1.6&times;</td><td>Multiplier per spaced reinforcement (~7 reach the cap)</td></tr>
+        <tr><td><code>STABILITY_CAP</code></td><td>365 d</td><td>Ceiling on the markdown bridge</td></tr>
+        <tr><td><code>SPACING_GAP_HOURS</code></td><td>20 h</td><td>Minimum gap for a read to count as reinforcement</td></tr>
+        <tr><td><code>IMPORTANCE_WEIGHT</code></td><td>0.6</td><td>Score points per unit of human-set importance</td></tr>
+        <tr><td><code>HOT_CHAR_BUDGET</code></td><td>12,000</td><td>Auto-loaded band, ~3K tokens</td></tr>
+        <tr><td><code>COLD_CHAR_BUDGET</code></td><td>4,000</td><td>Active cold index before roll-off</td></tr>
+        <tr><td><code>MEDITATE_EVERY_HOURS</code></td><td>22 h</td><td>At most one reflective sit per nightly cycle</td></tr>
+        <tr><td><code>AWARENESS_FLOOR</code></td><td>3 sits</td><td>Force an awareness object if none chosen this recently</td></tr>
+        <tr><td><code>BUSY_MINUTES</code></td><td>10 min</td><td>Recent memory write &rArr; a session is live, skip mutating passes</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Every one of these is a guess that has not yet been fitted against data. Treat them
+  as starting points, not findings.</p>
+
+  <h3 class="sub" id="appendix-d">D &middot; Related reading</h3>
+  <ul class="refs">
+    <li><a href="/pvragon/how-rowan-works">How Rowan Works</a> &mdash; the wider agent
+      infrastructure this memory system sits inside.</li>
+    <li><a href="/pvragon/ai-workspace-onboarding">The Pvragon AI Workspace</a> &mdash; the
+      four-layer architecture, retention tiers, and the DOE pattern.</li>
+    <li><a href="/pvragon/portable-agent-package">Portable Agent Package</a> &mdash; the transplantable
+      subset of the workspace.</li>
+    <li><a href="https://github.com/Pvragon/ai-workspace-reference" rel="noopener">Pvragon/ai-workspace-reference</a>
+      &mdash; public reference implementation, including the example agent memory layout.</li>
+  </ul>
+</section>
+
+<footer>
+  <img class="mark" src="data:image/png;base64,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" alt="" width="28" height="28">
+  <p><b>Agent Memory Architecture</b> &middot; Pvragon &middot; 30 July 2026</p>
+  <p class="fine">Architecture note. Figures are fresh recomputes from the running system on the date
+  above. The design is a bridge implementation in markdown &mdash; the policy layer is intended to
+  outlive the substrate.</p>
+</footer>
+</main>
+</div>
+<script>
+// nav: mobile drawer + scroll-spy. No dependencies.
+(function(){
+  var nav=document.getElementById('nav'), tog=document.getElementById('navtoggle');
+  tog.addEventListener('click',function(){
+    var open=nav.classList.toggle('open');
+    tog.textContent=open?'✕  Close':'☰  Contents';
+  });
+  nav.addEventListener('click',function(e){
+    if(e.target.tagName==='A'&&window.innerWidth<=900){
+      nav.classList.remove('open'); tog.textContent='☰  Contents';
+    }
+  });
+  var links=[].slice.call(nav.querySelectorAll('a'));
+  var targets=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function spy(){
+    var best=0, y=window.scrollY+140;
+    for(var i=0;i<targets.length;i++){ if(targets[i]&&targets[i].offsetTop<=y) best=i; }
+    links.forEach(function(a,i){ a.classList.toggle('on',i===best); });
+  }
+  var t=null;
+  window.addEventListener('scroll',function(){ if(t)return; t=setTimeout(function(){t=null;spy();},90);},{passive:true});
+  spy();
+})();
+</script>
+<script src="/prez-header.js" defer></script>
+</body>
+</html>

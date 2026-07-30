@@ -1016,11 +1016,15 @@
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-table-list"></i>
-                    <div class="item-text"><strong>MEMORY.md index</strong> &mdash; auto-loaded every cold start; one line per memory. Progressive disclosure again.</div>
+                    <div class="item-text"><strong>MEMORY.md index</strong> &mdash; auto-loaded every cold start, but <strong>character-budgeted</strong>: a Hot band plus a Cold band, with the low-relevance tail rolled off to an archive index. Bounded no matter how large the corpus grows.</div>
                 </div>
                 <div class="memory-item">
                     <i class="fa-solid fa-broom"></i>
                     <div class="item-text"><strong>Curated, not accumulated</strong> &mdash; wrong facts get corrected in place; everything is git-versioned.</div>
+                </div>
+                <div class="memory-item">
+                    <i class="fa-solid fa-wave-square"></i>
+                    <div class="item-text"><strong>Ranked by a two-strength model</strong> &mdash; storage strength never decays, retrieval strength does, and the decay rate itself slows with <em>spaced</em> reuse. Nothing is ever deleted; only how expensive it is to reach.</div>
                 </div>
             </div>
         </div>
