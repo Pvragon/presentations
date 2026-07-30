@@ -339,8 +339,8 @@ dl.gloss dt code{font-size:.82em}
   </div>
 
   <p class="note">Everything here runs in production on a single Linux workstation. Every figure was
-  re-derived from the running system while writing this note &mdash; a pass referred to below as
-  <b>the audit</b>. It found three places where our own roadmap disagreed with our own code, and
+  re-derived from the running system while writing this note. That pass is called <b>the audit</b>
+  below. It found three places where our own roadmap disagreed with our own code, and
   those are reported rather than quietly fixed.</p>
 </header>
 
@@ -349,12 +349,13 @@ dl.gloss dt code{font-size:.82em}
   <h2><span class="num">00</span> Before you start</h2>
   <div class="primer">
     <span class="tag">Read this first</span>
-    <p>If you have never built an LLM agent, four mechanics below do all the load-bearing work in
-    this document, and none of them are obvious. Two minutes here makes the rest readable.</p>
+    <p>If you have never built an LLM agent, four mechanics below do all the load-bearing work, and
+    none of them are obvious. Two minutes here makes the rest readable.</p>
   </div>
 
   <p>Throughout, an <b>agent</b> means a large language model running inside a <b>harness</b> &mdash;
-  an ordinary program (ours is a terminal application) that does three things:</p>
+  an ordinary program (ours is a terminal application) that does three things &mdash; plus one
+  piece of vocabulary you will need throughout:</p>
 
   <div class="memory-list">
     <div class="memory-item"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg><div class="item-text"><strong>It assembles the prompt.</strong>
@@ -373,19 +374,19 @@ dl.gloss dt code{font-size:.82em}
       before a tool call, handing it a JSON description of what is about to happen. The hook can do
       three useful things: quietly cause a side effect, print text that the harness inserts into the
       model's context, or approve or block the call. Hooks run whether or not the model is
-      cooperating, which is what makes them trustworthy places to put rules.</div></div>
+      cooperating, which makes them trustworthy places to put rules.</div></div>
     <div class="memory-item"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><div class="item-text"><strong>A session is one
       conversation.</strong> It begins, accumulates context, and ends. Nothing survives it except
       what was written to disk. A <b>cold start</b> is the beginning of a fresh session, when only
       the auto-loaded files are present.</div></div>
   </div>
 
-  <p>One more thing worth stating plainly, because it surprises people: <b>none of this involves
+  <p>Worth stating plainly, because it surprises people: <b>none of this involves
   training or fine-tuning a model.</b> Everything described here is file layout, arithmetic, and small
   scripts around an unmodified model.</p>
 
-  <p>Two words get used loosely everywhere else in this space, so they are worth pinning down
-  before anything else. The <b>harness</b> is the program running in the terminal &mdash; a chat
+  <p>Two words get used loosely everywhere else in this space, so they are worth pinning down.
+  The <b>harness</b> is the program running in the terminal &mdash; a chat
   loop with file tools and permissions. Today that is typically <b>Claude Code</b>; it could equally
   be <b>Codex</b> or another agentic CLI. <b>We use Claude Code</b>, and every example here comes
   from it. The <b>model</b> is the thing the harness calls. Neither is what this document is about.</p>
@@ -495,7 +496,7 @@ dl.gloss dt code{font-size:.82em}
     patient HM) destroys the ability to form new episodic memories while leaving old general knowledge
     intact: he could still ride a bike and knew Paris was in France. <b>Semantic dementia</b> does the
     opposite &mdash; the meaning of "dog" erodes while specific personal events survive.</p>
-    <p>Opposite failure modes, same organ system, dissociating cleanly. That is evidence of two
+    <p>Opposite failure modes, same organ system, cleanly dissociated. That is evidence of two
     separate systems that share inputs but not implementations. The engineering consequence, which we
     took literally: our tiers live in separate directories with separate writers, and the routine that
     captures facts at the end of a session is structurally incapable of writing to the tiers that hold
@@ -531,8 +532,8 @@ dl.gloss dt code{font-size:.82em}
   </div>
 
   <h3 class="sub">How a T2 memory is actually recalled</h3>
-  <p>Worth being concrete, because "retrieved when relevant" is where most memory designs quietly wave
-  their hands. There is no search engine and no embedding lookup. The mechanism is:</p>
+  <p>"Retrieved when relevant" is where most memory designs quietly wave their hands. There is no
+  search engine here and no embedding lookup. The mechanism is:</p>
   <ol class="steps">
     <li>The auto-loaded index carries a <b>one-line summary</b> of each memory it lists &mdash; enough
       to judge relevance without opening anything.</li>
@@ -576,7 +577,7 @@ dl.gloss dt code{font-size:.82em}
     <li><b>Can you write a tight trigger?</b> Yes &rarr; T3, and it costs nothing outside its trigger
       zone. No, it applies everywhere &rarr; T4, and you pay for it in every session.</li>
   </ul>
-  <p>That third question is what solved our "the always-on file is full" problem architecturally.
+  <p>That third question solved our "the always-on file is full" problem architecturally.
   Situational rules don't belong in the always-on file; they belong in a lens with a narrow
   trigger.</p>
 </section>
@@ -630,7 +631,7 @@ dl.gloss dt code{font-size:.82em}
   <h2><span class="num">05</span> Substrate, scheduler, policy</h2>
   <div class="primer">
     <span class="tag">Primer</span>
-    <p>Three things get bundled together when people say "agent memory". Separating them is what let
+    <p>Three things get bundled together when people say "agent memory". Separating them let
     us ship: two of the three needed no infrastructure at all.</p>
   </div>
 
@@ -680,8 +681,8 @@ dl.gloss dt code{font-size:.82em}
   </div>
 
   <p>At the end of a work session, the agent runs a procedure we call the <b>session debrief</b>.
-  It is a written checklist the agent follows &mdash; part shell script, part judgment &mdash; and it
-  is deliberately split along that line:</p>
+  It is a written checklist &mdash; part shell script, part judgment &mdash; deliberately split along
+  that line:</p>
 
   <div class="workspace-grid two">
     <div class="workspace-card card-primary">
@@ -700,8 +701,7 @@ dl.gloss dt code{font-size:.82em}
   </div>
 
   <h3 class="sub">What it writes, and where</h3>
-  <p>Two destinations, and the distinction is the whole T1/T2 decision from &sect;03 applied in
-  practice:</p>
+  <p>Two destinations. The distinction is the T1/T2 decision from &sect;03 applied in practice:</p>
   <div class="tablewrap">
     <table>
       <thead><tr><th>Destination</th><th>Holds</th><th>Shape</th></tr></thead>
@@ -713,7 +713,7 @@ dl.gloss dt code{font-size:.82em}
     </table>
   </div>
   <p>The default is T1. Facts go there <em>even when they feel important</em>, because the nightly
-  consolidation wake (&sect;07) is what abstracts durable patterns out of them later, and it does that
+  consolidation wake (&sect;07) abstracts durable patterns out of them later, and it does that
   job better with several days of evidence than the debrief can with one. Writing straight to T2 is
   reserved for <b>direct teaching</b> &mdash; someone states a durable preference or rule outright,
   and there is no episode to abstract from.</p>
@@ -739,7 +739,7 @@ dl.gloss dt code{font-size:.82em}
     not a prohibition on removing something that is simply false.</p>
   </div>
 
-  <p>There is a second, related routine worth naming since it appears in the file tree:
+  <p>One more routine, since it appears in the file tree:
   <code>current-state.md</code> is a short, deterministically rendered index of <em>what is in flight
   right now</em>. It is not a tier &mdash; it holds no content of its own. Each project memory carries
   a flag saying whether it belongs on that list and what its one-line status is, and a script renders
@@ -836,8 +836,7 @@ dl.gloss dt code{font-size:.82em}
 
   <div class="callout">
     <h4>What it actually produces</h4>
-    <p>A fair question is whether any of this yields anything. Two unprompted examples from recent
-    nights.</p>
+    <p>Does any of this yield anything? Two unprompted examples from recent nights.</p>
     <p>One sit was reviewing verification gates and noticed that a check reporting <code>172/172 =
     100%</code> was green <em>because of how its population was defined</em> &mdash; the denominator
     counted only cases that could not fail, so the metric was incapable of reporting a problem. It
@@ -886,8 +885,10 @@ stops being retrievable.
 </code></pre>
   <p>Strictly it is five fields, since <code>last_accessed</code> and <code>last_reinforced</code> are
   separate on purpose &mdash; see the spacing gate below. The one-line
-  <code>description</code> is what lands in the index and what the agent judges relevance from, so it
-  is the highest-leverage text in the whole file.</p>
+  <code>summary</code> lands in the index and is what the agent judges relevance from, so it is the
+  highest-leverage text in the whole file. <code>description</code> is the fallback used only when
+  <code>summary</code> is absent &mdash; the two hold different text on most files, which is exactly
+  why moving the authoritative one into the file mattered.</p>
 
   <h3 class="sub">The retrieval score</h3>
   <div class="equation">
@@ -899,7 +900,7 @@ stops being retrievable.
     <div class="equation-op">=</div>
     <div class="equation-result">score</div>
   </div>
-  <p><code>stability</code> is what makes this more than recency weighting. It is a per-file time
+  <p><code>stability</code> makes this more than recency weighting. It is a per-file time
   constant in days: it starts at 14, multiplies by 1.6 on each spaced reinforcement, and is capped at
   365. A file read once and abandoned decays with a two-week constant and goes cold in about two weeks.
   A file reinforced seven times across seven separate days decays with a one-year constant. Same
@@ -984,9 +985,9 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
   to say arbitrarily.</p>
 
   <div class="callout accent">
-    <h4>Where the summaries live &mdash; fixed, and worth reading as a cautionary tale</h4>
+    <h4>Where the summaries live &mdash; fixed, and a cautionary tale</h4>
     <p>The summary text now lives in each memory file's own <code>summary:</code> frontmatter. The
-    reranker reads it like any other field, which is what makes the index a genuine pure function of
+    reranker reads it like any other field, which makes the index a genuine pure function of
     the corpus. <b>Hand-edits to <code>MEMORY.md</code> are discarded</b> &mdash; to change what an
     entry says, you edit the file.</p>
     <p>It did not start that way, and the original design is instructive. The summary lived
@@ -997,7 +998,7 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
     which the hygiene linter reports each archived file as an <b>orphan</b>. This happened.</p>
     <p>The migration confirmed the stakes: <b>606 of 629</b> summaries differed from the file's own
     <code>description</code>, so the index really was the only copy. Two things nearly went wrong in
-    the fixing, both worth stating because neither was visible by inspection. The frontmatter parser
+    the fixing, neither visible by inspection. The frontmatter parser
     read only the <em>first line</em> of a value &mdash; harmless while frontmatter was a fallback,
     silent truncation of 216 multi-line summaries the moment it became the source of truth. And
     removing the carry-forward wholesale broke <b>"never delete"</b>: a file deleted while it sat in
@@ -1028,32 +1029,32 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
     <p>A newly written memory has <code>access_count: 0</code> and <code>last_accessed: now</code>, so
     it scores exactly <b>1.00</b>. Measured against the live corpus, that ranked <b>#125 of 612</b> &mdash;
     against roughly 49 visible slots <em>as the index then stood</em> (Hot + Cold only; the New band
-    did not yet exist, and adding it is what raised the visible count). New memories were born <em>straight into the archive</em>. Never
+    did not yet exist, and adding it raised the visible count). New memories were born <em>straight into the archive</em>. Never
     indexed, so never seen; never seen, so never read; never read, so never reinforced; and decaying
-    from 1.00 downward from there. <b>Everything written was effectively write-only.</b></p>
+    from 1.00 downward. <b>Everything written was effectively write-only.</b></p>
     <p>It was invisible by construction. Nothing errors. The session debrief reports success, git has
     the file, and the hygiene linter counts it as indexed <em>because the archive is an index</em>. The
-    only symptom is a memory that never comes up — indistinguishable from one that simply was not
+    only symptom is a memory that never comes up, indistinguishable from one that simply was not
     relevant. It also got worse quietly: halving the Cold band to fit the auto-load limit was a
     correct fix, and nobody checked what it did to newborns.</p>
     <p>It surfaced during a routine debrief, when the capture step noticed the reranker archiving both
     files it had just written. One of the two was a memory about <em>silent drift</em>, which had
     silently vanished.</p>
     <p class="fix">Fixed with the <b>New band</b>: files born within 14 days get reserved slots
-    regardless of score, so a memory is visible from birth and has a window in which it can actually
-    be read. It keys on <code>created:</code> and never on file mtime — the reinforcement hook rewrites
+    regardless of score, so a memory is visible from birth and has a window in which it can be
+    read. It keys on <code>created:</code> and never on file mtime — the reinforcement hook rewrites
     frontmatter on every touch, so mtime is last-touch, not birth. It claimed 113 files were under a
     week old where git said 40. A file with no <code>created:</code> is treated as <em>not</em> new:
     missing a real newborn costs one grace window, but a false one evicts a real memory.</p>
   </div>
 
   <div class="callout warn">
-    <h4>"One read away" &mdash; what that actually costs</h4>
+    <h4>"One read away" &mdash; what that costs</h4>
     <p>The Hot and Cold bands make retrieval genuinely cheap: the summary is already in front of the
     agent. The archive is different, and the phrase "one read away" flatters it. The archive is
     152&#8202;KB, so finding a memory in it means either reading a large catalogue or running a text
     search over the memory directory.</p>
-    <p>That creates a real asymmetry we should name. Text search does <em>not</em> reinforce (&sect;08),
+    <p>That creates a real asymmetry. Text search does <em>not</em> reinforce (&sect;08),
     so a memory found by the only practical means of finding it does not gain strength from being
     found. An archived memory climbs back only if the agent, having located it, then issues a
     deliberate <code>Read</code> of the file &mdash; which it does when it actually uses the contents,
@@ -1061,7 +1062,7 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
     <p class="fix">So the reinforcement loop closes for archived memories, but through a narrower path
     than for Hot ones, and the deep tail is realistically write-once. That is the intended shape &mdash;
     forgetting should be hard to reverse by accident &mdash; but it is a cost, not a free lunch, and
-    semantic search over the corpus (&sect;14) is what would properly fix it.</p>
+    semantic search over the corpus (&sect;14) would properly fix it.</p>
   </div>
 
   <p><b>Being precise about the "bounded" claim,</b> because the arithmetic invites suspicion. The
@@ -1081,8 +1082,8 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
     <div class="flow-arrow">&darr;</div>
     <div class="flow-box"><b>Long-non-reinforced</b> &mdash; retrieval cost approaches infinity but never reaches it. Not gone, just expensive</div>
   </div>
-  <p>This is structurally different from truncation-based decay, and it is a principle we had to be
-  held to: our first residue design used a rolling file truncated at ten entries, which quietly
+  <p>This is structurally different from truncation-based decay, and a principle we had to be held
+  to: our first residue design used a rolling file truncated at ten entries, which quietly
   violated it. We switched mid-build to dated files that persist forever with a 7-day visibility
   window. Same visible behaviour, no data loss.</p>
 
@@ -1134,9 +1135,9 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
   <p><b>Every memory hook exits 0 unconditionally</b>, wraps its whole body in a catch-all, serialises
   with a lock file, and writes atomically. A hook that raises can block the tool call it hooks, which
   would turn a memory bookkeeping bug into the agent being unable to work. The
-  <code>session_id</code> is what makes per-session lens de-duplication possible.</p>
-  <p>Two consequences of that design worth stating, because both are real and neither is a bug we
-  intend to fix. Hooks run <em>before</em> the tool call, so reinforcement is recorded for a read that
+  <code>session_id</code> makes per-session lens de-duplication possible.</p>
+  <p>Two consequences of that design, both real and neither a bug we intend to fix. Hooks run
+  <em>before</em> the tool call, so reinforcement is recorded for a read that
   might then fail or be denied &mdash; the count is of <em>intent to retrieve</em>, not of successful
   retrieval. And because a hook must never block, one that cannot take the lock inside its time budget
   gives up rather than waiting. Under heavy concurrency a reinforcement is therefore occasionally
@@ -1153,7 +1154,7 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
       </tbody>
     </table>
   </div>
-  <p>That third one deserves a word, since it solves a problem you would not guess exists. By default a
+  <p>The third solves a problem you would not guess exists. By default a
   human is asked to approve file writes. Memory capture writes many files, so without this hook a
   debrief becomes a wall of approval prompts and gets skipped &mdash; and a capture step that is
   annoying enough to skip is a capture step that does not exist.</p>
@@ -1190,7 +1191,7 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
       cue and do what it says. Output is appended to a log a human reads later.</div>
   </div>
   <p>The five-minute offset is required: the deterministic tick must finish writing the cue before the
-  reflective wake reads it. Splitting them this way is also what keeps the cost honest &mdash; the
+  reflective wake reads it. The split also keeps the cost honest: the
   expensive half only starts if the cheap half decided there was something worth thinking about.</p>
   <div class="quote-block">Scripts detect; the dreamer only wakes for what scripts can't decide.</div>
   <p>A linter answers "is metadata missing?" for free and correctly. A model is needed for "is this
@@ -1223,8 +1224,8 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   load-bearing, since it is how every script recognises a memory file.</p>
 
   <h3 class="sub">When things go wrong</h3>
-  <p>Worth being explicit, since the index has a known destructive failure mode and the corpus is
-  something we promise never to delete.</p>
+  <p>Worth being explicit, since the index has a known destructive failure mode and we promise never
+  to delete the corpus.</p>
   <ul class="bullet-list">
     <li><b>A partially written index cannot happen.</b> Both index files are written to a temporary
       file and moved into place with an atomic rename, under a lock. A crash mid-write leaves the
@@ -1330,7 +1331,7 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   </div>
   <p>We also rejected a heavyweight version of the maintenance cycle that we had designed ourselves
   months earlier &mdash; it came from a period when the system was far less mature, and the lightweight
-  hybrid was the right shape. Worth saying plainly: <b>the backlog is not a queue of commitments.</b>
+  hybrid was the right shape. Plainly: <b>the backlog is not a queue of commitments.</b>
   Several items in it are best resolved by deletion.</p>
 </section>
 
@@ -1423,8 +1424,9 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     <p>So an obvious-looking remedy presented itself: <b>reconstruct reinforcement history from four
     months of git commits</b>, treating each distinct day a memory file was committed as one spaced
     reinforcement. Call this the <em>git-history backfill</em>, to keep it distinct from the July one.
-    It would have moved 556 files. We simulated it against the real Hot band as it stood then (34 slots, before the New band existed) prior to applying
-    anything, and it was a <b>measurable regression</b>:</p>
+    It would have moved 556 files. We simulated it before applying anything, against the real Hot
+    band as it stood then (38 slots, before the New band existed), and it was a
+    <b>measurable regression</b>:</p>
     <div class="tablewrap">
       <table class="sim">
         <thead><tr><th>Variant</th><th>Hot slots displaced</th><th>Behavioural rules pushed out</th><th>Stalest file left in Hot</th></tr></thead>
@@ -1459,13 +1461,8 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     <table>
       <thead><tr><th>Item</th><th>Why it matters</th></tr></thead>
       <tbody>
-        <tr class="ok"><td><b>Move summaries into the memory files</b> &mdash; <b>done</b></td><td>629 summaries migrated into <code>summary:</code> frontmatter; the archive-merge is deleted and the index is genuinely derived. Both index files came out byte-identical across the migration, which is what proves nothing was lost.</td></tr>
         <tr><td><b>Fit the constants against real data</b></td><td>Every value &mdash; base 14d, growth 1.6, cap 365d, spacing 20h, importance weight 0.6 &mdash; is an unfitted guess. We now have months of history to fit against.</td></tr>
         <tr><td><b>More linters</b></td><td>Registry-versus-filesystem drift, index staleness, metadata age. The hygiene arm is the cheapest value in the system.</td></tr>
-        <tr class="ok"><td><b>Legacy-naming blind spot</b> &mdash; <b>done</b></td><td>16 files predating the <code>&lt;type&gt;_</code> convention were invisible to the linter: their links reported dead, they never appear in the index, and auto-repair declines because it sees no candidate.</td></tr>
-        <tr class="ok"><td><b>Regression tests on a corpus copy</b> &mdash; <b>done</b></td><td>26 tests over a synthetic fixture corpus, never the live one. Each was checked for falsifiability by running it against the previous revision &mdash; which caught one that passed against the bug it was written to catch.</td></tr>
-        <tr class="ok"><td><b>New memories were born invisible</b> &mdash; <b>done</b></td><td>A newly written memory scored 1.00 and ranked #125 of 612 against ~49 visible slots, so it went straight to the archive and could never be read, hence never reinforced. Fixed with the New band (&sect;08).</td></tr>
-        <tr class="ok"><td><b>One authoritative <code>type:</code></b> &mdash; <b>done</b></td><td>The corpus declared a memory's kind three ways. <code>template:</code> turned out to be a different axis, not an alias &mdash; 45 uses held real document-template names a wholesale collapse would have destroyed. Normalized value-by-value across 629 files.</td></tr>
         <tr><td><b>Token-dense memory style</b></td><td>Memory is read by a model, not a person. Dropping prose filler is an estimated 40&ndash;55% reduction on the wordier files.</td></tr>
       </tbody>
     </table>
@@ -1701,7 +1698,7 @@ python3 verify_memory_install.py         <span class="cmt"># prove the policy is
     </table>
   </div>
   <p class="note">Every one of these is an unfitted guess. Treat them as starting points, not findings.
-  Note also that Hot + Cold + surrounding prose must fit inside the harness's auto-load read limit
+  Note that Hot + Cold + surrounding prose must fit inside the harness's auto-load read limit
   (about 24&#8202;KB for us) or tail entries silently drop from the loaded index &mdash; raise the
   budgets only after confirming that ceiling.</p>
 
