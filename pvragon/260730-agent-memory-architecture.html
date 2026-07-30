@@ -1544,6 +1544,28 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   access-cost function over a permanent substrate. Once you see it that way, "what should the agent
   forget?" stops being a deletion question and becomes a ranking question: tractable, tunable, and
   reversible.</div>
+
+  <div class="callout accent">
+    <h4>On the Pvragon team? Don't replicate it &mdash; install it</h4>
+    <p>Everything above ships in <code>team-lib</code> and works for any agent name on any machine.
+    You do not need to build it. After your agent has a name and a home
+    (<a href="/pvragon/ai-workspace-onboarding">onboarding</a> Phase 7), it is three commands:</p>
+    <pre><code>cd ~/ai-workspace/team-lib/executions
+
+python3 bootstrap_memory.py              <span class="cmt"># DRY RUN — read what it will change</span>
+python3 bootstrap_memory.py --apply      <span class="cmt"># dirs, frontmatter, starter library, first index</span>
+python3 install_memory_hooks.py --apply  <span class="cmt"># register the hooks + nightly cron</span>
+python3 verify_memory_install.py         <span class="cmt"># prove the policy is actually wired</span>
+</code></pre>
+    <p><code>verify_memory_install.py</code> exits non-zero if anything is wrong, and it is the step
+    people skip. A disconnected hook is otherwise <em>invisible</em>: memories simply stop gaining
+    strength and nothing ever complains. Run it after any change to hooks, paths, or settings.</p>
+    <p>The build-and-operate contract &mdash; every constant, the frontmatter schema, the failure-mode
+    table &mdash; is <code>team-lib/context/indexed/memory-system.md</code>. This document is the
+    <em>why</em>; that one is the <em>how</em>.</p>
+    <p class="fix">What you install is identical for everyone. What accumulates in it is not &mdash;
+    which is the whole point. Give it a month of your work and it stops resembling anyone else's.</p>
+  </div>
 </section>
 
 <!-- APPENDIX ============================================================ -->
