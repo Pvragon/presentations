@@ -1548,10 +1548,21 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   reversible.</div>
 
   <div class="callout accent">
-    <h4>On the Pvragon team? Don't replicate it &mdash; install it</h4>
-    <p>Everything above ships in <code>team-lib</code> and works for any agent name on any machine.
-    You do not need to build it. After your agent has a name and a home
-    (<a href="/pvragon/ai-workspace-onboarding">onboarding</a> Phase 7), it is three commands:</p>
+    <h4>Where to go from here</h4>
+    <p><b>If you're on the Pvragon team</b> &mdash; don't replicate any of this. It ships in
+    <code>team-lib</code> (<a href="https://github.com/Pvragon/pvragon-ai-library">Pvragon/pvragon-ai-library</a>,
+    private) and works for any agent name on any machine. Start with the
+    <a href="/pvragon/ai-workspace-onboarding">workspace onboarding</a>, then run the four commands below.</p>
+    <p><b>If you're not</b> &mdash; the public reference implementation is
+    <a href="https://github.com/Pvragon/ai-workspace-reference">Pvragon/ai-workspace-reference</a>. Be
+    clear about what it does and does not give you: it carries the <em>workspace layout</em> and the
+    agent operating model, including a worked memory directory
+    (<code>agents/example-agent/memory/</code>) and a layered-memory reference. It does <b>not</b>
+    contain the fifteen scripts described here. You would be implementing the policy yourself, from
+    this document &mdash; which is enough for the ranking model, the spacing gate, and the banding, and
+    is deliberately not enough for the harness wiring, since that part is specific to our setup.</p>
+    <p>The four commands, for the team case &mdash; after your agent has a name and a home
+    (onboarding Phase 7):</p>
     <pre><code>cd ~/ai-workspace/team-lib/executions
 
 python3 bootstrap_memory.py              <span class="cmt"># DRY RUN — read what it will change</span>
