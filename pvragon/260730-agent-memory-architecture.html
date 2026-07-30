@@ -332,8 +332,8 @@ dl.gloss dt code{font-size:.82em}
   library.</p>
 
   <div class="stat-row">
-    <div class="stat-callout"><span class="stat-number">607</span><span class="stat-label">long-term memory files</span></div>
-    <div class="stat-callout"><span class="stat-number">19&#8202;KB</span><span class="stat-label">auto-loaded index, bounded</span></div>
+    <div class="stat-callout"><span class="stat-number">634</span><span class="stat-label">long-term memory files</span></div>
+    <div class="stat-callout"><span class="stat-number">21&#8202;KB</span><span class="stat-label">auto-loaded index, bounded</span></div>
     <div class="stat-callout"><span class="stat-number">14</span><span class="stat-label">nights of autonomous reflection</span></div>
     <div class="stat-callout"><span class="stat-number">0</span><span class="stat-label">memories deleted, ever</span></div>
   </div>
@@ -401,11 +401,12 @@ dl.gloss dt code{font-size:.82em}
   corrections, different things learned the hard way. The agent is what the system <em>becomes</em>
   for one person, not a thing handed over ready-made.</p>
 
-  <p>For the person whose corpus supplies every example below, that has become an agent called
-  <b>Rowan</b>, doing broad knowledge work for one user &mdash; data investigations, financial
-  reconciliation, drafting, building internal tools. The name matters only in that it explains the
-  flavour of the examples: vendor API quirks, audit findings, operating rules learned the hard way.
-  Your own would pick its own name and fill up with your own work.</p>
+  <p>Every example below comes from one running instance of this system. That instance is
+  <b>the agent</b>, not its user, and it chose the name <b>Rowan</b> for itself. Its work is broad
+  knowledge work for a single person &mdash; data investigations, financial reconciliation, drafting,
+  building internal tools &mdash; which matters only in that it explains the flavour of what follows:
+  vendor API quirks, audit findings, operating rules learned the hard way. A second install would
+  pick a different name and fill with different work.</p>
 
   <p class="note">Every term set in bold above, plus everything else this document coins, is defined
   in the <a href="#glossary">glossary</a>.</p>
@@ -933,54 +934,78 @@ stops being retrievable.
   if presence in Hot reinforced its own members the band would become self-perpetuating and nothing
   could ever be displaced. Only a deliberate <code>Read</code> of the file itself counts.</p>
 
-  <h3 class="sub">Three bands, and the roll-off</h3>
-  <p>The index is regenerated from scratch each time. The algorithm in full:</p>
+  <h3 class="sub">Four bands, and the roll-off</h3>
+  <p>The index is regenerated from scratch each time, and it is a <b>pure function of the corpus</b>
+  &mdash; it never reads its own previous output. The algorithm in full:</p>
   <pre><code>rows = []
 for file in memory_dir:                      <span class="cmt"># T2 topic files only</span>
     score = (access_count+1) * exp(-days_since(last_accessed)/stability)
             + 0.6 * importance
-    rows.append((score, file, summary_for(file)))
+    rows.append((score, file, frontmatter(file).summary))
 
-rows.sort(by score, descending)
-rows.sort(by filename, stable)               <span class="cmt"># tie-break: 536 files share a score</span>
+rows.sort(key = (-score, filename))          <span class="cmt"># total order: 504 files share a score</span>
 
-hot, cold, archive = [], [], []
-used_hot = used_cold = 0
-for score, file, summary in rows:
-    row = render(file, summary)              <span class="cmt"># the full markdown table line</span>
-    if status(file) startswith "superseded": archive.append(row); continue
+hot, new, cold, archive = [], [], [], []
+for score, file, summary in rows:            <span class="cmt"># pass 1: superseded never occupies a band</span>
+    if status(file) startswith "superseded": archive.append(file); continue
+    live.append(file)
+
+for file in live:                            <span class="cmt"># pass 2: Hot, by score. pins always fit</span>
     if pinned(file) or used_hot + len(row) &lt;= 12000:
-        hot.append(row);     used_hot  += len(row)
-    elif used_cold + len(row) &lt;= 4000:
-        cold.append(row);    used_cold += len(row)
-    else:
-        archive.append(row)                  <span class="cmt"># same score order, no budget</span>
+        hot.append(row);     used_hot += len(row)
+    else: rest.append(file)
 
-write("MEMORY.md", header + hot + cold + how_to_use)
+newborns = [f for f in rest if age(f.created) &lt;= 14 days]
+newborns.sort(key = (-created, filename))    <span class="cmt"># pass 3: New, by BIRTH not score</span>
+for file in newborns:                        <span class="cmt"># every newborn scores ~1.00, so score</span>
+    if used_new + len(row) &lt;= 2500:          <span class="cmt"># order here would be filename order</span>
+        new.append(truncate(row, 160));  used_new += len(row)
+
+for file in rest not in new:                 <span class="cmt"># pass 4: Cold, by score</span>
+    if used_cold + len(row) &lt;= 4000:
+        cold.append(row);    used_cold += len(row)
+    else: archive.append(row)                <span class="cmt"># same score order, no budget</span>
+
+write("MEMORY.md", header + hot + new + cold + how_to_use)
 write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, under a lock</span>
 </code></pre>
-  <p>Two details that matter more than they look. The budget counts the <em>rendered row</em>, and a
-  row that would straddle the boundary is pushed down rather than truncated. And the tie-break is
-  load-bearing: 536 of 607 files currently sit at base stability with zero reinforcements, so
-  <b>equal scores are the common case, not the edge case</b> &mdash; without a stable secondary sort
-  the Cold band would reshuffle arbitrarily on every run.</p>
+  <p>Three details that matter more than they look. The budget counts the <em>rendered row</em>, and a
+  row that would straddle the boundary is pushed down rather than truncated. The tie-break is
+  load-bearing: 504 of 634 files sit at base stability with zero reinforcements, so <b>equal scores
+  are the common case, not the edge case</b> &mdash; without a total ordering the Cold band would
+  reshuffle arbitrarily on every run. That ordering used to hold only <em>implicitly</em>, from a
+  stable sort fed by filename-ordered input; it is now an explicit <code>(-score, filename)</code>
+  key, because a property the concurrency guarantee depends on should not be a side effect of how
+  the caller happens to enumerate a directory.</p>
+
+  <p>And the New band is ordered by <b>birth, not score</b>. Every newborn scores almost exactly the
+  same, so ranking them by score would have ordered them by filename &mdash; alphabetically, which is
+  to say arbitrarily.</p>
 
   <div class="callout accent">
-    <h4>Where the summaries live &mdash; the one piece of state the index owns</h4>
-    <p>Two claims in this document need reconciling, because they sound contradictory. The index is
-    <b>derived</b>: membership and ordering are computed from the corpus every run, and a conflict is
-    resolved by re-running the generator, never by hand-merging. But the index also holds
-    <b>hand-curated one-line summaries</b> that exist nowhere else &mdash; a human rewrites a row to
-    make it a better recall cue.</p>
-    <p>So the reranker is not a pure function of the corpus. Each run it must read the existing
-    summaries from <em>both</em> <code>MEMORY.md</code> and <code>MEMORY-archive.md</code>, carry them
-    forward, and only fall back to the file's own <code>description</code> for rows it has never seen.
-    Miss the archive half and every regeneration silently destroys the curated summaries of everything
-    currently rolled off &mdash; and the hygiene linter then reports every archived file as an
-    <b>orphan</b> (a file no index row points at).</p>
-    <p class="fix">In hindsight the summary should live in the memory file's own frontmatter, which
-    would make the index genuinely derived and delete this whole class of bug. That refactor is not
-    done.</p>
+    <h4>Where the summaries live &mdash; fixed, and worth reading as a cautionary tale</h4>
+    <p>The summary text now lives in each memory file's own <code>summary:</code> frontmatter. The
+    reranker reads it like any other field, which is what makes the index a genuine pure function of
+    the corpus. <b>Hand-edits to <code>MEMORY.md</code> are discarded</b> &mdash; to change what an
+    entry says, you edit the file.</p>
+    <p>It did not start that way, and the original design is instructive. The summary lived
+    <em>only</em> in the index, so every run had to read its own previous output from <em>both</em>
+    <code>MEMORY.md</code> and <code>MEMORY-archive.md</code> and carry the text forward. That made
+    the index stateful and gave it a destructive failure mode: miss the archive half and every
+    regeneration silently destroys the curated summaries of everything currently rolled off, after
+    which the hygiene linter reports each archived file as an <b>orphan</b>. This happened.</p>
+    <p>The migration confirmed the stakes: <b>606 of 629</b> summaries differed from the file's own
+    <code>description</code>, so the index really was the only copy. Two things nearly went wrong in
+    the fixing, both worth stating because neither was visible by inspection. The frontmatter parser
+    read only the <em>first line</em> of a value &mdash; harmless while frontmatter was a fallback,
+    silent truncation of 216 multi-line summaries the moment it became the source of truth. And
+    removing the carry-forward wholesale broke <b>"never delete"</b>: a file deleted while it sat in
+    Hot or Cold lost its row entirely, because its only record was in the file being ignored. A
+    regression test caught it, not a review.</p>
+    <p class="fix">One legitimate read of prior output survives: <b>tombstones</b>. When a file no
+    longer exists the corpus cannot supply its text, and nothing is ever deleted, so its row is
+    preserved and marked. Tombstones are consulted only for names absent from disk, so no live file's
+    summary can originate from the index.</p>
   </div>
 
   <div class="tablewrap">
@@ -988,16 +1013,43 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
       <thead><tr><th>Band</th><th>File</th><th>Budget</th><th>Cost</th></tr></thead>
       <tbody>
         <tr><td><b>Hot</b></td><td><code>MEMORY.md</code></td><td>12,000 chars (~3K tokens)</td><td>paid every cold start</td></tr>
+        <tr><td><b>New</b></td><td><code>MEMORY.md</code></td><td>2,500 chars, born &le;14 days</td><td>paid every cold start</td></tr>
         <tr><td><b>Cold</b></td><td><code>MEMORY.md</code></td><td>4,000 chars</td><td>paid every cold start</td></tr>
         <tr><td><b>Archive</b></td><td><code>MEMORY-archive.md</code></td><td>unbounded</td><td>paid only when read</td></tr>
       </tbody>
     </table>
   </div>
   <div class="callout warn">
+    <h4>The bug that made the whole loop a lie &mdash; new memories were born invisible</h4>
+    <p>Everything above rests on one claim: <em>the reinforcement loop closes through retrieval</em>.
+    Read a memory and it gets stronger, so useful memories stay reachable. That argument silently
+    assumes the memory is <b>reachable in the first place</b>.</p>
+    <p>A newly written memory has <code>access_count: 0</code> and <code>last_accessed: now</code>, so
+    it scores exactly <b>1.00</b>. Measured against the live corpus, that ranked <b>#125 of 612</b> —
+    against roughly 49 visible slots. New memories were born <em>straight into the archive</em>. Never
+    indexed, so never seen; never seen, so never read; never read, so never reinforced; and decaying
+    from 1.00 downward from there. <b>Everything written was effectively write-only.</b></p>
+    <p>It was invisible by construction. Nothing errors. The session debrief reports success, git has
+    the file, and the hygiene linter counts it as indexed <em>because the archive is an index</em>. The
+    only symptom is a memory that never comes up — indistinguishable from one that simply was not
+    relevant. It also got worse quietly: halving the Cold band to fit the auto-load limit was a
+    correct fix, and nobody checked what it did to newborns.</p>
+    <p>It surfaced during a routine debrief, when the capture step noticed the reranker archiving both
+    files it had just written. One of the two was a memory about <em>silent drift</em>, which had
+    silently vanished.</p>
+    <p class="fix">Fixed with the <b>New band</b>: files born within 14 days get reserved slots
+    regardless of score, so a memory is visible from birth and has a window in which it can actually
+    be read. It keys on <code>created:</code> and never on file mtime — the reinforcement hook rewrites
+    frontmatter on every touch, so mtime is last-touch, not birth. It claimed 113 files were under a
+    week old where git said 40. A file with no <code>created:</code> is treated as <em>not</em> new:
+    missing a real newborn costs one grace window, but a false one evicts a real memory.</p>
+  </div>
+
+  <div class="callout warn">
     <h4>"One read away" &mdash; what that actually costs</h4>
     <p>The Hot and Cold bands make retrieval genuinely cheap: the summary is already in front of the
     agent. The archive is different, and the phrase "one read away" flatters it. The archive is
-    148&#8202;KB, so finding a memory in it means either reading a large catalogue or running a text
+    152&#8202;KB, so finding a memory in it means either reading a large catalogue or running a text
     search over the memory directory.</p>
     <p>That creates a real asymmetry we should name. Text search does <em>not</em> reinforce (&sect;08),
     so a memory found by the only practical means of finding it does not gain strength from being
@@ -1011,8 +1063,8 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
   </div>
 
   <p><b>Being precise about the "bounded" claim,</b> because the arithmetic invites suspicion. The
-  auto-loaded index is 19&#8202;KB and stays 19&#8202;KB whether the corpus is 600 files or 6,000. The
-  archive is currently 148&#8202;KB, and 19 + 148 is about the 168&#8202;KB we started from. The bytes
+  auto-loaded index is 21&#8202;KB and stays there whether the corpus is 600 files or 6,000. The
+  archive is currently 152&#8202;KB, and 21 + 152 is about the 168&#8202;KB we started from. The bytes
   did not disappear &mdash; they moved out of the cost that is paid on every single session and into a
   file that is read only when something in it is wanted. <b>The recurring cost is bounded and constant;
   total storage is unbounded and always was.</b> That is the entire trade.</p>
@@ -1153,10 +1205,10 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   <pre class="tree"><code>agents/&lt;agent&gt;/
 ├── identity.md                        <span class="cmt"># T4 — always loaded</span>
 ├── memory/
-│   ├── MEMORY.md                      <span class="cmt"># the index: Hot + Cold (19 KB, bounded)</span>
-│   ├── MEMORY-archive.md              <span class="cmt"># rolled-off catalogue (148 KB)</span>
+│   ├── MEMORY.md                      <span class="cmt"># the index: Hot + New + Cold (22 KB, bounded)</span>
+│   ├── MEMORY-archive.md              <span class="cmt"># rolled-off catalogue (152 KB)</span>
 │   ├── current-state.md               <span class="cmt"># rendered list of what's in flight</span>
-│   ├── &lt;type&gt;_&lt;topic&gt;.md              <span class="cmt"># T2 — 607 of these</span>
+│   ├── &lt;type&gt;_&lt;topic&gt;.md              <span class="cmt"># T2 — 634 of these</span>
 │   ├── short-term/YYMMDD-*.md         <span class="cmt"># T1 — facts + session residue, 7-day window</span>
 │   └── dream-journal/YYMMDD-*.md      <span class="cmt"># reflection residue</span>
 ├── lenses/*.md                        <span class="cmt"># T3 — hook-injected</span>
@@ -1182,10 +1234,15 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     <li><b>The corpus is the backup.</b> Everything is in git, committed at every debrief. The index is
       derived, so recovering from a bad regeneration is <code>git checkout</code> of two files followed
       by re-running the generator &mdash; not a restore.</li>
-    <li><b>The gap we have not closed:</b> there is no regression test over a copy of the corpus. Given
-      that the reranker can destroy curated summaries if its archive-merge logic breaks (&sect;08),
-      that is the most conspicuous piece of missing safety net in the system, and it is on the list in
-      &sect;14.</li>
+    <li><b>The gap we closed last:</b> there was no regression test over a copy of the corpus &mdash;
+      no safety net at all around the one component that can destroy data. There are now 26, run against
+      a synthetic fixture corpus in a temp directory, never the live one. They pin determinism, the total
+      tie-break, budget caps, curated summaries surviving regeneration (including archived rows),
+      nothing-lost, born-visible, the spacing gate, malformed-frontmatter degradation, and tombstones.
+      <b>The suite passed on first write, which is when a suite is least trustworthy.</b> Running it
+      against the previous revision exposed a test that was vacuous &mdash; its fixture rows were too
+      short to overflow the Hot band, so the newborn it was watching was never crowded out and it passed
+      against the exact bug it existed to catch.</li>
   </ul>
 
   <h3 class="sub">Concurrency</h3>
@@ -1279,14 +1336,14 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
 <section id="value">
   <h2><span class="num">12</span> What it buys, what it costs</h2>
   <div class="workspace-grid three">
-    <div class="workspace-card card-success"><h3>Bounded cold-start cost</h3><p>19&#8202;KB of index
+    <div class="workspace-card card-success"><h3>Bounded cold-start cost</h3><p>21&#8202;KB of index
       regardless of corpus size. The recurring cost is a function of the budget, not of how much we
       remember.</p></div>
     <div class="workspace-card card-success"><h3>Relevance without curation</h3><p>Nothing decides Hot
       membership by hand; it falls out of use and re-sorts nightly. Humans curate the one-line
       summaries, not the ranking.</p></div>
-    <div class="workspace-card card-success"><h3>Real forgetting, no data loss</h3><p>558 of 607 files
-      are currently rolled off. All 607 are on disk, catalogued, and one read from returning.</p></div>
+    <div class="workspace-card card-success"><h3>Real forgetting, no data loss</h3><p>573 of 634 files
+      are currently rolled off. All 634 are on disk, catalogued, and one read from returning.</p></div>
     <div class="workspace-card card-success"><h3>Rules that fire unbidden</h3><p>Lens content arrives
       whether or not the agent thinks to look. A rule that must be recalled to be applied is unreliable
       by construction.</p></div>
@@ -1321,12 +1378,13 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   <div class="tablewrap">
     <table>
       <tbody>
-        <tr><td>T2 topic files</td><td><b>607</b> &mdash; 253 feedback &middot; 168 project &middot; 145 reference &middot; 24 process &middot; 12 user, plus recent additions</td></tr>
-        <tr><td>Hot band</td><td>34 rows / 11,995 chars (budget 12,000)</td></tr>
-        <tr><td>Cold band</td><td>15 rows / 3,924 chars (budget 4,000)</td></tr>
-        <tr><td>Rolled to archive</td><td>558</td></tr>
-        <tr><td>Index size</td><td>19&#8202;KB, down from 168&#8202;KB</td></tr>
-        <tr><td>Stability distribution</td><td>536 at base (14d) &middot; 62 mid (30&ndash;99d) &middot; 7 high (100&ndash;364d) &middot; 2 at the 365d cap &nbsp;<i>(= 607)</i></td></tr>
+        <tr><td>T2 topic files</td><td><b>634</b> &mdash; 264 feedback &middot; 173 project &middot; 158 reference &middot; 26 process &middot; 13 user</td></tr>
+        <tr><td>Hot band</td><td>31 rows / 11,909 chars (budget 12,000)</td></tr>
+        <tr><td>New band</td><td>12 rows / 2,464 chars (budget 2,500)</td></tr>
+        <tr><td>Cold band</td><td>18 rows / 3,982 chars (budget 4,000)</td></tr>
+        <tr><td>Rolled to archive</td><td>573</td></tr>
+        <tr><td>Index size</td><td>21&#8202;KB, down from 168&#8202;KB</td></tr>
+        <tr><td>Stability distribution</td><td>504 at base (14d) &middot; 119 mid (30&ndash;99d) &middot; 8 high (100&ndash;364d) &middot; 3 at the 365d cap &nbsp;<i>(= 634)</i></td></tr>
         <tr><td>Never reinforced</td><td>491 files (81%)</td></tr>
         <tr><td>Working set &mdash; reinforced at least once</td><td>116 files; highest <code>access_count</code> is 13</td></tr>
         <tr><td>T1 short-term files</td><td>27 active in the 7-day window</td></tr>
@@ -1341,7 +1399,7 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     <li><b>The roadmap understated what had shipped.</b> Unattended reflection was listed as "decision
       pending". It had been running nightly on a timer for two weeks.</li>
     <li><b>Two constants were misdocumented.</b> The roadmap said the Cold budget was 28K and the index
-      about 43&#8202;KB. The code says 4,000 and the file is 19&#8202;KB &mdash; tightened after the
+      about 43&#8202;KB. The code says 4,000 and the file is 21&#8202;KB &mdash; tightened after the
       document was written, because the bands have to fit inside the harness's auto-load read limit or
       tail entries silently drop.</li>
     <li><b>Curation was not counted as reinforcement.</b> The hook fired on <code>Read</code> only, so
@@ -1352,13 +1410,13 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   <div class="callout accent">
     <h4>The finding that survived scrutiny, and the fix that didn't</h4>
     <p>That third finding began as something broader: that <code>stability</code> was "barely
-    exercised" &mdash; 491 of 607 files at base &mdash; and therefore the strength model was doing
+    exercised" &mdash; 504 of 634 files at base &mdash; and therefore the strength model was doing
     little work. That was two claims wearing one coat, and only one held.</p>
-    <p><b>The arithmetic is sound.</b> 605 of 607 files have <code>stability</code> exactly equal to
+    <p><b>The arithmetic is sound.</b> 626 of 634 files have <code>stability</code> exactly equal to
     <code>14 &times; 1.6^access_count</code>. Nothing is broken in the policy layer.</p>
     <p><b>The distribution is honest, not degenerate.</b> 81% of files had no reinforcement because
     they genuinely had not been retrieved in the 17 days since the <em>frontmatter backfill</em> (the
-    one-time migration in July that first added these fields to existing files). A 607-file corpus with
+    one-time migration in July that first added these fields to existing files). A 634-file corpus with
     a 116-file working set should look exactly like that.</p>
     <p>So an obvious-looking remedy presented itself: <b>reconstruct reinforcement history from four
     months of git commits</b>, treating each distinct day a memory file was committed as one spaced
@@ -1399,11 +1457,13 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     <table>
       <thead><tr><th>Item</th><th>Why it matters</th></tr></thead>
       <tbody>
-        <tr><td><b>Move summaries into the memory files</b></td><td>Would make the index genuinely derived and delete the destructive failure mode in &sect;08. The clearest design debt we have.</td></tr>
+        <tr class="ok"><td><b>Move summaries into the memory files</b> &mdash; <b>done</b></td><td>629 summaries migrated into <code>summary:</code> frontmatter; the archive-merge is deleted and the index is genuinely derived. Both index files came out byte-identical across the migration, which is what proves nothing was lost.</td></tr>
         <tr><td><b>Fit the constants against real data</b></td><td>Every value &mdash; base 14d, growth 1.6, cap 365d, spacing 20h, importance weight 0.6 &mdash; is an unfitted guess. We now have months of history to fit against.</td></tr>
         <tr><td><b>More linters</b></td><td>Registry-versus-filesystem drift, index staleness, metadata age. The hygiene arm is the cheapest value in the system.</td></tr>
-        <tr><td><b>Fix the legacy-naming blind spot</b></td><td>~19 files predate the <code>&lt;type&gt;_</code> convention, so the linter cannot see them: their links report dead, they never appear in the index, and auto-repair declines because it sees no candidate.</td></tr>
-        <tr><td><b>Regression tests on a corpus copy</b></td><td>Given a known destructive failure mode in the reranker, there is conspicuously little protecting a corpus we promise never to delete.</td></tr>
+        <tr class="ok"><td><b>Legacy-naming blind spot</b> &mdash; <b>done</b></td><td>16 files predating the <code>&lt;type&gt;_</code> convention were invisible to the linter: their links reported dead, they never appear in the index, and auto-repair declines because it sees no candidate.</td></tr>
+        <tr class="ok"><td><b>Regression tests on a corpus copy</b> &mdash; <b>done</b></td><td>26 tests over a synthetic fixture corpus, never the live one. Each was checked for falsifiability by running it against the previous revision &mdash; which caught one that passed against the bug it was written to catch.</td></tr>
+        <tr class="ok"><td><b>New memories were born invisible</b> &mdash; <b>done</b></td><td>A newly written memory scored 1.00 and ranked #125 of 612 against ~49 visible slots, so it went straight to the archive and could never be read, hence never reinforced. Fixed with the New band (&sect;08).</td></tr>
+        <tr class="ok"><td><b>One authoritative <code>type:</code></b> &mdash; <b>done</b></td><td>The corpus declared a memory's kind three ways. <code>template:</code> turned out to be a different axis, not an alias &mdash; 45 uses held real document-template names a wholesale collapse would have destroyed. Normalized value-by-value across 629 files.</td></tr>
         <tr><td><b>Token-dense memory style</b></td><td>Memory is read by a model, not a person. Dropping prose filler is an estimated 40&ndash;55% reduction on the wordier files.</td></tr>
       </tbody>
     </table>
@@ -1469,9 +1529,11 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     <li><b>Split detection from judgment.</b> Linters are free and run constantly; wake the model only
       for what a linter cannot decide. Getting this backwards is the expensive mistake and it is the
       default one.</li>
-    <li><b>Keep the summary in the memory file, not the index.</b> We did the opposite and it is our
-      clearest piece of design debt &mdash; it makes the index stateful and gives it a destructive
-      failure mode.</li>
+    <li><b>Keep the summary in the memory file, not the index.</b> We did the opposite, lived with the
+      consequences, and then migrated 629 summaries back into the files. Storing derived output as the
+      only copy of authored text makes the generator stateful and gives it a destructive failure mode.
+      The tell is simple: if regenerating an artefact requires <em>reading the previous version of that
+      artefact</em>, the data is in the wrong place.</li>
     <li><b>Keep lens-tier promotion human, permanently.</b> Anything that shapes interpretation of
       every input must be placed deliberately. Auto-promotion makes one error permanent.</li>
     <li><b>Verify against the running system, never the design document.</b> This audit found three
