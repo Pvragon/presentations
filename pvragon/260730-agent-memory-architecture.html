@@ -865,7 +865,8 @@ dl.gloss dt code{font-size:.82em}
   <pre class="schema"><code>---
 name: feedback_verify-before-claiming     <span class="cmt"># must match the filename stem</span>
 type: feedback                            <span class="cmt"># feedback|project|reference|user|process|handoff</span>
-description: Never report a figure without re-running what produced it.
+summary: Never report a figure without re-running what produced it.   <span class="cmt"># THIS is the index row text</span>
+description: Longer prose about the rule.                             <span class="cmt"># fallback when summary: is absent</span>
 created: 2026-07-16
 last_updated: 2026-07-28
 <span class="cmt"># --- the four policy fields; maintained by a hook, not by hand ---</span>
@@ -1025,8 +1026,9 @@ write("MEMORY-archive.md", archive)          <span class="cmt"># atomically, und
     Read a memory and it gets stronger, so useful memories stay reachable. That argument silently
     assumes the memory is <b>reachable in the first place</b>.</p>
     <p>A newly written memory has <code>access_count: 0</code> and <code>last_accessed: now</code>, so
-    it scores exactly <b>1.00</b>. Measured against the live corpus, that ranked <b>#125 of 612</b> —
-    against roughly 49 visible slots. New memories were born <em>straight into the archive</em>. Never
+    it scores exactly <b>1.00</b>. Measured against the live corpus, that ranked <b>#125 of 612</b> &mdash;
+    against roughly 49 visible slots <em>as the index then stood</em> (Hot + Cold only; the New band
+    did not yet exist, and adding it is what raised the visible count). New memories were born <em>straight into the archive</em>. Never
     indexed, so never seen; never seen, so never read; never read, so never reinforced; and decaying
     from 1.00 downward from there. <b>Everything written was effectively write-only.</b></p>
     <p>It was invisible by construction. Nothing errors. The session debrief reports success, git has
@@ -1205,7 +1207,7 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   <pre class="tree"><code>agents/&lt;agent&gt;/
 ├── identity.md                        <span class="cmt"># T4 — always loaded</span>
 ├── memory/
-│   ├── MEMORY.md                      <span class="cmt"># the index: Hot + New + Cold (22 KB, bounded)</span>
+│   ├── MEMORY.md                      <span class="cmt"># the index: Hot + New + Cold (21 KB, bounded)</span>
 │   ├── MEMORY-archive.md              <span class="cmt"># rolled-off catalogue (152 KB)</span>
 │   ├── current-state.md               <span class="cmt"># rendered list of what's in flight</span>
 │   ├── &lt;type&gt;_&lt;topic&gt;.md              <span class="cmt"># T2 — 634 of these</span>
@@ -1421,7 +1423,7 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     <p>So an obvious-looking remedy presented itself: <b>reconstruct reinforcement history from four
     months of git commits</b>, treating each distinct day a memory file was committed as one spaced
     reinforcement. Call this the <em>git-history backfill</em>, to keep it distinct from the July one.
-    It would have moved 556 files. We simulated it against the real 34-slot Hot band before applying
+    It would have moved 556 files. We simulated it against the real Hot band as it stood then (34 slots, before the New band existed) prior to applying
     anything, and it was a <b>measurable regression</b>:</p>
     <div class="tablewrap">
       <table class="sim">
@@ -1675,6 +1677,9 @@ python3 verify_memory_install.py         <span class="cmt"># prove the policy is
         <tr><td><code>IMPORTANCE_WEIGHT</code></td><td>0.6</td><td>score points per unit of human-set importance (default 0)</td></tr>
         <tr><td><code>HOT_CHAR_BUDGET</code></td><td>12,000</td><td>auto-loaded band, about 3K tokens</td></tr>
         <tr><td><code>COLD_CHAR_BUDGET</code></td><td>4,000</td><td>the listed-but-not-loaded band</td></tr>
+        <tr><td><code>NEWBORN_CHAR_BUDGET</code></td><td>2,500</td><td>reserved slots for the New band, added to the auto-load total</td></tr>
+        <tr><td><code>GRACE_DAYS</code></td><td>14 d</td><td>how long a memory counts as newborn, keyed on <code>created:</code></td></tr>
+        <tr><td><code>NEWBORN_SUMMARY_CHARS</code></td><td>160</td><td>newborn rows are triage, so truncated; doubles the band</td></tr>
         <tr><td><code>MEDITATE_EVERY_HOURS</code></td><td>22 h</td><td>at most one sit per nightly cycle; below 24 so a daily timer always qualifies</td></tr>
         <tr><td><code>BUSY_MINUTES</code></td><td>10 min</td><td>a memory write this recent means a human is probably active</td></tr>
         <tr><td><code>SPACING</code> (rotation)</td><td>21 d</td><td>days-since-last-sat saturation point</td></tr>
