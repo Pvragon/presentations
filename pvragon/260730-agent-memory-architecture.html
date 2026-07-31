@@ -765,6 +765,63 @@ dl.gloss dt code{font-size:.82em}
   a flag saying whether it belongs on that list and what its one-line status is, and a script renders
   the list from those flags. Putting the state on the project file rather than in the shared list is
   what stops ten concurrent sessions fighting over one file (&sect;09).</p>
+
+  <h3 class="sub">Dormancy &mdash; the same forgetting, applied to attention</h3>
+
+  <p>Everything above is about forgetting <em>facts</em>. The list of what is in flight needs the
+  same treatment, and for a while it did not have it. A workstream stayed open until something
+  proved it finished &mdash; so the list only ever grew, because the ordinary end of a piece of work
+  is not a completion event. It is silence.</p>
+
+  <p>The vocabulary was the actual bug. There were two ways to stop tracking something:
+  <b>archived</b>, meaning it finished, and <b>backlog</b>, meaning we still intend to do it. Neither
+  is true of work that simply stopped, so every dormant item had to be filed under a claim about
+  intent that nobody believed. As our principal put it:</p>
+
+  <div class="quote-block">
+    <p>"In the real world a project that sits for four weeks is 'done' and has been moved on from. We
+    may not have finished the work, and we might need to get back to it (maybe!?) at some point in the
+    future, but for now <b>it's not even on the backburner any more. It's closed</b>."</p>
+    <p class="attrib">&mdash; 2026-07-30, the conversation that became dormancy</p>
+  </div>
+
+  <p>So <b>dormant</b> is a third terminal status: not finished, not queued, moved on from. Anything
+  untouched for 20 days takes it automatically. Three properties make it work:</p>
+
+  <ul class="bullet-list">
+    <li><b>It closes rather than queues.</b> The earlier version converted stale items into backlog
+      entries stamped <i>"disposition happens at backlog review"</i> &mdash; scheduling future
+      attention for an item that earned its status by being ignored. Dormancy writes no stub and asks
+      nothing of anyone.</li>
+    <li><b>Nothing is deleted, or even moved.</b> The file stays where it is and keeps its row in the
+      index, so ordinary recall still finds it. Dormancy removes an item from <em>attention</em>,
+      never from <em>memory</em> &mdash; the same distinction between forgetting and deleting that the
+      decay model rests on (&sect;02).</li>
+    <li><b>Revival is free, which is what licenses the aggression.</b> Editing a dormant file moves
+      its <code>last_touched</code> past its <code>dormant_since</code>, and the next sweep returns it
+      to in flight. Working on something <em>is</em> the signal to reopen it; there is no command to
+      remember. A 20-day timer is only safe because a wrong call costs one edit to undo.</li>
+  </ul>
+
+  <div class="callout">
+    <h4>Two fields that look interchangeable and are not</h4>
+    <p>The dormancy clock reads <code>last_touched</code> only. The neighbouring
+    <code>last_accessed</code> moves whenever anything <em>reads</em> a file &mdash; including the
+    index reranker, which touches everything. Had dormancy watched that field, an item would have
+    resurrected itself the moment the nightly job glanced at it, and the whole mechanism would have
+    quietly done nothing.</p>
+  </div>
+
+  <div class="callout accent">
+    <h4>What the sweep refused to look at</h4>
+    <p>Both pathways began by checking whether a file's status was one of the open ones. A file whose
+    status was unrecognised &mdash; or missing entirely &mdash; matched neither branch and was skipped
+    in silence. It could not close, could not go dormant, and appeared in no count.</p>
+    <p>That described <b>66 of 173</b> project files, 62 of which had no status field at all. One of
+    them was live work touched six days earlier. An item the system declines to look at is
+    indistinguishable from an item that does not exist, so the sweep now reports unknown statuses
+    instead of skipping them, and a migration put the whole corpus on one vocabulary.</p>
+  </div>
 </section>
 
 <!-- 07 ============================================================ -->
@@ -1414,6 +1471,9 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
         <tr><td>T1 short-term files</td><td>27 active in the 7-day window</td></tr>
         <tr><td>Dream-journal entries</td><td>15 (14 consecutive nights)</td></tr>
         <tr><td>Lenses / meditation objects</td><td>9 / 13</td></tr>
+        <tr><td>Workstreams by lifecycle</td><td>173 total &mdash; 90 dormant &middot; 46 archived &middot; 34 open &middot; 3 backlog</td></tr>
+        <tr><td>Open before dormancy shipped</td><td>66; the first sweep closed 29, of which 25 sat outside the in-flight list where the old age-out could never reach them</td></tr>
+        <tr><td>Machine-checkable close signals</td><td>10 of 34 open (29%); a further 9 explicitly marked unmechanisable</td></tr>
       </tbody>
     </table>
   </div>
@@ -1626,7 +1686,8 @@ python3 verify_memory_install.py         <span class="cmt"># prove the policy is
     <dt>the audit</dt><dd>The pass, taken while writing this note, that re-derived every figure from the running system.</dd>
     <dt>frontmatter backfill</dt><dd>The one-time July migration that added policy fields to pre-existing memory files. Distinct from the rejected git-history backfill (&sect;13).</dd>
     <dt>orphan</dt><dd>A memory file that no index row points at. A linter finding.</dd>
-    <dt>workstream</dt><dd>A project-type memory carrying lifecycle state (in flight, handed off, archived) plus a machine-checkable condition for when it can be closed.</dd>
+    <dt>workstream</dt><dd>A project-type memory carrying lifecycle state (in flight, handed off, follow-on, archived, dormant, backlog) plus a machine-checkable condition for when it can be closed.</dd>
+    <dt>dormant</dt><dd>A workstream untouched past the threshold: not finished, not queued, moved on from. Closed without any claim that the work completed. Editing the file revives it automatically.</dd>
     <dt>temporal knowledge graph</dt><dd>A graph database where each edge carries a validity interval, so you can ask what was true as of a date.</dd>
   </dl>
 
@@ -1684,7 +1745,8 @@ python3 verify_memory_install.py         <span class="cmt"># prove the policy is
         <tr><td><code>consolidation_scan.py</code></td><td>detects un-graduated T1 and weak or stale T2</td></tr>
         <tr><td><code>memory_self_check.py</code></td><td>hygiene linter; detection plus safe auto-fixes</td></tr>
         <tr><td><code>regen_current_state.py</code></td><td>single writer of the in-flight list</td></tr>
-        <tr><td><code>sweep_workstreams.py</code></td><td>close-detection and age-out for project memories</td></tr>
+        <tr><td><code>sweep_workstreams.py</code></td><td>close-detection, dormancy and revival for project memories</td></tr>
+        <tr><td><code>normalize_workstream_status.py</code></td><td>puts every workstream on one status vocabulary</td></tr>
         <tr><td><code>bootstrap_memory.py</code></td><td><b>install</b> &mdash; directories, frontmatter backfill, starter library, first index</td></tr>
         <tr><td><code>install_memory_hooks.py</code></td><td><b>install</b> &mdash; registers the hooks and the two timers</td></tr>
         <tr><td><code>verify_memory_install.py</code></td><td><b>install</b> &mdash; proves the policy is actually wired, not merely that files exist</td></tr>
