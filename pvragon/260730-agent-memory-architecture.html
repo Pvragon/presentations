@@ -676,8 +676,9 @@ dl.gloss dt code{font-size:.82em}
   <div class="primer">
     <span class="tag">Primer</span>
     <p>Everything else in this document operates on memories that already exist. This section is the
-    ingest path: the one routine that turns a session's work into stored memory. Nothing enters the
-    corpus any other way.</p>
+    ingest path: the routine that turns a session's work into stored memory. It is the <em>main</em>
+    way things enter the corpus &mdash; not the only one. The nightly consolidation wake (&sect;07)
+    writes T2 by abstracting old T1 residue, and a human can teach a memory directly at any time.</p>
   </div>
 
   <p>At the end of a work session, the agent runs a procedure we call the <b>session debrief</b>.
@@ -712,6 +713,25 @@ dl.gloss dt code{font-size:.82em}
       </tbody>
     </table>
   </div>
+  <div class="callout warn">
+    <h4>The ingest path can succeed and still lose things</h4>
+    <p>The judgment half runs as several concurrent helper agents. Measured on 2026-07-30: only
+    <b>one of three</b> returned a report. The other two did their work correctly and returned
+    nothing &mdash; one of them arriving after the debrief had already finished and pushed. The
+    debrief reported success, because the files those two wrote were on disk exactly as intended.</p>
+    <p>What was nearly lost was not their <em>work</em> but their <em>observations</em>: a caught
+    concurrent-write race and two real defects, including the one that motivated the New band in
+    &sect;08. No check could have found them, because verifying artifacts on disk can only ever see
+    <b>files</b>, never what an agent noticed while writing them.</p>
+    <p class="fix">The fix is a second channel that does not depend on anything being returned:
+    each helper's last action is to append its findings to its own file, and the orchestrator reads
+    those files rather than waiting for reports. That directory is deliberately outside version
+    control, so it is <em>transport, not capture</em> &mdash; anything durable must then be promoted
+    into T1. The promotion is the step that actually closes the gap; without it the finding still
+    dies, one stage later. The general shape: <b>a pipeline that reports success by checking its
+    own outputs will not notice what never reached them.</b></p>
+  </div>
+
   <p>The default is T1. Facts go there <em>even when they feel important</em>, because the nightly
   consolidation wake (&sect;07) abstracts durable patterns out of them later, and it does that
   job better with several days of evidence than the debrief can with one. Writing straight to T2 is
