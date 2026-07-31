@@ -1218,7 +1218,7 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
 ├── meditations/*.md                   <span class="cmt"># contemplation objects</span>
 └── runtime/state/                     <span class="cmt"># scheduler cue file</span>
 </code></pre>
-  <p>Fifteen Python scripts implement all of it, about 2,800 lines &mdash; see
+  <p>Nineteen Python scripts implement all of it, about 4,800 lines &mdash; see
   <a href="#appendix-b">Appendix B</a>. Naming rule for topic files:
   <code>&lt;type&gt;_&lt;kebab-case-topic&gt;.md</code>, and the underscore after the type is
   load-bearing, since it is how every script recognises a memory file.</p>
@@ -1374,9 +1374,10 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
   <h2><span class="num">13</span> Measured state</h2>
   <div class="primer">
     <span class="tag">Primer</span>
-    <p>These numbers were recomputed from the running system while writing this note, not copied from
-    our design documents. Three of them contradicted those documents, and the contradictions are the
-    interesting part.</p>
+    <p>All measured <b>2026-07-30</b>, recomputed from the running system rather than copied from our
+    design documents. Three of them contradicted those documents, and the contradictions are the
+    interesting part. Treat this as a dated snapshot rather than a spec: the corpus grows every time a
+    session writes a memory, so the counts move daily while the budgets and the ratios hold.</p>
   </div>
   <div class="tablewrap">
     <table>
@@ -1555,7 +1556,7 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     clear about what it does and does not give you: it carries the <em>workspace layout</em> and the
     agent operating model, including a worked memory directory
     (<code>agents/example-agent/memory/</code>) and a layered-memory reference. It does <b>not</b>
-    contain the fifteen scripts described here. You would be implementing the policy yourself, from
+    contain the nineteen scripts described here. You would be implementing the policy yourself, from
     this document &mdash; which is enough for the ranking model, the spacing gate, and the banding, and
     is deliberately not enough for the harness wiring, since that part is specific to our setup.</p>
     <p>The four commands, for the team case &mdash; after your agent has a name and a home
@@ -1667,6 +1668,10 @@ python3 verify_memory_install.py         <span class="cmt"># prove the policy is
         <tr><td><code>bootstrap_memory.py</code></td><td><b>install</b> &mdash; directories, frontmatter backfill, starter library, first index</td></tr>
         <tr><td><code>install_memory_hooks.py</code></td><td><b>install</b> &mdash; registers the hooks and the two timers</td></tr>
         <tr><td><code>verify_memory_install.py</code></td><td><b>install</b> &mdash; proves the policy is actually wired, not merely that files exist</td></tr>
+        <tr><td><code>test_memory_ranking.py</code></td><td><b>tests</b> &mdash; the 26-test regression suite, run against a synthetic fixture corpus in a temp dir, never the live one</td></tr>
+        <tr><td><code>backfill_memory_created.py</code></td><td><b>migration</b> &mdash; gives every existing file a trustworthy <code>created:</code> from its git birth commit, which the New band keys on. Needed on any corpus that predates the band</td></tr>
+        <tr><td><code>migrate_summary_into_file.py</code></td><td><b>migration</b> &mdash; moves the curated summary out of the index into each file's <code>summary:</code>. Refuses to run if any file would lose text</td></tr>
+        <tr><td><code>normalize_memory_type.py</code></td><td><b>migration</b> &mdash; collapses the three ways a memory declared its kind into one authoritative <code>type:</code>, preserving genuine <code>template:</code> values</td></tr>
       </tbody>
     </table>
   </div>
