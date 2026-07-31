@@ -822,6 +822,60 @@ dl.gloss dt code{font-size:.82em}
     indistinguishable from an item that does not exist, so the sweep now reports unknown statuses
     instead of skipping them, and a migration put the whole corpus on one vocabulary.</p>
   </div>
+
+  <h3 class="sub">The findings inbox &mdash; forgetting has a timing problem too</h3>
+
+  <p>The nightly cycle audits the corpus and finds real things: dangling links, two topic files
+  competing for one narrative, a rule with no enforcement. For a long time each of those became a
+  line in a log nobody read. The pipeline existed and terminated in a file.</p>
+
+  <p>The obvious fix &mdash; report them when the session closes &mdash; made it worse, and the
+  reason is worth stating carefully, because it is not about volume:</p>
+
+  <div class="quote-block">
+    <p>"The point in time when they're being surfaced is one in which context is high and we're
+    actively trying to close a thread. It's basically like someone saying <b>'ok I need to go'</b>
+    and the person they say it to saying <b>'wait but also this this and this'</b>."</p>
+    <p class="attrib">&mdash; 2026-07-31</p>
+  </div>
+
+  <p>Session start fails for the mirror reason: you arrive with a goal and get derailed before
+  touching it. A hook firing between turns fails the same way, one level finer. The conclusion is
+  stronger than a filter setting &mdash; <b>a finding can never be raised inside a thread that
+  already has a purpose.</b></p>
+
+  <p>So the queue is <b>never announced</b>. It has three exits, and the design of each is a
+  statement about attention rather than about data:</p>
+
+  <ul class="bullet-list">
+    <li><b>Ambient.</b> One statusline segment: how many, and how old the oldest is. It escalates
+      &mdash; dim, then plain, then yellow at a week, then red &mdash; and it is <em>absent
+      entirely</em> when the inbox is empty. A counter that is always present is one you stop
+      reading, and a counter that only ever grows is a guilt meter.</li>
+    <li><b>Pull.</b> A command that opens the list when there is space for it. The operator picks
+      the moment; that is the entire point.</li>
+    <li><b>Offer.</b> When something has gone genuinely stale, the debrief adds <em>one line</em>
+      at the very end &mdash; "there are N findings waiting, want a session for them?" &mdash; and
+      is explicitly forbidden from listing them. An offer is different in kind from a report: it
+      opens no work, costs one word to decline, and if accepted the work happens in a session that
+      exists only for it, competing with nothing.</li>
+  </ul>
+
+  <div class="callout">
+    <h4>Two clocks, and why they must differ</h4>
+    <p><code>first_seen</code> drives <b>escalation</b> &mdash; how long you have had this, which
+    is what "ignored" actually means. <code>last_seen</code> drives <b>resolution</b>: a finding
+    the audit stops re-detecting has gone away on its own and closes silently, costing nobody a
+    decision.</p>
+    <p>That split is what stops the queue becoming debt. A real problem refreshes
+    <code>last_seen</code> nightly and keeps ageing toward the offer; a transient one disappears
+    without ever being triaged. Only what persists is allowed to escalate.</p>
+  </div>
+
+  <p>The same shape as dormancy, one level up. Dormancy decouples a memory's <em>storage</em> from
+  its <em>reachability</em>; this decouples a finding's <em>write</em> from its <em>read</em>. In
+  both cases the cheap half runs constantly and the expensive half &mdash; the part that spends
+  human attention &mdash; is gated on someone actually having attention to spend.</p>
 </section>
 
 <!-- 07 ============================================================ -->
@@ -1687,6 +1741,7 @@ python3 verify_memory_install.py         <span class="cmt"># prove the policy is
     <dt>frontmatter backfill</dt><dd>The one-time July migration that added policy fields to pre-existing memory files. Distinct from the rejected git-history backfill (&sect;13).</dd>
     <dt>orphan</dt><dd>A memory file that no index row points at. A linter finding.</dd>
     <dt>workstream</dt><dd>A project-type memory carrying lifecycle state (in flight, handed off, follow-on, archived, dormant, backlog) plus a machine-checkable condition for when it can be closed.</dd>
+    <dt>findings inbox</dt><dd>A pull-only queue of audit observations. Never announced: an ambient statusline count, a command to open it, and — only when something has gone stale — a one-line offer at the end of a debrief to open a session for it.</dd>
     <dt>dormant</dt><dd>A workstream untouched past the threshold: not finished, not queued, moved on from. Closed without any claim that the work completed. Editing the file revives it automatically.</dd>
     <dt>temporal knowledge graph</dt><dd>A graph database where each edge carries a validity interval, so you can ask what was true as of a date.</dd>
   </dl>
@@ -1747,6 +1802,7 @@ python3 verify_memory_install.py         <span class="cmt"># prove the policy is
         <tr><td><code>regen_current_state.py</code></td><td>single writer of the in-flight list</td></tr>
         <tr><td><code>sweep_workstreams.py</code></td><td>close-detection, dormancy and revival for project memories</td></tr>
         <tr><td><code>normalize_workstream_status.py</code></td><td>puts every workstream on one status vocabulary</td></tr>
+        <tr><td><code>findings.py</code></td><td>the pull-only findings inbox and its statusline segment</td></tr>
         <tr><td><code>bootstrap_memory.py</code></td><td><b>install</b> &mdash; directories, frontmatter backfill, starter library, first index</td></tr>
         <tr><td><code>install_memory_hooks.py</code></td><td><b>install</b> &mdash; registers the hooks and the two timers</td></tr>
         <tr><td><code>verify_memory_install.py</code></td><td><b>install</b> &mdash; proves the policy is actually wired, not merely that files exist</td></tr>
