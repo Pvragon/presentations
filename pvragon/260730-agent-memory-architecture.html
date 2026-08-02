@@ -1686,22 +1686,24 @@ body_token_cap: 380                <span class="cmt"># body is truncated to fit<
     private) and works for any agent name on any machine. Start with the
     <a href="/pvragon/ai-workspace-onboarding">workspace onboarding</a>, then run the four commands below.</p>
     <p><b>If you're not</b> &mdash; the public reference implementation is
-    <a href="https://github.com/Pvragon/ai-workspace-reference">Pvragon/ai-workspace-reference</a>. Be
-    clear about what it does and does not give you: it carries the <em>workspace layout</em> and the
-    agent operating model, including a worked memory directory
-    (<code>agents/example-agent/memory/</code>) and a layered-memory reference. It does <b>not</b>
-    contain the nineteen scripts described here. You would be implementing the policy yourself, from
-    this document &mdash; which is enough for the ranking model, the spacing gate, and the banding, and
-    is deliberately not enough for the harness wiring, since that part is specific to our setup.</p>
-    <p>The four commands, for the team case &mdash; after your agent has a name and a home
-    (onboarding Phase 7):</p>
-    <pre><code>cd ~/ai-workspace/team-lib/executions
+    <a href="https://github.com/Pvragon/ai-workspace-reference">Pvragon/ai-workspace-reference</a>. It ships the
+    <em>whole system</em>, not a description of it: the workspace layout, the agent operating model, a
+    worked memory directory (<code>agents/example-agent/memory/</code>), and every script named on this
+    page. The same one-command install below works there. As of 2026-08-01 that is verified rather
+    than asserted &mdash; the public repo is cloned onto a blank container and installed end to end by
+    <code>harnesses/public_workspace_container_test.sh</code>, which finishes with a named agent whose
+    memory index exists and whose reinforcement hook fires.</p>
+    <p>One command, after your agent has a name and a home (Getting Started Phase 7):</p>
+    <pre><code>bash ~/ai-workspace/team-lib/_admin/install_memory.sh
 
-python3 bootstrap_memory.py              <span class="cmt"># DRY RUN — read what it will change</span>
-python3 bootstrap_memory.py --apply      <span class="cmt"># dirs, frontmatter, starter library, first index</span>
-python3 install_memory_hooks.py --apply  <span class="cmt"># register the hooks + nightly cron</span>
-python3 verify_memory_install.py         <span class="cmt"># prove the policy is actually wired</span>
+<span class="cmt"># --dry-run first if you want to read what it will change</span>
+<span class="cmt"># chains: bootstrap → hooks + nightly cron → verify, and is idempotent</span>
+<span class="cmt"># exit 0 installed · 2 DEFERRED (no agent yet) · 1 failed</span>
 </code></pre>
+    <p>It used to be four separate scripts. They still exist and still work, but the chain skipped the
+    case a blank machine actually hits &mdash; no agent yet, because naming happens in the agent's
+    first session &mdash; so the installer now owns that ordering and reports <code>DEFERRED</code>
+    rather than a half-install that looks finished.</p>
     <p><code>verify_memory_install.py</code> exits non-zero if anything is wrong, and it is the step
     people skip. A disconnected hook is otherwise <em>invisible</em>: memories simply stop gaining
     strength and nothing ever complains. Run it after any change to hooks, paths, or settings.</p>
