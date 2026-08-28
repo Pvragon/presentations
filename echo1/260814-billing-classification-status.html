@@ -128,29 +128,42 @@
   details.dia > summary .nm{font-size:15.5px;font-weight:680;color:var(--ink);}
   details.dia > summary .ds{font-size:14px;color:var(--muted);}
   details.dia > summary .vg{margin-left:auto;}
-  .dia-bar{display:flex;gap:7px;align-items:center;padding:9px 14px;flex-wrap:wrap;
-    border-top:1px solid var(--line);background:var(--surface-2);}
-  .zbtn{font:600 12px/1 var(--sans);color:var(--muted);background:var(--surface);
-    border:1px solid var(--line);border-radius:7px;padding:7px 11px;cursor:pointer;}
+  .canvas{background:#ffffff;border-top:1px solid var(--line);padding:14px;
+    cursor:zoom-in;position:relative;}
+  .canvas svg{display:block;height:auto;margin:0 auto;width:100%;max-width:none;}
+  .canvas .tap{position:absolute;right:12px;bottom:12px;font:600 11.5px/1 var(--sans);
+    color:var(--muted);background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:6px 12px;pointer-events:none;opacity:.92;}
+  .canvas:hover .tap{color:var(--ink);border-color:var(--accent);}
+
+  /* full-window viewer */
+  .viewer{position:fixed;inset:0;z-index:9999;background:var(--ground);
+    display:flex;flex-direction:column;}
+  .viewer[hidden]{display:none;}
+  .viewer-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    padding:11px 16px;background:var(--surface);border-bottom:1px solid var(--line);}
+  .viewer-bar .vtitle{font-weight:700;font-size:15px;margin-right:6px;}
+  .zbtn{font:600 12.5px/1 var(--sans);color:var(--muted);background:var(--surface);
+    border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;}
   .zbtn:hover{color:var(--ink);border-color:var(--accent);}
   .zbtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
-  .zlevel{font-family:var(--mono);font-size:11.5px;color:var(--faint);min-width:46px;
+  .zbtn.close{margin-left:auto;}
+  .zlevel{font-family:var(--mono);font-size:12px;color:var(--faint);min-width:48px;
     text-align:center;font-variant-numeric:tabular-nums;}
-  .zhint{margin-left:auto;font-size:11.5px;color:var(--faint);}
-  .canvas{background:#ffffff;border-top:1px solid var(--line);padding:14px;
-    overflow:auto;max-height:78vh;cursor:grab;}
-  .canvas.grabbing{cursor:grabbing;}
-  .canvas svg{display:block;height:auto;margin:0 auto;}
-  /* full-screen reading mode */
-  .zbackdrop{position:fixed;inset:0;background:rgba(8,11,18,.62);z-index:9998;}
-  details.dia.zoomed{position:fixed;inset:14px;z-index:9999;margin:0;display:flex;
-    flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.45);}
-  details.dia.zoomed .canvas{max-height:none;flex:1;}
-  body.has-zoom{overflow:hidden;}
+  .viewer-stage{flex:1;overflow:hidden;background:#ffffff;position:relative;
+    cursor:grab;touch-action:none;}
+  .viewer-stage.grabbing{cursor:grabbing;}
+  .viewer-stage .pan{position:absolute;top:0;left:0;transform-origin:0 0;}
+  .viewer-stage .pan svg{display:block;width:100%;height:auto;max-width:none;}
+  .viewer-hint{padding:8px 16px;background:var(--surface);border-top:1px solid var(--line);
+    font-size:12px;color:var(--faint);}
+  body.viewing{overflow:hidden;}
   /* The diagram labels are HTML inside foreignObject, and their box sizes were measured by the
      renderer under browser defaults. Page-level line-height / box-sizing would inherit into them
-     and clip every multi-line label, so both are reset back to the defaults they were laid out in. */
-  .canvas svg foreignObject, .canvas svg foreignObject *{line-height:normal;box-sizing:content-box;}
+     and clip every multi-line label, so both are reset back to the defaults they were laid out in.
+     Scoped to foreignObject rather than to a container, so it survives the chart being moved into
+     the viewer -- scoping it to .canvas is exactly how the clipping came back once. */
+  svg foreignObject, svg foreignObject *{line-height:normal;box-sizing:content-box;}
 
   /* open questions */
   .work{display:flex;flex-direction:column;gap:13px;}
@@ -436,133 +449,140 @@
 
 <script>
 (function () {
-  var ZOOMS = [0.25, 0.35, 0.5, 0.7, 0.85, 1, 1.25, 1.5, 2, 3, 4];
+  var STEPS = [0.15, 0.25, 0.4, 0.55, 0.75, 1, 1.4, 2, 3, 4, 6];
 
-  function setup(canvas) {
-    var svg = canvas.querySelector('svg');
-    if (!svg) return;
-    var vb = (svg.getAttribute('viewBox') || '').split(/[\s,]+/).map(Number);
-    var natW = vb.length === 4 && vb[2] > 0 ? vb[2] : svg.getBoundingClientRect().width;
-    if (!natW) return;
-    svg.removeAttribute('width');
-    svg.style.maxWidth = 'none';
+  // one viewer, reused by every chart
+  var viewer = document.createElement('div');
+  viewer.className = 'viewer';
+  viewer.hidden = true;
+  viewer.innerHTML =
+    '<div class="viewer-bar">' +
+      '<span class="vtitle"></span>' +
+      '<button type="button" class="zbtn" data-a="out" aria-label="Zoom out">\u2212</button>' +
+      '<span class="zlevel"></span>' +
+      '<button type="button" class="zbtn" data-a="in" aria-label="Zoom in">+</button>' +
+      '<button type="button" class="zbtn" data-a="fit">Fit</button>' +
+      '<button type="button" class="zbtn" data-a="full">100%</button>' +
+      '<button type="button" class="zbtn close" data-a="close">Close \u2715</button>' +
+    '</div>' +
+    '<div class="viewer-stage"><div class="pan"></div></div>' +
+    '<div class="viewer-hint">Drag to move it around \u00b7 scroll to zoom \u00b7 double-click to zoom in \u00b7 Esc to close</div>';
+  document.body.appendChild(viewer);
 
-    var dia = canvas.closest('details.dia');
-    var z = null;
+  var stage = viewer.querySelector('.viewer-stage');
+  var pan = viewer.querySelector('.pan');
+  var vtitle = viewer.querySelector('.vtitle');
+  var zlevel = viewer.querySelector('.zlevel');
 
-    function fit() {
-      var avail = canvas.clientWidth - 28;
-      return avail > 0 ? Math.min(1, avail / natW) : 1;
-    }
-    function apply(next, anchor) {
-      var prev = z;
-      z = Math.max(0.15, Math.min(6, next));
-      var beforeX = canvas.scrollLeft, beforeY = canvas.scrollTop;
-      svg.style.width = (natW * z) + 'px';
-      label.textContent = Math.round(z * 100) + '%';
-      if (prev && anchor) {
-        var r = z / prev;
-        canvas.scrollLeft = (beforeX + anchor.x) * r - anchor.x;
-        canvas.scrollTop = (beforeY + anchor.y) * r - anchor.y;
-      }
-    }
-    function step(dir) {
-      var i = 0;
-      while (i < ZOOMS.length && ZOOMS[i] <= z + 0.001) i++;
-      var next = dir > 0 ? ZOOMS[Math.min(i, ZOOMS.length - 1)]
-                         : ZOOMS[Math.max(0, i - 2)];
-      apply(next, { x: canvas.clientWidth / 2, y: canvas.clientHeight / 2 });
-    }
+  var svg = null, home = null;      // the chart being viewed, and where it came from
+  var natW = 0, natH = 0;
+  var z = 1, tx = 0, ty = 0;
 
-    var bar = document.createElement('div');
-    bar.className = 'dia-bar';
-    function mk(txt, title, fn) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.className = 'zbtn'; b.textContent = txt;
-      b.title = title; b.setAttribute('aria-label', title);
-      b.addEventListener('click', function (e) { e.preventDefault(); fn(); });
-      bar.appendChild(b); return b;
-    }
-    mk('\u2212', 'Zoom out', function () { step(-1); });
-    var label = document.createElement('span');
-    label.className = 'zlevel'; bar.appendChild(label);
-    mk('+', 'Zoom in', function () { step(1); });
-    mk('Fit', 'Fit to width', function () { apply(fit()); canvas.scrollTop = 0; canvas.scrollLeft = 0; });
-    mk('100%', 'Actual size', function () { apply(1); });
-    var full = mk('Full screen', 'Open full screen', function () { toggleFull(); });
-    var hint = document.createElement('span');
-    hint.className = 'zhint';
-    hint.textContent = 'drag to pan \u00b7 ctrl + scroll to zoom';
-    bar.appendChild(hint);
-    canvas.parentNode.insertBefore(bar, canvas);
-
-    // drag to pan
-    var down = false, sx = 0, sy = 0, ox = 0, oy = 0;
-    canvas.addEventListener('pointerdown', function (e) {
-      if (e.button !== 0) return;
-      down = true; sx = e.clientX; sy = e.clientY;
-      ox = canvas.scrollLeft; oy = canvas.scrollTop;
-      canvas.classList.add('grabbing');
-      canvas.setPointerCapture(e.pointerId);
-    });
-    canvas.addEventListener('pointermove', function (e) {
-      if (!down) return;
-      canvas.scrollLeft = ox - (e.clientX - sx);
-      canvas.scrollTop = oy - (e.clientY - sy);
-    });
-    ['pointerup', 'pointercancel'].forEach(function (ev) {
-      canvas.addEventListener(ev, function () { down = false; canvas.classList.remove('grabbing'); });
-    });
-
-    // ctrl/cmd + wheel to zoom, anchored at the cursor
-    canvas.addEventListener('wheel', function (e) {
-      if (!e.ctrlKey && !e.metaKey) return;
-      e.preventDefault();
-      var r = canvas.getBoundingClientRect();
-      apply(z * (e.deltaY < 0 ? 1.12 : 1 / 1.12),
-            { x: e.clientX - r.left, y: e.clientY - r.top });
-    }, { passive: false });
-
-    canvas.addEventListener('dblclick', function (e) {
-      var r = canvas.getBoundingClientRect();
-      apply(z * 1.5, { x: e.clientX - r.left, y: e.clientY - r.top });
-    });
-
-    var backdrop = null;
-    function toggleFull() {
-      if (dia.classList.contains('zoomed')) {
-        dia.classList.remove('zoomed');
-        document.body.classList.remove('has-zoom');
-        if (backdrop) { backdrop.remove(); backdrop = null; }
-        full.textContent = 'Full screen';
-        apply(fit());
-      } else {
-        backdrop = document.createElement('div');
-        backdrop.className = 'zbackdrop';
-        backdrop.addEventListener('click', toggleFull);
-        document.body.appendChild(backdrop);
-        document.body.classList.add('has-zoom');
-        dia.classList.add('zoomed');
-        dia.open = true;
-        full.textContent = 'Close';
-        requestAnimationFrame(function () { apply(fit()); });
-      }
-    }
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && dia.classList.contains('zoomed')) toggleFull();
-    });
-
-    // size it once it actually has a width (details start closed)
-    if (canvas.clientWidth) apply(fit());
-    if (dia) dia.addEventListener('toggle', function () {
-      if (dia.open && z === null) apply(fit());
-    });
-    window.addEventListener('resize', function () {
-      if (z !== null && Math.abs(z - fit()) > 0.5) apply(fit());
-    });
+  function draw() {
+    pan.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + z + ')';
+    zlevel.textContent = Math.round(z * 100) + '%';
+  }
+  function fit() {
+    var w = stage.clientWidth - 32, h = stage.clientHeight - 32;
+    z = Math.min(w / natW, h / natH);
+    if (!isFinite(z) || z <= 0) z = 1;
+    tx = (stage.clientWidth - natW * z) / 2;
+    ty = (stage.clientHeight - natH * z) / 2;
+    draw();
+  }
+  function zoomAt(next, cx, cy) {
+    next = Math.max(0.05, Math.min(8, next));
+    // keep the point under the cursor fixed
+    tx = cx - (cx - tx) * (next / z);
+    ty = cy - (cy - ty) * (next / z);
+    z = next;
+    draw();
+  }
+  function stepZoom(dir) {
+    var i = 0;
+    while (i < STEPS.length && STEPS[i] <= z + 0.0001) i++;
+    var next = dir > 0 ? STEPS[Math.min(i, STEPS.length - 1)] : STEPS[Math.max(0, i - 2)];
+    zoomAt(next, stage.clientWidth / 2, stage.clientHeight / 2);
   }
 
-  document.querySelectorAll('.canvas').forEach(setup);
+  function open(canvas) {
+    svg = canvas.querySelector('svg');
+    if (!svg) return;
+    var vb = (svg.getAttribute('viewBox') || '').split(/[\s,]+/).map(Number);
+    if (vb.length !== 4 || !(vb[2] > 0) || !(vb[3] > 0)) return;
+    natW = vb[2]; natH = vb[3];
+    home = canvas;
+    var sum = canvas.closest('details.dia').querySelector('summary .nm');
+    vtitle.textContent = sum ? sum.textContent : '';
+    pan.style.width = natW + 'px';
+    pan.appendChild(svg);                       // move, so no duplicate ids
+    viewer.hidden = false;
+    document.body.classList.add('viewing');
+    requestAnimationFrame(fit);
+  }
+  function close() {
+    if (!svg) return;
+    svg.style.width = '100%';
+    home.insertBefore(svg, home.firstChild);    // put it back above the badge
+    svg = null; home = null;
+    viewer.hidden = true;
+    document.body.classList.remove('viewing');
+  }
+
+  viewer.addEventListener('click', function (e) {
+    var b = e.target.closest('.zbtn');
+    if (!b) return;
+    var a = b.getAttribute('data-a');
+    if (a === 'in') stepZoom(1);
+    else if (a === 'out') stepZoom(-1);
+    else if (a === 'fit') fit();
+    else if (a === 'full') zoomAt(1, stage.clientWidth / 2, stage.clientHeight / 2);
+    else if (a === 'close') close();
+  });
+
+  var down = false, px = 0, py = 0;
+  stage.addEventListener('pointerdown', function (e) {
+    if (e.button !== 0) return;
+    down = true; px = e.clientX; py = e.clientY;
+    stage.classList.add('grabbing');
+    stage.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  stage.addEventListener('pointermove', function (e) {
+    if (!down) return;
+    tx += e.clientX - px; ty += e.clientY - py;
+    px = e.clientX; py = e.clientY;
+    draw();
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+    stage.addEventListener(ev, function () { down = false; stage.classList.remove('grabbing'); });
+  });
+  stage.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    var r = stage.getBoundingClientRect();
+    zoomAt(z * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+  stage.addEventListener('dblclick', function (e) {
+    var r = stage.getBoundingClientRect();
+    zoomAt(z * 1.6, e.clientX - r.left, e.clientY - r.top);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (viewer.hidden) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === '+' || e.key === '=') stepZoom(1);
+    else if (e.key === '-') stepZoom(-1);
+    else if (e.key === '0') fit();
+  });
+  window.addEventListener('resize', function () { if (!viewer.hidden) fit(); });
+
+  // wire every inline chart as click-to-open
+  document.querySelectorAll('.canvas').forEach(function (canvas) {
+    var tap = document.createElement('span');
+    tap.className = 'tap';
+    tap.textContent = 'Click to open \u00b7 zoom and pan';
+    canvas.appendChild(tap);
+    canvas.addEventListener('click', function () { open(canvas); });
+  });
 })();
 </script>
 </body>
