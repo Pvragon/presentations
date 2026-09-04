@@ -16,7 +16,7 @@
     --accent-primary:#1E4958; --accent-secondary:#E7511F; --accent-tint:#EE8764; /* derivative.accent.tint1: the orange for SMALL text on dark (6.4:1) */
     --text-main:#F8FAFC; --text-muted:#DEEAEF; --text-subtle:#5E767D;
     --bg-body:#112328; --bg-card:#112328; --near-black:#080E10; --white:#FFFFFF;
-    --teal-tint1:#317891; --teal-tint2:#4DA4C2;
+    --teal-tint1:#317891; --teal-tint2:#4DA4C2; --teal-tint3:#86C1D6; /* heading text on dark: the teal that stays teal */
     --line:rgba(248,250,252,.08); --line-strong:rgba(248,250,252,.16);
     --card:rgba(17,35,40,.97); --card-2:rgba(30,73,88,.18); --band:rgba(30,73,88,.92); --band-soft:rgba(30,73,88,.45);
     --sans:"Noto Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -45,9 +45,7 @@
 
   /* headings — the Pvragon signature pattern: white bold text on a dark teal ground. Teal appears as
      SURFACES and RULES (never as heading text, which reads blue on dark); orange is an ACCENT only. */
-  article h2{font-size:26px;font-weight:800;margin:60px 0 18px;color:var(--text-main);
-    background:var(--band);border-left:5px solid var(--teal-tint2);border-radius:0 12px 12px 0;
-    padding:14px 20px;box-shadow:0 12px 30px -14px rgba(0,0,0,.7);}
+  article h2{font-size:27px;font-weight:800;margin:56px 0 12px;color:var(--teal-tint3);}
   article h2:first-child{margin-top:44px;}
   article h3{font-size:21px;font-weight:750;margin:38px 0 8px;color:var(--text-main);}
   article h3 .num{display:inline-flex;align-items:center;justify-content:center;
