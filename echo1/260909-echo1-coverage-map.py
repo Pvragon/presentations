@@ -25,7 +25,7 @@ PEOPLE = [
 TEAL, MUTED, SUBTLE, MAIN, CARD, ACCENT = '#86C1D6', '#DEEAEF', '#5E767D', '#F8FAFC', '#112328', '#E7511F'
 
 def render():
-    W, LEFT, TOP, RH, CW = 812, 146, 92, 40, (812 - 146 - 12) / 8
+    W, LEFT, TOP, RH, CW = 812, 134, 92, 40, (812 - 134 - 8) / 8
     rows = []
     y = TOP + 16
     out = []
@@ -36,7 +36,7 @@ def render():
         lines = a.split('|')
         for j, line in enumerate(lines):
             yy = TOP - 22 - 16 * (len(lines) - 1 - j)
-            out.append(f'<text x="{cx(i):.1f}" y="{yy}" text-anchor="middle" fill="{TEAL}" font-size="12" font-weight="700" {font}>{line.replace("&", "&amp;")}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{yy}" text-anchor="middle" fill="{TEAL}" font-size="11.5" font-weight="700" {font}>{line.replace("&", "&amp;")}</text>')
     group = None
     for name, g, builds, directs, *rest in PEOPLE:
         partial = rest[0] if rest else set()
@@ -50,7 +50,7 @@ def render():
             y += RH * 0.75
         col = TEAL if g == 'stays' else SUBTLE
         txt = MUTED if g == 'stays' else SUBTLE
-        out.append(f'<text x="16" y="{y + 20}" fill="{txt}" font-size="15.5" {font}>{name}</text>')
+        out.append(f'<text x="16" y="{y + 20}" fill="{txt}" font-size="15" {font}>{name}</text>')
         for i in range(8):
             if i in builds: out.append(f'<circle cx="{cx(i):.1f}" cy="{y + 15}" r="9" fill="{col}"/>')
             elif i in partial: out.append(f'<circle cx="{cx(i):.1f}" cy="{y + 15}" r="8" fill="none" stroke="{col}" stroke-width="2"/><path d="M{cx(i):.1f},{y + 7} a8,8 0 0,0 0,16 z" fill="{col}"/>')
