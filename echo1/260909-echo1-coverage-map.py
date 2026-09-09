@@ -25,7 +25,7 @@ PEOPLE = [
 TEAL, MUTED, SUBTLE, MAIN, CARD, ACCENT = '#86C1D6', '#DEEAEF', '#5E767D', '#F8FAFC', '#112328', '#E7511F'
 
 def render():
-    W, LEFT, TOP, RH, CW = 1000, 250, 70, 36, (1000 - 250 - 20) / 7
+    W, LEFT, TOP, RH, CW = 812, 158, 78, 40, (812 - 158 - 16) / 7
     rows = []
     y = TOP + 16
     out = []
@@ -35,23 +35,23 @@ def render():
     for i, a in enumerate(AREAS):
         parts = a.split(' & ') if ' & ' in a else a.split(' ')
         if len(parts) == 2 and ' & ' in a: parts = [parts[0] + ' &', parts[1]]
-        if len(parts) == 1: out.append(f'<text x="{cx(i):.1f}" y="{TOP - 24}" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>{a}</text>')
+        if len(parts) == 1: out.append(f'<text x="{cx(i):.1f}" y="{TOP - 26}" text-anchor="middle" fill="{TEAL}" font-size="13.5" font-weight="700" {font}>{a}</text>')
         else:
-            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 34}" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>{parts[0]}</text>')
-            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 18}" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>{parts[1]}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 40}" text-anchor="middle" fill="{TEAL}" font-size="13.5" font-weight="700" {font}>{parts[0]}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 22}" text-anchor="middle" fill="{TEAL}" font-size="13.5" font-weight="700" {font}>{parts[1]}</text>')
     group = None
     for name, g, builds, directs in PEOPLE:
         if g != group:
             group = g
             label = 'STAYS' if g == 'stays' else 'REQUIRED DOWNSIZING'
             if g == 'drop':
-                out.append(f'<line x1="20" y1="{y - 4}" x2="{W - 20}" y2="{y - 4}" stroke="{ACCENT}" stroke-width="1.5"/>')
+                out.append(f'<line x1="16" y1="{y - 4}" x2="{W - 16}" y2="{y - 4}" stroke="{ACCENT}" stroke-width="1.5"/>')
                 y += 10
-            out.append(f'<text x="20" y="{y + 14}" fill="{TEAL}" font-size="11" font-weight="700" letter-spacing="1.5" {font}>{label}</text>')
+            out.append(f'<text x="16" y="{y + 14}" fill="{TEAL}" font-size="13.5" font-weight="700" letter-spacing="1.6" {font}>{label}</text>')
             y += RH * 0.75
         col = TEAL if g == 'stays' else SUBTLE
         txt = MUTED if g == 'stays' else SUBTLE
-        out.append(f'<text x="20" y="{y + 20}" fill="{txt}" font-size="14" {font}>{name}</text>')
+        out.append(f'<text x="16" y="{y + 20}" fill="{txt}" font-size="15.5" {font}>{name}</text>')
         for i in range(7):
             if i in builds: out.append(f'<circle cx="{cx(i):.1f}" cy="{y + 15}" r="9" fill="{col}"/>')
             elif i in directs: out.append(f'<circle cx="{cx(i):.1f}" cy="{y + 15}" r="8" fill="none" stroke="{col}" stroke-width="2"/>')
@@ -59,18 +59,18 @@ def render():
     # count rows
     today = [sum(1 for _, g, b, _ in PEOPLE if i in b) for i in range(7)]
     after = [sum(1 for _, g, b, _ in PEOPLE if g == 'stays' and i in b) for i in range(7)]
-    out.append(f'<line x1="20" y1="{y + 2}" x2="{W - 20}" y2="{y + 2}" stroke="{SUBTLE}" stroke-width="1"/>')
+    out.append(f'<line x1="16" y1="{y + 2}" x2="{W - 16}" y2="{y + 2}" stroke="{SUBTLE}" stroke-width="1"/>')
     y += 12
     for label, vals in (('Hands-on today', today), ('Hands-on after taper', after)):
-        out.append(f'<text x="20" y="{y + 20}" fill="{MAIN}" font-size="14" font-weight="700" {font}>{label}</text>')
+        out.append(f'<text x="16" y="{y + 20}" fill="{MAIN}" font-size="15.5" font-weight="700" {font}>{label}</text>')
         for i, v in enumerate(vals):
-            out.append(f'<text x="{cx(i):.1f}" y="{y + 20}" text-anchor="middle" fill="{MAIN}" font-size="15" font-weight="700" {font}>{v}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{y + 20}" text-anchor="middle" fill="{MAIN}" font-size="16" font-weight="700" {font}>{v}</text>')
         y += RH
     # legend
     y += 14
-    out.append(f'<circle cx="30" cy="{y}" r="8" fill="{TEAL}"/><text x="46" y="{y + 5}" fill="{MUTED}" font-size="12" {font}>builds and supports the area</text>')
-    out.append(f'<circle cx="300" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><text x="316" y="{y + 5}" fill="{MUTED}" font-size="12" {font}>directs, designs or tests it</text>')
-    out.append(f'<circle cx="560" cy="{y}" r="8" fill="{SUBTLE}"/><text x="576" y="{y + 5}" fill="{MUTED}" font-size="12" {font}>required downsizing</text>')
+    out.append(f'<circle cx="26" cy="{y}" r="8" fill="{TEAL}"/><text x="42" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>builds and supports the area</text>')
+    out.append(f'<circle cx="290" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><text x="306" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>directs, designs or tests it</text>')
+    out.append(f'<circle cx="540" cy="{y}" r="8" fill="{SUBTLE}"/><text x="556" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>required downsizing</text>')
     H = y + 26
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H:.0f}" width="100%" role="img" '
            f'aria-label="Who covers which area of the application, today and after the taper" style="display:block;max-width:100%;height:auto">'
