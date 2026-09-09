@@ -11,14 +11,14 @@ AREAS = ['Intake', 'Dispatch & Ops', 'Optimization', 'Fleet Management', 'Billin
 # (name, group, builds[set of area indexes], directs/tests[set of area indexes])
 ALL = set(range(7))
 PEOPLE = [
-    ('James Hereford',    'stays', set(),           ALL),
-    ('Bradd Schofield',   'stays', set(),           ALL),
+    ('James Hereford',    'stays', {2, 4, 5},       {0, 1, 3, 6}),
+    ('Bradd Schofield',   'stays', {0, 1, 3, 6},    {2, 4, 5}),
     ('Roman Naidenko',    'stays', {1, 3, 4},       set()),
     ('JP Casabianca',     'stays', {0, 1, 2, 5},    set()),
     ('Rafael Casabianca', 'stays', {2, 5},          set()),
     ('Saymond Montoya',   'stays', set(),           {0, 1, 6}),
     ('William Titus',     'drop',  {6},             {0, 5}),
-    ('Alexander Pavelko', 'drop',  {5},             {0}),
+    ('Alexander Pavelko', 'drop',  {1, 3, 5},       {0}),
     ('Victor Cheung',     'drop',  {0, 5},          {6}),
     ('Prameeth Kotian',   'drop',  set(),           {0, 3, 5, 6}),
 ]
