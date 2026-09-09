@@ -20,7 +20,7 @@ PEOPLE = [
     ('William Titus',     'drop',  {6},             {0, 5}),
     ('Alexander Pavelko', 'drop',  {1, 3, 5},       {0}),
     ('Victor Cheung',     'drop',  {0, 5},          {6}),
-    ('Prameeth Kotian',   'drop',  set(),           {0, 3, 5, 6}),
+    ('Prameeth Kotian',   'drop',  set(),           ALL),
 ]
 TEAL, MUTED, SUBTLE, MAIN, CARD, ACCENT = '#86C1D6', '#DEEAEF', '#5E767D', '#F8FAFC', '#112328', '#E7511F'
 
