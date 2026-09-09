@@ -1,7 +1,7 @@
 ---
 template: deliverable
-version: 2.0.3
-summary: "One-page brief for the RideCare CEO, 10 September 2026: what Echo1 does today versus V1, what is left by epic with conservative progress states, the contracted versus billed months and the taper now required, and the engagement roster with one status per person. Sub-bullets and evidence live in hover tooltips."
+version: 2.1.0
+summary: "One-page brief for the RideCare CEO, 10 September 2026: what Echo1 does today versus V1, what is left by epic with conservative progress states, the contracted schedule by month, and the engagement roster with one status per person. Sub-bullets and evidence live in hover tooltips."
 created: 2026-09-09
 last_updated: 2026-09-09
 maintainer: pvragon
@@ -63,18 +63,22 @@ The 1 September working draft groups the remaining work into 26 outcomes. "In pr
 
 ## Contract and billing
 
-SOW-001 set a monthly schedule that peaks in the build and steps down after cutover. The bills sent have run above it since April.
+SOW-001 set a monthly schedule that peaks during the build and steps down to a steady state from September. The Investment Summary carries the same numbers.
 
-| Month 2026 | Contracted | Billed |
-| --- | --- | --- |
-| March | $86,000 | $86,096 |
-| April | $119,500 | $125,650 |
-| May | $120,000 | $130,000 |
-| June | $118,500 | $121,000 |
-| July | $99,500 | $119,500 |
-| August | $86,000 | $115,250 |
+| Month 2026 | Contracted |
+| --- | --- |
+| March | $86,000 |
+| April | $119,500 |
+| May | $120,000 |
+| June | $118,500 |
+| July | $99,500 |
+| August | $86,000 |
+| September | $80,000 |
+| October | $80,000 |
+| November | $80,000 |
+| December | $80,000 |
 
-From September the contracted figure is $80,000 a month through December. The first September invoice has not been sent. Getting from August's $115,250 to $80,000 is the taper the roster below reflects.
+Phase C fees beyond December are to be set by a separate SOW or amendment. The roster below is sized to the steady-state figure.
 
 ## The team
 
