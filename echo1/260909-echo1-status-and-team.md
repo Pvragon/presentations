@@ -1,7 +1,7 @@
 ---
 template: deliverable
-version: 1.1.0
-summary: "One-page brief for the RideCare CEO, 10 September 2026: what is live on Echo1 since the 9 August cutover, what remains on the Wave 2 board by epic, and the engagement roster at peak, now, and under the SOW-001 steady-state plan. No dollar figures by design."
+version: 2.0.0
+summary: "One-page brief for the RideCare CEO, 10 September 2026: what Echo1 does today versus V1, what is left by epic with conservative progress states, the contracted versus billed months and the taper now required, and the engagement roster with one status per person. Sub-bullets and evidence live in hover tooltips."
 created: 2026-09-09
 last_updated: 2026-09-09
 maintainer: pvragon
@@ -12,80 +12,88 @@ audience: David Roberts (RideCare CEO)
 
 ## Where we stand
 
-**Echo1 has been RideCare's production platform since the cutover on the night of Sunday, 9 August 2026.** Every V1 intake URL now forwards permanently to its V2 form, completed V1 records were migrated that night, and dispatchers, drivers and billing work in Echo1. The engagement moved into SOW-001 Phase C, ongoing operations and development, on 15 August. Everything below comes from two sources: the Echo1 Wave 2 board in ClickUp, and the Epics & Milestones working draft of 1 September.
+**Echo1 has been RideCare's production platform since the cutover on the night of 9 August 2026.** V1 intake links forward to Echo1, the V1 records came across that night, and dispatch, drivers and billing work in Echo1 every day. The contract moved into Phase C, ongoing operations and development, on 15 August. Hover over any row below for the detail behind it.
 
-## What is done
+## What Echo1 does today
 
-| Area | What is live |
+| Capability | Versus V1 |
 | --- | --- |
-| Intake | Public and requester intake forms, email intake, entity-specific form configuration, EPC badge capture, tribal and insurance fields, SPTHB form |
-| Dispatch and routes | Dispatch screen, route creation, edit-route drawer, transport duplication, missed-status timers, void and reroute rules, UTC-standard scheduling |
-| Optimizer | Proximity grouping, onboard-time cap, driver shift and wheel-time constraints, unvalidated-route guard, constraint display |
-| Driver trip log | Multi-route sign-off, end-of-route stop, document upload at every pickup, incident and crash notifications, manager edits with a change log |
-| Samsara sync | Driver-vehicle assignment propagation, extract and inject sync, route linkage, actual driven route and mileage in the app |
-| Billing and processing | 837 export at V1 parity, processing table and review-status fixes, requesting-entity payer setup, allowed-payers audit across 37 entities |
-| Data and admin | Client and facility soft delete and merge, one address autocomplete everywhere, SSN display standard, test-record cleanup, persistent filters |
-| Situational awareness | Live fleet GPS, un-dispatched request tracking, driver ETA visibility on routes |
-
-Wave 2 tally since cutover, top-level tickets only.
-
-| State | Tickets |
-| --- | --- |
-| Released to production | 95 |
-| Closed without a change | 51 |
-| Open | 181 |
+| <span title="Public and requester intake forms live on Echo1, V1 URLs redirect • Email intake • Forms configured per requesting entity • EPC badge, tribal and insurance details captured at intake • SPTHB form reachable">Every transport request comes in through Echo1</span> | Parity, expanded |
+| <span title="Dispatch screen with driver search and route status • Route creation and the edit-route drawer after dispatch • Transport duplication for every dispatcher case • Missed-status timers with late and missed row colours • Void and reroute rules on in-progress routes • Scheduling standardised on UTC for multi-state operation">Dispatchers run the whole day in Echo1</span> | Parity, expanded |
+| <span title="Groups nearby pickups and drop-offs • Caps rider time on board • Respects driver shift and wheel-time limits • Will not surface routes that failed validation • Per-run dashboard and remaining V1-parity items still in QA">Optimizer builds the pre-scheduled day</span> | In use, parity continuing |
+| <span title="Trip log with multi-route sign-off and end-of-route stop • Document upload at every pickup, including LMHP paperwork • Incident and crash reports with notifications restored • Manager edits to a trip log, each with a signature and change log">Drivers run rides from their phone</span> | Parity, expanded |
+| <span title="Driver and vehicle assignments propagate to Samsara • Route extract and inject keep start time, location and client names current • Actual driven route and real mileage shown in the app">Samsara stays in sync from Echo1</span> | Parity |
+| <span title="837 export at V1 parity • Processing table, review status and record counts fixed • Requesting-entity payer setup • Allowed-payer audit across 37 requesting entities">Claims go out as 837 files as before</span> | Parity |
+| <span title="Soft delete and merge for clients and facilities • One address autocomplete on every form • SSN display standard across grids and drawers • Persistent filters and state columns">Client and facility records can be cleaned and merged</span> | Expanded |
+| <span title="Situational awareness page with live GPS for the fleet • Dashboard of un-dispatched requests for the day • Driver ETA visibility on the routes page">Live view of the fleet and of un-dispatched requests</span> | New in Echo1 |
+| <span title="Multi-tenant architecture on AWS with tenant isolation at every layer • HIPAA-aligned infrastructure, encryption and audit logging • No dependence on the V1 Backendless platform">One platform built for more than one state and customer</span> | New |
 
 ## What is left
 
-The 1 September draft groups the open work into 26 epics. Hover an epic to see the work inside it. "In flight" means at least one ticket is being built, reviewed or verified in production today. "Started" means only scoping or refinement has happened. Owners are shown where one is named.
+The 1 September working draft groups the remaining work into 26 outcomes. "In progress" means a ticket for that outcome is being built, reviewed or checked in production right now. "Started" means it has been scoped and nothing more. Hover an outcome for the work inside it, and hover a state for the evidence.
 
-| Epic | Owner | State |
+| Outcome | Owner | State |
 | --- | --- | --- |
-| <span title="v1 parity for 837 exports (done) • Invoice workflow for contract billing • Updated payer framework for more detailed contract terms • Claims resubmission and rework lifecycle workflow • Data visualization, export and analysis for the billing team • 835 ingestion and improved adjudication tracking • Requester entity renames silently orphaning historical billing records • Restrict who can mark a transport as Processed">Full lifecycle revenue management</span> | Roman | In flight |
-| <span title="Crisis classification and its implications from intake form through billing • Dispatch workflow for when manager approval is needed • Cross-state rides need manager approval before dispatch • Hold status to pause the lateness clock on undispatchable crisis rides • Audible alert when a new crisis request arrives • Remove redundant CRISIS/SCHEDULED filters duplicating Secured/Unsecured">Advanced crisis classification and manager approvals</span> | JP | In flight |
-| <span title="Get optimization over the line • Optimizer strands riders when an earlier drop-off is free • Routes drivers home mid-day regardless of proximity • Assigns routes outside driver available hours and to off-duty drivers • Max Start and Max End stored as durations but read as clock times • Driver shift and wheel-time constraints • Geo-fence drivers to an operating zone for pickups • Per-run optimizer dashboard (V1 parity) • Stop count discrepancy between V1 and V2 on the same route • Show active client and drop-off distance on optimized routes">Optimization</span> | Rafael | In flight |
-| <span title="Vehicle and driver assignment in the trip log, so drivers never pick a vehicle in Samsara • Migrate driver messaging off Samsara • Lock drivers out of Samsara • Driver:vehicle pairing integrity, mid-day vehicle switch corrupts trip data • Mid-day vehicle swap scheduled as a routed stop for ADA vehicle collection">Get drivers out of Samsara</span> | Roman | In flight |
-| <span title="Complete the Situational Awareness page • Visual edit log for transport requests and transports • Complete all route editing functions, including extracting multiple clients from a route • Train dispatchers to use Echo1 for all day-to-day processes • Lock dispatchers out of Samsara • Add clients to an already-dispatched route for a group trip • Duplicate already-dispatched or voided transports • Swap vehicle to one the driver has not signed into • Historic transports: state-by-state record search">Remove Samsara from dispatcher day-to-day</span> | JP | In flight |
-| <span title="Finalize the form configurator tool • Let RideCare add fields • Intake form creator tool • Training material for creating a new form">Finalize form configuration tools</span> | Victor, Prameeth | In flight |
-| <span title="Reconcile audit schema with the v1.0 architecture spec • Verify audit_log auto-capture is working in staging and production • Routes audit log and dispatcher-visible change log (Samsara parity) • Transport history completion and the 17-event catalog • pgaudit in production for PHI-read auditing • 42 CFR Part 2 SUD trip confidentiality controls • MFA enforcement for admin and dispatcher roles">Audit, change log and compliance controls</span> | Rafael | In flight |
-| <span title="Fix Cognito role and profile resets in employee management • Employee creation creates the matching Fleet driver record • Review and document the Cognito roles and permissions architecture • Supervisor-only control of transport request dispatcher assignment • Pre-dispatch assignment of transport requests to dispatchers • Expand dispatcher permissions for vehicle and driver reassignment • Clean up V2 employee management">Identity, roles and employee management</span> | Rafael | In flight |
-| <span title="Stop the client edit drawer wiping stored addresses and dropping fields • Client merge for tenant admins, carrying claims, communications and SMS sessions • Facility merge, soft delete, and type and subtype editing • Facility address 2 capture across the universal autocomplete component • Stop case-manager submissions writing bad addresses into facilities • Retain the client home address collected on public intake">Client and facility data integrity</span> | Alexander, Roman | In flight |
-| <span title="Architectural review and documentation of all submission paths • Fix variant contracts stuck at draft, which makes discharge and multistop forms unavailable • Mitigate stale request-form contracts parked by the production deploy race • V1 to V2 form parity review • Migrate email-intake LLM extraction to the OpenAI Responses API • Separate the staging email parser from the production intake inbox">Intake and submissions reliability</span> | Victor | In flight |
-| <span title="Fix 20 to 30 second page-change load times across every data table • Loading animation for all data grids • Fix pagination controls disappearing when rows-per-page exceeds record count • Minimum sizing, spacing and colour formatting standards • Multi-select, filter and CSV export on driver forms">Data grid performance and usability</span> | JP | In flight |
-| <span title="Admin, employee and fleet • Intake flow • Dispatch flow • Driver flow • Processing and billing • End-to-end test dispatching a real ride to a Nebraska driver • Nebraska intake forms: confirm what is needed, test what exists, build the rest">Quality of life for the Nebraska rollout</span> | JP | Started |
-| <span title="Migrate cw.pvragon.com to help.echo1.co • Rewrite the transport lifecycle help-center articles for V2 • In-app help component across all core pages • Review all articles for operational coverage, especially dispatcher workflows">Help center and in-app guidance</span> | William | Started |
-| <span title="Offline route access and offline work capture • Driver-requested void from the trip log • Client belongings capture at pickup and handoff (V1 parity) • Purchase receipts in driver forms • Overdue trip log enforcement with warnings and admin override • Trip-log error detection and dispatch alerting on submission • Systemic sweep of unsignable trip logs, which is blocking billing">Driver trip log and field experience</span> | none | Started |
-| <span title="Dispatcher-adjustable client status and permanent risk flags • Increase visibility of risk-flag chips in the driver trip log • Surface transport notes in the driver trip log • Restore automated dispatcher notes • Make transport notes editable after dispatch • Split risk flags from Operational Ban, with managerial approval on ban • Warm handoff flag on intake forms">Improved client risk flags and transport notes</span> | none | Started |
-| <span title="Two ETA timers and flags: contractual long ETA and operational ETA • Blown ETA report for crisis transports • Delayed drop-off recognition to prevent auto-miss">ETA accuracy</span> | none | Started |
-| <span title="Unified Notifications Service • Configurable notification schedule and channel per requesting entity • Ride confirmation SMS build • Suppress SMS for flight-risk clients on involuntary admissions • Email deliverability re-testing for intake notifications • Route deviation email alert to admins">Unified notifications and client communications</span> | none | Not started |
-| <span title="Lifecycle Tracker built on V2 data • Audit the Operations Report and Dispatcher Productivity data • Data export tool • PDF trip log downloads • Audit package downloads • Actual driven GPS path on the routes page">Reporting and analytics</span> | none | Not started |
-| <span title="Driver onboarding pathway in Echo1 • Vehicle onboarding pathway in Echo1 • Gateway setup pathway in Echo1 • Lock admins out of Samsara">Migrate HR and admin users out of Samsara</span> | none | Not started |
-| <span title="Driver to dispatcher messaging • Dispatcher to manager messaging">In-app messaging</span> | none | Not started |
-| <span title="Entire workflow from the v1 plan • People discuss issues tied directly to transports • Manager escalation and approval flow • Open discussion vs manager discussions">In-app issue log</span> | none | Not started |
-| <span title="Login capability for customers (not riders) • Dedicated area of the site where they can see their transports • Reporting and analytics for their transports • Ability to manage client profiles (open question)">Customer login and reporting</span> | none | Not started |
-| <span title="New strategy for 24/7 realtime support • Monitoring, metrics and queue management tools">Streamline and formalize customer success processes</span> | none | Not started |
-| <span title="Finalize the improved UX flow for the entire historic transports page and processing • Implement that design">Finalized transport processing UI and UX</span> | none | Not started |
-| <span title="Feature flags • Preview environments • Test gates check less than they appear to • Flip-flop detector CI check for regression-reintroducing diffs • Staging equivalency: mirror production data and config • Formal dev test account set, and a global toggle to hide test records">Finalize modern dev environment</span> | none | Not started |
-| <span title="Dispatch Orchestration Service • Database health monitoring • Merge Assets and Vehicles • Admin Tools data transfer and request management">Core platform services</span> | none | Not started |
+| <span title="Epic: Full lifecycle revenue management • Invoice workflow for contract billing • Updated payer framework for more detailed contract terms • Claims resubmission and rework lifecycle workflow • Data visualization, export and analysis for the billing team • 835 ingestion and improved adjudication tracking • Requester entity renames silently orphaning historical billing records • Restrict who can mark a transport as Processed">Bill and collect the full lifecycle in Echo1</span> | Roman | <span title="In progress: billing export, query and payer-page fixes for the billing team. In review: billing page business logic. The rest is not started.">In&nbsp;progress</span> |
+| <span title="Epic: Advanced crisis classification and manager approvals • Crisis classification and its implications from intake form through billing • Dispatch workflow for when manager approval is needed • Cross-state rides need manager approval before dispatch • Hold status to pause the lateness clock on undispatchable crisis rides • Audible alert when a new crisis request arrives • Remove redundant CRISIS/SCHEDULED filters duplicating Secured/Unsecured">Crisis rides classified and manager-approved before dispatch</span> | JP | <span title="In production QA: hold status for undispatchable crisis rides, audible alert on new crisis requests. Manager approval flows are not started.">In&nbsp;progress</span> |
+| <span title="Epic: Optimization • Get optimization over the line • Optimizer strands riders when an earlier drop-off is free • Routes drivers home mid-day regardless of proximity • Assigns routes outside driver available hours and to off-duty drivers • Max Start and Max End stored as durations but read as clock times • Driver shift and wheel-time constraints • Geo-fence drivers to an operating zone for pickups • Per-run optimizer dashboard (V1 parity) • Stop count discrepancy between V1 and V2 on the same route • Show active client and drop-off distance on optimized routes">Optimizer routes you can trust without manual fixes</span> | Rafael | <span title="In review: solver rework to minimise drive time. In production QA: stranded-rider fix, mid-day routing home, per-run dashboard, no-revisit rule.">In&nbsp;progress</span> |
+| <span title="Epic: Get drivers out of Samsara • Vehicle and driver assignment in the trip log, so drivers never pick a vehicle in Samsara • Migrate driver messaging off Samsara • Lock drivers out of Samsara • Driver:vehicle pairing integrity, mid-day vehicle switch corrupts trip data • Mid-day vehicle swap scheduled as a routed stop for ADA vehicle collection">Drivers pick their vehicle and message dispatch in Echo1, not Samsara</span> | Roman | <span title="In review: vehicle assignment and driver duty status in the trip log. Messaging and lock-out are not started.">In&nbsp;progress</span> |
+| <span title="Epic: Remove Samsara from dispatcher day-to-day • Complete the Situational Awareness page • Visual edit log for transport requests and transports • Complete all route editing functions, including extracting multiple clients from a route • Train dispatchers to use Echo1 for all day-to-day processes • Lock dispatchers out of Samsara • Add clients to an already-dispatched route for a group trip • Duplicate already-dispatched or voided transports • Swap vehicle to one the driver has not signed into • Historic transports: state-by-state record search">Dispatchers never need to open Samsara</span> | JP | <span title="In progress: route editing lockout for in-progress routes. In review: route start and end ownership. In production QA: state-by-state search. Pre-start route editing is queued.">In&nbsp;progress</span> |
+| <span title="Epic: Finalize form configuration tools • Finalize the form configurator tool • Let RideCare add fields • Intake form creator tool • Training material for creating a new form">RideCare builds its own intake forms</span> | Victor, Prameeth | <span title="In progress: intake form creator end-to-end check, configurator issues. In review: form configuration fix.">In&nbsp;progress</span> |
+| <span title="Epic: Audit, change log and compliance controls • Reconcile audit schema with the v1.0 architecture spec • Verify audit_log auto-capture is working in staging and production • Routes audit log and dispatcher-visible change log (Samsara parity) • Transport history completion and the 17-event catalog • pgaudit in production for PHI-read auditing • 42 CFR Part 2 SUD trip confidentiality controls • MFA enforcement for admin and dispatcher roles">Every change is logged, PHI reads are audited, admins use MFA</span> | Rafael | <span title="In review: audit schema reconciliation and immutability. In production monitoring: audit auto-capture. In progress: routes change log. pgaudit, 42 CFR Part 2 and MFA are not started.">In&nbsp;progress</span> |
+| <span title="Epic: Identity, roles and employee management • Fix Cognito role and profile resets in employee management • Employee creation creates the matching Fleet driver record • Review and document the Cognito roles and permissions architecture • Supervisor-only control of transport request dispatcher assignment • Pre-dispatch assignment of transport requests to dispatchers • Expand dispatcher permissions for vehicle and driver reassignment • Clean up V2 employee management">Roles and employee records that stay correct</span> | Rafael | <span title="In review: Cognito roles and permissions review. In progress: employee management cleanup. In production QA: dispatcher reassignment permissions.">In&nbsp;progress</span> |
+| <span title="Epic: Client and facility data integrity • Stop the client edit drawer wiping stored addresses and dropping fields • Client merge for tenant admins, carrying claims, communications and SMS sessions • Facility merge, soft delete, and type and subtype editing • Facility address 2 capture across the universal autocomplete component • Stop case-manager submissions writing bad addresses into facilities • Retain the client home address collected on public intake">Client and facility records that stay accurate</span> | Alexander, Roman | <span title="In review: client merge for tenant admins with the new safety rules. In production QA: client page finalization. Facility address 2 is in backlog.">In&nbsp;progress</span> |
+| <span title="Epic: Intake and submissions reliability • Architectural review and documentation of all submission paths • Fix variant contracts stuck at draft, which makes discharge and multistop forms unavailable • Mitigate stale request-form contracts parked by the production deploy race • V1 to V2 form parity review • Migrate email-intake LLM extraction to the OpenAI Responses API • Separate the staging email parser from the production intake inbox">Every submission lands and every form variant is available</span> | Victor | <span title="In QA: discharge and multistop form variants stuck at draft. In review: V1 to V2 form comparison. The rest is in backlog.">In&nbsp;progress</span> |
+| <span title="Epic: Data grid performance and usability • Fix 20 to 30 second page-change load times across every data table • Loading animation for all data grids • Fix pagination controls disappearing when rows-per-page exceeds record count • Minimum sizing, spacing and colour formatting standards • Multi-select, filter and CSV export on driver forms">Tables that load in seconds</span> | JP | <span title="In production QA: sizing and spacing standards, driver-forms export. In QA: loading animation, pagination fix.">In&nbsp;progress</span> |
+| <span title="Epic: Improved client risk flags and transport notes • Dispatcher-adjustable client status and permanent risk flags • Increase visibility of risk-flag chips in the driver trip log • Surface transport notes in the driver trip log • Restore automated dispatcher notes • Make transport notes editable after dispatch • Split risk flags from Operational Ban, with managerial approval on ban • Warm handoff flag on intake forms">Risk flags and notes where drivers and dispatchers need them</span> | JP | <span title="In production QA: automated dispatcher notes restored. Risk-flag changes and warm handoff are in scoping.">In&nbsp;progress</span> |
+| <span title="Epic: Quality of life modifications for the Nebraska rollout • Admin, employee and fleet • Intake flow • Dispatch flow • Driver flow • Processing and billing • End-to-end test dispatching a real ride to a Nebraska driver • Nebraska intake forms: confirm what is needed, test what exists, build the rest">Nebraska dispatching end to end on Echo1</span> | JP | <span title="In refinement: Nebraska intake forms, end-to-end test ride. No build work yet.">Started</span> |
+| <span title="Epic: Help center and in-app guidance • Migrate cw.pvragon.com to help.echo1.co • Rewrite the transport lifecycle help-center articles for V2 • In-app help component across all core pages • Review all articles for operational coverage, especially dispatcher workflows">Help articles and in-app guidance for V2</span> | William | <span title="Queued: transport lifecycle article rewrite. In refinement: help centre review. In scoping: in-app help component.">Started</span> |
+| <span title="Epic: Driver trip log and field experience • Offline route access and offline work capture • Driver-requested void from the trip log • Client belongings capture at pickup and handoff (V1 parity) • Purchase receipts in driver forms • Overdue trip log enforcement with warnings and admin override • Trip-log error detection and dispatch alerting on submission • Systemic sweep of unsignable trip logs, which is blocking billing">Drivers work offline, request voids, log belongings and receipts</span> | none | <span title="In scoping: driver-requested void, purchase receipts. In refinement: offline access, belongings capture, unsignable trip log sweep.">Started</span> |
+| <span title="Epic: ETA accuracy • Two ETA timers and flags: contractual long ETA and operational ETA • Blown ETA report for crisis transports • Delayed drop-off recognition to prevent auto-miss">Contractual and operational ETAs tracked separately</span> | none | <span title="In refinement: response time and late arrival expansion. In scoping: late ETA investigation. Blown ETA report is in backlog.">Started</span> |
+| <span title="Epic: Unified notifications and client communications • Unified Notifications Service • Configurable notification schedule and channel per requesting entity • Ride confirmation SMS build • Suppress SMS for flight-risk clients on involuntary admissions • Email deliverability re-testing for intake notifications • Route deviation email alert to admins">One notification service, ride confirmation texts, per-entity schedules</span> | none | <span title="All items in backlog.">Not&nbsp;started</span> |
+| <span title="Epic: Reporting and analytics • Lifecycle Tracker built on V2 data • Audit the Operations Report and Dispatcher Productivity data • Data export tool • PDF trip log downloads • Audit package downloads • Actual driven GPS path on the routes page">Lifecycle tracker, exports and audit packages on V2 data</span> | none | <span title="All items in backlog.">Not&nbsp;started</span> |
+| <span title="Epic: Migrate HR and admin users out of Samsara • Driver onboarding pathway in Echo1 • Vehicle onboarding pathway in Echo1 • Gateway setup pathway in Echo1 • Lock admins out of Samsara">Driver, vehicle and gateway onboarding in Echo1</span> | none | <span title="No tickets yet.">Not&nbsp;started</span> |
+| <span title="Epic: In-app messaging • Driver to dispatcher messaging • Dispatcher to manager messaging">Drivers, dispatchers and managers message inside the app</span> | none | <span title="No tickets yet.">Not&nbsp;started</span> |
+| <span title="Epic: In-app issue log • Entire workflow from the v1 plan • People discuss issues tied directly to transports • Manager escalation and approval flow • Open discussion vs manager discussions">Issues raised and escalated against a transport</span> | none | <span title="No tickets yet.">Not&nbsp;started</span> |
+| <span title="Epic: Customer login and reporting • Login capability for customers (not riders) • Dedicated area of the site where they can see their transports • Reporting and analytics for their transports • Ability to manage client profiles (open question)">Customers log in to see and report on their own transports</span> | none | <span title="No tickets yet.">Not&nbsp;started</span> |
+| <span title="Epic: Streamline and formalize customer success processes • New strategy for 24/7 realtime support • Monitoring, metrics and queue management tools">24/7 support with queue and metrics tooling</span> | none | <span title="No tickets yet.">Not&nbsp;started</span> |
+| <span title="Epic: Finalized transport processing UI and UX • Finalize the improved UX flow for the entire historic transports page and processing • Implement that design">Redesigned historic transports and processing flow</span> | none | <span title="No tickets yet.">Not&nbsp;started</span> |
+| <span title="Epic: Finalize modern dev environment • Feature flags • Preview environments • Test gates check less than they appear to • Flip-flop detector CI check for regression-reintroducing diffs • Staging equivalency: mirror production data and config • Formal dev test account set, and a global toggle to hide test records">Feature flags, preview environments, staging that mirrors production</span> | none | <span title="Three items in backlog, none picked up.">Not&nbsp;started</span> |
+| <span title="Epic: Core platform services • Dispatch Orchestration Service • Database health monitoring • Merge Assets and Vehicles • Admin Tools data transfer and request management">Dispatch orchestration, database health monitoring, asset merge</span> | none | <span title="All items in backlog.">Not&nbsp;started</span> |
+
+## Contract and billing
+
+SOW-001 set a monthly schedule that peaks in the build and steps down after cutover. The bills sent have run above it since April.
+
+| Month 2026 | Contracted | Billed |
+| --- | --- | --- |
+| March | $86,000 | $86,096 |
+| April | $119,500 | $125,650 |
+| May | $120,000 | $130,000 |
+| June | $118,500 | $121,000 |
+| July | $99,500 | $119,500 |
+| August | $86,000 | $115,250 |
+
+From September the contracted figure is $80,000 a month through December. The first September invoice has not been sent. Getting from August's $115,250 to $80,000 is the taper the roster below reflects.
 
 ## The team
 
-The roster for the RideCare engagement, top to bottom. Peak is April through June 2026. Steady state is the SOW-001 Phase C plan that began 15 August.
+One status per person. Peak staffing ran April through June.
 
-| Person | Role | Peak (Apr to Jun) | Now (Sep) | Steady state |
-| --- | --- | --- | --- | --- |
-| James Hereford | CEO, acting CTO | On team | On team | Stays |
-| Bradd Schofield | Product Manager | On team | On team | Stays |
-| Roman Naidenko | Senior Engineer | On team | On team | Stays |
-| JP Casabianca | Engineering Lead | On team | On team | Stays |
-| Rafael Casabianca | Data and Infrastructure Lead | On team | On team | Stays |
-| Saymond Montoya | QA Engineer | On team | On team | Stays |
-| William Titus | Customer Success | On team | On team | Drop |
-| Alexander Pavelko | Senior Engineer, part-time | On team | On team | Drop |
-| Victor Cheung | Engineer | On team | On team | Drop |
-| Prameeth Kotian | Program Manager | On team | On team | Drop |
-| David Pérez | Full-stack Engineer | On team | Left Aug 2026 | |
-| Dana Hetté | Delivery Manager | On team | Left Aug 2026 | |
-| Muhammad Farhan | DevOps and Infrastructure | On team | Left Aug 2026 | |
-| Clarissa Mitidiero | Customer Success and UAT | On team | Left Jul 2026 | |
-| Bilal Mughal | Engineer, test automation | Left Apr 2026 | | |
+| Person | Role | Status |
+| --- | --- | --- |
+| James Hereford | CEO, acting CTO | Stays |
+| Bradd Schofield | Product Manager | Stays |
+| Roman Naidenko | Senior Engineer | Stays |
+| JP Casabianca | Engineering Lead | Stays |
+| Rafael Casabianca | Data and Infrastructure Lead | Stays |
+| Saymond Montoya | QA Engineer | Stays |
+| William Titus | Customer Success | Required&nbsp;Downsizing |
+| Alexander Pavelko | Senior Engineer, part-time | Required&nbsp;Downsizing |
+| Victor Cheung | Engineer | Required&nbsp;Downsizing |
+| Prameeth Kotian | Program Manager | Required&nbsp;Downsizing |
+| David Pérez | Full-stack Engineer | Left Aug 2026 |
+| Dana Hetté | Delivery Manager | Left Aug 2026 |
+| Muhammad Farhan | DevOps and Infrastructure | Left Jul 2026 |
+| Clarissa Mitidiero | Customer Success and UAT | Left Jul 2026 |
+| Bilal Mughal | Engineer, test automation | Left Apr 2026 |
