@@ -11,11 +11,12 @@
  */
 
 export const config = {
-  matcher: ['/echo1', '/echo1/:path*', '/one-mahjong', '/one-mahjong/:path*'],
+  matcher: ['/echo1', '/echo1/:path*', '/echo1-exec', '/echo1-exec/:path*', '/one-mahjong', '/one-mahjong/:path*'],
 };
 
 const PROTECTED_PATHS = {
   '/echo1': 'PREZ_PW_ECHO1',
+  '/echo1-exec': 'PREZ_PW_ECHO1_EXEC',
   '/one-mahjong': 'PREZ_PW_ONE_MAHJONG',
 };
 
