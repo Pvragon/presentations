@@ -36,7 +36,7 @@ def render():
         lines = a.split('|')
         for j, line in enumerate(lines):
             yy = TOP - 22 - 16 * (len(lines) - 1 - j)
-            out.append(f'<text x="{cx(i):.1f}" y="{yy}" text-anchor="middle" fill="{TEAL}" font-size="12.5" font-weight="700" {font}>{line.replace("&", "&amp;")}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{yy}" text-anchor="middle" fill="{TEAL}" font-size="12" font-weight="700" {font}>{line.replace("&", "&amp;")}</text>')
     group = None
     for name, g, builds, directs, *rest in PEOPLE:
         partial = rest[0] if rest else set()
@@ -68,10 +68,10 @@ def render():
         y += RH
     # legend
     y += 14
-    out.append(f'<circle cx="26" cy="{y}" r="8" fill="{TEAL}"/><text x="42" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>builds and supports the area</text>')
-    out.append(f'<circle cx="290" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><text x="306" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>directs, designs or tests it</text>')
-    out.append(f'<circle cx="520" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><path d="M520,{y - 7} a7,7 0 0,0 0,14 z" fill="{TEAL}"/><text x="536" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>covers part of it</text>')
-    out.append(f'<circle cx="672" cy="{y}" r="8" fill="{SUBTLE}"/><text x="688" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>required downsizing</text>')
+    out.append(f'<circle cx="24" cy="{y}" r="8" fill="{TEAL}"/><text x="38" y="{y + 5}" fill="{MUTED}" font-size="13" {font}>builds and supports the area</text>')
+    out.append(f'<circle cx="250" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><text x="264" y="{y + 5}" fill="{MUTED}" font-size="13" {font}>directs, designs or tests it</text>')
+    out.append(f'<circle cx="452" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><path d="M452,{y - 7} a7,7 0 0,0 0,14 z" fill="{TEAL}"/><text x="466" y="{y + 5}" fill="{MUTED}" font-size="13" {font}>covers part of it</text>')
+    out.append(f'<circle cx="606" cy="{y}" r="8" fill="{SUBTLE}"/><text x="620" y="{y + 5}" fill="{MUTED}" font-size="13" {font}>required downsizing</text>')
     H = y + 26
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H:.0f}" width="100%" role="img" '
            f'aria-label="Who covers which area of the application, today and after the taper" style="display:block;max-width:100%;height:auto">'
