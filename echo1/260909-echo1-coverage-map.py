@@ -25,7 +25,7 @@ PEOPLE = [
 TEAL, MUTED, SUBTLE, MAIN, CARD, ACCENT = '#86C1D6', '#DEEAEF', '#5E767D', '#F8FAFC', '#112328', '#E7511F'
 
 def render():
-    W, LEFT, TOP, RH, CW = 812, 158, 78, 40, (812 - 158 - 16) / 7
+    W, LEFT, TOP, RH, CW = 812, 150, 78, 40, (812 - 150 - 16) / 7
     rows = []
     y = TOP + 16
     out = []
@@ -35,10 +35,10 @@ def render():
     for i, a in enumerate(AREAS):
         parts = a.split(' & ') if ' & ' in a else a.split(' ')
         if len(parts) == 2 and ' & ' in a: parts = [parts[0] + ' &', parts[1]]
-        if len(parts) == 1: out.append(f'<text x="{cx(i):.1f}" y="{TOP - 26}" text-anchor="middle" fill="{TEAL}" font-size="13.5" font-weight="700" {font}>{a}</text>')
+        if len(parts) == 1: out.append(f'<text x="{cx(i):.1f}" y="{TOP - 26}" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>{a}</text>')
         else:
-            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 40}" text-anchor="middle" fill="{TEAL}" font-size="13.5" font-weight="700" {font}>{parts[0]}</text>')
-            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 22}" text-anchor="middle" fill="{TEAL}" font-size="13.5" font-weight="700" {font}>{parts[1]}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 40}" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>{parts[0]}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{TOP - 22}" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>{parts[1]}</text>')
     group = None
     for name, g, builds, directs in PEOPLE:
         if g != group:
