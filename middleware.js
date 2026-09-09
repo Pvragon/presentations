@@ -55,7 +55,7 @@ export default async function middleware(request) {
         return new Response(null, {
           status: 303,
           headers: {
-            'Location': matchedPrefix + '/',
+            'Location': path === matchedPrefix ? matchedPrefix + '/' : path,
             'Set-Cookie': `${cookieName}=${encodeURIComponent(password)}; Path=${matchedPrefix}; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
           },
         });
