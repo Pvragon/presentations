@@ -1,6 +1,6 @@
 ---
 template: deliverable
-version: 2.0.0
+version: 2.0.2
 summary: "One-page brief for the RideCare CEO, 10 September 2026: what Echo1 does today versus V1, what is left by epic with conservative progress states, the contracted versus billed months and the taper now required, and the engagement roster with one status per person. Sub-bullets and evidence live in hover tooltips."
 created: 2026-09-09
 last_updated: 2026-09-09
@@ -20,11 +20,11 @@ audience: David Roberts (RideCare CEO)
 | --- | --- |
 | <span title="Public and requester intake forms live on Echo1, V1 URLs redirect • Email intake • Forms configured per requesting entity • EPC badge, tribal and insurance details captured at intake • SPTHB form reachable">Every transport request comes in through Echo1</span> | Parity, expanded |
 | <span title="Dispatch screen with driver search and route status • Route creation and the edit-route drawer after dispatch • Transport duplication for every dispatcher case • Missed-status timers with late and missed row colours • Void and reroute rules on in-progress routes • Scheduling standardised on UTC for multi-state operation">Dispatchers run the whole day in Echo1</span> | Parity, expanded |
-| <span title="Groups nearby pickups and drop-offs • Caps rider time on board • Respects driver shift and wheel-time limits • Will not surface routes that failed validation • Per-run dashboard and remaining V1-parity items still in QA">Optimizer builds the pre-scheduled day</span> | In use, parity continuing |
+| <span title="V1 optimizer parity • Groups nearby pickups and drop-offs • Caps rider time on board • Respects driver shift and wheel-time limits • Will not surface routes that failed validation • Constraint display on optimization outputs">Optimizer builds the pre-scheduled day</span> | Parity, expanded |
 | <span title="Trip log with multi-route sign-off and end-of-route stop • Document upload at every pickup, including LMHP paperwork • Incident and crash reports with notifications restored • Manager edits to a trip log, each with a signature and change log">Drivers run rides from their phone</span> | Parity, expanded |
 | <span title="Driver and vehicle assignments propagate to Samsara • Route extract and inject keep start time, location and client names current • Actual driven route and real mileage shown in the app">Samsara stays in sync from Echo1</span> | Parity |
 | <span title="837 export at V1 parity • Processing table, review status and record counts fixed • Requesting-entity payer setup • Allowed-payer audit across 37 requesting entities">Claims go out as 837 files as before</span> | Parity |
-| <span title="Soft delete and merge for clients and facilities • One address autocomplete on every form • SSN display standard across grids and drawers • Persistent filters and state columns">Client and facility records can be cleaned and merged</span> | Expanded |
+| <span title="Soft delete and merge for clients and facilities • One address autocomplete on every form • SSN display standard across grids and drawers • Persistent filters and state columns">Client and facility records can be cleaned and merged</span> | Parity |
 | <span title="Situational awareness page with live GPS for the fleet • Dashboard of un-dispatched requests for the day • Driver ETA visibility on the routes page">Live view of the fleet and of un-dispatched requests</span> | New in Echo1 |
 | <span title="Multi-tenant architecture on AWS with tenant isolation at every layer • HIPAA-aligned infrastructure, encryption and audit logging • No dependence on the V1 Backendless platform">One platform built for more than one state and customer</span> | New |
 
