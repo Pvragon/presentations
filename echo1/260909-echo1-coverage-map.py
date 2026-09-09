@@ -8,15 +8,15 @@
 # bgCard, accentSecondary for the group rule). Edit the tables below, rebuild the page; never the HTML.
 # ---
 AREAS = ['Intake', 'Dispatch|& Ops', 'Optimization', 'Fleet|Management', 'Billing', 'Admin &|Reporting', 'Customer|Service', 'Database,|Security|& Infra']  # '|' = header line break
-# (name, group, builds[set of area indexes], directs/tests[set of area indexes])
+# (name, group, builds[set of area indexes], directs/tests[set of area indexes], partial[set of area indexes] optional)
 ALL = set(range(8))
 PEOPLE = [
     ('James Hereford',    'stays', {2, 4, 5},       {0, 1, 3, 6, 7}),
     ('Bradd Schofield',   'stays', {0, 1, 3, 6},    {2, 4, 5, 7}),
-    ('Roman Naidenko',    'stays', {1, 3, 4},       set()),
+    ('Roman Naidenko',    'stays', {1, 3, 4},       set(),          {7}),
     ('JP Casabianca',     'stays', {1, 5, 7},       {0}),
     ('Rafael Casabianca', 'stays', {2, 5, 7},       set()),
-    ('Saymond Montoya',   'stays', set(),           {0, 1, 6}),
+    ('Saymond Montoya',   'stays', set(),           {0, 1, 2, 3, 4, 5, 6}),
     ('William Titus',     'drop',  {6},             {0, 5}),
     ('Alexander Pavelko', 'drop',  {1, 3, 5},       {0}),
     ('Victor Cheung',     'drop',  {0, 5},          {6}),
@@ -25,7 +25,7 @@ PEOPLE = [
 TEAL, MUTED, SUBTLE, MAIN, CARD, ACCENT = '#86C1D6', '#DEEAEF', '#5E767D', '#F8FAFC', '#112328', '#E7511F'
 
 def render():
-    W, LEFT, TOP, RH, CW = 812, 140, 92, 40, (812 - 140 - 16) / 8
+    W, LEFT, TOP, RH, CW = 812, 146, 92, 40, (812 - 146 - 12) / 8
     rows = []
     y = TOP + 16
     out = []
@@ -36,9 +36,10 @@ def render():
         lines = a.split('|')
         for j, line in enumerate(lines):
             yy = TOP - 22 - 16 * (len(lines) - 1 - j)
-            out.append(f'<text x="{cx(i):.1f}" y="{yy}" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>{line.replace("&", "&amp;")}</text>')
+            out.append(f'<text x="{cx(i):.1f}" y="{yy}" text-anchor="middle" fill="{TEAL}" font-size="12.5" font-weight="700" {font}>{line.replace("&", "&amp;")}</text>')
     group = None
-    for name, g, builds, directs in PEOPLE:
+    for name, g, builds, directs, *rest in PEOPLE:
+        partial = rest[0] if rest else set()
         if g != group:
             group = g
             label = 'STAYS' if g == 'stays' else 'REQUIRED DOWNSIZING'
@@ -52,14 +53,15 @@ def render():
         out.append(f'<text x="16" y="{y + 20}" fill="{txt}" font-size="15.5" {font}>{name}</text>')
         for i in range(8):
             if i in builds: out.append(f'<circle cx="{cx(i):.1f}" cy="{y + 15}" r="9" fill="{col}"/>')
+            elif i in partial: out.append(f'<circle cx="{cx(i):.1f}" cy="{y + 15}" r="8" fill="none" stroke="{col}" stroke-width="2"/><path d="M{cx(i):.1f},{y + 7} a8,8 0 0,0 0,16 z" fill="{col}"/>')
             elif i in directs: out.append(f'<circle cx="{cx(i):.1f}" cy="{y + 15}" r="8" fill="none" stroke="{col}" stroke-width="2"/>')
         y += RH
     # count rows
-    today = [sum(1 for _, g, b, _ in PEOPLE if i in b) for i in range(8)]
-    after = [sum(1 for _, g, b, _ in PEOPLE if g == 'stays' and i in b) for i in range(8)]
+    today = [sum(1 for pp in PEOPLE if i in pp[2]) for i in range(8)]
+    after = [sum(1 for pp in PEOPLE if pp[1] == 'stays' and i in pp[2]) for i in range(8)]
     out.append(f'<line x1="16" y1="{y + 2}" x2="{W - 16}" y2="{y + 2}" stroke="{SUBTLE}" stroke-width="1"/>')
     y += 12
-    for label, vals in (('Hands-on today', today), ('Hands-on after taper', after)):
+    for label, vals in (('Hands-on today', today), ('After taper', after)):
         out.append(f'<text x="16" y="{y + 20}" fill="{MAIN}" font-size="15.5" font-weight="700" {font}>{label}</text>')
         for i, v in enumerate(vals):
             out.append(f'<text x="{cx(i):.1f}" y="{y + 20}" text-anchor="middle" fill="{MAIN}" font-size="16" font-weight="700" {font}>{v}</text>')
@@ -68,7 +70,8 @@ def render():
     y += 14
     out.append(f'<circle cx="26" cy="{y}" r="8" fill="{TEAL}"/><text x="42" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>builds and supports the area</text>')
     out.append(f'<circle cx="290" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><text x="306" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>directs, designs or tests it</text>')
-    out.append(f'<circle cx="540" cy="{y}" r="8" fill="{SUBTLE}"/><text x="556" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>required downsizing</text>')
+    out.append(f'<circle cx="520" cy="{y}" r="7" fill="none" stroke="{TEAL}" stroke-width="2"/><path d="M520,{y - 7} a7,7 0 0,0 0,14 z" fill="{TEAL}"/><text x="536" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>covers part of it</text>')
+    out.append(f'<circle cx="672" cy="{y}" r="8" fill="{SUBTLE}"/><text x="688" y="{y + 5}" fill="{MUTED}" font-size="14" {font}>required downsizing</text>')
     H = y + 26
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H:.0f}" width="100%" role="img" '
            f'aria-label="Who covers which area of the application, today and after the taper" style="display:block;max-width:100%;height:auto">'
