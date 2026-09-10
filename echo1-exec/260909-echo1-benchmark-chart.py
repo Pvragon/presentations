@@ -23,11 +23,11 @@ def render():
     # hybrid agency band P10–P90 with P50 tick
     o.append(f'<rect x="{x(f["p10"]):.1f}" y="70" width="{x(f["p90"]) - x(f["p10"]):.1f}" height="28" rx="6" fill="{PRIMARY}"/>')
     o.append(f'<rect x="{x(f["p10"]):.1f}" y="70" width="{x(f["p90"]) - x(f["p10"]):.1f}" height="28" rx="6" fill="none" stroke="{TEAL}" stroke-width="1.5"/>')
-    o.append(f'<line x1="{x(f["p50"]):.1f}" y1="66" x2="{x(f["p50"]):.1f}" y2="102" stroke="{TEAL}" stroke-width="3"/>')
+    o.append(f'<line x1="{x(f["p50"]):.1f}" y1="64" x2="{x(f["p50"]):.1f}" y2="98" stroke="{TEAL}" stroke-width="3"/>')
     o.append(f'<text x="{x(f["p10"]):.1f}" y="58" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>Low ${f["p10"] / 1000:.1f}k</text>')
     o.append(f'<text x="{x(f["p50"]):.1f}" y="40" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>Typical ${f["p50"] / 1000:.1f}k</text>')
     o.append(f'<text x="{x(f["p90"]):.1f}" y="58" text-anchor="middle" fill="{TEAL}" font-size="13" font-weight="700" {font}>High ${f["p90"] / 1000:.1f}k</text>')
-    o.append(f'<text x="{(x(f["p10"]) + x(f["p90"])) / 2:.1f}" y="89" text-anchor="middle" fill="{MAIN}" font-size="13" {font}>hybrid agency, same ten seats</text>')
+    o.append(f'<text x="{(x(f["p10"]) + x(f["p90"])) / 2:.1f}" y="112" text-anchor="middle" fill="{MUTED}" font-size="12.5" {font}>hybrid agency, same ten seats</text>')
     # RideCare marker
     rx = x(f['ridecare'])
     o.append(f'<line x1="{rx:.1f}" y1="30" x2="{rx:.1f}" y2="118" stroke="{ACCENT}" stroke-width="3"/>')
