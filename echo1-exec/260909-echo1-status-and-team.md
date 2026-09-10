@@ -1,6 +1,6 @@
 ---
 template: deliverable
-version: 3.0.0
+version: 3.1.0
 summary: "One-page brief for the RideCare CEO, 10 September 2026: what Echo1 does today versus V1, what is left by epic with conservative progress states, the contracted schedule by month, and the engagement roster with one status per person. Sub-bullets and evidence live in hover tooltips."
 created: 2026-09-09
 last_updated: 2026-09-09
@@ -13,14 +13,14 @@ audience: David Roberts (RideCare CEO)
 ## Summary
 
 <!-- strip end=Discuss -->
-1. **The plan.** SOW-001 ramped the team down about now, to $80k a month in steady state. Phase C began on 15 August.
-2. **July.** Together we moved that to $89k to keep Rafael on. That is the figure in the contract table below.
-3. **What $89k requires.** Dropping at least one and a half engineers, the program manager, and the customer success lead. The roster below names them.
-4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product", and I am often in finance and data work beyond development.
-5. **Where we are.** Echo1 has run RideCare since the 9 August cutover and is in good shape. A great deal remains, above all the Samsara exit, the full billing lifecycle, and audit and compliance.
-6. **Against the market.** I have benchmarked this heavily. RideCare pays well under market. Part of that came from the whole team stretching hard through the build, which we were glad to do but won't be able to sustain indefinitely.
-7. **Two ways forward.** Keep the current team as it is at $113.5k a month, or staff what Echo1 truly needs at about $120k. Both sit at the low end of market, against the $90k plan.
-8. **Upside.** A team that size can take on more software contracts. What we see in billing and elsewhere suggests a tech-enabled approach to parts of operations would pay off.
+1. **The plan.** The original scope of work planned to ramp the team down about now, to $80k a month in steady state. Phase C began on 15 August.
+2. **July.** We chatted at the 4th and moved that to $89k to keep Rafael on. That is the figure in the contract table below.
+3. **What $89k requires.** Dropping at least one and a half engineers, the program manager, and the customer success person.
+4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product". I, and sometimes Roman, are sometimes filling roles beyond dev.
+5. **Where we are.** Echo1 has run RideCare since the 10 August cutover and is in good shape. A great deal remains, above all the Samsara exit, the full billing lifecycle, and audit and compliance.
+6. **Against the market.** I've benchmarked the team's costs heavily and we're managing to stay well under market. Part of this comes from the team stretching hard through the build, which is great, but we won't be able to sustain that indefinitely.
+7. **Three ways forward.** Staff what Echo1 truly needs at about $120k a month ongoing. Keep the current team as is at $113.5k a month. Or slow down significantly and reduce staff to meet the $90k plan.
+8. **Upside.** A team that size can take on separate software contracts. What we see in the recent work from Roman and I on billing also suggests a tech-enabled approach to some traditional roles could pay off.
 
 Detail follows. Hover over any row for what sits behind it.
 
