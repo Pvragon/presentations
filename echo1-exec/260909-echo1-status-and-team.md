@@ -1,6 +1,6 @@
 ---
 template: deliverable
-version: 2.6.0
+version: 2.7.0
 summary: "One-page brief for the RideCare CEO, 10 September 2026: what Echo1 does today versus V1, what is left by epic with conservative progress states, the contracted schedule by month, and the engagement roster with one status per person. Sub-bullets and evidence live in hover tooltips."
 created: 2026-09-09
 last_updated: 2026-09-09
@@ -107,5 +107,6 @@ One status per person. Peak staffing ran April through June.
 The application by area, and the people against each area.
 
 <div class="coverage">
+<p class="coverage-hint">Swipe sideways to see every column.</p>
 <!-- coverage-map -->
 </div>
