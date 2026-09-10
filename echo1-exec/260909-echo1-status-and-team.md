@@ -18,7 +18,7 @@ audience: David Roberts (RideCare CEO)
 3. **What $89k requires.** Dropping at least one and a half engineers, the program manager, and the customer success lead. The roster below names them.
 4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product", and I am often in finance and data work beyond development.
 5. **Where we are.** Echo1 has run RideCare since the 9 August cutover and is in good shape. A great deal remains, above all the Samsara exit, the full billing lifecycle, and audit and compliance.
-6. **Against the market.** I have benchmarked this heavily. RideCare pays well under market. Part of that came from the whole team stretching hard through the build, which we were glad to do and would rather not plan around.
+6. **Against the market.** I have benchmarked this heavily. RideCare pays well under market. Part of that came from the whole team stretching hard through the build, which we were glad to do but won't be able to sustain indefinitely.
 7. **Two ways forward.** Keep the current team as it is at $113.5k a month, or staff what Echo1 truly needs at about $120k. Both sit at the low end of market, against the $90k plan.
 8. **Upside.** A team that size can take on more software contracts. What we see in billing and elsewhere suggests a tech-enabled approach to parts of operations would pay off.
 
