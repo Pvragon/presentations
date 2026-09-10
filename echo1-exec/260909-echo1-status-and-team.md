@@ -15,7 +15,7 @@ audience: David Roberts (RideCare CEO)
 <!-- strip end=Discuss -->
 1. **The plan.** The original scope of work planned to ramp the team down about now, to $80k a month in steady state.
 2. **July.** We chatted at the 4th and moved that to $89k to keep Rafael on. That is the figure in the contract table below.
-3. **What $89k requires.** Dropping at least one and a half engineers, the program manager, and the customer success person.
+3. **What $89k requires.** Dropping at least one and a half engineers, the program manager, and the customer success person. Five people have already come off the team since peak.
 4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product". I, and sometimes Roman, are sometimes filling roles beyond dev.
 5. **Where we are.** Echo1 has run RideCare since the 10 August cutover and is in good shape. A great deal remains, above all the Samsara exit, the full billing lifecycle, and audit and compliance.
 6. **Against the market.** I've benchmarked the team's costs heavily and we're managing to stay well under market. Part of this comes from the team stretching hard through the build, which is great, but we won't be able to sustain that indefinitely.
