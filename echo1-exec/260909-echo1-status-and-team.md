@@ -123,7 +123,7 @@ The application by area, and the people against each area.
 
 ## <span title="Same roster shape: two US leads, one US senior engineer, seven nearshore seats. Prices are what such agencies bill per seat, blended across the ten.">Price per person, against the market</span>
 
-RideCare pays about $11.1k a month per person on Echo1. A hybrid US-lead plus nearshore agency fielding the same ten seats would charge $12.4k to $15.6k.
+RideCare pays about $11.1k a month per person on Echo1. A hybrid US-lead plus nearshore agency fielding the same ten seats would charge $12.4k to $15.6k. An Oklahoma agency starts at about $13.0k.
 
 <div class="benchmark">
 <!-- benchmark-chart -->
@@ -134,4 +134,5 @@ RideCare pays about $11.1k a month per person on Echo1. A hybrid US-lead plus ne
 | <span title="One in ten hybrid agencies would price the roster at or below this. Published 2026 rate bands: Accelerance survey of 60 firms, Mismo, nCube, DistantJob, BLS.">Low (P10)</span> | $12.4k |
 | <span title="Matches the $13.4k per seat from the independent same-roster benchmark in the full assessment.">Typical (P50)</span> | $13.9k |
 | High (P90) | $15.6k |
+| <span title="Oklahoma City and Tulsa agencies on Clutch list $75 to $150 an hour. $75 an hour across ten seats at 173 hours a month is $13.0k per person, before the discount long-term dedicated teams usually get.">Oklahoma agency (low)</span> | $13.0k |
 | **<span title="Current monthly billing across the 10 people on Echo1. Below the lowest tenth of agencies at rate card; roughly equal to the lowest tenth after the 10 to 20% discount agencies give long-term dedicated teams.">RideCare today</span>** | **$11.1k** |
