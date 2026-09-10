@@ -13,7 +13,7 @@ audience: David Roberts (RideCare CEO)
 ## Summary
 
 <!-- strip end=Discuss -->
-1. **The plan.** The original scope of work planned to ramp the team down about now, to $80k a month in steady state. Phase C began on 15 August.
+1. **The plan.** The original scope of work planned to ramp the team down about now, to $80k a month in steady state.
 2. **July.** We chatted at the 4th and moved that to $89k to keep Rafael on. That is the figure in the contract table below.
 3. **What $89k requires.** Dropping at least one and a half engineers, the program manager, and the customer success person.
 4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product". I, and sometimes Roman, are sometimes filling roles beyond dev.
