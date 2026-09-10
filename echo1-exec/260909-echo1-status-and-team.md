@@ -1,6 +1,6 @@
 ---
 template: deliverable
-version: 2.7.0
+version: 2.8.0
 summary: "One-page brief for the RideCare CEO, 10 September 2026: what Echo1 does today versus V1, what is left by epic with conservative progress states, the contracted schedule by month, and the engagement roster with one status per person. Sub-bullets and evidence live in hover tooltips."
 created: 2026-09-09
 last_updated: 2026-09-09
@@ -110,3 +110,18 @@ The application by area, and the people against each area.
 <p class="coverage-hint">Swipe sideways to see every column.</p>
 <!-- coverage-map -->
 </div>
+
+## <span title="Same roster shape: two US leads, one US senior engineer, seven nearshore seats. Prices are what such agencies bill per seat, blended across the ten.">Price per person, against the market</span>
+
+RideCare pays about $11.1k a month per person on Echo1. A hybrid US-lead plus nearshore agency fielding the same ten seats would charge $12.4k to $15.6k.
+
+<div class="benchmark">
+<!-- benchmark-chart -->
+</div>
+
+| Hybrid agency | Per person |
+| --- | --- |
+| <span title="One in ten hybrid agencies would price the roster at or below this. Published 2026 rate bands: Accelerance survey of 60 firms, Mismo, nCube, DistantJob, BLS.">Low (P10)</span> | $12.4k |
+| <span title="Matches the $13.4k per seat from the independent same-roster benchmark in the full assessment.">Typical (P50)</span> | $13.9k |
+| High (P90) | $15.6k |
+| **<span title="Current monthly billing across the 10 people on Echo1. Below the lowest tenth of agencies at rate card; roughly equal to the lowest tenth after the 10 to 20% discount agencies give long-term dedicated teams.">RideCare today</span>** | **$11.1k** |
