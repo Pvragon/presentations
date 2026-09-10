@@ -16,13 +16,13 @@ audience: David Roberts (RideCare CEO)
 1. **The plan.** The original scope of work planned to ramp the team down about now, to $80k a month in steady state.
 2. **July.** We chatted at the 4th and moved that to $89k to keep Rafael on. That is the figure in the contract table below.
 3. **What $89k requires.** Dropping at least one and a half engineers, the program manager, and the customer success person. Five people have already come off the team since peak.
-4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product". I, and sometimes Roman, are sometimes filling roles beyond dev.
-5. **Where we are.** Echo1 has run RideCare since the 10 August cutover and is in good shape. A great deal remains, above all the Samsara exit, the full billing lifecycle, and audit and compliance.
-6. **Against the market.** I've benchmarked the team's costs heavily and we're managing to stay well under market. Part of this comes from the team stretching hard through the build, which is great, but we won't be able to sustain that indefinitely.
+4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product". Roman and I are sometimes filling roles beyond dev.
+5. **Where we are.** Ride Care has run on the Echo1 app since the 10 August cutover and is in good shape. A great deal remains, above all the Samsara exit, the full billing lifecycle, and audit and compliance.
+6. **Against the market.** I've benchmarked the team's costs and we've been able to stay well under market. Part of this comes from the team stretching hard through the build, which is great, but we won't be able to sustain that indefinitely.
 7. **Three ways forward.** Staff what Echo1 truly needs at about $130k a month ongoing. Keep the current team as is at $113.5k a month. Or slow down significantly and reduce staff to meet the $90k plan.
 8. **Upside.** A team that size can take on separate software contracts. What we see in the recent work from Roman and I on billing also suggests a tech-enabled approach to some traditional roles could pay off.
 
-Detail follows. Hover over any row for what sits behind it.
+Detail follows. Hover or tap a dotted phrase for what sits behind it.
 
 ## What Echo1 does today
 
@@ -40,7 +40,7 @@ Detail follows. Hover over any row for what sits behind it.
 
 ## What is left
 
-The 1 September working draft groups the remaining work into 26 outcomes. "In progress" means code for that outcome was merged or opened for review in the last two weeks. "Partly delivered" means part of it is already in production and nothing else is being built right now. "Started" means it has been scoped, or was built earlier and has not moved in over two weeks. Hover an epic for the work inside it, and hover a state for the evidence.
+The 1 September working draft groups the remaining work into 26 outcomes. "In progress" means code for that outcome was merged or opened for review in the last two weeks. "Partly delivered" means part of it is already in production and nothing else is being built right now. "Started" means it has been scoped, or was built earlier and has not moved in over two weeks. Tap or hover an epic for the work inside it, and a state for the evidence.
 
 | Epic | Outcome | Owner | State |
 | --- | --- | --- | --- |
