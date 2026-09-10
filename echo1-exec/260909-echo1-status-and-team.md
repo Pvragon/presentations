@@ -19,8 +19,8 @@ audience: David Roberts (RideCare CEO)
 4. **Scope has grown.** "Reproduce V1 as a multi-tenant product" became "build a much bigger, better product". Roman and I are sometimes filling roles beyond dev.
 5. **Where we are.** Ride Care has run on the Echo1 app since the 10 August cutover and is in good shape. A great deal remains, above all the Samsara exit, the full billing lifecycle, and audit and compliance.
 6. **Against the market.** I've benchmarked the team's costs and we've been able to stay well under market. Part of this comes from the team stretching hard through the build, which is great, but we won't be able to sustain that indefinitely.
-7. **Three ways forward.** Staff what Echo1 truly needs at about $130k a month ongoing. Keep the current team as is at $113.5k a month. Or slow down significantly and reduce staff to meet the $90k plan.
-8. **Upside.** A team that size can take on separate software contracts. What we see in the recent work from Roman and I on billing also suggests a tech-enabled approach to some traditional roles could pay off.
+7. **Three ways forward.** Staff Echo1 for growth at about $130k a month ongoing. Keep the current team as is at $113.5k a month. Or slow down significantly and reduce staff to meet the $90k plan.
+8. **Upside.** The team today, especially if staffed for growth, can take on separate software contracts. What we see in the recent work from Roman and I on billing also suggests a tech-enabled approach to some traditional roles could pay off.
 
 Detail follows. Hover or tap a dotted phrase for what sits behind it.
 
