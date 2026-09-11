@@ -270,9 +270,13 @@
     list.querySelectorAll('.t').forEach(e => e.classList.toggle('active', e.dataset.id === id));
     const el = list.querySelector(`.t[data-id="${id}"]`); if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
-  function openRail() { if (!rail.classList.contains('open')) { rail.classList.add('open'); load(); } }
-  function toggleRail() { rail.classList.contains('open') ? rail.classList.remove('open') : openRail(); }
-  $('.close').addEventListener('click', () => rail.classList.remove('open'));
+  // The share header is fixed top-right at a higher z-index; slide it left while the rail is open so it
+  // never covers the rail's own title.
+  function shiftHeader(open) { const h = document.getElementById('prez-header-host'); if (h) h.style.transform = open ? `translateX(-${Math.min(360, innerWidth)}px)` : ''; }
+  function openRail() { if (!rail.classList.contains('open')) { rail.classList.add('open'); shiftHeader(true); load(); } }
+  function closeRail() { rail.classList.remove('open'); shiftHeader(false); }
+  function toggleRail() { rail.classList.contains('open') ? closeRail() : openRail(); }
+  $('.close').addEventListener('click', closeRail);
   $('.showres').addEventListener('change', render);
   $('.who').addEventListener('click', () => showIdentity());
   $('.pagec').addEventListener('click', () => startCompose(null, null));
