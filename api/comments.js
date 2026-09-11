@@ -7,11 +7,11 @@
  * Gates (mirrors the page itself):
  *   - page access: same per-path password cookie the middleware sets → you can comment on what you can read
  *   - identity:    the shared .prgn.ai `prgn_identity` cookie {playerId, name, color} — device-level, same as play.prgn.ai
- *   - agent:       `Authorization: Bearer $PREZ_AGENT_TOKEN` → Rowan; may list across pages (?scope=all)
+ *   - agent:       `Authorization: Bearer $PREZ_AGENT_TOKEN` → Rowan's terminal tooling; may list across pages (?scope=all)
  *
  * GET  /api/comments?page=/cat/slug            → { page, canComment, identity, threads:[{..., messages:[...]}] }
- * GET  /api/comments?scope=all&status=open&to_agent=1   (agent only)
- * POST /api/comments  { action: create|reply|resolve|reopen|to_agent, ... }
+ * GET  /api/comments?scope=all&status=open   (agent only)
+ * POST /api/comments  { action: create|reply|resolve|reopen, ... }
  */
 import { pageAccessGranted, parseCookies } from '../lib/protected-paths.js';
 
@@ -37,7 +37,6 @@ export default async function handler(req, res) {
         const q = ['select=*,messages:prez_messages(*)', 'order=updated_at.desc', 'limit=200'];
         const status = url.searchParams.get('status');
         if (status && status !== 'all') q.push(`status=eq.${status}`);
-        if (url.searchParams.get('to_agent') === '1') q.push('to_agent=is.true');
         return send(res, 200, { threads: await db.get(`prez_threads?${q.join('&')}`) });
       }
       const page = normPage(url.searchParams.get('page'));
@@ -61,7 +60,7 @@ export default async function handler(req, res) {
       if (!text || text.length > MAX_BODY) return send(res, 400, { error: 'body 1..4000 chars' });
       const anchor = cleanAnchor(body.anchor);
       const [thread] = await db.post('prez_threads', {
-        page, quote: anchor ? anchor.exact : null, anchor, to_agent: !!body.to_agent, ...who,
+        page, quote: anchor ? anchor.exact : null, anchor, ...who,
       });
       const [message] = await db.post('prez_messages', { thread_id: thread.id, body: text, is_agent: isAgent, ...who });
       return send(res, 201, { thread: { ...thread, messages: [message] } });
@@ -76,21 +75,14 @@ export default async function handler(req, res) {
     if (body.action === 'reply') {
       if (!text || text.length > MAX_BODY) return send(res, 400, { error: 'body 1..4000 chars' });
       const [message] = await db.post('prez_messages', { thread_id: threadId, body: text, is_agent: isAgent, ...who });
-      // an agent reply clears the hand-off flag; a human reply that @mentions rowan sets it
-      const patch = isAgent ? { to_agent: false } : (/@rowan\b/i.test(text) ? { to_agent: true } : null);
-      if (patch) await db.patch(`prez_threads?id=eq.${threadId}`, patch);
       return send(res, 201, { message });
     }
     if (body.action === 'resolve' || body.action === 'reopen') {
       const resolving = body.action === 'resolve';
       if (text) await db.post('prez_messages', { thread_id: threadId, body: text, is_agent: isAgent, ...who });
       const [updated] = await db.patch(`prez_threads?id=eq.${threadId}`, resolving
-        ? { status: 'resolved', resolved_at: new Date().toISOString(), resolved_by: identity.name, to_agent: false, updated_at: new Date().toISOString() }
+        ? { status: 'resolved', resolved_at: new Date().toISOString(), resolved_by: identity.name, updated_at: new Date().toISOString() }
         : { status: 'open', resolved_at: null, resolved_by: null, updated_at: new Date().toISOString() });
-      return send(res, 200, { thread: updated });
-    }
-    if (body.action === 'to_agent') {
-      const [updated] = await db.patch(`prez_threads?id=eq.${threadId}`, { to_agent: !!body.to_agent, updated_at: new Date().toISOString() });
       return send(res, 200, { thread: updated });
     }
     return send(res, 400, { error: 'unknown action' });

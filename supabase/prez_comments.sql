@@ -9,7 +9,7 @@ create table if not exists public.prez_threads (
   quote         text,                                -- exact selected text (null = page-level)
   anchor        jsonb,                               -- W3C TextQuoteSelector {exact, prefix, suffix}
   status        text not null default 'open' check (status in ('open','resolved')),
-  to_agent      boolean not null default false,      -- "Send to Rowan" flag (Claude-artifact hand-off gate)
+  to_agent      boolean not null default false,      -- DORMANT: agent hand-off removed 2026-09-10 at Jaime's request
   author_id     text not null,                       -- prgn_identity.playerId (device-level, .prgn.ai)
   author_name   text not null,
   author_color  text,
