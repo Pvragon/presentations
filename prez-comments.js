@@ -208,7 +208,7 @@
     const hr = window.__prezHeaderRoot; if (!hr || hr.querySelector('.comments')) return;
     const bar = hr.querySelector('.bar'); if (!bar) return;
     const sep = document.createElement('span'); sep.className = 'sep';
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'comments'; b.setAttribute('aria-label', 'Comments');
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'comments'; b.setAttribute('aria-label', 'Comments'); b.style.whiteSpace = 'nowrap';
     b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="clbl">Comments</span>';
     b.addEventListener('click', () => toggleRail());
     bar.appendChild(sep); bar.appendChild(b);
