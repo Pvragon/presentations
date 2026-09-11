@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comment Threads Test</title>
+<style>
+  :root { color-scheme: light dark;
+    --bg:#fcfcfb; --fg:#1b2b2e; --muted:#5b6b6e; --line:rgba(20,40,42,.14); --card:#f3f5f4; --accent:#0f7b7f; }
+  @media (prefers-color-scheme: dark) { :root {
+    --bg:#121d20; --fg:#e7eef0; --muted:#9fb1b5; --line:rgba(255,255,255,.14); --card:#1a282c; --accent:#5fd0d4; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:56px 20px 96px; }
+  h1 { font-size:2rem; margin:0 0 .25em; }
+  h2 { font-size:1.15rem; margin:2em 0 .5em; color:var(--accent); }
+  p, li { max-width:65ch; }
+  .kicker { font:600 12px/1 ui-monospace,Menlo,Consolas,monospace; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:1em 0; }
+  ol li { margin:.4em 0; }
+  code { font:0.92em ui-monospace,Menlo,Consolas,monospace; background:var(--card); padding:1px 5px; border-radius:5px; }
+  table { border-collapse:collapse; width:100%; font-size:.95rem; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; }
+  .muted { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">prez.prgn.ai · experiment · 2026-09-10</p>
+  <h1>Comment Threads Test</h1>
+  <p>This page carries the Vercel Toolbar injection script. If commenting works here, it works on any prez page. The point of the test is to find out who can leave a comment, what the comment anchors to, and whether Rowan can read and answer the thread from the terminal.</p>
+
+  <h2>How to leave a test comment</h2>
+  <div class="card">
+    <ol>
+      <li>Sign in at <code>vercel.com</code> with an account that belongs to the <strong>Pvragon Product Dev</strong> team.</li>
+      <li>Come back to this page. A small Vercel pill should appear near the bottom. Click it to activate the toolbar.</li>
+      <li>Choose <strong>Comment</strong>, then either click a spot on the page or highlight a run of text.</li>
+      <li>Type anything. Mention <code>@rowan</code> in the text if you want to test the hand-off convention.</li>
+    </ol>
+  </div>
+
+  <h2>Things to comment on</h2>
+  <p>A comment can pin to a point on the page or to a highlighted passage. Try one of each. This paragraph exists to be highlighted. It has no other purpose, which makes it the ideal target for a test comment, because nothing depends on it and nothing will break when it changes later.</p>
+  <p>The second paragraph is here so that a comment thread can be tied to a different element. When the page is redeployed with new text, we want to know whether the thread stays attached, floats to the top, or disappears. That behaviour decides whether prez comments can be trusted across revisions.</p>
+
+  <h2>What we are trying to learn</h2>
+  <table>
+    <tr><th>Question</th><th>How we find out</th></tr>
+    <tr><td>Who can comment</td><td>Try as a team member, then as someone outside the team</td></tr>
+    <tr><td>Where it anchors</td><td>One pinned comment, one highlighted passage</td></tr>
+    <tr><td>Agent can read it</td><td>Rowan lists the thread with the Vercel CLI</td></tr>
+    <tr><td>Agent can answer it</td><td>Rowan replies and resolves from the terminal</td></tr>
+    <tr><td>Survives a redeploy</td><td>Edit this page, push, check the thread is still attached</td></tr>
+  </table>
+
+  <p class="muted">The toolbar is loaded from <code>vercel.live</code>. Visitors who are not signed in to Vercel see the page as normal.</p>
+</main>
+
+<script
+  src="https://vercel.live/_next-live/feedback/feedback.js"
+  data-explicit-opt-in="true"
+  data-owner-id="team_Tfmo7QHhAPcZU7Cda7qwgDUq"
+  data-project-id="prj_pRHerAjlcJTycxYERarTus29IAil"
+  data-branch="main"
+></script>
+<script src="/prez-header.js" defer></script>
+</body>
+</html>
