@@ -1,6 +1,7 @@
 /* Pvragon Presentations — anchored comment threads (the Claude-artifact comment model, on our own host).
  *
- * Loaded by prez-header.js on every prez page; nothing to add per page. Lives in a Shadow DOM so it
+ * Loaded by prez-header.js only on pages that declare <meta name="prez-comments" content="on">
+ * (document/artifact pages — not decks, not index pages). Lives in a Shadow DOM so it
  * cannot collide with the host page's CSS. Talks only to /api/comments (same origin).
  *
  * Model (borrowed from Claude artifacts):
