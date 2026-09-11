@@ -6,7 +6,7 @@
  * Model (borrowed from Claude artifacts):
  *   - a thread anchors to a highlighted passage (W3C TextQuoteSelector: exact + prefix/suffix), or to the page
  *   - threads survive redeploys as long as the passage still exists; orphaned threads stay listed in the rail
- *   - "Send to Rowan" hands a thread to the agent; a reply from Rowan clears it; resolve closes it
+ *   - reply / resolve / reopen; resolved threads stay readable behind a filter
  * Identity: the shared .prgn.ai cookie `prgn_identity` {playerId, name, color} — same picker as play.prgn.ai.
  * Access: you can comment on any page you can open (the API re-checks the page password cookie).
  */
@@ -154,8 +154,6 @@
       .m p{ margin:2px 0 0; white-space:pre-wrap; word-wrap:break-word; }
       .row{ display:flex; gap:6px; align-items:center; margin-top:8px; flex-wrap:wrap; }
       .row button,.row .tog{ all:unset; cursor:pointer; font:600 11px/1 system-ui; padding:5px 8px; border-radius:7px; background:rgba(127,127,127,.12); color:inherit; }
-      .row .tog.on{ background:rgba(10,143,160,.18); color:#0a8fa0; }
-      @media (prefers-color-scheme:dark){ .row .tog.on{ color:#5fd0d4; } }
       textarea{ width:100%; min-height:58px; resize:vertical; font:13px/1.4 system-ui; padding:8px; border-radius:8px; border:1px solid rgba(127,127,127,.3); background:transparent; color:inherit; margin-top:8px; }
       textarea:focus{ outline:2px solid rgba(10,143,160,.5); }
       .empty{ opacity:.65; font-size:13px; padding:18px 8px; text-align:center; line-height:1.5; }
@@ -183,8 +181,8 @@
     <div class="markers"></div>
     <div class="compose" role="dialog" aria-label="New comment">
       <div class="q cq"></div>
-      <textarea class="ctext" placeholder="Write a comment… (@rowan to hand it to the agent)"></textarea>
-      <div class="row"><button class="csend" type="button">Post</button><button class="ccancel" type="button">Cancel</button><label class="tog cagent" title="Ask Rowan to pick this up"><input type="checkbox" style="vertical-align:-1px"> Send to Rowan</label></div>
+      <textarea class="ctext" placeholder="Write a comment…"></textarea>
+      <div class="row"><button class="csend" type="button">Post</button><button class="ccancel" type="button">Cancel</button></div>
     </div>
     <aside class="rail" aria-label="Comments">
       <div class="hd"><h2>Comments</h2><button class="chip who" type="button" title="Change your name or color"><span class="dot"></span><span class="nm">Set your name</span></button><button class="x close" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
@@ -253,7 +251,7 @@
     let html = t.quote ? `<div class="q ${r ? '' : 'orphan'}" title="Jump to passage">${esc(t.quote)}</div>` : '<div class="q" style="border-color:#9ca3af">Whole page</div>';
     for (const m of t.messages) html += `<div class="m ${m.is_agent ? 'agent' : ''}"><span class="dot" style="background:${esc(m.author_color || '#999')}"></span><div><b>${esc(m.author_name)}</b><span class="when">${fmtWhen(m.created_at)}</span><p>${esc(m.body)}</p></div></div>`;
     if (t.status === 'resolved') html += `<div class="m" style="opacity:.6;font-size:12px"><span></span><div>Resolved${t.resolved_by ? ' by ' + esc(t.resolved_by) : ''}${t.resolved_at ? ' · ' + fmtWhen(t.resolved_at) : ''}</div></div>`;
-    html += `<textarea class="rtext" placeholder="Reply…"></textarea><div class="row"><button class="reply">Reply</button>${t.status === 'open' ? '<button class="resolve">Resolve</button>' : '<button class="reopen">Reopen</button>'}<button class="tog agent ${t.to_agent ? 'on' : ''}" title="Hand this thread to Rowan">${t.to_agent ? '⏳ With Rowan' : 'Send to Rowan'}</button></div>`;
+    html += `<textarea class="rtext" placeholder="Reply…"></textarea><div class="row"><button class="reply">Reply</button>${t.status === 'open' ? '<button class="resolve">Resolve</button>' : '<button class="reopen">Reopen</button>'}</div>`;
     el.innerHTML = html;
     const q = el.querySelector('.q'); if (q && r) q.addEventListener('click', () => focusThread(t.id, true));
     const ta = el.querySelector('.rtext');
@@ -262,7 +260,6 @@
     ta.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') el.querySelector('.reply').click(); });
     const res = el.querySelector('.resolve'); if (res) res.addEventListener('click', () => act('resolve', { body: ta.value.trim() }));
     const reo = el.querySelector('.reopen'); if (reo) reo.addEventListener('click', () => act('reopen', {}));
-    el.querySelector('.agent').addEventListener('click', () => act('to_agent', { to_agent: !t.to_agent }));
     return el;
   }
   function focusThread(id, scroll) {
@@ -298,7 +295,7 @@
   function startCompose(anchor, range) {
     pendingAnchor = anchor; fab.classList.remove('show');
     $('.cq').textContent = anchor ? anchor.exact : 'Whole page'; $('.cq').style.borderColor = anchor ? '#f59e0b' : '#9ca3af';
-    $('.ctext').value = ''; $('.cagent input').checked = false;
+    $('.ctext').value = '';
     if (range) { const rect = range.getBoundingClientRect(); const w = Math.min(320, innerWidth * 0.92); compose.style.left = Math.max(8, Math.min(innerWidth - w - 8, rect.left)) + 'px'; compose.style.top = Math.min(innerHeight - 220, rect.bottom + 8) + 'px'; }
     else { compose.style.left = Math.max(8, innerWidth - Math.min(360, innerWidth) - 340) + 'px'; compose.style.top = '72px'; }
     compose.classList.add('show'); $('.ctext').focus();
@@ -309,7 +306,7 @@
     const text = $('.ctext').value.trim(); if (!text) return $('.ctext').focus();
     try {
       await ensureIdentity();
-      const j = await api('POST', { action: 'create', page: PAGE, anchor: pendingAnchor, body: text, to_agent: $('.cagent input').checked || /@rowan\b/i.test(text) });
+      const j = await api('POST', { action: 'create', page: PAGE, anchor: pendingAnchor, body: text });
       compose.classList.remove('show'); document.getSelection().removeAllRanges(); openRail(); await load(); focusThread(j.thread.id, false); toast('Comment posted');
     } catch (e) { if (e.need !== 'identity') toast(e.status === 401 ? 'This page is locked — unlock it first' : e.message); }
   });
