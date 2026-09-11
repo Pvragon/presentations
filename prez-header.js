@@ -6,6 +6,7 @@
  *
  * Rollout: pages include  <script src="/prez-header.js" defer></script>  before
  * </body>. Add it to new pages; scripts/inject_share_header.py backfills old ones.
+ * It also loads /prez-comments.js (anchored comment threads), so comments need no per-page change.
  */
 (function () {
   if (window.__prezHeader) return;            // guard against double-inject
@@ -19,6 +20,7 @@
       'position:fixed;top:0;right:0;z-index:2147483000;pointer-events:none';
     document.documentElement.appendChild(host);
     const root = host.attachShadow({ mode: 'open' });
+    window.__prezHeaderRoot = root;            // prez-comments.js appends its button here
 
     root.innerHTML = `
       <style>
@@ -110,6 +112,11 @@
     };
 
     btn.addEventListener('click', copy);
+
+    // Comment threads (anchored, Claude-artifact style) — one loader here means every page has them.
+    if (!document.querySelector('script[src="/prez-comments.js"]')) {
+      const cs = document.createElement('script'); cs.src = '/prez-comments.js'; cs.defer = true; document.head.appendChild(cs);
+    }
   };
 
   if (document.readyState === 'loading') {

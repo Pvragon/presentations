@@ -5,19 +5,15 @@
  * the request body, validates the password, and sets an HttpOnly cookie.
  *
  * To add a new protected category:
- *   1. Add entry to PROTECTED_PATHS: '/category-name': 'ENV_VAR_NAME'
+ *   1. Add entry to PROTECTED_PATHS in lib/protected-paths.js (shared with api/comments.js)
  *   2. Set env var in Vercel: vercel env add ENV_VAR_NAME
  *   3. Redeploy — middleware picks it up automatically
  */
 
-export const config = {
-  matcher: ['/echo1', '/echo1/:path*', '/echo1-exec', '/echo1-exec/:path*', '/one-mahjong', '/one-mahjong/:path*'],
-};
+import { PROTECTED_PATHS, MATCHER } from './lib/protected-paths.js';
 
-const PROTECTED_PATHS = {
-  '/echo1': 'PREZ_PW_ECHO1',
-  '/echo1-exec': 'PREZ_PW_ECHO1_EXEC',
-  '/one-mahjong': 'PREZ_PW_ONE_MAHJONG',
+export const config = {
+  matcher: MATCHER,
 };
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
@@ -142,7 +138,8 @@ function authPage(prefix, showError) {
     h1 span { color: var(--accent-orange); }
     .subtitle { color: var(--text-subtle); font-size: 0.9rem; font-weight: 300; margin-bottom: 1.8rem; position: relative; }
     form { position: relative; display: flex; flex-direction: column; gap: 0.8rem; }
-    input[type="password"] {
+    .pw { position: relative; }
+    #pw {
       width: 100%;
       padding: 0.75rem 1rem;
       background: rgba(248, 250, 252, 0.04);
@@ -153,10 +150,22 @@ function authPage(prefix, showError) {
       font-family: 'Noto Sans', sans-serif;
       outline: none;
       transition: border-color 0.2s;
+      padding-right: 2.9rem;
     }
-    input[type="password"]:focus { border-color: rgba(231, 81, 31, 0.5); }
-    input[type="password"]::placeholder { color: var(--text-subtle); }
-    button {
+    #pw:focus { border-color: rgba(231, 81, 31, 0.5); }
+    #pw::placeholder { color: var(--text-subtle); }
+    .eye {
+      position: absolute; top: 50%; right: 0.45rem; transform: translateY(-50%);
+      width: 2.1rem; height: 2.1rem; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none; border-radius: 8px;
+      color: var(--text-subtle); cursor: pointer; transition: color 0.15s, background 0.15s;
+    }
+    .eye:hover { color: var(--text-muted); background: rgba(248, 250, 252, 0.06); transform: translateY(-50%); box-shadow: none; }
+    .eye:focus-visible { outline: 2px solid rgba(231, 81, 31, 0.6); outline-offset: 1px; }
+    .eye svg { width: 18px; height: 18px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    button[type="submit"] {
       width: 100%;
       padding: 0.75rem;
       background: linear-gradient(135deg, var(--accent-orange), #c44019);
@@ -169,7 +178,7 @@ function authPage(prefix, showError) {
       cursor: pointer;
       transition: all 0.2s;
     }
-    button:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(231, 81, 31, 0.3); }
+    button[type="submit"]:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(231, 81, 31, 0.3); }
     .error {
       color: var(--accent-orange);
       font-size: 0.85rem;
@@ -186,11 +195,35 @@ function authPage(prefix, showError) {
     <p class="subtitle">This section requires a password</p>
     ${showError ? '<p class="error">Incorrect password. Please try again.</p>' : ''}
     <form method="POST" action="${actionUrl}">
-      <input type="password" name="password" placeholder="Enter password" autofocus autocomplete="off">
+      <div class="pw">
+        <input type="password" id="pw" name="password" placeholder="Enter password" autofocus autocomplete="off" aria-describedby="pw-hint">
+        <button type="button" class="eye" id="eye" aria-label="Show password" aria-pressed="false" title="Show password">
+          <svg class="i-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="i-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-6.5 0-10-7-10-7a19.8 19.8 0 0 1 4.22-5.06"/><path d="M9.9 4.24A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a19.8 19.8 0 0 1-3.17 4.19"/><path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/><path d="M1 1l22 22"/></svg>
+        </button>
+      </div>
+      <span id="pw-hint" class="sr-only">Use the eye button to show or hide the password</span>
       <button type="submit">Continue</button>
     </form>
     <div class="back"><a href="/">← Back to presentations</a></div>
   </div>
+  <script>
+    (function () {
+      var pw = document.getElementById('pw'), eye = document.getElementById('eye');
+      var show = eye.querySelector('.i-show'), hide = eye.querySelector('.i-hide');
+      eye.addEventListener('click', function () {
+        var visible = pw.type === 'password';
+        pw.type = visible ? 'text' : 'password';
+        show.style.display = visible ? 'none' : '';
+        hide.style.display = visible ? '' : 'none';
+        eye.setAttribute('aria-pressed', String(visible));
+        eye.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+        eye.title = visible ? 'Hide password' : 'Show password';
+        pw.focus({ preventScroll: true });
+        try { pw.setSelectionRange(pw.value.length, pw.value.length); } catch (e) {}
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }

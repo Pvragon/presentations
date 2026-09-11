@@ -1,0 +1,6 @@
+{
+  "name": "pvragon-presentations",
+  "private": true,
+  "type": "module",
+  "description": "prez.prgn.ai — static branded artifacts + edge password middleware + /api/comments (no dependencies)."
+}

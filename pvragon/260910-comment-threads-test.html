@@ -28,15 +28,15 @@
 <main>
   <p class="kicker">prez.prgn.ai · experiment · 2026-09-10</p>
   <h1>Comment Threads Test</h1>
-  <p>This page carries the Vercel Toolbar injection script. If commenting works here, it works on any prez page. The point of the test is to find out who can leave a comment, what the comment anchors to, and whether Rowan can read and answer the thread from the terminal.</p>
+  <p>This page is the proving ground for prez comment threads: highlight any passage, click <strong>Comment</strong>, and a thread is pinned to that text. No account is needed. Your name and color are remembered on this device for every prgn.ai site, the same way play.prgn.ai does it. Rowan reads and answers threads from the terminal.</p>
 
   <h2>How to leave a test comment</h2>
   <div class="card">
     <ol>
-      <li>Sign in at <code>vercel.com</code> with an account that belongs to the <strong>Pvragon Product Dev</strong> team.</li>
-      <li>Come back to this page. A small Vercel pill should appear near the bottom. Click it to activate the toolbar.</li>
-      <li>Choose <strong>Comment</strong>, then either click a spot on the page or highlight a run of text.</li>
-      <li>Type anything. Mention <code>@rowan</code> in the text if you want to test the hand-off convention.</li>
+      <li>Highlight a run of text anywhere on the page. A small <strong>Comment</strong> button appears above it.</li>
+      <li>Click it, type your comment, and post. The first time, you will be asked for a name and a color.</li>
+      <li>Open the <strong>Comments</strong> button in the top-right header to see every thread on the page, reply, or resolve.</li>
+      <li>Tick <strong>Send to Rowan</strong>, or mention <code>@rowan</code>, to hand a thread to the agent.</li>
     </ol>
   </div>
 
@@ -47,23 +47,16 @@
   <h2>What we are trying to learn</h2>
   <table>
     <tr><th>Question</th><th>How we find out</th></tr>
-    <tr><td>Who can comment</td><td>Try as a team member, then as someone outside the team</td></tr>
-    <tr><td>Where it anchors</td><td>One pinned comment, one highlighted passage</td></tr>
-    <tr><td>Agent can read it</td><td>Rowan lists the thread with the Vercel CLI</td></tr>
+    <tr><td>Who can comment</td><td>Anyone who can open the page; a name is asked for once</td></tr>
+    <tr><td>Where it anchors</td><td>Highlighted passage, or the whole page</td></tr>
+    <tr><td>Agent can read it</td><td>Rowan lists threads with prez_comments.py</td></tr>
     <tr><td>Agent can answer it</td><td>Rowan replies and resolves from the terminal</td></tr>
     <tr><td>Survives a redeploy</td><td>Edit this page, push, check the thread is still attached</td></tr>
   </table>
 
-  <p class="muted">The toolbar is loaded from <code>vercel.live</code>. Visitors who are not signed in to Vercel see the page as normal.</p>
+  <p class="muted">Threads are stored in Pvragon's own database and gated by the same page password as the page itself. The Vercel Toolbar experiment that first lived on this page was retired on the same day: it required every commenter to hold a Vercel account.</p>
 </main>
 
-<script
-  src="https://vercel.live/_next-live/feedback/feedback.js"
-  data-explicit-opt-in="true"
-  data-owner-id="team_Tfmo7QHhAPcZU7Cda7qwgDUq"
-  data-project-id="prj_pRHerAjlcJTycxYERarTus29IAil"
-  data-branch="main"
-></script>
 <script src="/prez-header.js" defer></script>
 </body>
 </html>
