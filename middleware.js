@@ -58,13 +58,13 @@ export default async function middleware(request) {
           },
         });
       } else {
-        return new Response(authPage(matchedPrefix, true), {
+        return new Response(authPage(matchedPrefix, true, url), {
           status: 401,
           headers: { 'Content-Type': 'text/html; charset=utf-8' },
         });
       }
     } catch (e) {
-      return new Response(authPage(matchedPrefix, true), {
+      return new Response(authPage(matchedPrefix, true, url), {
         status: 401,
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
       });
@@ -81,16 +81,17 @@ export default async function middleware(request) {
   }
 
   // Not authenticated — show prompt
-  return new Response(authPage(matchedPrefix, false), {
+  return new Response(authPage(matchedPrefix, false, url), {
     status: 401,
     headers: { 'Content-Type': 'text/html; charset=utf-8' },
   });
 }
 
-function authPage(prefix, showError) {
+function authPage(prefix, showError, url) {
   const categoryName = prefix.replace(/^\//, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  // Form POSTs to the current path — middleware intercepts it
-  const actionUrl = prefix + '/';
+  // Form POSTs back to the page that was requested (path + query), so the 303 after a correct
+  // password lands on that page, not on the category index. A bare prefix goes to the index.
+  const actionUrl = (url.pathname === prefix ? prefix + '/' : url.pathname) + (url.search || '');
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
