@@ -129,6 +129,9 @@
 .wrap{max-width:1280px}
 @media (min-width:1100px){.grid-wrap table.plan td{font-size:15px}}
 .plan-cards{display:none}
+.grid-wrap table.plan{table-layout:fixed;width:100%}
+.grid-wrap table.plan col.c-week{width:110px}
+.grid-wrap table.plan td,.grid-wrap table.plan th{overflow-wrap:anywhere}
 .grid-wrap table.plan td{vertical-align:top;font-size:14.5px;line-height:1.45}
 .grid-wrap table.plan tbody tr td{background:transparent;border-top:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
 .grid-wrap table.plan tbody tr.wk-0 td{background:var(--card-2)}
@@ -182,6 +185,7 @@ table.desc tr{scroll-margin-top:90px}
 <article>
 <h2>The plan by week</h2>
 <div class="table-scroll grid-wrap"><table class="plan">
+<colgroup><col class="c-week"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"></colgroup>
 <thead><tr><th>Week Ending</th><th>JP</th><th>Victor</th><th>Roman</th><th>Raf</th><th>Alex (PT)</th></tr></thead><tbody>
 <tr class="wk-1"><td class="week">09/18 (38)</td><td><a class="item" href="#item-stabilize-and-finalize-route-editing">Stabilize and finalize route editing</a></td><td><a class="item" href="#item-client-login-area">Client Login Area</a></td><td><a class="item" href="#item-close-eligibility-check">Close eligibility check</a></td><td><a class="item" href="#item-wrap-up-optimizer-for-now">Wrap up Optimizer for now</a></td><td><a class="item" href="#item-finalize-client-facility-page">Finalize Client &amp; Facility Page</a></td></tr>
 <tr class="wk-1"><td class="week"></td><td><a class="item" href="#item-nebraska-readiness">Nebraska Readiness</a></td><td></td><td></td><td><a class="item" href="#item-facility-typing">Facility Typing</a></td><td></td></tr>
