@@ -54,7 +54,9 @@ export default async function middleware(request) {
           status: 303,
           headers: {
             'Location': path === matchedPrefix ? matchedPrefix + '/' : path,
-            'Set-Cookie': `${cookieName}=${encodeURIComponent(password)}; Path=${matchedPrefix}; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
+            // Path=/ (not the prefix): the comments API at /api/comments must receive this cookie too. The name
+            // already carries the prefix, so categories cannot collide.
+            'Set-Cookie': `${cookieName}=${encodeURIComponent(password)}; Path=/; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
           },
         });
       } else {
