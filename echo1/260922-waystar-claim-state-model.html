@@ -153,9 +153,9 @@ Second-level edits are the HIPAA structure checks, business validations such as 
 and procedure codes valid for the date of service, optional coding-compliance packages (CCI,
 LCD, NCD), and payer- or intermediary-specific rules; they count toward monthly billing. A claim
 stops at the first second-level edit it fails, and a corrected resubmission can fail a later one.</p>
-<p class="callout"><strong>Event codes in square brackets</strong> are Waystar&rsquo;s Claims Disposition Report codes (the full list
-is in §4.2). Waystar publishes the list without explaining its grammar; the pattern in the list
-is that the letters before the hyphen name the event and the letter after it names who did it:
+<p class="callout"><strong>Claims Disposition Report event codes</strong> such as <code>R-Z</code>, <code>A-T</code> and <code>FP-T</code> are Waystar&rsquo;s own; the
+full list is in §4.2. Waystar publishes the list without explaining its grammar; the pattern in
+the list is that the letters before the hyphen name the event and the letter after it names who did it:
 <code>-T</code> for Waystar&rsquo;s own processing, <code>-P</code> the payer, <code>-I</code> an intermediary, <code>-R</code> a repricer, and
 <code>-Z</code> on the one first-edits rejection. So <code>A-T</code> is <em>passed all edits</em> at Waystar, <code>FP-T</code> is
 <em>sent to the payer</em> by Waystar, <code>R-P</code> is <em>rejected by the payer</em>, <code>D-P</code> <em>denied by the payer</em>,
@@ -399,13 +399,13 @@ payer emits lands in one of them, or in <em>no change</em> (an informational eve
 </tr>
 </tbody>
 </table></div>
-<p>Three things the table makes explicit:</p>
+<p>Three consequences for anyone building on these codes:</p>
 <ul>
 <li><strong>Nothing outside the 835 separates paid in full from partially paid from overpaid.</strong> <code>P-P</code>,
-  <code>F1</code> and <code>PAID</code> all mean &ldquo;the payer paid something.&rdquo; The money decides, and only the 835 has
-  the money.</li>
-<li><strong>Denied is money too.</strong> <code>D-P</code>, <code>F2</code> and the <code>DENIED</code> family say a denial happened; whether the
-  claim is <em>denied</em> or <em>partially paid</em> in our terms depends on whether any line paid.
+  <code>F1</code> and <code>PAID</code> all mean &ldquo;the payer paid something,&rdquo; and only the 835 carries the amount.</li>
+<li><strong>A denial code does not fix the state either.</strong> <code>D-P</code>, <code>F2</code> and the <code>DENIED</code> family say a
+  denial happened; whether the claim is <em>denied</em> or <em>partially paid</em> in our terms depends on
+  whether any line paid.
   <code>CLP02 = 4</code> marks only a whole-claim denial, and most zero-paid claims in our files carry
   <code>CLP02 = 1</code> (§4.5).</li>
 <li><strong>The Claim Monitoring strings are not a substitute for our states.</strong> They need the Claim
@@ -790,6 +790,110 @@ reason, and its remark codes (<code>LQ*HE</code>).</p>
 <li><strong>A net-overpaid claim needs no action from us to correct</strong>; the payer&rsquo;s reversal is the
   expected next loop. If it never comes, the excess is a refund we owe.</li>
 </ul>
+<h3>Replacement or void: which one</h3>
+<p>A replacement (frequency 7) says <em>disregard the last version, adjudicate this one instead</em>, in
+one transaction. The payer matches the ICN in <code>REF*F8</code>, reverses the original adjudication and
+adjudicates the replacement as the new version of the same claim. Both halves arrive in one
+remittance: a status-22 loop with negative money under the old ICN, and a new loop under a new
+ICN. The payer keeps the two linked as one claim history.</p>
+<p>A void (frequency 8) followed by a new original does the same work in two round trips, and the
+second claim is a stranger to the first. After the void processes, the frequency-1 claim carries
+no reference to anything, so the payer treats it as brand new: its duplicate check runs against
+the voided claim, its timely-filing clock starts from the new receipt date, and nothing ties the
+two together on the payer&rsquo;s books. Waystar&rsquo;s articles say to wait for the void to process before
+sending the new original, so there is a gap with no claim on file at all.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>situation</th>
+<th>send</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>same encounter, corrected data: units, mileage, codes, modifiers, diagnosis, charges</td>
+<td>replacement, frequency 7 with the original ICN. Some payers accept a corrected claim only within 12 months of the original payment and only one correction per original; both assume the link a 7 preserves</td>
+</tr>
+<tr>
+<td>the claim was wrong at its identity: wrong patient, wrong payer, wrong date of service</td>
+<td>void, then a new original once the void has processed. The BCBSMS rejection <em>key information does not match the corrected claim, please void original first</em> is the documented case</td>
+</tr>
+<tr>
+<td>the claim should not exist</td>
+<td>void only</td>
+</tr>
+<tr>
+<td>Medicare, professional claim</td>
+<td>neither is accepted; a corrected claim goes as frequency 1 with a claim note</td>
+</tr>
+</tbody>
+</table></div>
+<p>For the common case here, a mileage-unit correction on the same ride, the replacement is the
+shorter path: one file, one remittance, the link kept. Void-and-resubmit is for when the original
+was the wrong claim, not a wrong version of the right claim.</p>
+<p><strong>Medicaid is not Medicare.</strong> The refusal of frequency 7 and 8 on professional claims is a
+Medicare rule (the federal fee-for-service program), stated in Waystar&rsquo;s <em>How do I send a
+corrected claim to Medicare</em> article. Waystar&rsquo;s corpus has no Oklahoma Medicaid rule either way;
+its general instruction is &ldquo;ensure that the payer requires or accepts a replacement claim.&rdquo; For
+our payers the evidence is our own:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>payer</th>
+<th>share of 837 files sent</th>
+<th>frequency 7 / 8 through Waystar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OHCA / SoonerCare (<code>SKOK0</code>)</td>
+<td>43,671 of 64,000</td>
+<td><strong>proven.</strong> One void and one replacement sent 2026-09-02; SoonerCare matched the ICN, reversed the original under status 22 and adjudicated the correction under a new ICN, in one 835</td>
+</tr>
+<tr>
+<td>Humana Healthy Horizons (<code>61101</code>)</td>
+<td>6,939</td>
+<td>untested. Waystar&rsquo;s Humana note applies: it forwards in real time, so a resubmission sent before Humana&rsquo;s response comes back as a duplicate</td>
+</tr>
+<tr>
+<td>Oklahoma Complete Health (<code>68069</code>)</td>
+<td>6,682</td>
+<td>untested</td>
+</tr>
+<tr>
+<td>Aetna Better Health of Oklahoma (<code>128OK</code>)</td>
+<td>6,537</td>
+<td>untested</td>
+</tr>
+</tbody>
+</table></div>
+<p>Counts are files in the 837 archive naming that payer, measured 2026-09-22. The three MCOs
+have never received a 7 or an 8 from us. The first correction to each is the test; Waystar&rsquo;s
+side is the same file and the same upload, and only the payer&rsquo;s answer is unknown.</p>
+<h3>Sending a void or a replacement without the portal</h3>
+<p>Both are ordinary 837 files. There is no Waystar API call for either; the claim file upload is
+the one write path Waystar documents.</p>
+<ol>
+<li>Build a complete 837P for the claim, restating every segment of the original. Set Loop 2300
+   <code>CLM05-3</code> to <code>8</code> (void) or <code>7</code> (replacement, with the corrected content), and add
+   <code>REF*F8*&lt;ICN&gt;</code> in Loop 2300 with the payer&rsquo;s control number for the adjudication being voided
+   or replaced, read from the 835 <code>CLP07</code>.</li>
+<li>Optionally run the file through the Real-Time Rules Engine
+   (host <code>claimsapi.zirmed.com</code>, path <code>/ImmediateClaims/Intake/Process</code>, SOAP action
+   <code>Submit837ForEdits</code>, up to 50 claims) to see Waystar&rsquo;s edit results at once instead of after the nightly batch. The claims
+   land in Waystar&rsquo;s test area, not at the payer.</li>
+<li>Upload the file to <code>sshftp.waystar.com</code>, directory <code>/upload</code>, named <code>&lt;anything&gt;.CLP</code>. Waystar
+   ingests it automatically. The SFTP client matters: Waystar&rsquo;s server refuses modern OpenSSH on a
+   valid credential, and Node <code>ssh2</code> connects; five failed logins block the IP.</li>
+<li>Watch for the answer. Waystar&rsquo;s side (accepted, rejected by an edit, sent to the payer) is
+   readable per claim through the Claims History API. The payer&rsquo;s side arrives in the next 835:
+   a status-22 reversal under the original ICN, and for a replacement a new loop under a new
+   ICN. The 277CA and 277U files would carry the Waystar and payer status too, once the SFTP
+   download folder is provisioned.</li>
+</ol>
+<p>The two Echo1 corrections of 2026-09-02, one void and one replacement, went exactly this way:
+batch files <code>RC-B-0009</code> and <code>RC-B-REPL-0001</code> through the SFTP upload, answered in the
+SoonerCare 835 dated 2026-09-02.</p>
 <hr />
 <h2>7. Rework by failure signal</h2>
 <p>Sources: the Support Centre articles named in <code>waystar-corrected-claim-workflow.md</code> §1.</p>
