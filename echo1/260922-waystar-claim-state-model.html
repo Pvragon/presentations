@@ -729,6 +729,47 @@ thing from the other side: 13,284 primary adjudications paid zero under status <
 under status <code>4</code>. <strong>Denied is read from the money, never from <code>CLP02</code>.</strong></p>
 <p><code>19</code>, <code>20</code>, <code>21</code>, <code>23</code> (processed and forwarded to another payer) and <code>25</code>, <code>27</code> are in Waystar&rsquo;s
 map but do not occur in our files.</p>
+<h4>OHCA&rsquo;s ICN prefixes: how SoonerCare marks an adjustment</h4>
+<p>SoonerCare&rsquo;s ICN is a 13-digit number whose first two digits say what kind of record it is. The
+payer does not publish a legend in the RA, so this is measured across every SoonerCare loop on
+file (79,070 loops, 2026-09-22), read together with OHCA&rsquo;s own remittance advice for payment
+012596050:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>prefix</th>
+<th>loops</th>
+<th>what it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>20</code></td>
+<td>57,368</td>
+<td>an original electronic claim adjudication; the ICN carries the year and day it was received (<code>2026245…</code> = day 245 of 2026)</td>
+</tr>
+<tr>
+<td><code>59</code></td>
+<td>2,712</td>
+<td><strong>the void of a prior adjudication.</strong> Every one is status 1, paid 0.00, with a single <code>CO-45</code> for the full charge, and 2,681 of them sit beside a status-22 reversal of the same claim in the same 835. On OHCA&rsquo;s RA the pair appears under <em>HCFA 1500 CLAIM ADJUSTMENTS</em> as the original ICN with its amounts negated and the 59 ICN beneath it, and the money taken back appears under <em>FINANCIAL TRANSACTIONS</em> with code 8400, <em>result of claim adjustment</em></td>
+</tr>
+<tr>
+<td><code>22</code>, <code>52</code></td>
+<td>9,243 and 9,744</td>
+<td>re-adjudications that pay: together they carry $10.6M of payments, and 15,773 of them sit beside a reversal of the same claim. The reading consistent with that is a reprocessed or replaced claim adjudicated afresh; OHCA has not stated it</td>
+</tr>
+<tr>
+<td><code>49</code></td>
+<td>3</td>
+<td>reversals only</td>
+</tr>
+</tbody>
+</table></div>
+<p>So when OHCA says a 59 means the prior claim is being voided or cancelled, the 835 shows the
+same event twice: the status-22 loop under the original ICN gives the money back, and the
+status-1 loop under the 59 ICN is the zero-paid adjustment record that replaces it. Both count
+in the net, which is why the five-state rule needs no special case for it. Our own void and
+replacement of 2026-09-02 each produced one 59 ICN.</p>
 <hr />
 <h2>5. Line grain: why a partial is worked per line</h2>
 <p>Adjudication is per service line. Each ICN restates the full line set with its own money, and
@@ -790,7 +831,8 @@ reason, and its remark codes (<code>LQ*HE</code>).</p>
 <li><strong>A denial or partial is corrected with a reference to the adjudication.</strong> Frequency <code>7</code>
   (replacement) or <code>8</code> (void) in <code>CLM05-3</code>, and the payer&rsquo;s ICN in <code>REF*F8</code>. The payer answers
   with a new ICN for the correction and a <code>CLP02 = 22</code> reversal under the original ICN, and the
-  claim re-nets. Measured end to end on the two Echo1 corrections of 2026-09-02.</li>
+  claim re-nets. Measured end to end on the two Echo1 corrections of 2026-09-02. SoonerCare adds
+  a third loop: a zero-paid adjustment record under an ICN beginning <code>59</code> (§4.5).</li>
 <li><strong>Medicare refuses 7 and 8 on professional claims</strong>; the correction goes as frequency <code>1</code> with
   a claim note.</li>
 <li><strong>A net-overpaid claim needs no action from us to correct</strong>; the payer&rsquo;s reversal is the
