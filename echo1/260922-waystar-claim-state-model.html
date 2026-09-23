@@ -137,83 +137,114 @@
   </div>
   <h1>Waystar claim states, from 837 upload to the <span class="accent">five 835 states</span></h1>
   <p class="lede">The lifecycle of a claim through Waystar, and the five states a claim can be in once at least one 835 loop exists: net negative, denied, partially paid, paid in full, net overpaid.</p>
-  <div class="meta"><span>Waystar docs captured 2026-08-08</span><span>Measured 2026-09-22</span><span>v0.1.0</span></div>
+  <div class="meta"><span>Waystar docs captured 2026-08-08</span><span>Measured 2026-09-22</span><span>v0.2.0</span></div>
 </header>
 
 <article>
 <hr />
 <h2>1. The lifecycle</h2>
 <figure class="dia" data-name="diagram-1" data-title="diagram 1"><figcaption><span class="nm">diagram 1</span></figcaption><div class="canvas"><svg id="mdiagram1" xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 1757.62109375 1481" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mdiagram1{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}#mdiagram1 .error-icon{fill:#552222;}#mdiagram1 .error-text{fill:#552222;stroke:#552222;}#mdiagram1 .edge-thickness-normal{stroke-width:2px;}#mdiagram1 .edge-thickness-thick{stroke-width:3.5px;}#mdiagram1 .edge-pattern-solid{stroke-dasharray:0;}#mdiagram1 .edge-pattern-dashed{stroke-dasharray:3;}#mdiagram1 .edge-pattern-dotted{stroke-dasharray:2;}#mdiagram1 .marker{fill:#333333;stroke:#333333;}#mdiagram1 .marker.cross{stroke:#333333;}#mdiagram1 svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mdiagram1 .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#mdiagram1 .cluster-label text{fill:#333;}#mdiagram1 .cluster-label span,#mdiagram1 p{color:#333;}#mdiagram1 .label text,#mdiagram1 span,#mdiagram1 p{fill:#333;color:#333;}#mdiagram1 .node rect,#mdiagram1 .node circle,#mdiagram1 .node ellipse,#mdiagram1 .node polygon,#mdiagram1 .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mdiagram1 .flowchart-label text{text-anchor:middle;}#mdiagram1 .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mdiagram1 .node .label{text-align:center;}#mdiagram1 .node.clickable{cursor:pointer;}#mdiagram1 .arrowheadPath{fill:#333333;}#mdiagram1 .edgePath .path{stroke:#333333;stroke-width:2.0px;}#mdiagram1 .flowchart-link{stroke:#333333;fill:none;}#mdiagram1 .edgeLabel{background-color:#e8e8e8;text-align:center;}#mdiagram1 .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}#mdiagram1 .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#mdiagram1 .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#mdiagram1 .cluster text{fill:#333;}#mdiagram1 .cluster span,#mdiagram1 p{color:#333;}#mdiagram1 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#mdiagram1 .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#mdiagram1 :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mdiagram1 .state>*{fill:#E8F1F5!important;stroke:#1E4958!important;color:#0B1F26!important;}#mdiagram1 .state span{fill:#E8F1F5!important;stroke:#1E4958!important;color:#0B1F26!important;}#mdiagram1 .state tspan{fill:#0B1F26!important;}#mdiagram1 .bad>*{fill:#FBE9E7!important;stroke:#B42318!important;color:#0B1F26!important;}#mdiagram1 .bad span{fill:#FBE9E7!important;stroke:#B42318!important;color:#0B1F26!important;}#mdiagram1 .bad tspan{fill:#0B1F26!important;}#mdiagram1 .rework>*{fill:#FCEFDC!important;stroke:#B54708!important;color:#0B1F26!important;}#mdiagram1 .rework span{fill:#FCEFDC!important;stroke:#B54708!important;color:#0B1F26!important;}#mdiagram1 .rework tspan{fill:#0B1F26!important;}</style><g><marker id="mdiagram1_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mdiagram1_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mdiagram1_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mdiagram1_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mdiagram1_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mdiagram1_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"><g class="cluster default flowchart-label" id="STATES"><rect style="" rx="0" ry="0" x="420.75" y="1042" width="1042.25390625"></rect><g class="cluster-label" transform="translate(746.189453125, 1042)"><foreignObject width="391.375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">4 · The five states: net of every 835 loop for the claim</span></div></foreignObject></g></g><g class="cluster default flowchart-label" id="PAYER"><rect style="" rx="0" ry="0" x="451.625" y="550" width="942.8671875" height="423"></rect><g class="cluster-label" transform="translate(891.39453125, 550)"><foreignObject width="63.328125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">3 · Payer</span></div></foreignObject></g></g><g class="cluster default flowchart-label" id="WS"><rect style="" rx="0" ry="0" x="16.6328125" y="153" width="873.7890625" height="347"></rect><g class="cluster-label" transform="translate(393.41015625, 153)"><foreignObject width="120.234375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">2 · Waystar edits</span></div></foreignObject></g></g><g class="cluster default flowchart-label" id="SUBMIT"><rect style="" rx="0" ry="0" x="354.625" y="0" width="334.421875" height="103"></rect><g class="cluster-label" transform="translate(470.859375, 0)"><foreignObject width="101.953125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">1 · Submission</span></div></foreignObject></g></g></g><g class="edgePaths"><path d="M521.836,78L521.836,82.167C521.836,86.333,521.836,94.667,521.836,103C521.836,111.333,521.836,119.667,521.836,128C521.836,136.333,521.836,144.667,521.836,152.117C521.836,159.567,521.836,166.133,521.836,169.417L521.836,172.7" id="L-A-B-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-A LE-B" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M357.385,231L321.703,236.75C286.02,242.5,214.654,254,178.972,269.917C143.289,285.833,143.289,306.167,143.289,326.5C143.289,346.833,143.289,367.167,148.774,382.479C154.259,397.791,165.229,408.083,170.714,413.228L176.199,418.374" id="L-B-RJW-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-B LE-RJW" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M577.622,231L589.727,236.75C601.832,242.5,626.041,254,638.145,264.617C650.25,275.233,650.25,284.967,650.25,289.833L650.25,294.7" id="L-B-C-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-B LE-C" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M514.047,353L484.494,358.75C454.94,364.5,395.833,376,354.973,387.121C314.113,398.242,291.5,408.984,280.193,414.355L268.886,419.726" id="L-C-RJW-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-C LE-RJW" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M674.298,353L679.516,358.75C684.734,364.5,695.17,376,700.388,388.2C705.605,400.4,705.605,413.3,705.605,419.75L705.605,426.2" id="L-C-D-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-C LE-D" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M705.605,465.5L705.605,471.25C705.605,477,705.605,488.5,705.605,498.417C705.605,508.333,705.605,516.667,705.605,525C705.605,533.333,705.605,541.667,705.605,549.117C705.605,556.567,705.605,563.133,705.605,566.417L705.605,569.7" id="L-D-E-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-D LE-E" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M662.774,609L648.287,614.75C633.8,620.5,604.826,632,590.339,642.617C575.852,653.233,575.852,662.967,575.852,667.833L575.852,672.7" id="L-E-RJP-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-E LE-RJP" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M763.984,609L783.729,614.75C803.475,620.5,842.966,632,862.711,642.617C882.457,653.233,882.457,662.967,882.457,667.833L882.457,672.7" id="L-E-F-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-E LE-F" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M882.457,750L882.457,755.75C882.457,761.5,882.457,773,882.457,783.617C882.457,794.233,882.457,803.967,882.457,808.833L882.457,813.7" id="L-F-L-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-F LE-L" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M617.028,948L599.881,952.167C582.735,956.333,548.442,964.667,531.295,974.583C514.148,984.5,514.148,996,514.148,1007.5C514.148,1019,514.148,1030.5,514.148,1041.117C514.148,1051.733,514.148,1061.467,514.148,1066.333L514.148,1071.2" id="L-L-S1-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-L LE-S1" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M719.087,948L708.534,952.167C697.98,956.333,676.873,964.667,666.319,974.583C655.766,984.5,655.766,996,655.766,1007.5C655.766,1019,655.766,1030.5,655.766,1041.117C655.766,1051.733,655.766,1061.467,655.766,1066.333L655.766,1071.2" id="L-L-S2-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-L LE-S2" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M848.515,948L846.323,952.167C844.13,956.333,839.745,964.667,837.552,974.583C835.359,984.5,835.359,996,835.359,1007.5C835.359,1019,835.359,1030.5,835.359,1041.117C835.359,1051.733,835.359,1061.467,835.359,1066.333L835.359,1071.2" id="L-L-S3-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-L LE-S3" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M991.884,948L998.952,952.167C1006.021,956.333,1020.159,964.667,1027.228,974.583C1034.297,984.5,1034.297,996,1034.297,1007.5C1034.297,1019,1034.297,1030.5,1034.297,1041.117C1034.297,1051.733,1034.297,1061.467,1034.297,1066.333L1034.297,1071.2" id="L-L-S4-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-L LE-S4" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M1153.736,948L1171.26,952.167C1188.785,956.333,1223.834,964.667,1241.358,974.583C1258.883,984.5,1258.883,996,1258.883,1007.5C1258.883,1019,1258.883,1030.5,1258.883,1039.533C1258.883,1048.567,1258.883,1055.133,1258.883,1058.417L1258.883,1061.7" id="L-L-S5-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-L LE-S5" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M208.313,475L208.313,479.167C208.313,483.333,208.313,491.667,208.313,500C208.313,508.333,208.313,516.667,208.313,525C208.313,533.333,208.313,541.667,208.313,552.833C208.313,564,208.313,578,208.313,593.583C208.313,609.167,208.313,626.333,208.313,646.667C208.313,667,208.313,690.5,208.313,714C208.313,737.5,208.313,761,208.313,780.783C208.313,800.567,208.313,816.633,208.313,824.667L208.313,832.7" id="L-RJW-R1-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RJW LE-R1" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M575.852,750L575.852,755.75C575.852,761.5,575.852,773,543.601,787.437C511.351,801.874,446.85,819.248,414.6,827.935L382.35,836.622" id="L-RJP-R1-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RJP LE-R1" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M655.766,1129.5L655.766,1135.25C655.766,1141,655.766,1152.5,655.766,1164C655.766,1175.5,655.766,1187,661.56,1197.912C667.355,1208.825,678.944,1219.15,684.739,1224.312L690.533,1229.474" id="L-S2-R2-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-S2 LE-R2" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M835.359,1129.5L835.359,1135.25C835.359,1141,835.359,1152.5,835.359,1164C835.359,1175.5,835.359,1187,829.565,1197.912C823.77,1208.825,812.181,1219.15,806.386,1224.312L800.592,1229.474" id="L-S3-R2-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-S3 LE-R2" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M688.984,1105.574L814.654,1115.312C940.324,1125.049,1191.664,1144.525,1317.334,1160.012C1443.004,1175.5,1443.004,1187,1443.004,1197.617C1443.004,1208.233,1443.004,1217.967,1443.004,1222.833L1443.004,1227.7" id="L-S2-R3-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-S2 LE-R3" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M208.313,929L208.313,936.333C208.313,943.667,208.313,958.333,208.313,971.417C208.313,984.5,208.313,996,208.313,1007.5C208.313,1019,208.313,1030.5,208.313,1046.417C208.313,1062.333,208.313,1082.667,208.313,1103C208.313,1123.333,208.313,1143.667,208.313,1159.583C208.313,1175.5,208.313,1187,208.313,1206.083C208.313,1225.167,208.313,1251.833,208.313,1276.917C208.313,1302,208.313,1325.5,238.214,1342.136C268.116,1358.772,327.919,1368.545,357.821,1373.431L387.723,1378.317" id="L-R1-RS-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-R1 LE-RS" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M745.563,1324L745.563,1328.167C745.563,1332.333,745.563,1340.667,740.043,1348.51C734.524,1356.354,723.486,1363.708,717.967,1367.385L712.448,1371.061" id="L-R2-RS-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-R2 LE-RS" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path><path d="M1443.004,1324L1443.004,1328.167C1443.004,1332.333,1443.004,1340.667,1351.138,1352.896C1259.273,1365.126,1075.542,1381.251,983.676,1389.314L891.811,1397.377" id="L-R3-RS-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-R3 LE-RS" style="fill:none;" marker-end="url(#mdiagram1_flowchart-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(143.2890625, 326.5)"><g class="label" transform="translate(-15.0390625, -9.5)"><foreignObject width="30.078125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">fails</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(650.25, 265.5)"><g class="label" transform="translate(-22.7421875, -9.5)"><foreignObject width="45.484375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">passes</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(336.7265625, 387.5)"><g class="label" transform="translate(-15.0390625, -9.5)"><foreignObject width="30.078125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">fails</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(705.60546875, 387.5)"><g class="label" transform="translate(-43.328125, -9.5)"><foreignObject width="86.65625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">passes [A-T]</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(575.8515625, 643.5)"><g class="label" transform="translate(-30.7265625, -9.5)"><foreignObject width="61.453125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">rejected</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(882.45703125, 643.5)"><g class="label" transform="translate(-30.8203125, -9.5)"><foreignObject width="61.640625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">received</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(882.45703125, 784.5)"><g class="label" transform="translate(-64.1328125, -9.5)"><foreignObject width="128.265625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">payer adjudicates</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(514.1484375, 1007.5)"><g class="label" transform="translate(-100.2265625, -9.5)"><foreignObject width="200.453125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">net every loop, then bucket</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(208.3125, 643.5)"><g class="label" transform="translate(-42.0078125, -9.5)"><foreignObject width="84.015625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">fix the data</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(575.8515625, 784.5)"><g class="label" transform="translate(-42.0078125, -9.5)"><foreignObject width="84.015625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">fix the data</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(655.765625, 1198.5)"><g class="label" transform="translate(-55.9921875, -9.5)"><foreignObject width="111.984375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">data was wrong</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(835.359375, 1198.5)"><g class="label" transform="translate(-55.9921875, -9.5)"><foreignObject width="111.984375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">data was wrong</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(1443.00390625, 1198.5)"><g class="label" transform="translate(-94.125, -9.5)"><foreignObject width="188.25" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">should not have been sent</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default state flowchart-label" id="flowchart-S1-9" data-node="true" data-id="S1" transform="translate(514.1484375, 1103)"><rect class="basic label-container" style="" rx="0" ry="0" x="-58.3984375" y="-26.5" width="116.796875" height="53"></rect><g class="label" style="" transform="translate(-50.8984375, -19)"><rect></rect><foreignObject width="101.796875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">NET NEGATIVE<br/>net below 0</span></div></foreignObject></g></g><g class="node default state flowchart-label" id="flowchart-S2-10" data-node="true" data-id="S2" transform="translate(655.765625, 1103)"><rect class="basic label-container" style="" rx="0" ry="0" x="-33.21875" y="-26.5" width="66.4375" height="53"></rect><g class="label" style="" transform="translate(-25.71875, -19)"><rect></rect><foreignObject width="51.4375" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">DENIED<br/>net = 0</span></div></foreignObject></g></g><g class="node default state flowchart-label" id="flowchart-S3-11" data-node="true" data-id="S3" transform="translate(835.359375, 1103)"><rect class="basic label-container" style="" rx="0" ry="0" x="-96.375" y="-26.5" width="192.75" height="53"></rect><g class="label" style="" transform="translate(-88.875, -19)"><rect></rect><foreignObject width="177.75" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">PARTIALLY PAID<br/>0 below net below billed</span></div></foreignObject></g></g><g class="node default state flowchart-label" id="flowchart-S4-12" data-node="true" data-id="S4" transform="translate(1034.296875, 1103)"><rect class="basic label-container" style="" rx="0" ry="0" x="-52.5625" y="-26.5" width="105.125" height="53"></rect><g class="label" style="" transform="translate(-45.0625, -19)"><rect></rect><foreignObject width="90.125" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">PAID IN FULL<br/>net = billed</span></div></foreignObject></g></g><g class="node default state flowchart-label" id="flowchart-S5-13" data-node="true" data-id="S5" transform="translate(1258.8828125, 1103)"><rect class="basic label-container" style="" rx="0" ry="0" x="-122.0234375" y="-36" width="244.046875" height="72"></rect><g class="label" style="" transform="translate(-114.5234375, -28.5)"><rect></rect><foreignObject width="229.046875" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">NET OVERPAID<br/>net above billed<br/>the payer's reversal (22) follows</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-E-5" data-node="true" data-id="E" transform="translate(705.60546875, 592)"><rect class="basic label-container" style="" rx="5" ry="5" x="-67.609375" y="-17" width="135.21875" height="34"></rect><g class="label" style="" transform="translate(-60.109375, -9.5)"><rect></rect><foreignObject width="120.21875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Front-end intake</span></div></foreignObject></g></g><g class="node default bad flowchart-label" id="flowchart-RJP-6" data-node="true" data-id="RJP" transform="translate(575.8515625, 714)"><rect class="basic label-container" style="" rx="0" ry="0" x="-89.2265625" y="-36" width="178.453125" height="72"></rect><g class="label" style="" transform="translate(-81.7265625, -28.5)"><rect></rect><foreignObject width="163.453125" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">REJECTED BY PAYER<br/>never adjudicated<br/>[R-P; 277 A3 / A6 / A7]</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-F-7" data-node="true" data-id="F" transform="translate(882.45703125, 714)"><rect class="basic label-container" style="" rx="0" ry="0" x="-120.28125" y="-36" width="240.5625" height="72"></rect><g class="label" style="" transform="translate(-112.78125, -28.5)"><rect></rect><foreignObject width="225.5625" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">AWAITING ADJUDICATION<br/>portal status Received by Payer<br/>[A-P; 277 A1 / A2 / P0 to P3]</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-L-8" data-node="true" data-id="L" transform="translate(882.45703125, 883.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-293.046875" y="-64.5" width="586.09375" height="129"></rect><g class="label" style="" transform="translate(-285.546875, -57)"><rect></rect><foreignObject width="571.09375" height="114"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">835 claim record, one per adjudication (X12 calls it a CLP loop)<br/>CLP02, the claim status code, is the payer's headline for this adjudication:<br/>1 processed as primary · 2 processed as secondary · 3 processed as tertiary<br/>4 denied (whole claim) · 22 reversal of an earlier payment, amounts negative<br/>CLP03 billed · CLP04 paid · CLP07 the payer's ICN<br/>then one SVC line per service with its paid amount and CAS adjustment reasons</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-B-1" data-node="true" data-id="B" transform="translate(521.8359375, 204.5)"><rect class="basic label-container" style="" rx="5" ry="5" x="-183.2734375" y="-26.5" width="366.546875" height="53"></rect><g class="label" style="" transform="translate(-175.7734375, -19)"><rect></rect><foreignObject width="351.546875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">First-level edits<br/>name matching, payer enrollment, account rules</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-C-2" data-node="true" data-id="C" transform="translate(650.25, 326.5)"><rect class="basic label-container" style="" rx="5" ry="5" x="-205.171875" y="-26.5" width="410.34375" height="53"></rect><g class="label" style="" transform="translate(-197.671875, -19)"><rect></rect><foreignObject width="395.34375" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Second-level edits<br/>HIPAA, NPI, diagnosis and procedure codes, payer rules</span></div></foreignObject></g></g><g class="node default bad flowchart-label" id="flowchart-RJW-3" data-node="true" data-id="RJW" transform="translate(208.3125, 448.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-130.0859375" y="-26.5" width="260.171875" height="53"></rect><g class="label" style="" transform="translate(-122.5859375, -19)"><rect></rect><foreignObject width="245.171875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">REJECTED BY WAYSTAR<br/>[R-Z first-level · R-T second-level]</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-D-4" data-node="true" data-id="D" transform="translate(705.60546875, 448.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-94.4609375" y="-17" width="188.921875" height="34"></rect><g class="label" style="" transform="translate(-86.9609375, -9.5)"><rect></rect><foreignObject width="173.921875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Sent to the payer [FP-T]</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-A-0" data-node="true" data-id="A" transform="translate(521.8359375, 51.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-132.2109375" y="-26.5" width="264.421875" height="53"></rect><g class="label" style="" transform="translate(-124.7109375, -19)"><rect></rect><foreignObject width="249.421875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">837 claim file uploaded to Waystar<br/>SFTP /upload, .CLP</span></div></foreignObject></g></g><g class="node default rework flowchart-label" id="flowchart-R1-14" data-node="true" data-id="R1" transform="translate(208.3125, 883.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-208.3125" y="-45.5" width="416.625" height="91"></rect><g class="label" style="" transform="translate(-200.8125, -38)"><rect></rect><foreignObject width="401.625" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">NEW ORIGINAL, after a rejection<br/>send the corrected claim as a brand-new claim<br/>837 Loop 2300 CLM05-3 (claim frequency type code) = 1<br/>no REF*F8 segment</span></div></foreignObject></g></g><g class="node default rework flowchart-label" id="flowchart-R2-15" data-node="true" data-id="R2" transform="translate(745.5625, 1278.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-306.125" y="-45.5" width="612.25" height="91"></rect><g class="label" style="" transform="translate(-298.625, -38)"><rect></rect><foreignObject width="597.25" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">REPLACEMENT, after a denial or partial payment<br/>send the whole claim again with the fix in it<br/>837 Loop 2300 CLM05-3 (claim frequency type code) = 7, replace prior claim<br/>REF*F8 = the payer's ICN for the adjudication being replaced (from the 835, CLP07)</span></div></foreignObject></g></g><g class="node default rework flowchart-label" id="flowchart-R3-16" data-node="true" data-id="R3" transform="translate(1443.00390625, 1278.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-298.6171875" y="-45.5" width="597.234375" height="91"></rect><g class="label" style="" transform="translate(-291.1171875, -38)"><rect></rect><foreignObject width="582.234375" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">VOID, when the claim should not have been sent<br/>send the whole original claim again, unchanged<br/>837 Loop 2300 CLM05-3 (claim frequency type code) = 8, void prior claim<br/>REF*F8 = the payer's ICN for the adjudication being voided (from the 835, CLP07)</span></div></foreignObject></g></g><g class="node default rework flowchart-label" id="flowchart-RS-17" data-node="true" data-id="RS" transform="translate(639.7421875, 1419.5)"><rect style="" rx="45.5" ry="45.5" x="-246.7890625" y="-45.5" width="493.578125" height="91"></rect><g class="label" style="" transform="translate(-227.9140625, -38)"><rect></rect><foreignObject width="455.828125" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">5 · Rework: the corrected 837 goes back to box 1,<br/>the same SFTP upload as an original.<br/>The payer answers with new 835 loops in box 3:<br/>a new ICN for the correction, and a reversal (22) of the old one</span></div></foreignObject></g></g></g></g></g></svg></div></figure>
-<h3>Terms used in the lifecycle</h3>
+<h3>Terms</h3>
 <p class="callout"><strong>First-level and second-level edits</strong> are Waystar&rsquo;s two rounds of checks before a claim goes
-anywhere (Support Centre article <em>What are the clearinghouse first and second level edits</em>,
-revised 2026-01-06). First-level edits are name matching, payer enrollment and account-specific
-rules; they run &ldquo;before the claim is processed and the claim has not been billed to the client.&rdquo;
-Second-level edits are the HIPAA structure checks, business validations such as NPI, diagnosis
-and procedure codes valid for the date of service, optional coding-compliance packages (CCI,
-LCD, NCD), and payer- or intermediary-specific rules; they count toward monthly billing. A claim
+anywhere. First-level: name matching, payer enrollment, account rules; they run before the claim
+is processed or billed to us. Second-level: HIPAA structure, NPI, diagnosis and procedure codes
+valid for the date of service, optional coding-compliance packages, payer-specific rules. A claim
 stops at the first second-level edit it fails, and a corrected resubmission can fail a later one.</p>
-<p class="callout"><strong>Claims Disposition Report event codes</strong> such as <code>R-Z</code>, <code>A-T</code> and <code>FP-T</code> are Waystar&rsquo;s own; the
-full list is in §4.2. Waystar publishes the list without explaining its grammar; the pattern in
-the list is that the letters before the hyphen name the event and the letter after it names who did it:
-<code>-T</code> for Waystar&rsquo;s own processing, <code>-P</code> the payer, <code>-I</code> an intermediary, <code>-R</code> a repricer, and
-<code>-Z</code> on the one first-edits rejection. So <code>A-T</code> is <em>passed all edits</em> at Waystar, <code>FP-T</code> is
-<em>sent to the payer</em> by Waystar, <code>R-P</code> is <em>rejected by the payer</em>, <code>D-P</code> <em>denied by the payer</em>,
-<code>P-P</code> <em>paid by the payer</em>. The codes reach a customer only through the CDR file, which is not
-provisioned for our account; the same events appear as text in each claim&rsquo;s Waystar history.</p>
-<p class="callout"><strong>277 category codes</strong> (<code>A1</code>, <code>A3</code>, <code>P0</code>, <code>F2</code> and so on) are the X12 claim-status categories a
-payer returns to a status inquiry, listed with Waystar&rsquo;s labels in §4.3.</p>
-<p class="callout"><strong>Frequency code</strong> is X12&rsquo;s name for one field, and the name misleads: it has nothing to do with
-how often. The <em>claim frequency type code</em> is the third part of <code>CLM05</code> in Loop 2300 of the 837
-(the composite that also carries place of service), and it tells the payer what kind of
-submission this file is: <code>1</code> an original claim, <code>7</code> a replacement of a prior claim (the payer
-re-adjudicates using this version), <code>8</code> a void of a prior claim (the payer reverses it). A <code>7</code>
-or an <code>8</code> must also carry the payer&rsquo;s control number for the original adjudication, the ICN,
-in <code>REF*F8</code>; without it the payer answers <em>original claim not found</em>. Medicare accepts neither
-on professional claims, and takes a corrected claim as a <code>1</code> with a claim note instead.</p>
-<p class="callout"><strong>Loop</strong> is X12&rsquo;s word for the block of segments that describes one thing inside a file. In
-the 835 a <em>claim loop</em> is the block for one adjudication of one claim: the <code>CLP</code> segment (our
-claim number, the claim status code <code>CLP02</code>, billed <code>CLP03</code>, paid <code>CLP04</code>, the payer&rsquo;s ICN
-<code>CLP07</code>) followed by that adjudication&rsquo;s service lines and adjustments. A reversal is a claim
-loop of its own, with <code>CLP02 = 22</code> and negative amounts.</p>
-<p class="callout"><strong>ICN</strong> is the payer&rsquo;s own claim identifier, assigned when it adjudicates. It arrives in the 835
-as <code>CLP07</code>, one per adjudication, so a claim that was corrected and re-adjudicated has more than
-one.</p>
-<p class="callout"><strong>Net</strong> is the sum of every 835 claim payment amount (<code>CLP04</code>) for the claim across all its
-loops; a reversal loop carries a negative amount, so it subtracts. <strong>Billed</strong> is the claim&rsquo;s total
-charge (<code>CLP03</code>) on a non-reversal loop.</p>
-<p>Three points in the lifecycle are easy to get wrong:</p>
+<p class="callout"><strong>Event codes</strong> such as <code>R-Z</code>, <code>A-T</code>, <code>FP-T</code> are Waystar&rsquo;s Claims Disposition Report codes (§4.2).
+Waystar does not explain the grammar; the pattern is that the letters before the hyphen name the
+event and the letter after it names who did it: <code>-T</code> Waystar, <code>-P</code> the payer, <code>-I</code> an
+intermediary, <code>-R</code> a repricer, <code>-Z</code> the one first-edits rejection.</p>
+<p class="callout"><strong>277 category codes</strong> (<code>A1</code>, <code>A3</code>, <code>P0</code>, <code>F2</code>) are the X12 claim-status categories a payer returns
+to a status inquiry (§4.3).</p>
+<p class="callout"><strong>Frequency code</strong> is X12&rsquo;s name for one 837 field and has nothing to do with how often. The claim
+frequency type code, <code>CLM05-3</code> in Loop 2300, tells the payer what kind of submission this is:
+<code>1</code> original, <code>7</code> replacement of a prior claim, <code>8</code> void of a prior claim. A 7 or 8 also carries
+the payer&rsquo;s ICN for the original adjudication in <code>REF*F8</code>.</p>
+<p class="callout"><strong>Loop</strong> is X12&rsquo;s word for the block of segments describing one thing in a file. In the 835 a
+claim loop is one adjudication of one claim: the <code>CLP</code> segment, then that adjudication&rsquo;s service
+lines and adjustments. A reversal is its own loop, status 22, negative amounts.</p>
+<p class="callout"><strong>Net</strong> is the sum of <code>CLP04</code> over every loop for the claim; reversals subtract. <strong>Billed</strong> is
+<code>CLP03</code> on a non-reversal loop.</p>
+<h3>The identifiers</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>number</th>
+<th>assigned by</th>
+<th>lives in</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>our claim number</td>
+<td>us, once per claim</td>
+<td>837 <code>CLM01</code>; echoed as 835 <code>CLP01</code></td>
+<td><code>JUD.GAN.0006.B.24</code></td>
+</tr>
+<tr>
+<td>Waystar Claim ID and Instance ID</td>
+<td>Waystar, per submission</td>
+<td>the spine, the history API, 835 line refs (<code>REF*6R</code>)</td>
+<td><code>12329620875</code> / <code>12692789795</code></td>
+</tr>
+<tr>
+<td>payer ICN</td>
+<td>the payer, per adjudication</td>
+<td>835 <code>CLP07</code>; <code>REF*F8</code> on a void or replacement</td>
+<td><code>2026231434711</code></td>
+</tr>
+<tr>
+<td>payment number</td>
+<td>the payer, per check or EFT</td>
+<td>835 <code>TRN02</code>; the RA header</td>
+<td><code>012596050</code></td>
+</tr>
+<tr>
+<td>claim status code</td>
+<td>X12 code set, not an id</td>
+<td>835 <code>CLP02</code></td>
+<td><code>1</code>, <code>22</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Our claim number is the same across every submission of a claim. Waystar&rsquo;s IDs change with every
+submission and never reach the payer; one in <code>REF*F8</code> gets the claim rejected. The ICN is the
+only number the payer creates, and SoonerCare&rsquo;s ICN prefixes (§4.5) carry the payer&rsquo;s record type.</p>
+<p>One 835 is one payment and lists every claim it touched (median 15 loops per file, up to
+19,661). One ICN normally appears once; a second appearance is its reversal, usually in a later
+835 (15,104 of 15,458 cases). One claim number carries one ICN in 48,813 cases, two in 13,236,
+three in 2,160: every resubmission or adjustment gets a new one.</p>
+<p>The Jud.Gan claim ties them together: one claim number; two Waystar submissions (original,
+replacement); three ICNs (original <code>2026231434711</code>, replacement <code>2026245443565</code>, void record
+<code>5926243005629</code>); two payments (<code>012581768</code> on 2026-08-19 paid the original; <code>012596050</code> on
+2026-09-02 carried the replacement, the reversal and the 59 record in one 835).</p>
+<h3>Three things to get right</h3>
 <ol>
-<li><strong>Rejection and denial are different exits.</strong> A rejection (Waystar&rsquo;s edits, or the payer&rsquo;s
-   front end) happens <em>before</em> adjudication: no ICN, no 835, nothing to reverse. Waystar&rsquo;s 277
-   vocabulary keeps them apart (<code>A3</code>/<code>A6</code>/<code>A7</code> are <em>Rejected</em>, <code>F2</code> is <em>Denied</em>), and so does the
-   CDR: <code>R-P CLAIM REJECTED BY PAYER</code> versus <code>D-P CLAIM DENIED BY PAYER</code>. A rejected claim is
-   resubmitted as an <strong>original</strong> (frequency 1); a denied one is corrected with frequency 7 or 8
-   and the payer&rsquo;s ICN.</li>
-<li><strong>&ldquo;Received by Payer&rdquo; is where every adjudicated claim lives.</strong> The portal&rsquo;s Status column
-   (the spine&rsquo;s <code>Status</code>) is a transport state and never advances past it. Measured across all
-   64,944 spine rows the column takes five values only: <code>Received by Payer</code> (64,786),
-   <code>Rejected by Payer</code> (66), <code>Rejected by Waystar</code> (59), <code>In Progress</code> (29),
-   <code>Rejected - Name Matching Required</code> (4). Paid, denied and partial are <strong>not</strong> portal statuses.
-   They exist only on the 835 side.</li>
-<li><strong>The state is the net of every loop, and it is never final.</strong> One claim can carry several
-   ICNs (each resubmission gets a new one) and several loops per ICN (a reversal is a second
-   loop under the <em>same</em> ICN with <code>CLP02 = 22</code> and negative money). A later 835 can move a claim
-   between states at any time.</li>
+<li><strong>Rejection and denial are different exits.</strong> A rejection happens before adjudication: no ICN,
+   no 835, nothing to reverse. Waystar keeps them apart (<code>A3</code>/<code>A6</code>/<code>A7</code> rejected, <code>F2</code> denied;
+   <code>R-P</code> versus <code>D-P</code>). A rejected claim goes back as an original (frequency 1); a denied one is
+   corrected with 7 or 8 and the ICN.</li>
+<li><strong>&ldquo;Received by Payer&rdquo; is where every adjudicated claim lives.</strong> The portal Status column never
+   advances past it: across 64,944 spine rows it takes five values, Received by Payer (64,786),
+   Rejected by Payer (66), Rejected by Waystar (59), In Progress (29), Rejected - Name Matching
+   Required (4). Paid, denied and partial exist only on the 835 side.</li>
+<li><strong>The state is the net of every loop, and never final.</strong> A claim can carry several ICNs and
+   several loops per ICN. The next 835 can move it.</li>
 </ol>
 <hr />
 <h2>2. The five states</h2>
-<p><strong>Rule.</strong> For a claim with at least one 835 <code>CLP</code> loop, let <code>net = Σ CLP04</code> over every loop
-(reversals carry negative <code>CLP04</code>, so they subtract) and <code>billed = CLP03</code> of the adjudication
-(the largest non-reversal <code>CLP03</code> when they differ). Then the claim is in exactly one of:</p>
+<p><strong>Rule.</strong> For a claim with at least one 835 loop: <code>net = Σ CLP04</code> over every loop (reversals
+negative), <code>billed = CLP03</code> of the adjudication (the largest non-reversal <code>CLP03</code> if they differ).
+Then exactly one of:</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
 <th>#</th>
 <th>state</th>
 <th>test</th>
-<th>what the money is</th>
-<th>what it means</th>
+<th>the money</th>
+<th>meaning</th>
 <th>first action</th>
 </tr>
 </thead>
@@ -222,25 +253,25 @@ charge (<code>CLP03</code>) on a non-reversal loop.</p>
 <td>1</td>
 <td><strong>Net negative</strong></td>
 <td><code>net &lt; 0</code></td>
-<td><code>net</code> (cash taken back beyond what these files show arriving)</td>
-<td>a reversal in our files exceeds the payments in our files: either the original payment predates our 835 coverage, or a recoupment landed on this loop</td>
-<td>find the missing payment (payer RA in <code>data/non-waystar-eobs/</code>, or an earlier era) before treating it as owed</td>
+<td><code>net</code>, cash taken back beyond what these files show arriving</td>
+<td>the original payment predates our 835 coverage, or a recoupment landed here</td>
+<td>find the original payment (payer RA, earlier era) before treating it as owed</td>
 </tr>
 <tr>
 <td>2</td>
 <td><strong>Denied</strong></td>
 <td><code>net = 0</code></td>
 <td><code>billed</code></td>
-<td>the payer adjudicated and paid nothing</td>
-<td>read the CAS codes; correct + frequency 7, void + 8, or appeal</td>
+<td>adjudicated, nothing paid</td>
+<td>read the CAS codes; replace (7), void (8), or appeal</td>
 </tr>
 <tr>
 <td>3</td>
 <td><strong>Partially paid</strong></td>
 <td><code>0 &lt; net &lt; billed</code></td>
-<td><code>billed − net</code> (the shortfall)</td>
-<td>at least one line paid less than billed</td>
-<td>work at line grain (§4): which lines, which group code</td>
+<td><code>billed − net</code></td>
+<td>at least one line paid below billed</td>
+<td>work line by line (§5)</td>
 </tr>
 <tr>
 <td>4</td>
@@ -248,49 +279,40 @@ charge (<code>CLP03</code>) on a non-reversal loop.</p>
 <td><code>net = billed</code></td>
 <td><code>net</code></td>
 <td>every line paid at billed</td>
-<td>nothing</td>
+<td>none</td>
 </tr>
 <tr>
 <td>5</td>
 <td><strong>Net overpaid</strong></td>
 <td><code>net &gt; billed</code></td>
-<td><code>net − billed</code> (the excess we hold)</td>
-<td>usually a duplicate payment not yet reversed; a refund liability</td>
-<td>expect a <code>CLP02 = 22</code> reversal; if none comes, it is ours to return</td>
+<td><code>net − billed</code>, ours to return</td>
+<td>usually a duplicate payment not yet reversed</td>
+<td>expect a status-22 reversal; if none comes, refund</td>
 </tr>
 </tbody>
 </table></div>
-<p>At the claim level <em>paid in full</em> means every service line paid at its billed amount (Jaime,
-2026-09-22). Adjustment codes do not change the bucket: a claim paid at the contracted rate with
-a <code>CO-45</code> write-down is <em>partially paid</em>, because by the 2026-08-09 ruling no adjustment code
-settles a claim.</p>
-<p><strong>Why five.</strong> States 2–4 cover every net between zero and billed inclusive. Net can also fall
-below zero or above billed, and both happen.</p>
-<p><strong>How a claim moves between the five.</strong> Every move is a new 835 loop for the claim; the state
-is re-netted, never edited.</p>
+<p>Paid in full means every service line paid at billed. Adjustment codes do not move the bucket: a
+claim paid at the contracted rate with a <code>CO-45</code> write-down is partially paid, because by the
+2026-08-09 ruling no adjustment code settles a claim.</p>
+<p><strong>How a claim moves between the five.</strong> Every move is a new 835 loop; the state is re-netted.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
 <th>from</th>
 <th>to</th>
-<th>the 835 loop that moves it</th>
+<th>the loop that moves it</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>net negative</td>
 <td>denied</td>
-<td>the original payment is found (an earlier remittance, or the payer&rsquo;s own portal) and enters the net</td>
+<td>the original payment is found and enters the net</td>
 </tr>
 <tr>
 <td>denied</td>
-<td>partially paid</td>
-<td>a later loop pays some lines (a replacement was adjudicated, or an appeal succeeded)</td>
-</tr>
-<tr>
-<td>denied</td>
-<td>paid in full</td>
-<td>a later loop pays every line at billed</td>
+<td>partially paid or paid in full</td>
+<td>a later loop pays some or all lines</td>
 </tr>
 <tr>
 <td>partially paid</td>
@@ -300,25 +322,70 @@ is re-netted, never edited.</p>
 <tr>
 <td>partially paid or paid in full</td>
 <td>denied</td>
-<td>a reversal (<code>CLP02 = 22</code>) takes the payment back</td>
+<td>a reversal (<code>22</code>) takes the payment back</td>
 </tr>
 <tr>
 <td>paid in full</td>
 <td>net overpaid</td>
-<td>a duplicate payment arrives</td>
+<td>a duplicate payment</td>
 </tr>
 <tr>
 <td>net overpaid</td>
 <td>paid in full</td>
-<td>the payer reverses the duplicate (<code>CLP02 = 22</code>)</td>
+<td>the payer reverses the duplicate</td>
 </tr>
 </tbody>
 </table></div>
+<p><strong>Measured 2026-09-22</strong> across 920 ERA files and 107,687 claim loops:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>state</th>
+<th>claims</th>
+<th>money</th>
+<th>money is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>net negative</td>
+<td>13</td>
+<td>−4,302.20</td>
+<td>Σ net</td>
+</tr>
+<tr>
+<td>denied</td>
+<td>4,305</td>
+<td>1,653,416.68</td>
+<td>Σ billed</td>
+</tr>
+<tr>
+<td>partially paid</td>
+<td>10,568</td>
+<td>1,841,792.81</td>
+<td>Σ (billed − net)</td>
+</tr>
+<tr>
+<td>paid in full</td>
+<td>46,460</td>
+<td>22,876,172.86</td>
+<td>Σ net</td>
+</tr>
+<tr>
+<td>net overpaid</td>
+<td>70</td>
+<td>31,071.95</td>
+<td>Σ (net − billed)</td>
+</tr>
+</tbody>
+</table></div>
+<p>61,416 claims carry at least one loop and a stated charge. All 13 net-negative claims are
+legacy-timestamp account numbers whose original payment predates the earliest 835 on file
+(2025-02-26): a gap in our records, not a payer position.</p>
 <hr />
-<h2>3. Every Waystar vocabulary, mapped onto our states</h2>
-<p>Our states are eight: three before adjudication and the five after. Every code Waystar or a
-payer emits lands in one of them, or in <em>no change</em> (an informational event) or <em>cannot tell</em>
-(a code that does not separate two of ours). The mapping, with the sources in §4:</p>
+<h2>3. Every Waystar code list, mapped onto our states</h2>
+<p>Our states are eight: three before adjudication, five after. Every code lands in one of them, in
+<em>no change</em>, or in <em>cannot tell</em>.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -361,7 +428,7 @@ payer emits lands in one of them, or in <em>no change</em> (an informational eve
 <td></td>
 <td></td>
 <td></td>
-<td>net of loops below 0</td>
+<td>net below 0</td>
 </tr>
 <tr>
 <td><strong>Denied</strong></td>
@@ -369,7 +436,7 @@ payer emits lands in one of them, or in <em>no change</em> (an informational eve
 <td><code>D-P</code></td>
 <td><code>F2</code>, <code>F4</code></td>
 <td><code>DENIED</code>, <code>AUTH</code>, <code>BENEXHAUSTED</code>, <code>COB</code>, <code>CODING</code>, <code>MEDNEC</code>, <code>CREDENTIAL</code>, <code>NETWORK</code>, <code>NOTCOVERED</code>, <code>POLICY</code>, <code>TIMELY</code></td>
-<td>net = 0; <code>4</code> when the whole claim is denied</td>
+<td>net = 0; <code>4</code> only when the whole claim is denied</td>
 </tr>
 <tr>
 <td><strong>Partially paid</strong></td>
@@ -405,33 +472,26 @@ payer emits lands in one of them, or in <em>no change</em> (an informational eve
 </tr>
 </tbody>
 </table></div>
-<p>Three consequences for anyone building on these codes:</p>
+<p>Three consequences:</p>
 <ul>
-<li><strong>Nothing outside the 835 separates paid in full from partially paid from overpaid.</strong> <code>P-P</code>,
-  <code>F1</code> and <code>PAID</code> all mean &ldquo;the payer paid something,&rdquo; and only the 835 carries the amount.</li>
-<li><strong>A denial code does not fix the state either.</strong> <code>D-P</code>, <code>F2</code> and the <code>DENIED</code> family say a
-  denial happened; whether the claim is <em>denied</em> or <em>partially paid</em> in our terms depends on
-  whether any line paid.
-  <code>CLP02 = 4</code> marks only a whole-claim denial, and most zero-paid claims in our files carry
-  <code>CLP02 = 1</code> (§4.5).</li>
-<li><strong>The Claim Monitoring strings are not a substitute for our states.</strong> They need the Claim
-  Monitoring product, which we have not established we own; they are Waystar&rsquo;s reading of a
-  payer portal at the moment of a status check, not a remittance; and <code>PAID</code> cannot separate
-  three of our five. Where they add value is the <em>reason</em> on a denial (<code>AUTH</code>, <code>TIMELY</code>,
-  <code>CODING</code>), which is the same information the 835&rsquo;s <code>CAS</code> reason codes carry for the claims we
-  already have. If Claim Monitoring is ever bought, its strings map in by the column above; they
-  do not replace the 835 net.</li>
+<li><strong>Only the 835 separates paid in full, partially paid and overpaid.</strong> <code>P-P</code>, <code>F1</code> and <code>PAID</code>
+  all mean &ldquo;the payer paid something.&rdquo;</li>
+<li><strong>A denial code does not fix the state either.</strong> Whether a claim is denied or partially paid
+  depends on whether any line paid. <code>CLP02 = 4</code> marks a whole-claim denial only; most zero-paid
+  claims carry <code>CLP02 = 1</code> (§4.5).</li>
+<li><strong>Claim Monitoring strings do not replace our states.</strong> They need a product we have not
+  established we own, they are Waystar&rsquo;s reading of a payer portal at the moment of a check, and
+  <code>PAID</code> cannot separate three of our five. Their denial reasons (<code>AUTH</code>, <code>TIMELY</code>, <code>CODING</code>)
+  duplicate the 835&rsquo;s <code>CAS</code> codes for claims we already hold.</li>
 </ul>
 <hr />
-<h2>4. Waystar&rsquo;s own vocabularies, and where each one reaches you</h2>
-<p>Waystar publishes four code lists that touch claim state, and each reaches a customer through
-a different transport.</p>
-<h3>4.1 Portal claim Status (the spine&rsquo;s <code>Status</code> column): transport only</h3>
-<p>Five values, measured (§1). Reaches us through the ClaimsScreen export (the spine). Says nothing
-about adjudication.</p>
-<h3>4.2 Claims Disposition Report event codes: Waystar&rsquo;s own, via SFTP <code>/download</code></h3>
-<p>From the developer portal. Delivered as a pipe-delimited file per CustID, daily 5–6 AM ET or per
-batch. <strong>Not provisioned for our account</strong> (the <code>/Download</code> directory is empty).</p>
+<h2>4. Waystar&rsquo;s code lists, and how each reaches us</h2>
+<h3>4.1 Portal claim Status: transport only</h3>
+<p>Five values (§1). Reaches us through the ClaimsScreen export, the spine. Says nothing about
+adjudication.</p>
+<h3>4.2 Claims Disposition Report event codes: Waystar&rsquo;s own, via SFTP</h3>
+<p>Pipe-delimited file per CustID, daily 5–6 AM ET or per batch. Not provisioned for our account;
+the same events appear as text in each claim&rsquo;s Waystar history.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -523,11 +583,9 @@ batch. <strong>Not provisioned for our account</strong> (the <code>/Download</co
 </tr>
 </tbody>
 </table></div>
-<h3>4.3 277 claim-status category codes: X12 standard, via Claim Monitoring</h3>
-<p>From the ClaimStatusPlus User Guide p.18–19. These are the X12 277 category codes; Waystar
-reproduces them and adds the label it shows on its Claim Status tab. They reach a customer only
-through <strong>Claim Monitoring</strong> (a product we have not established we own), as the real-time
-276/277 API, the batch <code>.276</code> file, or the nightly 277U.</p>
+<h3>4.3 277 category codes: X12 standard, via Claim Monitoring</h3>
+<p>ClaimStatusPlus User Guide p.18–19. Reach a customer only through Claim Monitoring (real-time
+276/277 API, batch <code>.276</code>, or the nightly 277U), a product we have not established we own.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -575,7 +633,7 @@ through <strong>Claim Monitoring</strong> (a product we have not established we 
 <tr>
 <td><code>P0</code></td>
 <td>Pending</td>
-<td>&ldquo;a pended claim is one for which no remittance advice has been issued, <strong>or only part of the claim has been paid</strong>&ldquo;</td>
+<td>&ldquo;no remittance advice has been issued, <strong>or only part of the claim has been paid</strong>&ldquo;</td>
 </tr>
 <tr>
 <td><code>P1</code> / <code>P2</code> / <code>P3</code></td>
@@ -620,15 +678,12 @@ through <strong>Claim Monitoring</strong> (a product we have not established we 
 <tr>
 <td><code>E0</code> – <code>E2</code>, <code>D0</code></td>
 <td>Error / Data Search Unsuccessful</td>
-<td>resubmit the <em>inquiry</em> later</td>
+<td>resubmit the inquiry later</td>
 </tr>
 </tbody>
 </table></div>
-<p>Note <code>P0</code>: Waystar&rsquo;s own definition puts a partially paid claim under <em>Pending</em>, which is the
-documentary basis for &ldquo;state 3 is not final&rdquo;.</p>
+<p><code>P0</code> puts a partially paid claim under Pending: Waystar&rsquo;s own basis for &ldquo;state 3 is not final.&rdquo;</p>
 <h3>4.4 Claim Monitoring dispositions: Waystar&rsquo;s own, in <code>STC12</code> of the 277</h3>
-<p>From the developer portal&rsquo;s Claim Monitoring page. Waystar puts a fixed string in the 277&rsquo;s
-<code>STC12</code> free text so a host system can match on it. The strings that map to the five states:</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -641,16 +696,16 @@ documentary basis for &ldquo;state 3 is not final&rdquo;.</p>
 <tr>
 <td><code>PAID</code></td>
 <td>Claim has been paid</td>
-<td>state 4 (or 3, the string does not say which)</td>
+<td>state 4 or 3; the string does not say which</td>
 </tr>
 <tr>
 <td><code>PATIALPAY</code> [sic]</td>
-<td><strong>At least 1 line item has a zero payment</strong></td>
+<td>at least 1 line item has a zero payment</td>
 <td>state 3, line-based</td>
 </tr>
 <tr>
 <td><code>PATRESP</code></td>
-<td>Remaining balance is patient responsibility</td>
+<td>remaining balance is patient responsibility</td>
 <td>state 3, PR group</td>
 </tr>
 <tr>
@@ -671,17 +726,16 @@ documentary basis for &ldquo;state 3 is not final&rdquo;.</p>
 </tbody>
 </table></div>
 <h3>4.5 835 claim status code <code>CLP02</code>: X12 standard, in the ERA we already fetch</h3>
-<p>Waystar names four in the Denial Rate Report article and lists the full set it maps in the
-Remittance Crosswalk (row 111): <code>1, 2, 3, 4, 5, 10, 13, 15, 16, 17, 19, 20, 21, 22, 23, 25, 27</code>.
-The ones that occur in our files, measured:</p>
+<p>Waystar&rsquo;s crosswalk maps <code>1, 2, 3, 4, 5, 10, 13, 15, 16, 17, 19, 20, 21, 22, 23, 25, 27</code>. Five
+occur in our files:</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
 <th><code>CLP02</code></th>
-<th>X12 meaning</th>
+<th>meaning</th>
 <th>loops</th>
-<th>of which paid = 0</th>
-<th>of which paid &lt; 0</th>
+<th>paid = 0</th>
+<th>paid &lt; 0</th>
 </tr>
 </thead>
 <tbody>
@@ -722,18 +776,21 @@ The ones that occur in our files, measured:</p>
 </tr>
 </tbody>
 </table></div>
-<p>Waystar&rsquo;s own warning about <code>4</code>, verbatim: <em>&ldquo;The claim status is set to 4 ONLY when the entire
-claim is denied. If individual line items (procedures) are denied, but the entire claim has not
-been denied, then the remit will not appear on this report.&rdquo;</em> The measurement says the same
-thing from the other side: 13,284 primary adjudications paid zero under status <code>1</code> against 1,278
-under status <code>4</code>. <strong>Denied is read from the money, never from <code>CLP02</code>.</strong></p>
-<p><code>19</code>, <code>20</code>, <code>21</code>, <code>23</code> (processed and forwarded to another payer) and <code>25</code>, <code>27</code> are in Waystar&rsquo;s
-map but do not occur in our files.</p>
+<p>Primary, secondary and tertiary are the payer&rsquo;s place in the coordination-of-benefits line when
+it adjudicated. We bill every claim as primary (all 63,911 carry <code>SBR01 = P</code>); SoonerCare answers
+as secondary on 12,095 loops and tertiary on 7,981, paying $10.3M on them. That sequence comes
+from the coverage OHCA has on file for the member, and the reading consistent with the data is
+dual eligibility with Medicaid as payer of last resort. Unconfirmed by any document. It changes
+nothing for the five states: a 2 or 3 nets like a 1.</p>
+<p>Waystar&rsquo;s own warning about <code>4</code>: <em>&ldquo;The claim status is set to 4 ONLY when the entire claim is
+denied. If individual line items (procedures) are denied, but the entire claim has not been
+denied, then the remit will not appear on this report.&rdquo;</em> Measured: 13,284 zero-paid adjudications
+under status 1 against 1,278 under status 4. <strong>Denied is read from the money, never from
+<code>CLP02</code>.</strong></p>
 <h4>OHCA&rsquo;s ICN prefixes: how SoonerCare marks an adjustment</h4>
-<p>SoonerCare&rsquo;s ICN is a 13-digit number whose first two digits say what kind of record it is. The
-payer does not publish a legend in the RA, so this is measured across every SoonerCare loop on
-file (79,070 loops, 2026-09-22), read together with OHCA&rsquo;s own remittance advice for payment
-012596050:</p>
+<p>SoonerCare&rsquo;s 13-digit ICN begins with two digits that say what kind of record it is. No legend is
+published; this is measured across 79,070 SoonerCare loops and read against OHCA&rsquo;s RA for
+payment 012596050.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -746,17 +803,17 @@ file (79,070 loops, 2026-09-22), read together with OHCA&rsquo;s own remittance 
 <tr>
 <td><code>20</code></td>
 <td>57,368</td>
-<td>an original electronic claim adjudication; the ICN carries the year and day it was received (<code>2026245…</code> = day 245 of 2026)</td>
+<td>an original electronic claim; the ICN carries the receipt date (<code>2026245…</code> = day 245 of 2026)</td>
 </tr>
 <tr>
 <td><code>59</code></td>
 <td>2,712</td>
-<td><strong>the void of a prior adjudication.</strong> Every one is status 1, paid 0.00, with a single <code>CO-45</code> for the full charge, and 2,681 of them sit beside a status-22 reversal of the same claim in the same 835. On OHCA&rsquo;s RA the pair appears under <em>HCFA 1500 CLAIM ADJUSTMENTS</em> as the original ICN with its amounts negated and the 59 ICN beneath it, and the money taken back appears under <em>FINANCIAL TRANSACTIONS</em> with code 8400, <em>result of claim adjustment</em></td>
+<td><strong>the void of a prior adjudication.</strong> Every one is status 1, paid 0.00, one <code>CO-45</code> for the full charge; 2,681 sit beside a status-22 reversal of the same claim in the same 835. OHCA&rsquo;s RA lists the pair under <em>HCFA 1500 CLAIM ADJUSTMENTS</em> (the original ICN with amounts negated, the 59 ICN beneath it) and the recoupment under <em>FINANCIAL TRANSACTIONS</em>, code 8400 <em>result of claim adjustment</em></td>
 </tr>
 <tr>
 <td><code>22</code>, <code>52</code></td>
 <td>9,243 and 9,744</td>
-<td>re-adjudications that pay: together they carry $10.6M of payments, and 15,773 of them sit beside a reversal of the same claim. The reading consistent with that is a reprocessed or replaced claim adjudicated afresh; OHCA has not stated it</td>
+<td>re-adjudications that pay: $10.6M between them, 15,773 beside a reversal of the same claim. Reads as reprocessed or replaced claims adjudicated afresh; OHCA has not stated it</td>
 </tr>
 <tr>
 <td><code>49</code></td>
@@ -765,34 +822,21 @@ file (79,070 loops, 2026-09-22), read together with OHCA&rsquo;s own remittance 
 </tr>
 </tbody>
 </table></div>
-<p>So when OHCA says a 59 means the prior claim is being voided or cancelled, the 835 shows the
-same event twice: the status-22 loop under the original ICN gives the money back, and the
-status-1 loop under the 59 ICN is the zero-paid adjustment record that replaces it. Both count
-in the net, which is why the five-state rule needs no special case for it. Our own void and
-replacement of 2026-09-02 each produced one 59 ICN.</p>
+<p>A void therefore shows twice in the 835: the status-22 loop under the original ICN returns the
+money, and the status-1 loop under the 59 ICN is the zero-paid record that replaces it. Both net,
+so the five-state rule needs no special case. Our void and replacement of 2026-09-02 each
+produced one 59.</p>
 <hr />
-<h2>5. Line grain: why a partial is worked per line</h2>
-<p>Adjudication is per service line. Each ICN restates the full line set with its own money, and
-the claim-level <code>CLP04</code> is the sum. Waystar&rsquo;s Denial Management product works at this grain:</p>
-<ul>
-<li><strong>Fully Paid</strong> (Denial Management guide, auto-close rules): <em>&ldquo;The paid amount equals the
-  billed amount, and no adjustment codes were returned.&rdquo;</em></li>
-<li><strong>Partially Paid</strong> (same): <em>&ldquo;The paid amount is less than the billed amount and no adjustment
-  codes were returned.&rdquo;</em></li>
-<li><strong>Workable vs informational.</strong> Every <code>CAS</code> adjustment is tagged workable or informational by the
-  customer&rsquo;s own tags, categories and auto-close rules. A remit is <em>denied</em> in Denial Management
-  &ldquo;if there were any ‘Workable’ adjustment lines on the remits … BOTH claim and line level …
-  denied in full or partially.&rdquo; So Waystar&rsquo;s product definition of a denial is <em>any workable
-  adjustment</em>, not <em>paid zero</em>.</li>
-<li><strong>Denied amount has three calculations</strong> and the customer picks one: billed − paid,
-  allowed − paid, or the sum of workable adjustments. Waystar&rsquo;s worked example gives 400, 100 and
-  a code-driven figure for the same remit. This document&rsquo;s state table uses billed − paid.</li>
-</ul>
-<p>Adjustment group codes, as the 835 carries them in <code>CAS01</code>:</p>
+<h2>5. Lines and adjustment groups</h2>
+<p>Adjudication is per service line; each ICN restates the full line set with its own money, and
+<code>CLP04</code> is the sum. Waystar&rsquo;s Denial Management product defines Fully Paid as paid equals billed
+and Partially Paid as paid below billed, calls a remit denied when any workable adjustment line
+exists at claim or line level, and offers three denied-amount calculations (billed − paid,
+allowed − paid, sum of workable adjustments). This page uses billed − paid.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
-<th>group</th>
+<th><code>CAS01</code> group</th>
 <th>name</th>
 <th>collectable as stated?</th>
 </tr>
@@ -806,7 +850,7 @@ the claim-level <code>CLP04</code> is the sum. Waystar&rsquo;s Denial Management
 <tr>
 <td><code>CO</code></td>
 <td>contractual obligation</td>
-<td>no, but by the 2026-08-09 ruling every <code>CO-45</code> here is owed, not written down</td>
+<td>no, but by the 2026-08-09 ruling every <code>CO-45</code> here is owed</td>
 </tr>
 <tr>
 <td><code>PI</code></td>
@@ -816,40 +860,60 @@ the claim-level <code>CLP04</code> is the sum. Waystar&rsquo;s Denial Management
 <tr>
 <td><code>OA</code></td>
 <td>other adjustment</td>
-<td>depends on the reason code; <code>OA-18</code> (duplicate) splits two ways</td>
+<td>by reason code; <code>OA-18</code> (duplicate) splits two ways</td>
 </tr>
 </tbody>
 </table></div>
-<p>A partially paid claim is therefore a list of lines, each with its paid, its <code>CAS</code> group and
-reason, and its remark codes (<code>LQ*HE</code>).</p>
+<p>A partially paid claim is a list of lines, each with its paid amount, its <code>CAS</code> group and reason,
+and its remark codes (<code>LQ*HE</code>).</p>
 <hr />
-<h2>6. The loop back: corrected claims</h2>
-<p>Covered in full in <code>waystar-corrected-claim-workflow.md</code>. The parts the flowchart depends on:</p>
-<ul>
-<li><strong>A rejection is resubmitted as an original.</strong> Frequency <code>1</code>, no <code>REF*F8</code>. Auto-Archive (if
-  enabled) will fold the old rejected instance onto the new one by <code>CLM01</code>.</li>
-<li><strong>A denial or partial is corrected with a reference to the adjudication.</strong> Frequency <code>7</code>
-  (replacement) or <code>8</code> (void) in <code>CLM05-3</code>, and the payer&rsquo;s ICN in <code>REF*F8</code>. The payer answers
-  with a new ICN for the correction and a <code>CLP02 = 22</code> reversal under the original ICN, and the
-  claim re-nets. Measured end to end on the two Echo1 corrections of 2026-09-02. SoonerCare adds
-  a third loop: a zero-paid adjustment record under an ICN beginning <code>59</code> (§4.5).</li>
-<li><strong>Medicare refuses 7 and 8 on professional claims</strong>; the correction goes as frequency <code>1</code> with
-  a claim note.</li>
-<li><strong>A net-overpaid claim needs no action from us to correct</strong>; the payer&rsquo;s reversal is the
-  expected next loop. If it never comes, the excess is a refund we owe.</li>
-</ul>
-<h3>Replacement or void: which one</h3>
-<p>A replacement (frequency 7) says <em>disregard the last version, adjudicate this one instead</em>, in
-one transaction. The payer matches the ICN in <code>REF*F8</code>, reverses the original adjudication and
-adjudicates the replacement as the new version of the same claim. Both halves arrive in one
-remittance: a status-22 loop with negative money under the old ICN, and a new loop under a new
-ICN. The payer keeps the two linked as one claim history.</p>
-<p>A void (frequency 8) followed by a new original does the same work in two round trips, and the
-second claim is a stranger to the first. After the void processes, the frequency-1 claim carries
-no reference to anything, so the payer treats it as brand new: its duplicate check runs against
-the voided claim, its timely-filing clock starts from the new receipt date, and nothing ties the
-two together on the payer&rsquo;s books. Waystar&rsquo;s articles say to wait for the void to process before
-sending the new original, so there is a gap with no claim on file at all.</p>
+<h2>6. Corrected claims</h2>
+<p>Every correction is a new 837 through the same SFTP upload as an original. The answer comes back
+on the same 835 feed. Fields:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>send</th>
+<th><code>CLM05-3</code></th>
+<th><code>REF*F8</code></th>
+<th>content</th>
+<th>after</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>new original</td>
+<td><code>1</code></td>
+<td>none</td>
+<td>the corrected claim</td>
+<td>any rejection</td>
+</tr>
+<tr>
+<td>replacement</td>
+<td><code>7</code></td>
+<td>the ICN being replaced</td>
+<td>the whole claim with the fix in it</td>
+<td>a denial or partial where the data was wrong</td>
+</tr>
+<tr>
+<td>void</td>
+<td><code>8</code></td>
+<td>the ICN being voided</td>
+<td>the whole original claim, unchanged</td>
+<td>the claim should not have been sent</td>
+</tr>
+</tbody>
+</table></div>
+<p>The payer answers a 7 or 8 with a status-22 reversal under the original ICN and, for a 7, a new
+loop under a new ICN. SoonerCare adds a zero-paid record under a 59 ICN (§4.5). A net-overpaid
+claim needs no correction from us; the payer&rsquo;s reversal is the expected next loop.</p>
+<h3>Replacement or void</h3>
+<p>A replacement is &ldquo;disregard the last version, adjudicate this one&rdquo; in one transaction: the payer
+reverses the original and adjudicates the new version, linked as one claim history, in one
+remittance. A void followed by a new original does the same work in two round trips, and the
+second claim is unlinked from the first: the payer runs its duplicate check against the voided
+claim, starts the timely-filing clock from the new receipt date, and links nothing. Waystar&rsquo;s
+articles say to wait for the void to process before sending the new original.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -859,49 +923,45 @@ sending the new original, so there is a gap with no claim on file at all.</p>
 </thead>
 <tbody>
 <tr>
-<td>same encounter, corrected data: units, mileage, codes, modifiers, diagnosis, charges</td>
-<td>replacement, frequency 7 with the original ICN. Some payers accept a corrected claim only within 12 months of the original payment and only one correction per original; both assume the link a 7 preserves</td>
+<td>same encounter, corrected data (units, mileage, codes, modifiers, diagnosis, charges)</td>
+<td>replacement. Some payers accept one correction per original, within 12 months of payment; both assume the link a 7 keeps</td>
 </tr>
 <tr>
-<td>the claim was wrong at its identity: wrong patient, wrong payer, wrong date of service</td>
-<td>void, then a new original once the void has processed. The BCBSMS rejection <em>key information does not match the corrected claim, please void original first</em> is the documented case</td>
+<td>wrong at its identity (patient, payer, date of service)</td>
+<td>void, then a new original once the void has processed. BCBSMS&rsquo;s <em>key information does not match, void original first</em> is the documented case</td>
 </tr>
 <tr>
-<td>the claim should not exist</td>
+<td>should not exist</td>
 <td>void only</td>
 </tr>
 <tr>
-<td>Medicare, professional claim</td>
-<td>neither is accepted; a corrected claim goes as frequency 1 with a claim note</td>
+<td>Medicare, professional</td>
+<td>neither is accepted; send frequency 1 with a claim note</td>
 </tr>
 </tbody>
 </table></div>
-<p>For the common case here, a mileage-unit correction on the same ride, the replacement is the
-shorter path: one file, one remittance, the link kept. Void-and-resubmit is for when the original
-was the wrong claim, not a wrong version of the right claim.</p>
-<p><strong>Medicaid is not Medicare.</strong> The refusal of frequency 7 and 8 on professional claims is a
-Medicare rule (the federal fee-for-service program), stated in Waystar&rsquo;s <em>How do I send a
-corrected claim to Medicare</em> article. Waystar&rsquo;s corpus has no Oklahoma Medicaid rule either way;
-its general instruction is &ldquo;ensure that the payer requires or accepts a replacement claim.&rdquo; For
-our payers the evidence is our own:</p>
+<p>For a mileage-unit fix on the same ride, replacement is the shorter path.</p>
+<p><strong>Medicaid is not Medicare.</strong> The 7/8 refusal is a Medicare fee-for-service rule. Waystar has no
+Oklahoma Medicaid rule either way; its instruction is to confirm the payer accepts a replacement.
+Our evidence:</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
 <th>payer</th>
-<th>share of 837 files sent</th>
-<th>frequency 7 / 8 through Waystar</th>
+<th>837 files sent</th>
+<th>7 / 8 through Waystar</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>OHCA / SoonerCare (<code>SKOK0</code>)</td>
-<td>43,671 of 64,000</td>
-<td><strong>proven.</strong> One void and one replacement sent 2026-09-02; SoonerCare matched the ICN, reversed the original under status 22 and adjudicated the correction under a new ICN, in one 835</td>
+<td>43,671</td>
+<td><strong>proven</strong> 2026-09-02: one void, one replacement, both adjudicated in one 835</td>
 </tr>
 <tr>
 <td>Humana Healthy Horizons (<code>61101</code>)</td>
 <td>6,939</td>
-<td>untested. Waystar&rsquo;s Humana note applies: it forwards in real time, so a resubmission sent before Humana&rsquo;s response comes back as a duplicate</td>
+<td>untested; forwards in real time, so a resubmission before its response returns as a duplicate</td>
 </tr>
 <tr>
 <td>Oklahoma Complete Health (<code>68069</code>)</td>
@@ -915,112 +975,81 @@ our payers the evidence is our own:</p>
 </tr>
 </tbody>
 </table></div>
-<p>Counts are files in the 837 archive naming that payer, measured 2026-09-22. The three MCOs
-have never received a 7 or an 8 from us. The first correction to each is the test; Waystar&rsquo;s
-side is the same file and the same upload, and only the payer&rsquo;s answer is unknown.</p>
-<h3>Sending a void or a replacement without the portal</h3>
-<p>Both are ordinary 837 files. There is no Waystar API call for either; the claim file upload is
-the one write path Waystar documents.</p>
+<p>Waystar&rsquo;s side is the same file and upload for all four; only the payer&rsquo;s answer is unknown.</p>
+<h3>Sending one without the portal</h3>
 <ol>
-<li>Build a complete 837P for the claim, restating every segment of the original. Set Loop 2300
-   <code>CLM05-3</code> to <code>8</code> (void) or <code>7</code> (replacement, with the corrected content), and add
-   <code>REF*F8*&lt;ICN&gt;</code> in Loop 2300 with the payer&rsquo;s control number for the adjudication being voided
-   or replaced, read from the 835 <code>CLP07</code>.</li>
-<li>Optionally run the file through the Real-Time Rules Engine
-   (host <code>claimsapi.zirmed.com</code>, path <code>/ImmediateClaims/Intake/Process</code>, SOAP action
-   <code>Submit837ForEdits</code>, up to 50 claims) to see Waystar&rsquo;s edit results at once instead of after the nightly batch. The claims
-   land in Waystar&rsquo;s test area, not at the payer.</li>
-<li>Upload the file to <code>sshftp.waystar.com</code>, directory <code>/upload</code>, named <code>&lt;anything&gt;.CLP</code>. Waystar
-   ingests it automatically. The SFTP client matters: Waystar&rsquo;s server refuses modern OpenSSH on a
-   valid credential, and Node <code>ssh2</code> connects; five failed logins block the IP.</li>
-<li>Watch for the answer. Waystar&rsquo;s side (accepted, rejected by an edit, sent to the payer) is
-   readable per claim through the Claims History API. The payer&rsquo;s side arrives in the next 835:
-   a status-22 reversal under the original ICN, and for a replacement a new loop under a new
-   ICN. The 277CA and 277U files would carry the Waystar and payer status too, once the SFTP
-   download folder is provisioned.</li>
+<li>Build a complete 837P restating every segment of the original, with <code>CLM05-3</code> and <code>REF*F8</code>
+   set as above (the ICN from the 835&rsquo;s <code>CLP07</code>).</li>
+<li>Optionally post it to the Real-Time Rules Engine (host <code>claimsapi.zirmed.com</code>, path
+   <code>/ImmediateClaims/Intake/Process</code>, SOAP action <code>Submit837ForEdits</code>, up to 50 claims) for
+   Waystar&rsquo;s edit results at once. The claims land in Waystar&rsquo;s test area, not at the payer.</li>
+<li>Upload to <code>sshftp.waystar.com</code>, directory <code>/upload</code>, as <code>&lt;anything&gt;.CLP</code>. Use a Node <code>ssh2</code>
+   client: Waystar&rsquo;s server refuses modern OpenSSH on a valid credential, and five failed logins
+   block the IP.</li>
+<li>Read the answer: Waystar&rsquo;s side per claim through the Claims History API, the payer&rsquo;s side in
+   the next 835.</li>
 </ol>
-<p>The two Echo1 corrections of 2026-09-02, one void and one replacement, went exactly this way:
-batch files <code>RC-B-0009</code> and <code>RC-B-REPL-0001</code> through the SFTP upload, answered in the
-SoonerCare 835 dated 2026-09-02.</p>
+<p>Echo1&rsquo;s void and replacement of 2026-09-02 (<code>RC-B-0009</code>, <code>RC-B-REPL-0001</code>) went this way and were
+answered in SoonerCare&rsquo;s 835 of the same date.</p>
 <hr />
 <h2>7. Rework by failure signal</h2>
-<p>Sources: the Support Centre articles named in <code>waystar-corrected-claim-workflow.md</code> §1.</p>
+<p>Sources: the Support Centre articles in <code>waystar-corrected-claim-workflow.md</code> §1.</p>
 <h4>Rejected by Waystar, first-level edit</h4>
-<p>Shows as portal status <em>Rejected by Waystar</em> with history text <code>CLAIM REJECTED BY FIRST EDITS</code>.
-A setup problem: payer name matching, payer enrollment, or an account rule. Fix the setup or the
-data and send the claim again as a new original (frequency 1).</p>
+<p>Portal status <em>Rejected by Waystar</em>, history <code>CLAIM REJECTED BY FIRST EDITS</code>. A setup problem:
+name matching, enrollment, or an account rule. Fix it, send a new original.</p>
 <h4>Rejected by Waystar, second-level edit</h4>
-<p>Shows as history text <code>CLAIM REJECTED BY SECOND EDITS</code> followed by the message and the X12 loop
-and segment it names, e.g. <code>[2320-DMG02]</code>. Fix that field and send again as a new original. The
-Real-Time Rules Engine can pre-check a corrected 837 without waiting for the nightly batch.</p>
+<p>History <code>CLAIM REJECTED BY SECOND EDITS</code> plus the message and the X12 segment, e.g.
+<code>[2320-DMG02]</code>. Fix that field, send a new original; the Real-Time Rules Engine can pre-check it.</p>
 <h4>Rejected by the payer</h4>
-<p>Shows as portal status <em>Rejected by Payer</em>, 277 category <code>A3</code>, <code>A6</code> or <code>A7</code>, with the payer&rsquo;s
-message. Fix per the message (Waystar&rsquo;s <em>Rejection Message Help</em> articles cover the common ones)
-and send again as a new original. If the message says <em>duplicate</em>, search two years of claims,
-including archived ones, before resubmitting.</p>
-<h4>Denied for a data reason, adjustment group CO</h4>
-<p>Shows as an 835 line with <code>CAS*CO*16</code> (claim lacks information) and a remark such as <code>M53</code>
-(missing or invalid units), paid 0. Correct the data and send a replacement (frequency 7)
-carrying the original ICN in <code>REF*F8</code>.</p>
-<h4>Reduced or denied as CO-45, charge exceeds fee schedule</h4>
-<p>Shows as an 835 line with <code>CAS*CO*45</code>. By the 2026-08-09 ruling this is owed, not written down.
-It is a rate dispute with the payer, not a claim correction.</p>
-<h4>Denied by the payer&rsquo;s own decision, adjustment group PI</h4>
-<p>Shows as an 835 line with <code>CAS*PI*…</code>. Appeal. The Appeal Builder at
-<code>denials.zirmed.com/Appeals/Start</code> needs Denial + Appeal Management; otherwise the payer&rsquo;s own
-appeal process.</p>
-<h4>Balance moved to the patient, adjustment group PR</h4>
-<p>Shows as an 835 line with <code>CAS*PR*…</code>. Bill the patient; nothing goes back to the payer.</p>
+<p>Portal status <em>Rejected by Payer</em>, 277 <code>A3</code>/<code>A6</code>/<code>A7</code>, with the payer&rsquo;s message. Fix per the
+message, send a new original. If it says duplicate, search two years of claims including archived
+ones first.</p>
+<h4>Denied for a data reason, group CO</h4>
+<p>835 line <code>CAS*CO*16</code> with a remark such as <code>M53</code> (invalid units), paid 0. Correct the data, send a
+replacement.</p>
+<h4>Reduced or denied as CO-45</h4>
+<p>Charge exceeds fee schedule. Owed by the 2026-08-09 ruling; a rate dispute, not a correction.</p>
+<h4>Denied by the payer&rsquo;s decision, group PI</h4>
+<p>Appeal. The Appeal Builder at <code>denials.zirmed.com/Appeals/Start</code> needs Denial + Appeal
+Management; otherwise the payer&rsquo;s own process.</p>
+<h4>Balance moved to the patient, group PR</h4>
+<p>Bill the patient.</p>
 <h4>Duplicate, OA-18</h4>
-<p>Shows as an 835 line with <code>CAS*OA*18</code>. Decide which case it is: two same-day transports that
-should have been one claim (merge and rebill), or a genuine double bill (nothing owed).</p>
+<p>Decide which: two same-day transports that should have been one claim (merge and rebill), or a
+genuine double bill (nothing owed).</p>
 <h4>Partially paid</h4>
-<p>Net between zero and billed. Work each unpaid line by whichever block above matches its <code>CAS</code>
-group and reason.</p>
+<p>Work each unpaid line by the block above that matches its <code>CAS</code> group and reason.</p>
 <h4>Net overpaid</h4>
-<p>Net above billed. Wait for the payer&rsquo;s reversal (<code>CLP02 = 22</code>); if none comes, the excess is a
-refund we owe.</p>
+<p>Wait for the reversal; if none comes, refund the excess.</p>
 <h4>Net negative</h4>
-<p>Net below zero. Find the original payment (an earlier remittance, or the payer&rsquo;s own portal)
-before treating the claim as owed.</p>
+<p>Find the original payment before treating the claim as owed.</p>
 <h4>The claim should not have been sent</h4>
-<p>Any state after adjudication. Void it (frequency 8, original ICN in <code>REF*F8</code>). Once the void has
-processed, send a new original if one is due.</p>
-<h4>The payer says the corrected claim&rsquo;s key data does not match the original</h4>
-<p>A payer rejection of a frequency-7 claim. Void the original first, wait for the void to process,
-then send a new original.</p>
+<p>Void it. Send a new original after the void processes, if one is due.</p>
+<h4>The payer says the corrected claim&rsquo;s key data does not match</h4>
+<p>Void the original, wait, send a new original.</p>
 <h4>The payer is Medicare</h4>
-<p>Medicare refuses frequency 7 and 8 on professional claims. Send the corrected claim as
-frequency 1 with a claim note (<code>NTE*ADD</code>, 80 characters) and no <code>REF*F8</code>.</p>
+<p>Send frequency 1 with a claim note (<code>NTE*ADD</code>, 80 characters), no <code>REF*F8</code>.</p>
 <h4>The payer is Humana</h4>
-<p>Humana forwards in real time. Do not resubmit until its response has arrived, or the
-resubmission is rejected as a duplicate.</p>
-<p>Every corrected claim is a new 837 through the same SFTP upload as an original. The answer
-arrives on the same 835 feed: a new ICN for the correction and a status-22 reversal under the
-original ICN, and the claim re-nets.</p>
+<p>Do not resubmit until its response has arrived.</p>
 <hr />
-<h2>8. Deciding the state: the procedure</h2>
-<p>For one claim (one account number as the payer echoes it in <code>CLP01</code>):</p>
+<h2>8. Deciding the state</h2>
 <ol>
-<li>Collect every <code>CLP</code> loop across every ERA file whose <code>CLP01</code> is this claim. Include reversals.</li>
-<li>If there are none: the claim is <strong>not adjudicated</strong>. Separate <em>rejected</em> (a rejection event in
-   Waystar&rsquo;s history, or portal Status <code>Rejected by …</code>) from <em>awaiting</em> (portal Status
-   <code>Received by Payer</code>, no loop yet). Neither is in the five states.</li>
-<li><code>net = Σ CLP04</code>. <code>billed = max CLP03</code> over loops with <code>CLP02 ≠ 22</code>.</li>
-<li>Bucket by the table in §2.</li>
-<li>Record the evidence with the verdict: the file, the ICN (<code>CLP07</code>), the <code>CLP02</code>, and for
-   states 1, 2, 3 the <code>CAS</code> lines.</li>
-<li>Treat the state as current, not final. The next ERA file can change it.</li>
+<li>Collect every <code>CLP</code> loop across every ERA file whose <code>CLP01</code> is this claim, reversals included.</li>
+<li>None: the claim is not adjudicated. Separate rejected (a rejection event in Waystar&rsquo;s history,
+   or portal Status <em>Rejected by …</em>) from awaiting (<em>Received by Payer</em>, no loop yet).</li>
+<li><code>net = Σ CLP04</code>; <code>billed = max CLP03</code> over loops with <code>CLP02 ≠ 22</code>.</li>
+<li>Bucket by §2.</li>
+<li>Record the evidence: file, ICN, <code>CLP02</code>, and for states 1–3 the <code>CAS</code> lines.</li>
+<li>Treat the state as current, not final.</li>
 </ol>
 <hr />
 <h2>9. Not covered</h2>
 <ul>
-<li>Whether the Claims Disposition Report, 277U or Claim Monitoring can be provisioned for our
-  account. All are documented; none is delivered to us today.</li>
-<li>Payer-portal remittances outside Waystar (<code>data/non-waystar-eobs/</code>). They overlap the ERA
-  corpus for SoonerCare and would be the second source for state 1.</li>
-<li>Line-level state. The counts above use the claim net; the per-line test (every line paid at
-  billed) is the definition but is not yet computed.</li>
+<li>Provisioning of the CDR, 277U or Claim Monitoring for our account. Documented; none delivered.</li>
+<li>Payer-portal remittances outside Waystar (<code>data/non-waystar-eobs/</code>), the second source for
+  state 1.</li>
+<li>Line-level state. Counts use the claim net; the per-line test is the definition but not yet
+  computed.</li>
 <li>Institutional claims (837I). Everything measured is professional.</li>
 </ul>
 </article>
