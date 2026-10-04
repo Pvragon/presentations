@@ -271,10 +271,138 @@ that built it, and how each charge was derived, so it reproduces exactly years l
 <li>a clearinghouse account, electronic payer id and payer name per payer, dated by send date;</li>
 <li>one interchange sender shared across tenants <em>later</em>.</li>
 </ul>
-<p class="callout"><strong>Out of scope:</strong> claim operations, tenant values, deciding who pays, workers&rsquo; compensation,
-dual-eligible billing.</p>
-<p class="callout"><strong>Test:</strong> the 41-axis variation catalogue and the 26-payer walk. The proposed design handles 7
-payers now and 16 later, with 3 out of scope and none needing code.</p>
+<h2>Contracts to accommodate</h2>
+<p>Every attribute below must be configurable.</p>
+<h4>Known contracts</h4>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Contract</th>
+<th>Attributes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Oklahoma Medicaid and its managed care plans (SoonerCare, Aetna, Humana, Oklahoma Complete Health, ODMHSAS crisis)</td>
+<td>per client leg; $160 per transport (T2003) plus mileage (S0215): $2.85 a mile over 30 until 2025-11-30, $4.80 a mile from 2025-12-01; distance changed on 2025-12-01 from the vehicle&rsquo;s path to the client&rsquo;s pickup to dropoff; 837P through Waystar; a contract code on ODMHSAS claims</td>
+</tr>
+<tr>
+<td>TANF (Oklahoma Human Services)</td>
+<td>$143 per trip, no mileage; invoiced</td>
+</tr>
+<tr>
+<td>ODMHSAS non-emergency (state mental health centres)</td>
+<td>one contract for several requesting facilities; $45 per trip plus $2.25 a mile over 30 from 2025-10-01, mileage only before; earlier side terms of $6,250 a month (Griffin) and $65 per trip (OCCIC, OCRU); submitted through the state&rsquo;s invoice application</td>
+</tr>
+<tr>
+<td>Oklahoma facility contracts (Oceans, NorthCare, Wagoner, Oakwood Springs, D-Hub, Lincoln County)</td>
+<td>$45 per trip plus $2.25 a mile over 30; at some, $45 cancellation once travel has begun; at some, a fuel surcharge above $5 a gallon with no amount stated; invoiced; Oceans earlier $6,000 a month</td>
+</tr>
+<tr>
+<td>Memorial Health System SWOK</td>
+<td>$45 per trip plus $2.25 a mile from the first mile; $45 cancellation once travel has begun; fuel surcharge from written notice, capped at the extra fuel cost, no rate stated; invoice within 45 days; paid in 60 days by check, 45 by ACH, 30 by Paymode-X; 2% late charge per 30 days</td>
+</tr>
+<tr>
+<td>Chickasaw Nation; Integris</td>
+<td>flat $7,000 a month for up to 65 transports; flat $6,500 a month for up to 120; no price stated beyond the cap</td>
+</tr>
+<tr>
+<td>Texas Recovery Center; Coffeyville Regional</td>
+<td>$160 per trip plus $4.80 a mile over 30; $40 an hour wait (Texas: beyond 30 minutes at a facility); Texas: $160 no-show when the client refuses to board</td>
+</tr>
+<tr>
+<td>Wichita VA</td>
+<td>$2.85 a mile, $85 minimum per transport; $45 cancellation once dispatched; invoice within 45 days; paid within 60 days of receipt</td>
+</tr>
+<tr>
+<td>Sedgwick County</td>
+<td>per vehicle trip, whatever the number of patients; fixed round-trip prices from Wichita to Osawatomie ($473.10), Larned ($376.20) and Cottonwood Springs ($498.75); other destinations $2.85 a mile round trip from Wichita, $85 floor; cancellation en route $45 or mileage driven, whichever is greater; two employees; at most two unrestrained or one restrained patient; minors never with adults; net 30</td>
+</tr>
+<tr>
+<td>Larned State Hospital</td>
+<td>per vehicle trip, round trip from Larned; $85 under 50 miles, else $2.85 every mile; wait $35 an hour after 30 minutes in total; $75 per extra stop; $1.50 a mile per extra passenger, one way between that passenger&rsquo;s own stops; $1.00 a mile with two staff; fuel +$0.50 a mile above $5 a gallon, +$0.04 per further $1; cancellation $45 or mileage driven; preauthorised travel expenses at cost; $104,000 a year cap; weekly invoice with the contract&rsquo;s own column list; net 30</td>
+</tr>
+<tr>
+<td>Colorado Access (other Colorado regional plans pending)</td>
+<td>100% of the state fee schedule, dated; $262.55 per one-way trip (A0999 ET) and $6.28 a mile from the first mile (A0425 ET), whole miles; modifier 76 on a repeat trip the same day, 77 by another provider; billed under DRC with Colorado&rsquo;s provider number 11638; a form before any transport over 250 miles; wait, cancellations, no-shows and empty miles not paid; one client per vehicle; 365 days to file; 837P</td>
+</tr>
+</tbody>
+</table></div>
+<h4>Variants to expect</h4>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>Attributes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>State Medicaid transport broker</td>
+<td>the broker&rsquo;s trip id on each claim, or as the claim number; one claim per trip; codes by level of service (ambulatory, wheelchair, stretcher); prior authorisation per trip; no-shows paid; portal submission</td>
+</tr>
+<tr>
+<td>Arizona Medicaid (AHCCCS)</td>
+<td>a rural rate by pickup location; three service lines per claim in fixed order; loaded miles from the odometer; wait in 30-minute units, only when returning was not feasible; prior authorisation over 100 miles per member-day; a trip report on every claim; a second claim for one member-day denied</td>
+</tr>
+<tr>
+<td>Medicare and ambulance payers</td>
+<td>miles rounded up to tenths under 100, whole miles at 100 and over; origin and destination modifiers; pickup and dropoff locations on the claim; patient weight and transport reason; certification of need</td>
+</tr>
+<tr>
+<td>Minnesota protected transport</td>
+<td>modifier UA on every line; an attendant aboard, not paid separately; at least five days between transport and submission</td>
+</tr>
+<tr>
+<td>Kansas Medicaid plan</td>
+<td>mileage over 10 miles; wait in half hours after 30 minutes, rounded down; a contract code on the claim</td>
+</tr>
+<tr>
+<td>Plans paying mileage in tenths</td>
+<td>tenths precision on the mileage line</td>
+</tr>
+<tr>
+<td>Distance bands</td>
+<td>a flat price per distance band, then a per-mile rate beyond the last band</td>
+</tr>
+<tr>
+<td>Counties guaranteeing a monthly minimum</td>
+<td>a per-trip price with $2,000 a month guaranteed per referring facility</td>
+</tr>
+<tr>
+<td>Hospital discharges</td>
+<td>one invoice per discharge; the hospital&rsquo;s encounter number on each row</td>
+</tr>
+<tr>
+<td>Capitation</td>
+<td>a fixed amount per enrolled member per month</td>
+</tr>
+<tr>
+<td>Fee-schedule percentages and charge lists</td>
+<td>a percentage of the state fee schedule; or the tenant&rsquo;s own charges billed, with the payer paying the lesser of charges or schedule</td>
+</tr>
+<tr>
+<td>Managed care plans requiring authorisation</td>
+<td>the prior-authorisation number on every claim</td>
+</tr>
+<tr>
+<td>Expenses at cost</td>
+<td>tolls and parking passed through at cost</td>
+</tr>
+<tr>
+<td>Payer changes</td>
+<td>a new electronic payer id mid-contract, with older claims still rebilled</td>
+</tr>
+<tr>
+<td>Multi-state tenant</td>
+<td>transports in several timezones, each dated where it happens</td>
+</tr>
+<tr>
+<td>Multi-site tenant</td>
+<td>sites enrolled separately with the same payer, each under its own identity</td>
+</tr>
+</tbody>
+</table></div>
 <h2>The model</h2>
 <figure class="dia" data-name="layers" data-title="The configuration model"><figcaption><span class="nm">The configuration model</span><span class="ds">platform, tenant, payer and the dated payer versions</span></figcaption><div class="canvas"><svg id="mlayers" xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 1366.57421875 839" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mlayers{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}#mlayers .error-icon{fill:#552222;}#mlayers .error-text{fill:#552222;stroke:#552222;}#mlayers .edge-thickness-normal{stroke-width:2px;}#mlayers .edge-thickness-thick{stroke-width:3.5px;}#mlayers .edge-pattern-solid{stroke-dasharray:0;}#mlayers .edge-pattern-dashed{stroke-dasharray:3;}#mlayers .edge-pattern-dotted{stroke-dasharray:2;}#mlayers .marker{fill:#333333;stroke:#333333;}#mlayers .marker.cross{stroke:#333333;}#mlayers svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mlayers .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#mlayers .cluster-label text{fill:#333;}#mlayers .cluster-label span,#mlayers p{color:#333;}#mlayers .label text,#mlayers span,#mlayers p{fill:#333;color:#333;}#mlayers .node rect,#mlayers .node circle,#mlayers .node ellipse,#mlayers .node polygon,#mlayers .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mlayers .flowchart-label text{text-anchor:middle;}#mlayers .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mlayers .node .label{text-align:center;}#mlayers .node.clickable{cursor:pointer;}#mlayers .arrowheadPath{fill:#333333;}#mlayers .edgePath .path{stroke:#333333;stroke-width:2.0px;}#mlayers .flowchart-link{stroke:#333333;fill:none;}#mlayers .edgeLabel{background-color:#e8e8e8;text-align:center;}#mlayers .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}#mlayers .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#mlayers .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#mlayers .cluster text{fill:#333;}#mlayers .cluster span,#mlayers p{color:#333;}#mlayers div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#mlayers .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#mlayers :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="mlayers_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mlayers_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mlayers_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mlayers_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mlayers_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mlayers_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path d="M215.547,91L215.547,95.167C215.547,99.333,215.547,107.667,215.547,115.117C215.547,122.567,215.547,129.133,215.547,132.417L215.547,135.7" id="L-P-T-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-P LE-T" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M270.605,232L277.562,237.75C284.52,243.5,298.436,255,370.095,268.892C441.754,282.785,571.156,299.07,635.857,307.212L700.558,315.355" id="L-T-PY-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-T LE-PY" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M888.316,338.6L943.669,345.333C999.022,352.067,1109.728,365.533,1165.081,377.133C1220.434,388.733,1220.434,398.467,1220.434,403.333L1220.434,408.2" id="L-PY-RS-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-PY LE-RS" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M767.915,354L763.332,358.167C758.748,362.333,749.581,370.667,739.99,378.48C730.4,386.293,720.385,393.587,715.378,397.233L710.37,400.88" id="L-PY-SC-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-PY LE-SC" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M705.816,337.195L640.239,344.163C574.661,351.13,443.507,365.065,368.574,378.846C293.641,392.627,274.93,406.253,265.574,413.067L256.219,419.88" id="L-PY-RC-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-PY LE-RC" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M1256.513,485.5L1263.862,492.833C1271.212,500.167,1285.91,514.833,1293.26,532.333C1300.609,549.833,1300.609,570.167,1300.609,588.917C1300.609,607.667,1300.609,624.833,1295.836,637.048C1291.062,649.264,1281.515,656.527,1276.742,660.159L1271.968,663.791" id="L-RS-RL-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RS LE-RL" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M1184.354,485.5L1177.005,492.833C1169.656,500.167,1154.957,514.833,1147.607,527.033C1140.258,539.233,1140.258,548.967,1140.258,553.833L1140.258,558.7" id="L-RS-RG-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RS LE-RG" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M1140.258,617L1140.258,621.167C1140.258,625.333,1140.258,633.667,1145.031,641.465C1149.805,649.264,1159.352,656.527,1164.125,660.159L1168.899,663.791" id="L-RG-RL-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RG LE-RL" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M733.916,495L745.329,500.75C756.741,506.5,779.566,518,790.978,528.617C802.391,539.233,802.391,548.967,802.391,553.833L802.391,558.7" id="L-SC-CP-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-SC LE-CP" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M802.391,617L802.391,621.167C802.391,625.333,802.391,633.667,802.391,641.117C802.391,648.567,802.391,655.133,802.391,658.417L802.391,661.7" id="L-CP-CPV-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-CP LE-CPV" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M541.928,495L529.078,500.75C516.228,506.5,490.528,518,477.678,530.2C464.828,542.4,464.828,555.3,464.828,561.75L464.828,568.2" id="L-SC-DR-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-SC LE-DR" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M802.391,739L802.391,743.167C802.391,747.333,802.391,755.667,802.391,763.117C802.391,770.567,802.391,777.133,802.391,780.417L802.391,783.7" id="L-CPV-DR2-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-CPV LE-DR2" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M445.25,418.289L403.633,411.741C362.016,405.193,278.781,392.096,237.164,376.965C195.547,361.833,195.547,344.667,195.547,325.917C195.547,307.167,195.547,286.833,196.77,271.774C197.993,256.714,200.44,246.928,201.663,242.035L202.886,237.142" id="L-SC-T-0" class=" edge-thickness-normal edge-pattern-dotted flowchart-link LS-SC LE-T" style="fill:none;stroke-width:2px;stroke-dasharray:3;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M822.145,213L822.145,221.917C822.145,230.833,822.145,248.667,820.116,262.516C818.088,276.366,814.032,286.232,812.004,291.165L809.976,296.098" id="L-TR-PY-0" class=" edge-thickness-normal edge-pattern-dotted flowchart-link LS-TR LE-PY" style="fill:none;stroke-width:2px;stroke-dasharray:3;" marker-end="url(#mlayers_flowchart-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(802.390625, 529.5)"><g class="label" transform="translate(-83.859375, -9.5)"><foreignObject width="167.71875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">inherits, with overrides</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(195.546875, 327.5)"><g class="label" transform="translate(-87.359375, -19)"><foreignObject width="174.71875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">names a billing identity;<br/>blank = tenant default</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(822.14453125, 266.5)"><g class="label" transform="translate(-30.15625, -9.5)"><foreignObject width="60.3125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">billed to</span></div></foreignObject></g></g></g><g class="nodes"><g class="node default default flowchart-label" id="flowchart-P-0" data-node="true" data-id="P" transform="translate(215.546875, 45.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-186.8359375" y="-45.5" width="373.671875" height="91"></rect><g class="label" style="" transform="translate(-179.3359375, -38)"><rect></rect><foreignObject width="358.671875" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">platform<br/>named options, code catalogues,<br/>claim-profile templates, rate templates,<br/>reference series, document types, invoice layouts</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-T-1" data-node="true" data-id="T" transform="translate(215.546875, 186.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-215.546875" y="-45.5" width="431.09375" height="91"></rect><g class="label" style="" transform="translate(-208.046875, -38)"><rect></rect><foreignObject width="416.09375" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">tenant configuration §3.2<br/>billing identities + dated default, clearinghouse accounts,<br/>business calendar, profile overrides,<br/>tenant templates, layouts, zones</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-PY-3" data-node="true" data-id="PY" transform="translate(797.06640625, 327.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-91.25" y="-26.5" width="182.5" height="53"></rect><g class="label" style="" transform="translate(-83.75, -19)"><rect></rect><foreignObject width="167.5" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">payer<br/>stable identity, contact</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RS-5" data-node="true" data-id="RS" transform="translate(1220.43359375, 449.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-130.140625" y="-36" width="260.28125" height="72"></rect><g class="label" style="" transform="translate(-122.640625, -28.5)"><rect></rect><foreignObject width="245.28125" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">rate_schedule, dated by DOS<br/>grain, pairing, reference location,<br/>odometer fallback, caps</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-SC-7" data-node="true" data-id="SC" transform="translate(643.609375, 449.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-198.359375" y="-45.5" width="396.71875" height="91"></rect><g class="label" style="" transform="translate(-190.859375, -38)"><rect></rect><foreignObject width="381.71875" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">payer_submission_config, dated by DOS<br/>channel, billing identity or blank, member-id source,<br/>period timezone, filing and payment terms,<br/>invoice period and layout</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RC-9" data-node="true" data-id="RC" transform="translate(215.546875, 449.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-179.703125" y="-26.5" width="359.40625" height="53"></rect><g class="label" style="" transform="translate(-172.203125, -19)"><rect></rect><foreignObject width="344.40625" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">payer_routing_config, dated by submission date<br/>payer electronic id, clearinghouse account</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RL-11" data-node="true" data-id="RL" transform="translate(1220.43359375, 703)"><rect class="basic label-container" style="" rx="0" ry="0" x="-119.46875" y="-36" width="238.9375" height="72"></rect><g class="label" style="" transform="translate(-111.96875, -28.5)"><rect></rect><foreignObject width="223.9375" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">rate_line, never dated<br/>price, measure, distance basis,<br/>rounding, line building, code</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RG-13" data-node="true" data-id="RG" transform="translate(1140.2578125, 590.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-125.3515625" y="-26.5" width="250.703125" height="53"></rect><g class="label" style="" transform="translate(-117.8515625, -19)"><rect></rect><foreignObject width="235.703125" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">rate_line_group<br/>choice or tiers over one measure</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-CP-17" data-node="true" data-id="CP" transform="translate(802.390625, 590.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-162.515625" y="-26.5" width="325.03125" height="53"></rect><g class="label" style="" transform="translate(-155.015625, -19)"><rect></rect><foreignObject width="310.03125" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">claim_profile template, platform or tenant<br/>referenced, never copied</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-CPV-19" data-node="true" data-id="CPV" transform="translate(802.390625, 703)"><rect class="basic label-container" style="" rx="0" ry="0" x="-138.1015625" y="-36" width="276.203125" height="72"></rect><g class="label" style="" transform="translate(-130.6015625, -28.5)"><rect></rect><foreignObject width="261.203125" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">claim_profile_version, dated by DOS<br/>claim layout, X12 settings,<br/>code rules, documentation rules</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-DR-21" data-node="true" data-id="DR" transform="translate(464.828125, 590.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-125.046875" y="-17" width="250.09375" height="34"></rect><g class="label" style="" transform="translate(-117.546875, -9.5)"><rect></rect><foreignObject width="235.09375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">documentation_rule, payer level</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-DR2-23" data-node="true" data-id="DR2" transform="translate(802.390625, 806)"><rect class="basic label-container" style="" rx="0" ry="0" x="-128.7890625" y="-17" width="257.578125" height="34"></rect><g class="label" style="" transform="translate(-121.2890625, -9.5)"><rect></rect><foreignObject width="242.578125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">documentation_rule, profile level</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-TR-26" data-node="true" data-id="TR" transform="translate(822.14453125, 186.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-111.5234375" y="-26.5" width="223.046875" height="53"></rect><g class="label" style="" transform="translate(-104.0234375, -19)"><rect></rect><foreignObject width="208.046875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">transport (transport request)<br/>payer, pickup timezone</span></div></foreignObject></g></g></g></g></g></svg></div></figure>
 <div class="table-scroll"><table>
