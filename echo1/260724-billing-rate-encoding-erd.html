@@ -180,19 +180,24 @@ it, and how each charge was derived, so it reproduces exactly years later.</p>
 <p class="callout"><strong>R7. Billing identities.</strong> The system must support:</p>
 <ul>
 <li>several legal identities per tenant (OK RIDE CARE and DRC);</li>
-<li>one identity per payer: the one it names, else the tenant&rsquo;s dated default;</li>
-<li>dated address changes, with a new NPI or tax ID as a new identity;</li>
-<li>payer-issued numbers sent only with their own identity (Colorado&rsquo;s 11638);</li>
-<li>separately enrolled sites as separate payers (SoonerCare Tulsa and OKC).</li>
+<li>a dated tenant default identity;</li>
+<li>dated address and contact changes, with a new NPI or tax ID as a new identity.</li>
 </ul>
-<p class="callout"><strong>R8. Tenant settings.</strong> The system must support:</p>
+<p class="callout"><strong>R8. Payer records.</strong> The system must support:</p>
+<ul>
+<li>a billing identity named per payer, or left blank to follow the tenant default;</li>
+<li>payer-issued numbers set only on a payer that names its identity (Colorado&rsquo;s 11638);</li>
+<li>one payer record per enrolment, so separately enrolled sites are separate payers (SoonerCare
+  Tulsa and OKC).</li>
+</ul>
+<p class="callout"><strong>R9. Tenant settings.</strong> The system must support:</p>
 <ul>
 <li>service dates in the transport&rsquo;s local timezone;</li>
 <li>a period timezone for months and invoice weeks;</li>
 <li>business days and holidays;</li>
 <li>a claim number prefix and clearinghouse accounts.</li>
 </ul>
-<p class="callout"><strong>R9. What is priced.</strong> The system must price:</p>
+<p class="callout"><strong>R10. What is priced.</strong> The system must price:</p>
 <ul>
 <li>per client leg, per vehicle trip, or per period ($6,250 a month);</li>
 <li>completed and cancelled transports, and no-shows <em>later</em>;</li>
@@ -200,7 +205,7 @@ it, and how each charge was derived, so it reproduces exactly years later.</p>
 <li>from a contract, fee schedule or programme, and from a percentage of a fee schedule or a charge
   list <em>later</em>.</li>
 </ul>
-<p class="callout"><strong>R10. Price terms.</strong> The system must support:</p>
+<p class="callout"><strong>R11. Price terms.</strong> The system must support:</p>
 <ul>
 <li>any number of terms per payer: base, mileage, wait, extra stop, additional passenger, staff,
   fuel, cancellation, minimum and period fee, with at-cost expenses and attendant time <em>later</em>;</li>
@@ -213,7 +218,7 @@ it, and how each charge was derived, so it reproduces exactly years later.</p>
 <li>caps on dollars or transports per period (Larned $104,000 a year);</li>
 <li>price and code by level of service <em>later</em>.</li>
 </ul>
-<p class="callout"><strong>R11. Distance and rounding.</strong> The system must support:</p>
+<p class="callout"><strong>R12. Distance and rounding.</strong> The system must support:</p>
 <ul>
 <li>a distance rule per term: one way or round trip, between the client&rsquo;s stops, from a fixed
   location, or along the vehicle&rsquo;s path;</li>
@@ -222,7 +227,7 @@ it, and how each charge was derived, so it reproduces exactly years later.</p>
 <li>time priced in any unit (Arizona 30 minutes);</li>
 <li>rounding once, per trip, before pricing.</li>
 </ul>
-<p class="callout"><strong>R12. Claims and service lines.</strong> The system must support:</p>
+<p class="callout"><strong>R13. Claims and service lines.</strong> The system must support:</p>
 <ul>
 <li>codes and modifiers per term, with state code rules (Colorado ET, Minnesota UA);</li>
 <li>line building, repeat modifiers and line limits (Arizona three lines);</li>
@@ -231,21 +236,21 @@ it, and how each charge was derived, so it reproduces exactly years later.</p>
 <li>prior-authorisation and trip ids on the claim <em>later</em>;</li>
 <li>secondary billing <em>later</em>.</li>
 </ul>
-<p class="callout"><strong>R13. Electronic claims (837P).</strong> The system must support:</p>
+<p class="callout"><strong>R14. Electronic claims (837P).</strong> The system must support:</p>
 <ul>
 <li>every payer-side 837P setting as configuration;</li>
 <li>clearinghouse routing per payer;</li>
 <li>ambulance claim structures <em>later</em>;</li>
 <li>one interchange sender shared across tenants <em>later</em>.</li>
 </ul>
-<p class="callout"><strong>R14. Invoices.</strong> The system must support:</p>
+<p class="callout"><strong>R15. Invoices.</strong> The system must support:</p>
 <ul>
 <li>billing by 837P or invoice from the same priced data;</li>
 <li>invoice period, dates and payment terms (Larned weekly, net 30);</li>
 <li>an invoice layout per payer (Larned&rsquo;s column list);</li>
 <li>portal submission <em>later</em>.</li>
 </ul>
-<p class="callout"><strong>R15. Payer rules.</strong> The system must support:</p>
+<p class="callout"><strong>R16. Payer rules.</strong> The system must support:</p>
 <ul>
 <li>documentation requirements, holding the claim when delivery is not built (Colorado 250-mile form);</li>
 <li>services a payer never pays (Colorado: no wait time);</li>
