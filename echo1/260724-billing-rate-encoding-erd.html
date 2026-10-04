@@ -152,503 +152,110 @@
 
 <article>
 <h2>Requirements</h2>
-<p>These are the capabilities a payer and tenant configuration must have, whatever tables implement
-them. They are written for any tenant billing any payer in any US state: state Medicaid, managed
-care plans, transport brokers, counties, hospitals and state agencies on contract. Every
-requirement comes from a signed contract, a state billing manual or a federal rule. Echo1 decides how to implement them;
-the proposed design is one way to meet them.</p>
-<p>Each requirement has one of two levels:</p>
+<p>What any payer and tenant configuration must do to bill every tenant&rsquo;s contracts, in any US state.
+Echo1 decides how to implement them.</p>
+<p>Items marked <em>later</em> are needed by no payer yet. They must be addable without restructuring, and
+until then configuration that needs them is refused with a reason.</p>
+<p class="callout"><strong>R1. Configuration, not code.</strong> Any tenant sets up any payer through configuration. A new
+behaviour is a new option every tenant can use, never per-payer code.</p>
+<p class="callout"><strong>R2. Tenant isolation.</strong> Each tenant&rsquo;s data is isolated in the database. Platform templates are
+readable by every tenant and writable only by the platform.</p>
+<p class="callout"><strong>R3. Shared templates.</strong> Rules common to many payers are kept once as dated templates, and a payer
+overrides single settings without copying the rest (Colorado&rsquo;s 837 rules).</p>
+<p class="callout"><strong>R4. Dated versions.</strong> The system must support:</p>
 <ul>
-<li><strong>Now</strong>: a current RideCare payer, or a payer type a new tenant will certainly bring, needs it.</li>
-<li><strong>Room</strong>: no current payer needs it yet, but adding it later must be an addition (a new option
-  value, column or table), never a restructure. Until it is built, configuration that needs it is
-  refused with a named reason.</li>
+<li>terms resolved on the service date, and routing on the send date;</li>
+<li>changes only by a new version, with no gaps;</li>
+<li>versions used by a billed claim locked against edits and back-dating;</li>
+<li>payer deactivation and reactivation from a date.</li>
 </ul>
-<h4>1. Foundations</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R1</td>
-<td>Let a tenant set up any payer through named options and configured rows. Adding a payer never needs a code change; a new behaviour is a reviewed new option that every tenant can use</td>
-<td>Now</td>
-<td>26 hypothetical payers across many states walk through without per-payer code</td>
-</tr>
-<tr>
-<td>R2</td>
-<td>Isolate each tenant&rsquo;s identities, payers, prices and claims from every other tenant, enforced in the database</td>
-<td>Now</td>
-<td>two transport companies on one platform</td>
-</tr>
-<tr>
-<td>R3</td>
-<td>Let rules common to many payers be kept once as a shared, dated template, and let a payer override a single setting without copying the rest</td>
-<td>Now</td>
-<td>Colorado&rsquo;s state 837 rules, used by every Colorado payer</td>
-</tr>
-<tr>
-<td>R4</td>
-<td>Date every price and every billing term. Prices and terms apply on the transport&rsquo;s service date; electronic routing applies on the date the file is sent</td>
-<td>Now</td>
-<td>Oklahoma mileage rose from $2.85 to $4.80 on 2025-12-01; a payer changes its electronic id, then an older claim is rebilled</td>
-</tr>
-<tr>
-<td>R5</td>
-<td>Change configuration only by adding a dated version. Versions follow each other without gaps, except after a deliberate deactivation. A version a billed claim used cannot be edited or back-dated under</td>
-<td>Now</td>
-<td>a rate correction must not silently reprice claims already sent</td>
-</tr>
-<tr>
-<td>R6</td>
-<td>Give exactly one price and one set of claim terms for every transport. Two settings that could decide the same money are refused when saved. Ambiguity is never settled by row order or by a person choosing at billing time</td>
-<td>Now</td>
-<td>Larned&rsquo;s &ldquo;$85 under 50 miles&rdquo; and &ldquo;$2.85 a mile at 50 and over&rdquo; can never both apply</td>
-</tr>
-<tr>
-<td>R7</td>
-<td>Stop with a named reason when anything needed is missing: a measurement, an index value, a setting, an address, a version in force. A missing value never prices as zero or as &ldquo;no limit&rdquo;</td>
-<td>Now</td>
-<td>a fuel surcharge with no fuel price for the week</td>
-</tr>
-<tr>
-<td>R8</td>
-<td>Record on every claim the exact configuration versions, billing identity and address it was built from, and how each charge was derived per transport. A replacement or void years later reproduces the original exactly</td>
-<td>Now</td>
-<td>an audit asks why a 2026 claim billed 13 miles</td>
-</tr>
-<tr>
-<td>R9</td>
-<td>Price only from the payer and measured facts of the transport: distance, wait, stops, staff, where it went, when it was cancelled. Who pays is decided before pricing, never inside a price rule</td>
-<td>Now</td>
-<td>TANF and crisis transports are separate payers, not price conditions</td>
-</tr>
-</tbody>
-</table></div>
-<h4>2. Tenant and billing identity</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R10</td>
-<td>Let a tenant bill under several legal identities, each with legal name, NPI, tax ID, taxonomy, address and contact</td>
-<td>Now</td>
-<td>RideCare bills as OK RIDE CARE and as David Roberts Consulting</td>
-</tr>
-<tr>
-<td>R11</td>
-<td>Bill each payer under one identity: the one its configuration names, or the tenant&rsquo;s dated default. Changing the default reaches every payer that follows it from a date, without editing those payers</td>
-<td>Now</td>
-<td>a company with one identity never sets one per payer</td>
-</tr>
-<tr>
-<td>R12</td>
-<td>Date address and contact changes on the identity without touching any payer. A new NPI or tax ID is a new identity</td>
-<td>Now</td>
-<td>the company moves offices</td>
-</tr>
-<tr>
-<td>R13</td>
-<td>Send a payer-issued enrolment number, taxonomy override or contract code only with the identity it was issued to</td>
-<td>Now</td>
-<td>Colorado&rsquo;s provider number 11638 belongs to DRC alone</td>
-</tr>
-<tr>
-<td>R14</td>
-<td>Support sites separately enrolled with one payer as separate payer records that roll up for reporting and may share an electronic payer id</td>
-<td>Now</td>
-<td>&ldquo;SoonerCare, Tulsa site&rdquo; and &ldquo;SoonerCare, OKC site&rdquo;</td>
-</tr>
-<tr>
-<td>R15</td>
-<td>Date each transport in the timezone where it happens, whatever the server&rsquo;s or viewer&rsquo;s zone. Period boundaries such as months and invoice weeks use a configured timezone</td>
-<td>Now</td>
-<td>a 23:20 CDT pickup belongs to that day, though it is 04:20 UTC the next day</td>
-</tr>
-<tr>
-<td>R16</td>
-<td>Hold tenant settings: business days and holidays, claim number prefix, clearinghouse accounts</td>
-<td>Now</td>
-<td>an invoice dated the last business day of the month</td>
-</tr>
-</tbody>
-</table></div>
-<h4>3. What is priced</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R17</td>
-<td>Price one client&rsquo;s leg, one vehicle trip whatever the number of riders, or a fixed fee per period</td>
-<td>Now</td>
-<td>Medicaid prices per client leg; Sedgwick County per trip; Griffin pays $6,250 a month</td>
-</tr>
-<tr>
-<td>R18</td>
-<td>Price completed transports and cancellations, each by its own terms</td>
-<td>Now</td>
-<td>$45 if cancelled after the driver was dispatched</td>
-</tr>
-<tr>
-<td>R19</td>
-<td>Price no-shows</td>
-<td>Room</td>
-<td>a broker that pays when the client refuses to board</td>
-</tr>
-<tr>
-<td>R20</td>
-<td>Pair an outbound and its return into one priced trip</td>
-<td>Now</td>
-<td>Larned prices the round trip</td>
-</tr>
-<tr>
-<td>R21</td>
-<td>Record where the rates come from: contract, state fee schedule or programme</td>
-<td>Now</td>
-<td>Colorado pays 100% of the state fee schedule</td>
-</tr>
-<tr>
-<td>R22</td>
-<td>Price as a percentage of a fee schedule, or bill a tenant&rsquo;s own charge list with the expected payment tracked separately</td>
-<td>Room</td>
-<td>&ldquo;the lesser of billed charges or the fee schedule&rdquo;</td>
-</tr>
-</tbody>
-</table></div>
-<h4>4. Price terms</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R23</td>
-<td>Allow any number of priced terms per payer: base, mileage, wait, extra stop, additional passenger, additional staff, fuel surcharge, cancellation, minimum, period fee</td>
-<td>Now</td>
-<td>Larned has eight priced terms</td>
-</tr>
-<tr>
-<td>R24</td>
-<td>Price expenses at cost, attendant time and no-shows as terms</td>
-<td>Room</td>
-<td>Larned&rsquo;s preauthorised travel expenses</td>
-</tr>
-<tr>
-<td>R25</td>
-<td>Give each term its own included allowance before charging starts</td>
-<td>Now</td>
-<td>Oklahoma&rsquo;s first 30 miles; Larned&rsquo;s first 30 minutes of wait; none in Colorado</td>
-</tr>
-<tr>
-<td>R26</td>
-<td>Choose between mutually exclusive prices by a measured fact, and price in tiers</td>
-<td>Now</td>
-<td>Larned: $85 under 50 round-trip miles, else $2.85 every mile</td>
-</tr>
-<tr>
-<td>R27</td>
-<td>Price by where the transport went: a fixed price for a named route, otherwise the regular terms</td>
-<td>Now</td>
-<td>Sedgwick: Wichita to Osawatomie $473.10, other destinations by the mile</td>
-</tr>
-<tr>
-<td>R28</td>
-<td>Price by zones of postal codes, counties or map areas</td>
-<td>Room</td>
-<td>Arizona&rsquo;s rural rate</td>
-</tr>
-<tr>
-<td>R29</td>
-<td>Apply a term only when a measured condition holds</td>
-<td>Now</td>
-<td>$1.00 a mile when two staff are aboard; a surcharge when fuel tops $5.00</td>
-</tr>
-<tr>
-<td>R30</td>
-<td>Apply a minimum charge per priced trip</td>
-<td>Now</td>
-<td>Sedgwick&rsquo;s $85 floor</td>
-</tr>
-<tr>
-<td>R31</td>
-<td>Guarantee a minimum per period, overall or per referring facility</td>
-<td>Room</td>
-<td>a county guaranteeing each facility $2,000 a month</td>
-</tr>
-<tr>
-<td>R32</td>
-<td>Adjust a rate by a dated published index, with a step rule</td>
-<td>Now</td>
-<td>Larned: +$0.50 a mile above $5.00 a gallon, +$0.04 per further $1.00</td>
-</tr>
-<tr>
-<td>R33</td>
-<td>Cap a payer by dollars, priced trips or transports per month, year or contract term, from a chosen start</td>
-<td>Now</td>
-<td>Larned $104,000 a year; Chickasaw 65 transports a month</td>
-</tr>
-<tr>
-<td>R34</td>
-<td>Choose price and procedure code by level of service or vehicle type</td>
-<td>Room</td>
-<td>ambulatory, wheelchair and stretcher codes in state Medicaid programmes</td>
-</tr>
-</tbody>
-</table></div>
-<h4>5. Distance and rounding</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R35</td>
-<td>Set the distance rule per priced term: one way or round trip; between the client&rsquo;s own pickup and dropoff, or from a fixed reference location; or the vehicle&rsquo;s driven path shared among riders</td>
-<td>Now</td>
-<td>Larned&rsquo;s first passenger is priced round trip from Larned, further passengers one way between their own stops</td>
-</tr>
-<tr>
-<td>R36</td>
-<td>Measure distance from the map now, and leave room for odometer readings with a fallback rule</td>
-<td>Room</td>
-<td>Arizona requires loaded miles from the odometer</td>
-</tr>
-<tr>
-<td>R37</td>
-<td>Round each quantity per term: up, down or half up; whole or tenths; a precision that changes above a threshold</td>
-<td>Now</td>
-<td>Medicare rounds up to tenths under 100 miles and to whole miles at 100 and over</td>
-</tr>
-<tr>
-<td>R38</td>
-<td>Price time in any unit size</td>
-<td>Now</td>
-<td>per hour; Arizona per 30 minutes</td>
-</tr>
-<tr>
-<td>R39</td>
-<td>Keep measurements at full precision and round once, per priced trip, before pricing. Money rounds to cents</td>
-<td>Now</td>
-<td>the same transport always prices the same</td>
-</tr>
-</tbody>
-</table></div>
-<h4>6. Claims and service lines</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R40</td>
-<td>Set procedure codes and modifiers per term, with state rules on required modifiers and whole units</td>
-<td>Now</td>
-<td>Colorado A0999 ET and A0425 ET; Minnesota requires UA</td>
-</tr>
-<tr>
-<td>R41</td>
-<td>Build service lines per payer: one line per code per claim, or one per trip; repeat modifiers on a later trip the same day; a unit cap per line; a line order; a maximum number of lines per claim, then a split or a stop</td>
-<td>Now</td>
-<td>Colorado repeats with 76; Arizona allows three lines in a fixed order</td>
-</tr>
-<tr>
-<td>R42</td>
-<td>Group transports into claims by payer, client and service date</td>
-<td>Now</td>
-<td>one claim per client-day</td>
-</tr>
-<tr>
-<td>R43</td>
-<td>Group one claim per trip, or one claim per period</td>
-<td>Room</td>
-<td>brokers billing per trip</td>
-</tr>
-<tr>
-<td>R44</td>
-<td>Carry external references on the claim: prior authorisation numbers, a broker&rsquo;s trip id</td>
-<td>Room</td>
-<td>a managed care plan requiring the authorisation number on every claim</td>
-</tr>
-<tr>
-<td>R45</td>
-<td>Say per payer which coverage record supplies the member id</td>
-<td>Now</td>
-<td>rebilling a transport to a second payer</td>
-</tr>
-<tr>
-<td>R46</td>
-<td>Record the payer&rsquo;s position as primary, and leave room for secondary</td>
-<td>Room</td>
-<td>rebill a payer that is not primary</td>
-</tr>
-</tbody>
-</table></div>
-<h4>7. Electronic claims (837P)</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R47</td>
-<td>Set every payer-side 837P choice without code: filing indicator, diagnosis source, place of service, taxonomy segments, rendering provider, contract code placement, claim constants, the correction forms the payer accepts</td>
-<td>Now</td>
-<td>the Oklahoma and Colorado 837 differences</td>
-</tr>
-<tr>
-<td>R48</td>
-<td>Route each payer through a clearinghouse account with its electronic payer id and name</td>
-<td>Now</td>
-<td>Waystar for every current payer</td>
-</tr>
-<tr>
-<td>R49</td>
-<td>Add Medicare-style ambulance structures: pickup and dropoff locations, origin and destination modifiers, ambulance segment, certification of need</td>
-<td>Room</td>
-<td>a Medicare Part B ambulance payer</td>
-</tr>
-<tr>
-<td>R50</td>
-<td>Share one interchange sender among several tenants</td>
-<td>Room</td>
-<td>the platform as a billing service</td>
-</tr>
-</tbody>
-</table></div>
-<h4>8. Invoices</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R51</td>
-<td>Bill a payer by 837P or by invoice from the same priced data. Vehicle-trip and period pricing bill by invoice</td>
-<td>Now</td>
-<td>Larned and Sedgwick are invoiced</td>
-</tr>
-<tr>
-<td>R52</td>
-<td>Submit through a payer&rsquo;s web portal</td>
-<td>Room</td>
-<td>the VA payment portal</td>
-</tr>
-<tr>
-<td>R53</td>
-<td>Set the invoice period (weekly, monthly, one per claim), week start, invoice date rule and payment terms</td>
-<td>Now</td>
-<td>Larned weekly, net 30; a hospital invoice per discharge</td>
-</tr>
-<tr>
-<td>R54</td>
-<td>Set the invoice layout per payer: a summary or itemised rows, and chosen columns in order</td>
-<td>Now</td>
-<td>Larned&rsquo;s contract lists the columns its invoice must show</td>
-</tr>
-</tbody>
-</table></div>
-<h4>9. Documentation, exclusions, occupancy and filing</h4>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>#</th>
-<th>The system must</th>
-<th>Level</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>R55</td>
-<td>Set documentation requirements per payer or template: what, when, for which scope, how it is delivered, and whether it blocks or warns. A requirement whose delivery route is not built holds the claim by default</td>
-<td>Now</td>
-<td>Colorado&rsquo;s form for transports over 250 miles</td>
-</tr>
-<tr>
-<td>R56</td>
-<td>Exclude services the payer never pays</td>
-<td>Now</td>
-<td>Colorado pays no wait time or cancellations</td>
-</tr>
-<tr>
-<td>R57</td>
-<td>Limit clients per vehicle movement</td>
-<td>Now</td>
-<td>Colorado one; Sedgwick two</td>
-</tr>
-<tr>
-<td>R58</td>
-<td>Add occupancy rules on transport facts</td>
-<td>Room</td>
-<td>restrained clients alone; minors apart from adults</td>
-</tr>
-<tr>
-<td>R59</td>
-<td>Hold a timely-filing window and an earliest submission date per payer</td>
-<td>Now</td>
-<td>Colorado Access 365 days; Minnesota waits five days</td>
-</tr>
-<tr>
-<td>R60</td>
-<td>Deactivate a payer from a date, while claims already dated can still be sent, and reactivate it later</td>
-<td>Now</td>
-<td>a contract ends mid-year</td>
-</tr>
-</tbody>
-</table></div>
-<h4>Out of scope</h4>
-<p>Claim operations (holding, replacing, voiding and appealing claims), each tenant&rsquo;s own values,
-deciding who pays, workers&rsquo; compensation, and Medicare-Medicaid dual-eligible billing.</p>
-<h4>How to test a design against them</h4>
-<p>The 41-axis variation catalogue (<code>redesign-261001/02-variation-catalogue.md</code>) and the 26-payer
-walk (<code>03-design-overview.md</code> §7) are the test set. Every case must be configurable now or have
-room reserved. None may need per-payer code. The proposed design below meets them: 7 payers as
-is, 16 with reserved room, 3 out of scope, and none that cannot be configured.</p>
+<p class="callout"><strong>R5. Safe pricing.</strong> The system must:</p>
+<ul>
+<li>give exactly one price per transport, refusing conflicting settings on save;</li>
+<li>stop with a reason when data is missing, never pricing it as zero;</li>
+<li>price only on the payer and measured facts of the transport, with who pays decided upstream.</li>
+</ul>
+<p class="callout"><strong>R6. Reproducible claims.</strong> Each claim records the configuration, identity and address that built
+it, and how each charge was derived, so it reproduces exactly years later.</p>
+<p class="callout"><strong>R7. Billing identities.</strong> The system must support:</p>
+<ul>
+<li>several legal identities per tenant (OK RIDE CARE and DRC);</li>
+<li>one identity per payer: the one it names, else the tenant&rsquo;s dated default;</li>
+<li>dated address changes, with a new NPI or tax ID as a new identity;</li>
+<li>payer-issued numbers sent only with their own identity (Colorado&rsquo;s 11638);</li>
+<li>separately enrolled sites as separate payers (SoonerCare Tulsa and OKC).</li>
+</ul>
+<p class="callout"><strong>R8. Tenant settings.</strong> The system must support:</p>
+<ul>
+<li>service dates in the transport&rsquo;s local timezone;</li>
+<li>a period timezone for months and invoice weeks;</li>
+<li>business days and holidays;</li>
+<li>a claim number prefix and clearinghouse accounts.</li>
+</ul>
+<p class="callout"><strong>R9. What is priced.</strong> The system must price:</p>
+<ul>
+<li>per client leg, per vehicle trip, or per period ($6,250 a month);</li>
+<li>completed and cancelled transports, and no-shows <em>later</em>;</li>
+<li>an outbound and its return as one trip (Larned);</li>
+<li>from a contract, fee schedule or programme, and from a percentage of a fee schedule or a charge
+  list <em>later</em>.</li>
+</ul>
+<p class="callout"><strong>R10. Price terms.</strong> The system must support:</p>
+<ul>
+<li>any number of terms per payer: base, mileage, wait, extra stop, additional passenger, staff,
+  fuel, cancellation, minimum and period fee, with at-cost expenses and attendant time <em>later</em>;</li>
+<li>an included allowance per term (first 30 miles free);</li>
+<li>alternative prices chosen by a measure, and tiers (Larned $85, else $2.85 a mile);</li>
+<li>a fixed price per named route (Sedgwick $473.10), and zones <em>later</em>;</li>
+<li>terms that apply only under a condition (two staff aboard; fuel over $5);</li>
+<li>a minimum per trip (Sedgwick $85), and per period or facility <em>later</em>;</li>
+<li>escalators tied to a published index (Larned fuel);</li>
+<li>caps on dollars or transports per period (Larned $104,000 a year);</li>
+<li>price and code by level of service <em>later</em>.</li>
+</ul>
+<p class="callout"><strong>R11. Distance and rounding.</strong> The system must support:</p>
+<ul>
+<li>a distance rule per term: one way or round trip, between the client&rsquo;s stops, from a fixed
+  location, or along the vehicle&rsquo;s path;</li>
+<li>map distance now, and odometer <em>later</em>;</li>
+<li>rounding per term by mode, precision and threshold (Medicare tenths under 100 miles);</li>
+<li>time priced in any unit (Arizona 30 minutes);</li>
+<li>rounding once, per trip, before pricing.</li>
+</ul>
+<p class="callout"><strong>R12. Claims and service lines.</strong> The system must support:</p>
+<ul>
+<li>codes and modifiers per term, with state code rules (Colorado ET, Minnesota UA);</li>
+<li>line building, repeat modifiers and line limits (Arizona three lines);</li>
+<li>claims grouped by payer, client and service date, and per trip or per period <em>later</em>;</li>
+<li>the member id source chosen per payer;</li>
+<li>prior-authorisation and trip ids on the claim <em>later</em>;</li>
+<li>secondary billing <em>later</em>.</li>
+</ul>
+<p class="callout"><strong>R13. Electronic claims (837P).</strong> The system must support:</p>
+<ul>
+<li>every payer-side 837P setting as configuration;</li>
+<li>clearinghouse routing per payer;</li>
+<li>ambulance claim structures <em>later</em>;</li>
+<li>one interchange sender shared across tenants <em>later</em>.</li>
+</ul>
+<p class="callout"><strong>R14. Invoices.</strong> The system must support:</p>
+<ul>
+<li>billing by 837P or invoice from the same priced data;</li>
+<li>invoice period, dates and payment terms (Larned weekly, net 30);</li>
+<li>an invoice layout per payer (Larned&rsquo;s column list);</li>
+<li>portal submission <em>later</em>.</li>
+</ul>
+<p class="callout"><strong>R15. Payer rules.</strong> The system must support:</p>
+<ul>
+<li>documentation requirements, holding the claim when delivery is not built (Colorado 250-mile form);</li>
+<li>services a payer never pays (Colorado: no wait time);</li>
+<li>a limit on clients per vehicle, and occupancy rules on transport facts <em>later</em>;</li>
+<li>timely-filing windows and earliest send dates.</li>
+</ul>
+<p class="callout"><strong>Out of scope:</strong> claim operations, tenant values, deciding who pays, workers&rsquo; compensation,
+dual-eligible billing.</p>
+<p class="callout"><strong>Test:</strong> the 41-axis variation catalogue and the 26-payer walk. The proposed design handles 7
+payers now and 16 later, with 3 out of scope and none needing code.</p>
 <h2>The model</h2>
 <figure class="dia" data-name="layers" data-title="The configuration model"><figcaption><span class="nm">The configuration model</span><span class="ds">platform, tenant, payer and the dated payer versions</span></figcaption><div class="canvas"><svg id="mlayers" xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 1366.57421875 839" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mlayers{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}#mlayers .error-icon{fill:#552222;}#mlayers .error-text{fill:#552222;stroke:#552222;}#mlayers .edge-thickness-normal{stroke-width:2px;}#mlayers .edge-thickness-thick{stroke-width:3.5px;}#mlayers .edge-pattern-solid{stroke-dasharray:0;}#mlayers .edge-pattern-dashed{stroke-dasharray:3;}#mlayers .edge-pattern-dotted{stroke-dasharray:2;}#mlayers .marker{fill:#333333;stroke:#333333;}#mlayers .marker.cross{stroke:#333333;}#mlayers svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mlayers .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#mlayers .cluster-label text{fill:#333;}#mlayers .cluster-label span,#mlayers p{color:#333;}#mlayers .label text,#mlayers span,#mlayers p{fill:#333;color:#333;}#mlayers .node rect,#mlayers .node circle,#mlayers .node ellipse,#mlayers .node polygon,#mlayers .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mlayers .flowchart-label text{text-anchor:middle;}#mlayers .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mlayers .node .label{text-align:center;}#mlayers .node.clickable{cursor:pointer;}#mlayers .arrowheadPath{fill:#333333;}#mlayers .edgePath .path{stroke:#333333;stroke-width:2.0px;}#mlayers .flowchart-link{stroke:#333333;fill:none;}#mlayers .edgeLabel{background-color:#e8e8e8;text-align:center;}#mlayers .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}#mlayers .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#mlayers .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#mlayers .cluster text{fill:#333;}#mlayers .cluster span,#mlayers p{color:#333;}#mlayers div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#mlayers .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#mlayers :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="mlayers_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mlayers_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mlayers_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mlayers_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mlayers_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mlayers_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path d="M215.547,91L215.547,95.167C215.547,99.333,215.547,107.667,215.547,115.117C215.547,122.567,215.547,129.133,215.547,132.417L215.547,135.7" id="L-P-T-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-P LE-T" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M270.605,232L277.562,237.75C284.52,243.5,298.436,255,370.095,268.892C441.754,282.785,571.156,299.07,635.857,307.212L700.558,315.355" id="L-T-PY-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-T LE-PY" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M888.316,338.6L943.669,345.333C999.022,352.067,1109.728,365.533,1165.081,377.133C1220.434,388.733,1220.434,398.467,1220.434,403.333L1220.434,408.2" id="L-PY-RS-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-PY LE-RS" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M767.915,354L763.332,358.167C758.748,362.333,749.581,370.667,739.99,378.48C730.4,386.293,720.385,393.587,715.378,397.233L710.37,400.88" id="L-PY-SC-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-PY LE-SC" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M705.816,337.195L640.239,344.163C574.661,351.13,443.507,365.065,368.574,378.846C293.641,392.627,274.93,406.253,265.574,413.067L256.219,419.88" id="L-PY-RC-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-PY LE-RC" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M1256.513,485.5L1263.862,492.833C1271.212,500.167,1285.91,514.833,1293.26,532.333C1300.609,549.833,1300.609,570.167,1300.609,588.917C1300.609,607.667,1300.609,624.833,1295.836,637.048C1291.062,649.264,1281.515,656.527,1276.742,660.159L1271.968,663.791" id="L-RS-RL-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RS LE-RL" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M1184.354,485.5L1177.005,492.833C1169.656,500.167,1154.957,514.833,1147.607,527.033C1140.258,539.233,1140.258,548.967,1140.258,553.833L1140.258,558.7" id="L-RS-RG-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RS LE-RG" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M1140.258,617L1140.258,621.167C1140.258,625.333,1140.258,633.667,1145.031,641.465C1149.805,649.264,1159.352,656.527,1164.125,660.159L1168.899,663.791" id="L-RG-RL-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-RG LE-RL" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M733.916,495L745.329,500.75C756.741,506.5,779.566,518,790.978,528.617C802.391,539.233,802.391,548.967,802.391,553.833L802.391,558.7" id="L-SC-CP-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-SC LE-CP" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M802.391,617L802.391,621.167C802.391,625.333,802.391,633.667,802.391,641.117C802.391,648.567,802.391,655.133,802.391,658.417L802.391,661.7" id="L-CP-CPV-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-CP LE-CPV" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M541.928,495L529.078,500.75C516.228,506.5,490.528,518,477.678,530.2C464.828,542.4,464.828,555.3,464.828,561.75L464.828,568.2" id="L-SC-DR-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-SC LE-DR" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M802.391,739L802.391,743.167C802.391,747.333,802.391,755.667,802.391,763.117C802.391,770.567,802.391,777.133,802.391,780.417L802.391,783.7" id="L-CPV-DR2-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-CPV LE-DR2" style="fill:none;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M445.25,418.289L403.633,411.741C362.016,405.193,278.781,392.096,237.164,376.965C195.547,361.833,195.547,344.667,195.547,325.917C195.547,307.167,195.547,286.833,196.77,271.774C197.993,256.714,200.44,246.928,201.663,242.035L202.886,237.142" id="L-SC-T-0" class=" edge-thickness-normal edge-pattern-dotted flowchart-link LS-SC LE-T" style="fill:none;stroke-width:2px;stroke-dasharray:3;" marker-end="url(#mlayers_flowchart-pointEnd)"></path><path d="M822.145,213L822.145,221.917C822.145,230.833,822.145,248.667,820.116,262.516C818.088,276.366,814.032,286.232,812.004,291.165L809.976,296.098" id="L-TR-PY-0" class=" edge-thickness-normal edge-pattern-dotted flowchart-link LS-TR LE-PY" style="fill:none;stroke-width:2px;stroke-dasharray:3;" marker-end="url(#mlayers_flowchart-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(802.390625, 529.5)"><g class="label" transform="translate(-83.859375, -9.5)"><foreignObject width="167.71875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">inherits, with overrides</span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(195.546875, 327.5)"><g class="label" transform="translate(-87.359375, -19)"><foreignObject width="174.71875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">names a billing identity;<br/>blank = tenant default</span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(822.14453125, 266.5)"><g class="label" transform="translate(-30.15625, -9.5)"><foreignObject width="60.3125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel">billed to</span></div></foreignObject></g></g></g><g class="nodes"><g class="node default default flowchart-label" id="flowchart-P-0" data-node="true" data-id="P" transform="translate(215.546875, 45.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-186.8359375" y="-45.5" width="373.671875" height="91"></rect><g class="label" style="" transform="translate(-179.3359375, -38)"><rect></rect><foreignObject width="358.671875" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">platform<br/>named options, code catalogues,<br/>claim-profile templates, rate templates,<br/>reference series, document types, invoice layouts</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-T-1" data-node="true" data-id="T" transform="translate(215.546875, 186.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-215.546875" y="-45.5" width="431.09375" height="91"></rect><g class="label" style="" transform="translate(-208.046875, -38)"><rect></rect><foreignObject width="416.09375" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">tenant configuration §3.2<br/>billing identities + dated default, clearinghouse accounts,<br/>business calendar, profile overrides,<br/>tenant templates, layouts, zones</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-PY-3" data-node="true" data-id="PY" transform="translate(797.06640625, 327.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-91.25" y="-26.5" width="182.5" height="53"></rect><g class="label" style="" transform="translate(-83.75, -19)"><rect></rect><foreignObject width="167.5" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">payer<br/>stable identity, contact</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RS-5" data-node="true" data-id="RS" transform="translate(1220.43359375, 449.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-130.140625" y="-36" width="260.28125" height="72"></rect><g class="label" style="" transform="translate(-122.640625, -28.5)"><rect></rect><foreignObject width="245.28125" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">rate_schedule, dated by DOS<br/>grain, pairing, reference location,<br/>odometer fallback, caps</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-SC-7" data-node="true" data-id="SC" transform="translate(643.609375, 449.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-198.359375" y="-45.5" width="396.71875" height="91"></rect><g class="label" style="" transform="translate(-190.859375, -38)"><rect></rect><foreignObject width="381.71875" height="76"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">payer_submission_config, dated by DOS<br/>channel, billing identity or blank, member-id source,<br/>period timezone, filing and payment terms,<br/>invoice period and layout</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RC-9" data-node="true" data-id="RC" transform="translate(215.546875, 449.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-179.703125" y="-26.5" width="359.40625" height="53"></rect><g class="label" style="" transform="translate(-172.203125, -19)"><rect></rect><foreignObject width="344.40625" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">payer_routing_config, dated by submission date<br/>payer electronic id, clearinghouse account</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RL-11" data-node="true" data-id="RL" transform="translate(1220.43359375, 703)"><rect class="basic label-container" style="" rx="0" ry="0" x="-119.46875" y="-36" width="238.9375" height="72"></rect><g class="label" style="" transform="translate(-111.96875, -28.5)"><rect></rect><foreignObject width="223.9375" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">rate_line, never dated<br/>price, measure, distance basis,<br/>rounding, line building, code</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-RG-13" data-node="true" data-id="RG" transform="translate(1140.2578125, 590.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-125.3515625" y="-26.5" width="250.703125" height="53"></rect><g class="label" style="" transform="translate(-117.8515625, -19)"><rect></rect><foreignObject width="235.703125" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">rate_line_group<br/>choice or tiers over one measure</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-CP-17" data-node="true" data-id="CP" transform="translate(802.390625, 590.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-162.515625" y="-26.5" width="325.03125" height="53"></rect><g class="label" style="" transform="translate(-155.015625, -19)"><rect></rect><foreignObject width="310.03125" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">claim_profile template, platform or tenant<br/>referenced, never copied</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-CPV-19" data-node="true" data-id="CPV" transform="translate(802.390625, 703)"><rect class="basic label-container" style="" rx="0" ry="0" x="-138.1015625" y="-36" width="276.203125" height="72"></rect><g class="label" style="" transform="translate(-130.6015625, -28.5)"><rect></rect><foreignObject width="261.203125" height="57"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">claim_profile_version, dated by DOS<br/>claim layout, X12 settings,<br/>code rules, documentation rules</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-DR-21" data-node="true" data-id="DR" transform="translate(464.828125, 590.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-125.046875" y="-17" width="250.09375" height="34"></rect><g class="label" style="" transform="translate(-117.546875, -9.5)"><rect></rect><foreignObject width="235.09375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">documentation_rule, payer level</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-DR2-23" data-node="true" data-id="DR2" transform="translate(802.390625, 806)"><rect class="basic label-container" style="" rx="0" ry="0" x="-128.7890625" y="-17" width="257.578125" height="34"></rect><g class="label" style="" transform="translate(-121.2890625, -9.5)"><rect></rect><foreignObject width="242.578125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">documentation_rule, profile level</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-TR-26" data-node="true" data-id="TR" transform="translate(822.14453125, 186.5)"><rect class="basic label-container" style="" rx="0" ry="0" x="-111.5234375" y="-26.5" width="223.046875" height="53"></rect><g class="label" style="" transform="translate(-104.0234375, -19)"><rect></rect><foreignObject width="208.046875" height="38"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">transport (transport request)<br/>payer, pickup timezone</span></div></foreignObject></g></g></g></g></g></svg></div></figure>
 <div class="table-scroll"><table>
@@ -957,7 +564,7 @@ Usage against the cap after it is 1,643.70 of 104,000.00.</p>
 <tr>
 <th>Stamp</th>
 <th>On</th>
-<th>Proves</th>
+<th>Records</th>
 </tr>
 </thead>
 <tbody>
