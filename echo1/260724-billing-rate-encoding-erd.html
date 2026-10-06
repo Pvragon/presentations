@@ -218,33 +218,106 @@ that built it, and how each charge was derived, and reproduces exactly.</p>
   clearinghouse and fetch its responses.</li>
 </ul>
 <h4>Payer</h4>
-<p><strong>R9. Payer: records.</strong> The system must support:</p>
-<ul>
-<li>a billing identity named per payer, dated, or left blank to follow the tenant default;</li>
-<li>deactivation and reactivation from a date;</li>
-<li><em>Future features:</em> a payer-assigned provider number on the claim beside the NPI, tied to the
-  identity it was issued to.</li>
-</ul>
+<p><strong>R9. Payer: settings.</strong> Each payer holds dated settings for who bills it, where its claims go, and
+what it requires. The system must support:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Variations to support</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Billing identity</td>
+<td>named per payer, dated; or blank to follow the tenant default</td>
+<td>Colorado Access under Ride Care Inc.; Oklahoma payers under David Roberts Consulting</td>
+</tr>
+<tr>
+<td>Routing</td>
+<td>clearinghouse account, electronic payer id and payer name, dated by send date; <em>Future features:</em> one interchange sender shared across tenants</td>
+<td>OHCA <code>SKOK0</code> through Waystar</td>
+</tr>
+<tr>
+<td>837P settings</td>
+<td>every payer-side 837P value as configuration: filing indicator, diagnosis and place of service sources, taxonomy, rendering provider, contract code; <em>Future features:</em> ambulance claim structures, a payer-assigned provider number beside the NPI</td>
+<td>the Oklahoma and Colorado differences</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>required documents, when they are due, and how they are delivered; claims held while the delivery route is not built</td>
+<td>Colorado 250-mile form</td>
+</tr>
+<tr>
+<td>Services not paid</td>
+<td>services the payer never pays</td>
+<td>Colorado: wait, cancellations, empty miles</td>
+</tr>
+<tr>
+<td>Clients per vehicle</td>
+<td>a limit per vehicle movement; <em>Future features:</em> occupancy rules on transport facts</td>
+<td>Colorado 1; Sedgwick 2</td>
+</tr>
+<tr>
+<td>Filing windows</td>
+<td>a timely-filing limit and an earliest send date</td>
+<td>Colorado Access 365 days; Minnesota 5-day wait</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>deactivation and reactivation from a date</td>
+<td>a contract ends</td>
+</tr>
+</tbody>
+</table></div>
 <p><strong>R10. Payer pricing: what is priced.</strong> Each payer&rsquo;s rate schedule sets the priced unit, the
 outcomes paid, and the limits on the total. The system must support:</p>
-<ul>
-<li>the priced unit: one client&rsquo;s leg, one vehicle trip whatever the number of clients aboard, or a
-  fixed fee per period;</li>
-<li>an outbound and its return priced as one trip;</li>
-<li>the outcomes paid: completed, canceled, no-show;</li>
-<li>caps on dollars or transports per period, counted in the payer&rsquo;s timezone;</li>
-<li>rates from a contract, a state fee schedule or a program;</li>
-<li><em>Future features:</em> rates as a percentage of a fee schedule, or from the tenant&rsquo;s own charge list.</li>
-</ul>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Variations to support</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Priced unit</td>
+<td>one client&rsquo;s leg; one vehicle trip whatever the number of clients aboard; a fixed fee per period</td>
+<td>Medicaid; Sedgwick, Larned; Chickasaw</td>
+</tr>
+<tr>
+<td>Round trip</td>
+<td>an outbound and its return priced as one trip</td>
+<td>Larned</td>
+</tr>
+<tr>
+<td>Outcomes paid</td>
+<td>completed, canceled, no-show</td>
+<td>Texas Recovery no-show</td>
+</tr>
+<tr>
+<td>Caps</td>
+<td>dollars or transports per period, counted in the payer&rsquo;s timezone</td>
+<td>Larned $104,000 a year; Chickasaw 65 a month</td>
+</tr>
+<tr>
+<td>Rate source</td>
+<td>a contract, a state fee schedule, a program; <em>Future features:</em> a percentage of a fee schedule, the tenant&rsquo;s own charge list</td>
+<td>Colorado fee schedule; TANF program rate</td>
+</tr>
+</tbody>
+</table></div>
 <p><strong>R11. Payer pricing: price terms.</strong> A transport&rsquo;s price is the sum of its terms. Each term is
 configured separately, may apply only under a condition, and carries its own procedure code and
-modifiers. The system must support these terms and variations:</p>
+modifiers. The system must support:</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
 <th>Term</th>
 <th>Variations to support</th>
-<th>Contracts</th>
+<th>Examples</th>
 </tr>
 </thead>
 <tbody>
@@ -317,57 +390,143 @@ modifiers. The system must support these terms and variations:</p>
 </table></div>
 <p><strong>R12. Payer pricing: distance and time.</strong> Every term priced by distance or time sets how that
 quantity is measured. The system must support:</p>
-<ul>
-<li>direction and endpoints: one way or round trip; between the client&rsquo;s own pickup and dropoff,
-  from a fixed reference location, or along the vehicle&rsquo;s driven path;</li>
-<li>distance from the map;</li>
-<li>rounding by mode (up, down, half up) and precision (whole or tenths), with a precision that can
-  change above a threshold;</li>
-<li>time in any unit size;</li>
-<li>full precision until pricing, then rounded once per trip;</li>
-<li><em>Future features:</em> distance from the odometer.</li>
-</ul>
-<p><strong>R13. Payer claim terms: claims and service lines.</strong> The system must support:</p>
-<ul>
-<li>codes and modifiers per term, with state code rules;</li>
-<li>line building, repeat modifiers and line limits;</li>
-<li>claims grouped by payer, client and service date;</li>
-<li>the member id source chosen per payer;</li>
-<li><em>Future features:</em> claims grouped per trip or per period; prior-authorization and trip ids on the
-  claim; secondary billing.</li>
-</ul>
-<p><strong>R14. Payer claim terms: 837P settings.</strong> The system must support:</p>
-<ul>
-<li>every payer-side 837P setting as configuration;</li>
-<li><em>Future features:</em> ambulance claim structures.</li>
-</ul>
-<p><strong>R15. Payer claim terms: invoices.</strong> The system must support:</p>
-<ul>
-<li>billing by 837P or invoice from the same priced data;</li>
-<li>invoices run on demand: the user picks the payer and an as-of date, and the invoice covers the
-  period since that payer&rsquo;s last invoice under the same billing identity;</li>
-<li>invoice periods that never overlap for one payer and one billing identity;</li>
-<li>a run whose period spans a change of billing identity or payer terms stopped for review;</li>
-<li>a transport dated inside an already invoiced period flagged as late;</li>
-<li>checks before an invoice is issued, listing transports in the period that are missing or not
-  ready to bill;</li>
-<li>payment terms per payer;</li>
-<li>an invoice layout per payer;</li>
-<li>submission through a payer&rsquo;s web portal.</li>
-</ul>
-<p><strong>R16. Payer claim terms: documentation and payer rules.</strong> The system must support:</p>
-<ul>
-<li>documentation requirements, holding the claim when the delivery route is not built;</li>
-<li>services a payer never pays;</li>
-<li>a limit on clients per vehicle;</li>
-<li>timely-filing windows and earliest send dates;</li>
-<li><em>Future features:</em> occupancy rules on transport facts.</li>
-</ul>
-<p><strong>R17. Payer routing.</strong> The system must support:</p>
-<ul>
-<li>a clearinghouse account, electronic payer id and payer name per payer, dated by send date;</li>
-<li><em>Future features:</em> one interchange sender shared across tenants.</li>
-</ul>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Variations to support</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Direction</td>
+<td>one way; round trip</td>
+<td>Oklahoma one way; Larned round trip</td>
+</tr>
+<tr>
+<td>Endpoints</td>
+<td>the client&rsquo;s own pickup and dropoff; a fixed reference location; the vehicle&rsquo;s driven path</td>
+<td>Oklahoma from 2025-12-01; Larned from Larned; Oklahoma before 2025-12-01</td>
+</tr>
+<tr>
+<td>Distance source</td>
+<td>the map; <em>Future features:</em> the odometer</td>
+<td>Arizona odometer</td>
+</tr>
+<tr>
+<td>Rounding</td>
+<td>up, down or half up; whole or tenths; a precision that changes above a threshold</td>
+<td>Colorado whole miles; Medicare tenths under 100 miles</td>
+</tr>
+<tr>
+<td>Time unit</td>
+<td>any unit size</td>
+<td>per hour; Arizona 30 minutes</td>
+</tr>
+<tr>
+<td>When rounded</td>
+<td>full precision until pricing, then once per trip</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>R13. Payer claim terms: claims and service lines.</strong> Each payer&rsquo;s claim terms set how priced
+transports become claims and service lines. The system must support:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Variations to support</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codes and modifiers</td>
+<td>per term; state rules on required modifiers and whole units</td>
+<td>Colorado A0999 ET; Minnesota UA</td>
+</tr>
+<tr>
+<td>Service lines</td>
+<td>one line per code per claim, or per trip; repeat modifiers on later trips the same day; a unit cap per line; line order; a maximum number of lines per claim</td>
+<td>Colorado 76 and 77; Arizona three lines</td>
+</tr>
+<tr>
+<td>Claim grouping</td>
+<td>one claim per payer, client and service date; <em>Future features:</em> per trip, per period</td>
+<td>brokers per trip</td>
+</tr>
+<tr>
+<td>Member id</td>
+<td>the coverage record that supplies it, per payer</td>
+<td>rebilling to a second payer</td>
+</tr>
+<tr>
+<td>References</td>
+<td><em>Future features:</em> prior-authorization and trip ids on the claim</td>
+<td>managed care plans; brokers</td>
+</tr>
+<tr>
+<td>Payer position</td>
+<td>primary; <em>Future features:</em> secondary</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>R14. Payer claim terms: invoices.</strong> Each invoiced payer&rsquo;s claim terms set how invoices are run
+and printed. The system must support:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Variations to support</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Channel</td>
+<td>837P or invoice, from the same priced data</td>
+<td>Larned, Sedgwick invoiced</td>
+</tr>
+<tr>
+<td>Invoice run</td>
+<td>on demand: the user picks the payer and an as-of date; the invoice covers the period since the payer&rsquo;s last invoice under the same billing identity</td>
+<td>Larned weekly</td>
+</tr>
+<tr>
+<td>Periods</td>
+<td>never overlapping for one payer and one billing identity; a run spanning a change of billing identity or payer terms stopped for review; a transport dated in an invoiced period flagged as late</td>
+<td></td>
+</tr>
+<tr>
+<td>Pre-issue check</td>
+<td>the transports in the period that are missing or not ready to bill</td>
+<td></td>
+</tr>
+<tr>
+<td>Grouping</td>
+<td>one invoice for the period; one invoice per claim</td>
+<td>hospital discharges</td>
+</tr>
+<tr>
+<td>Payment terms</td>
+<td>days from the invoice date, or from the payer&rsquo;s receipt</td>
+<td>Larned net 30; Wichita VA 60 days from receipt</td>
+</tr>
+<tr>
+<td>Layout</td>
+<td>rows and columns per payer</td>
+<td>Larned&rsquo;s column list</td>
+</tr>
+<tr>
+<td>Portal</td>
+<td>submission through a payer&rsquo;s web portal</td>
+<td>ODMHSAS invoice application; VA</td>
+</tr>
+</tbody>
+</table></div>
 <h2>Contracts to accommodate</h2>
 <p>Every attribute below must be configurable.</p>
 <h4>Known contracts</h4>
