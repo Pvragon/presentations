@@ -216,7 +216,8 @@ plan bills by the state&rsquo;s 837 rules. The system must support:</p>
 <li>a home timezone, the default for each payer&rsquo;s period timezone;</li>
 <li>a claim number prefix, so every claim number the tenant sends is unique and recognizable when
   the payment comes back;</li>
-<li>clearinghouse accounts: the tenant&rsquo;s own submitter account with a clearinghouse such as Waystar.</li>
+<li>clearinghouse connections: the tenant&rsquo;s submitter id and the settings that send claim files to a
+  clearinghouse such as Waystar and fetch its responses.</li>
 </ul>
 <h4>Payer</h4>
 <p><strong>R9. Payer: records.</strong> The system must support:</p>
@@ -246,7 +247,8 @@ plan bills by the state&rsquo;s 837 rules. The system must support:</p>
 <li>terms that apply only under a condition (two staff aboard; fuel over $5);</li>
 <li>a minimum per trip (Sedgwick $85), and per period or facility <em>later</em>;</li>
 <li>escalators tied to a published index (Larned fuel);</li>
-<li>caps on dollars or transports per period (Larned $104,000 a year);</li>
+<li>caps on dollars or transports per period, counted in the payer&rsquo;s timezone (Larned $104,000 a
+  year);</li>
 <li>price and code by level of service <em>later</em>.</li>
 </ul>
 <p><strong>R12. Payer pricing: distance and rounding.</strong> The system must support:</p>
@@ -275,10 +277,11 @@ plan bills by the state&rsquo;s 837 rules. The system must support:</p>
 <p><strong>R15. Payer claim terms: invoices.</strong> The system must support:</p>
 <ul>
 <li>billing by 837P or invoice from the same priced data;</li>
-<li>invoice period, dates and payment terms (Larned weekly, net 30);</li>
-<li>invoice dates set by rule, such as the last business day of the month, from the tenant&rsquo;s business
-  days and holidays (Memorial Health);</li>
-<li>a period timezone for months and invoice weeks;</li>
+<li>invoices run on demand: the user picks the payer and an as-of date, and the invoice covers every
+  billable transport for that payer up to that date not yet invoiced;</li>
+<li>checks before an invoice is issued, listing transports in the period that are missing or not
+  ready to bill;</li>
+<li>payment terms per payer (Larned net 30);</li>
 <li>an invoice layout per payer (Larned&rsquo;s column list);</li>
 <li>portal submission <em>later</em>.</li>
 </ul>
