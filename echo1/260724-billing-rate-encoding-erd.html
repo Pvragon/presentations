@@ -281,8 +281,10 @@ plan bills by the state&rsquo;s 837 rules. The system must support:</p>
 <p><strong>R15. Payer claim terms: invoices.</strong> The system must support:</p>
 <ul>
 <li>billing by 837P or invoice from the same priced data;</li>
-<li>invoices run on demand: the user picks the payer and an as-of date, and the invoice covers every
-  billable transport for that payer up to that date not yet invoiced;</li>
+<li>invoices run on demand: the user picks the payer and an as-of date, and the invoice covers the
+  period since that payer&rsquo;s last invoice under the same billing identity, so periods never overlap;</li>
+<li>a run whose period spans a change of billing identity or payer terms stops for review instead of
+  splitting silently, and a transport dated inside an already invoiced period is flagged as late;</li>
 <li>checks before an invoice is issued, listing transports in the period that are missing or not
   ready to bill;</li>
 <li>payment terms per payer (Larned net 30);</li>
