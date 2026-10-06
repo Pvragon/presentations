@@ -147,7 +147,7 @@
   </div>
   <h1>Payer configuration: requirements <span class="accent">and proposed design</span></h1>
   <p class="lede">The capabilities any payer and tenant configuration must have to bill every tenant's contracts in any US state. The proposed design uses one dated schedule per payer, rate lines for every priced term, billing identities chosen per payer, and a stamp on every claim.</p>
-  <div class="meta"><span>Proposed design, draft</span><span>Design v0.10.0-draft</span><span>Echo1 origin/main aa0d1650d</span><span>Updated 2026-10-06</span></div>
+  <div class="meta"><span>Proposed design, draft</span><span>Design v0.11.0-draft</span><span>Echo1 origin/main aa0d1650d</span><span>Updated 2026-10-06</span></div>
 </header>
 
 <article>
@@ -400,9 +400,15 @@ limits on the total, and where its rates come from. The system must support:</p>
 </table></div>
 <p><strong>R12. Payer pricing: price terms.</strong> A transport&rsquo;s price is the sum of its terms. Each term is
 configured separately, may apply only under a condition, and carries its own procedure code and
-modifiers. Terms can also be alternatives: exactly one of a set applies, chosen by a measured fact
-such as distance or destination, and overlapping ranges are refused when saved. The system must
-support:</p>
+modifiers. Terms can also be grouped:</p>
+<ul>
+<li>a band set: exactly one term of the set applies, chosen by a measured fact such as distance or
+  destination, with an optional fallback when none matches; overlapping ranges are refused when
+  saved;</li>
+<li>a tier set: every tier applies, each pricing its own slice of one quantity, such as the first
+  10 miles at one rate and the rest at another.</li>
+</ul>
+<p>The system must support:</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -900,14 +906,17 @@ payer as each recognizes the new one.</p>
   A used version is never edited or deleted.</li>
 <li><strong>Retroactive versions.</strong> A user who is both a tenant admin and a billing admin may enter a version whose
   effective date is before claims already billed under the version before it. Before saving, the
-  user sees every billed claim and sent invoice it reaches and confirms. On saving:</li>
+  user sees every billed claim and sent invoice it reaches and confirms. On saving:<ul>
 <li>transports not yet billed take the new version, and draft claims on the old one are rebuilt;</li>
-<li>billed claims and sent invoices keep what they were billed under, and each gets a note, for
-    example: &ldquo;Billed under rate schedule RS-OK, version effective 2026-01-01. A version effective
-    2026-03-01 was entered on 2026-04-10 by J. Smith, with an effective date before this claim was
-    billed. Review whether this claim needs a correction.&rdquo;;</li>
-<li>every claim and invoice with a note not yet cleared appears on one list for the billing team,
-    who decide any replacement, void or rebill later.</li>
+<li>billed claims and sent invoices keep what they were billed under; each is flagged for
+  billing review and gets a billing note, for example: &ldquo;Billed under rate schedule RS-OK, version effective 2026-01-01. A version effective
+  2026-03-01 was entered on 2026-04-10 by J. Smith, with an effective date before this claim was
+  billed. Review whether this claim needs a correction.&rdquo;;</li>
+<li>every flagged claim and invoice appears on one list for the billing team, who decide any
+  replacement, void or rebill later. A biller can clear or set the flag, and every change of the
+  flag adds a billing note.</li>
+</ul>
+</li>
 <li><strong>Fixing a wrong version.</strong> A version that was simply wrong is fixed the same way: a new version
   from the same start date replaces it in full. The old one is kept, because billed claims point to
   it, and is never used again.</li>
