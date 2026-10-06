@@ -227,37 +227,108 @@ plan bills by the state&rsquo;s 837 rules. The system must support:</p>
   to the identity it was issued to <em>later</em>;</li>
 <li>deactivation and reactivation from a date.</li>
 </ul>
-<p><strong>R10. Payer pricing: what is priced.</strong> The system must price:</p>
+<p><strong>R10. Payer pricing: what is priced.</strong> Each payer&rsquo;s rate schedule says what one priced unit is,
+which outcomes are paid, and the limits on the total. The system must support:</p>
 <ul>
-<li>per client leg, per vehicle trip, or per period ($6,250 a month);</li>
-<li>completed and canceled transports, and no-shows <em>later</em>;</li>
-<li>an outbound and its return as one trip (Larned);</li>
-<li>from a contract, fee schedule or program, and from a percentage of a fee schedule or a charge
-  list <em>later</em>.</li>
-</ul>
-<p><strong>R11. Payer pricing: price terms.</strong> The system must support:</p>
-<ul>
-<li>any number of terms per payer: base, mileage, wait, extra stop, additional passenger, staff,
-  fuel, cancellation, minimum and period fee, with at-cost expenses and attendant time <em>later</em>;</li>
-<li>a threshold per term, either subtracted (first 30 miles free) or switching the whole quantity on
-  (every mile paid once a transport exceeds 30);</li>
-<li>alternative prices chosen by a measure, and tiers (Larned $85, else $2.85 a mile);</li>
-<li>a fixed price per named route (Sedgwick $473.10), and zones <em>later</em>;</li>
-<li>terms that apply only under a condition (two staff aboard; fuel over $5);</li>
-<li>a minimum per trip (Sedgwick $85), and per period or facility <em>later</em>;</li>
-<li>escalators tied to a published index (Larned fuel);</li>
+<li>the priced unit: one client&rsquo;s leg (Medicaid), one vehicle trip whatever the number of clients
+  aboard (Sedgwick, Larned), or a fixed fee per period (Chickasaw $7,000 a month);</li>
+<li>an outbound and its return priced as one trip (Larned);</li>
+<li>the outcomes paid: completed, canceled, and no-show (Texas Recovery);</li>
 <li>caps on dollars or transports per period, counted in the payer&rsquo;s timezone (Larned $104,000 a
-  year);</li>
-<li>price and code by level of service <em>later</em>.</li>
+  year; Chickasaw 65 transports a month);</li>
+<li>where the rates come from: a contract, a state fee schedule or a program; a percentage of a fee
+  schedule or the tenant&rsquo;s own charge list <em>later</em>.</li>
 </ul>
-<p><strong>R12. Payer pricing: distance and rounding.</strong> The system must support:</p>
+<p><strong>R11. Payer pricing: price terms.</strong> A transport&rsquo;s price is the sum of its terms. Each term is
+configured separately, may apply only under a condition, and carries its own procedure code and
+modifiers. The system must support these terms, each with the variations shown:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Variations to support</th>
+<th>Contracts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base charge</td>
+<td>a flat amount per trip; a flat amount that applies below a distance, with mileage instead above it; a fixed price for a named route; none at all; by zone or level of service <em>later</em></td>
+<td>Oklahoma $160; Larned $85 under 50 miles; Sedgwick Wichita to Osawatomie $473.10; Wichita VA none</td>
+</tr>
+<tr>
+<td>Mileage</td>
+<td>a rate per mile, with one of three starting rules: from the first mile; after a number of free miles, which are subtracted; or every mile once the transport exceeds a threshold, nothing below it</td>
+<td>Colorado from mile 1; Oklahoma facilities first 30 free; Oklahoma Medicaid every mile over 30</td>
+</tr>
+<tr>
+<td>Wait time</td>
+<td>a rate per time unit after a free period, counted across the trip</td>
+<td>Larned $35 an hour after 30 minutes; Arizona per 30 minutes</td>
+</tr>
+<tr>
+<td>Extra stop</td>
+<td>an amount per stop beyond pickup and dropoff</td>
+<td>Larned $75</td>
+</tr>
+<tr>
+<td>Additional passenger</td>
+<td>a rate per mile for each extra client, measured on that client&rsquo;s own trip</td>
+<td>Larned $1.50 a mile</td>
+</tr>
+<tr>
+<td>Additional staff</td>
+<td>a rate per mile when a second staff member rides</td>
+<td>Larned $1.00 a mile</td>
+</tr>
+<tr>
+<td>Fuel surcharge</td>
+<td>a rate per mile above a fuel price, stepping with a published index; a contract that names no amount yet; effective from a written notice</td>
+<td>Larned +$0.50 above $5 a gallon; Oklahoma facilities; Memorial Health</td>
+</tr>
+<tr>
+<td>Cancellation</td>
+<td>a flat fee once a stage is reached (dispatched, en route); or the greater of a fee and the mileage driven</td>
+<td>Wichita VA $45 once dispatched; Sedgwick, Larned $45 or mileage</td>
+</tr>
+<tr>
+<td>No-show</td>
+<td>a flat fee when the client refuses to board</td>
+<td>Texas Recovery $160</td>
+</tr>
+<tr>
+<td>Minimum</td>
+<td>a floor per trip; per period or per facility <em>later</em></td>
+<td>Sedgwick, Wichita VA $85</td>
+</tr>
+<tr>
+<td>Period fee</td>
+<td>a flat amount per period, with the number of transports it covers</td>
+<td>Chickasaw $7,000 for 65 a month</td>
+</tr>
+<tr>
+<td>Attendant time</td>
+<td>a rate per hour for a waiting attendant</td>
+<td>Coffeyville $40 an hour</td>
+</tr>
+<tr>
+<td>Expenses at cost</td>
+<td>preauthorized travel expenses passed through at cost</td>
+<td>Larned</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>R12. Payer pricing: distance and time.</strong> Every term priced by distance or time says how that
+quantity is measured. The system must support:</p>
 <ul>
-<li>a distance rule per term: one way or round trip, between the client&rsquo;s stops, from a fixed
-  location, or along the vehicle&rsquo;s path;</li>
-<li>map distance now, and odometer <em>later</em>;</li>
-<li>rounding per term by mode, precision and threshold (Medicare tenths under 100 miles);</li>
-<li>time priced in any unit (Arizona 30 minutes);</li>
-<li>rounding once, per trip, before pricing.</li>
+<li>direction and endpoints: one way or round trip; between the client&rsquo;s own pickup and dropoff,
+  from a fixed reference location, or along the vehicle&rsquo;s driven path (Larned is round trip from
+  Larned);</li>
+<li>distance from the map; from the odometer <em>later</em> (Arizona);</li>
+<li>rounding by mode (up, down, half up) and precision (whole or tenths), with a precision that can
+  change above a threshold (Medicare: tenths under 100 miles, whole miles above);</li>
+<li>time in any unit size (per hour; Arizona per 30 minutes);</li>
+<li>full precision until pricing, then rounded once per trip.</li>
 </ul>
 <p><strong>R13. Payer claim terms: claims and service lines.</strong> The system must support:</p>
 <ul>
