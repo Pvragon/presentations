@@ -333,7 +333,7 @@ priced unit. The system must support three units:</p>
 </tr>
 <tr>
 <td>Mileage</td>
-<td>the client&rsquo;s own trip (the vehicle&rsquo;s path only for the later rebill of claims from before 2025-12-01)</td>
+<td>the client&rsquo;s own trip, or its share of the vehicle&rsquo;s route</td>
 <td>the trip&rsquo;s distance</td>
 <td>not used</td>
 </tr>
@@ -440,7 +440,7 @@ only under a condition, and carries its own procedure code and modifiers. Terms 
 </tr>
 <tr>
 <td>Wait time</td>
-<td>a rate per time unit after a free period, or once the wait passes a threshold, counted across the trip</td>
+<td>a rate per time unit after a free period, or once the wait passes a threshold, on the trip&rsquo;s total wait; <em>Future features:</em> a threshold tested at each stop separately</td>
 <td>Larned $35 an hour after 30 free minutes; Texas Recovery $40 an hour once over 30 minutes</td>
 </tr>
 <tr>
@@ -513,7 +513,7 @@ quantity is measured. The system must support:</p>
 </tr>
 <tr>
 <td>Endpoints</td>
-<td>the client&rsquo;s own pickup and dropoff; a fixed reference location; the vehicle&rsquo;s driven path along its route, each transport taking its own part (client leg only, and needed only by the later build that rebills claims from before 2025-12-01)</td>
+<td>the client&rsquo;s own pickup and dropoff; a fixed reference location; the vehicle&rsquo;s driven path along its route, each transport taking its own part (client leg only)</td>
 <td>Oklahoma from 2025-12-01; Larned from Larned; Oklahoma before 2025-12-01</td>
 </tr>
 <tr>
@@ -648,7 +648,7 @@ of the Ride Care shared drive.</p>
 <tbody>
 <tr>
 <td>Oklahoma Medicaid</td>
-<td>SoonerCare, its managed care plans (Aetna, Humana, and Oklahoma Complete Health), and ODMHSAS crisis: per client leg; $160 per transport (T2003); transports of 30 miles or less get $160 only, and longer ones add a rate for every mile, a threshold rather than free miles (S0215): $2.85 until 2025-11-30, and $4.80 from 2025-12-01 under state plan amendment OK-25-0018 (approved 2026-03-19, back-dated), measured from the client&rsquo;s pickup to dropoff; before 2025-12-01 RideCare billed only the miles past 30 along the vehicle&rsquo;s path, which was incorrect; cancellations billed $160 with no mileage until 2025-10-31, not billed from 2025-11-01; 837P through Waystar; a contract code on ODMHSAS claims</td>
+<td>SoonerCare, its managed care plans (Aetna, Humana, and Oklahoma Complete Health), and ODMHSAS crisis: per client leg; $160 per transport (T2003); until 2025-11-30, $2.85 a mile (S0215) over 30 miles along the vehicle&rsquo;s path; from 2025-12-01, under state plan amendment OK-25-0018 (approved 2026-03-19, back-dated), transports of 30 miles or less get $160 only, and longer ones add $4.80 for every mile from the client&rsquo;s pickup to dropoff, a threshold rather than free miles, which RideCare&rsquo;s billing has not yet applied; cancellations billed $160 with no mileage until 2025-10-31, not billed from 2025-11-01; 837P through Waystar; a contract code on ODMHSAS claims</td>
 </tr>
 <tr>
 <td>TANF</td>
@@ -656,7 +656,7 @@ of the Ride Care shared drive.</p>
 </tr>
 <tr>
 <td>ODMHSAS non-emergency</td>
-<td>state mental health centers: one contract for several requesting facilities; from 2025-10-01, &ldquo;$45.00 per trip under 30 miles&rdquo;, and over 30 miles &ldquo;$2.25 per mile for each mile beyond the 30-mile baseline&rdquo;, read as $45 plus the miles past 30 (free miles, not a threshold); a trip of exactly 30 miles fits neither clause; only miles with the client aboard are billed; mileage only before 2025-10-01; earlier side agreements of $6,250 a month (Griffin) and $65 per trip (OCCIC, OCRU); submitted through the state&rsquo;s invoice application</td>
+<td>state mental health centers: one contract for several requesting facilities; from 2025-10-01, &ldquo;$45.00 per trip under 30 miles&rdquo;, and over 30 miles &ldquo;$2.25 per mile for each mile beyond the 30-mile baseline&rdquo;, read as $45 plus $2.25 for each mile past 30 (free miles, not a threshold), so a 30-mile trip is $45.00 and a 31-mile trip $47.25; only miles with the client aboard are billed; mileage only before 2025-10-01; earlier side agreements of $6,250 a month (Griffin) and $65 per trip (OCCIC, OCRU); submitted through the state&rsquo;s invoice application</td>
 </tr>
 <tr>
 <td>Oklahoma facilities</td>
@@ -672,7 +672,7 @@ of the Ride Care shared drive.</p>
 </tr>
 <tr>
 <td>Texas Recovery</td>
-<td>$160 pick-up fee per trip and &ldquo;$4.80 per mile thereafter&rdquo;; $40 an hour wait, &ldquo;only charged if driver must wait at either facility longer than 30 minutes&rdquo;, a threshold: once a wait at one facility passes 30 minutes, the whole wait is charged; $160 no-show when the client refuses to board</td>
+<td>$160 pick-up fee per trip and &ldquo;$4.80 per mile thereafter&rdquo;; $40 an hour wait, &ldquo;only charged if driver must wait at either facility longer than 30 minutes&rdquo;, a threshold: once the trip&rsquo;s total wait passes 30 minutes, the whole wait is charged; $160 no-show when the client refuses to board</td>
 </tr>
 <tr>
 <td>Coffeyville</td>
@@ -1088,7 +1088,7 @@ reason.</p>
 </tr>
 <tr>
 <td>Wait minutes</td>
-<td>recorded on the transport (a new field)</td>
+<td>the transport&rsquo;s total time less its mapped travel time</td>
 </tr>
 <tr>
 <td>Extra stops</td>
@@ -1150,8 +1150,8 @@ differently, and a client basis may combine either direction with either kind of
 </tr>
 </tbody>
 </table></div>
-<p>The vehicle path is used only to reproduce claims from before 2025-12-01, in a separate, later
-build that rebills them from Echo1. It follows the route the way Echo1 computes <code>start_to_end_distance</code> today
+<p>The vehicle path is one distance basis a schedule may choose, separate from whether its mileage
+has free miles or a threshold. Oklahoma Medicaid used it before 2025-12-01. It follows the route the way Echo1 computes <code>start_to_end_distance</code> today
 (<code>transport-leg-distances.ts</code>):</p>
 <div class="table-scroll"><table>
 <thead>
