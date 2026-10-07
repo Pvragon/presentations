@@ -1518,6 +1518,401 @@ the period or one per claim, rows per rate line or per priced unit, and the due 
 </tr>
 </tbody>
 </table></div>
+<h2>9. Five examples take transports through the five stages to a bill</h2>
+<p>Where a contract is silent, the value is marked as illustrative.</p>
+<h3>9.1 An Oklahoma Medicaid day becomes two 837P claims</h3>
+<p>Oklahoma Medicaid&rsquo;s schedule, in effect from 2025-12-01, has two rate lines: $160 per transport
+under T2003, and $4.80 a mile under S0215 when the transport is over 30 miles, measured from pickup
+to dropoff and rounded half up to whole miles. On Tuesday 2026-03-10 RideCare ran three transports:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Transport</th>
+<th>Client</th>
+<th>Pickup</th>
+<th>Miles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-101</td>
+<td>Alice</td>
+<td>09:15</td>
+<td>42.6</td>
+</tr>
+<tr>
+<td>T-102</td>
+<td>Alice, return</td>
+<td>16:40</td>
+<td>18.3</td>
+</tr>
+<tr>
+<td>T-103</td>
+<td>Bob</td>
+<td>23:20</td>
+<td>75.2</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>7.1 Settings.</strong> Every pickup is in Oklahoma, so each service date is taken in Central time:
+2026-03-10. Bob&rsquo;s 23:20 pickup is already 2026-03-11 in UTC, and the local date keeps him on the
+10th. The schedule and submission configuration in effect that day are found. The configuration
+names no identity, so the tenant default, David Roberts Consulting, bills.</p>
+<p><strong>7.2 Priced units.</strong> The unit of work is the client leg, so each transport is one unit.</p>
+<p><strong>7.3 Pricing.</strong> Each unit gets the $160 term. Mileage is rounded before the threshold test:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Miles</th>
+<th>Rounded</th>
+<th>Over 30?</th>
+<th>Mileage term</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-101</td>
+<td>42.6</td>
+<td>43</td>
+<td>yes</td>
+<td>43 × $4.80 = $206.40</td>
+</tr>
+<tr>
+<td>T-102</td>
+<td>18.3</td>
+<td>18</td>
+<td>no</td>
+<td>none</td>
+</tr>
+<tr>
+<td>T-103</td>
+<td>75.2</td>
+<td>75</td>
+<td>yes</td>
+<td>75 × $4.80 = $360.00</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>7.4 Claims.</strong> Claims group by payer, client, and day, so Alice&rsquo;s two units share one claim and
+Bob has his own.</p>
+<p><strong>7.5 Service lines and sending.</strong> Both rate lines build one line per claim, so Alice&rsquo;s two $160
+terms become one T2003 line of 2 units:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>T2003</th>
+<th>S0215</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alice</td>
+<td>2 units, $320.00</td>
+<td>43 units, $206.40</td>
+<td>$526.40</td>
+</tr>
+<tr>
+<td>Bob</td>
+<td>1 unit, $160.00</td>
+<td>75 units, $360.00</td>
+<td>$520.00</td>
+</tr>
+</tbody>
+</table></div>
+<p>Both claims go out as 837P files through Waystar, to the payer id in effect on the send date.</p>
+<h3>9.2 A Larned week becomes one invoice</h3>
+<p>Larned prices each vehicle trip, round trip from Larned State Hospital. Its alternatives are $85
+for a trip under 50 miles, else $2.85 a mile. Its add-ons are wait at $35 an hour after 30 free
+minutes, $75 per extra stop, $1.50 a mile for each extra passenger on that passenger&rsquo;s own trip,
+$1.00 a mile with two staff, and a fuel surcharge above $5 a gallon. Wait rounds to tenths of an
+hour, and the staff and fuel lines use round-trip miles; both choices are illustrative, because the
+contract states neither. In the week of 2026-10-04, the fuel price in effect was $3.10 a gallon.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Movement</th>
+<th>Date</th>
+<th>Vehicle</th>
+<th>Clients</th>
+<th>Trip</th>
+<th>Facts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Tue 10-06</td>
+<td>V7</td>
+<td>Dan</td>
+<td>hospital to Via Christi, Wichita</td>
+<td>2 staff; 1 extra stop; 45 min wait; returns empty</td>
+</tr>
+<tr>
+<td>B out</td>
+<td>Tue 10-06</td>
+<td>V3</td>
+<td>Eve, Fay</td>
+<td>hospital to Pawnee Valley, 2.4 mi</td>
+<td>together</td>
+</tr>
+<tr>
+<td>B back</td>
+<td>Tue 10-06</td>
+<td>V3</td>
+<td>Eve, Fay</td>
+<td>Pawnee Valley to hospital</td>
+<td>same clients</td>
+</tr>
+<tr>
+<td>C out</td>
+<td>Thu 10-08</td>
+<td>V7</td>
+<td>Gus</td>
+<td>correctional facility to Reno County Courthouse</td>
+<td>130 min wait</td>
+</tr>
+<tr>
+<td>C back</td>
+<td>Thu 10-08</td>
+<td>V7</td>
+<td>Gus</td>
+<td>courthouse to correctional facility</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>7.1 Settings.</strong> The schedule in effect on 10-06 and 10-08 is found. The payer names David Roberts
+Consulting as its identity.</p>
+<p><strong>7.2 Priced units.</strong> The unit of work is the vehicle trip, and round trips are priced as one.
+Eve and Fay rode together, so movement B out is one trip. B back brings the same clients to the
+same place on the same day, so it pairs with B out. C pairs the same way. Movement A returned empty,
+which is a dead leg, so A is a one-way unit. That leaves three units.</p>
+<p><strong>7.3 Pricing.</strong> Every distance is measured from the hospital to the far point and back:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Round-trip miles</th>
+<th>Alternative</th>
+<th>Terms</th>
+<th>Unit price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>265.3, rounded 265</td>
+<td>mileage</td>
+<td>265 × $2.85 = $755.25; wait 15 min = 0.3 h × $35 = $10.50; stop $75.00; staff 265 × $1.00 = $265.00</td>
+<td>$1,105.75</td>
+</tr>
+<tr>
+<td>B</td>
+<td>4.8, rounded 5</td>
+<td>$85</td>
+<td>$85.00; Fay&rsquo;s 2.4 mi, rounded 2, × $1.50 = $3.00</td>
+<td>$88.00</td>
+</tr>
+<tr>
+<td>C</td>
+<td>136.8, rounded 137</td>
+<td>mileage</td>
+<td>137 × $2.85 = $390.45; wait 100 min = 1.7 h × $35 = $59.50</td>
+<td>$449.95</td>
+</tr>
+</tbody>
+</table></div>
+<p>The fuel price, $3.10, is not over $5, so no unit has a fuel term. Only unit A had two staff.</p>
+<p><strong>7.4 Claims.</strong> Vehicle trips group by payer and day: units A and B form the 10-06 claim,
+$1,193.75, and unit C forms the 10-08 claim, $449.95.</p>
+<p><strong>7.5 Service lines and sending.</strong> Each rate line builds one line per claim, labeled with the rate
+line&rsquo;s name. On Monday 10-12 the user runs Larned&rsquo;s invoice as of Saturday 10-10. The pre-issue
+check finds nothing missing, so both claims go on one invoice of $1,643.70, one row per trip in
+Larned&rsquo;s column layout. Payment is due 30 days from Larned&rsquo;s receipt, so the due date prints as an
+estimate. The year&rsquo;s billing stands at $1,643.70 of the $104,000 cap.</p>
+<h3>9.3 A Colorado day bills a repeat trip with modifier 76</h3>
+<p>Colorado Access pays the state fee schedule: $262.55 per one-way trip under A0999 ET, and $6.28 a
+mile from the first mile under A0425 ET, in whole miles. Each trip gets its own lines, and a repeat
+trip the same day adds modifier 76. A0999 carries 76 by the payer&rsquo;s rules; giving it to A0425 as
+well is illustrative. A transport over 250 miles needs a verification form before it runs. On
+Tuesday 2026-07-14, Carmen rode twice:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Transport</th>
+<th>Pickup</th>
+<th>Miles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-201</td>
+<td>07:05, emergency room</td>
+<td>47.4</td>
+</tr>
+<tr>
+<td>T-202</td>
+<td>13:30, inpatient psychiatric</td>
+<td>263.8</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>7.1 Settings.</strong> Both pickups are in Colorado, so the service date is taken in Mountain time:
+2026-07-14. The payer names Ride Care Inc. as its identity. T-202&rsquo;s 263.8 miles round to 264, which
+is over 250, so the verification form is on T-202&rsquo;s checklist, due before its 13:30 start. The
+form was completed at 10:00, and billing confirms it.</p>
+<p><strong>7.2 Priced units.</strong> Each transport is one client leg.</p>
+<p><strong>7.3 Pricing.</strong></p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Trip term</th>
+<th>Mileage term</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-201</td>
+<td>$262.55</td>
+<td>47.4 rounded 47 × $6.28 = $295.16</td>
+</tr>
+<tr>
+<td>T-202</td>
+<td>$262.55</td>
+<td>263.8 rounded 264 × $6.28 = $1,657.92</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>7.4 Claims.</strong> Both units are Carmen&rsquo;s on one day, so they share one claim.</p>
+<p><strong>7.5 Service lines and sending.</strong> Lines run by pickup time. T-202 is Carmen&rsquo;s second trip of the
+day, so its lines carry 76:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Code</th>
+<th>Units</th>
+<th>Charge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>A0999 ET</td>
+<td>1</td>
+<td>$262.55</td>
+</tr>
+<tr>
+<td>2</td>
+<td>A0425 ET</td>
+<td>47</td>
+<td>$295.16</td>
+</tr>
+<tr>
+<td>3</td>
+<td>A0999 ET 76</td>
+<td>1</td>
+<td>$262.55</td>
+</tr>
+<tr>
+<td>4</td>
+<td>A0425 ET 76</td>
+<td>264</td>
+<td>$1,657.92</td>
+</tr>
+</tbody>
+</table></div>
+<p>The claim totals $2,478.18. It is built and priced but not sent: Colorado Access has not yet issued
+RideCare an electronic payer id, so the routing in effect has none, and the claim is held for
+review until a new routing version supplies it.</p>
+<h3>9.4 A Sedgwick cancellation bills $45 or the mileage driven, whichever is greater</h3>
+<p>Sedgwick pays a canceled trip once the vehicle is en route: $45, or the miles driven at $2.85 a
+mile, whichever is greater. The schedule prices it with two lines on the canceled outcome: a
+mileage line on the miles driven before the cancellation, and a $45 minimum. On one day, three
+Sedgwick transports were canceled:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Transport</th>
+<th>Departed?</th>
+<th>Odometer at departure</th>
+<th>Odometer at cancellation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-401</td>
+<td>yes</td>
+<td>48,210.4</td>
+<td>48,220.0</td>
+</tr>
+<tr>
+<td>T-402</td>
+<td>yes</td>
+<td>31,005.2</td>
+<td>31,026.5</td>
+</tr>
+<tr>
+<td>T-403</td>
+<td>no</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>7.1 Settings.</strong> The schedule pays the canceled outcome, so all three pass this stage.</p>
+<p><strong>7.2 Priced units.</strong> Each canceled transport is its own unit. T-403 was canceled before the
+vehicle departed, so it is a void: it is not priced, and it is flagged for review so operations
+can void it.</p>
+<p><strong>7.3 Pricing.</strong> The miles driven are the odometer difference, rounded half up:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Miles driven</th>
+<th>Mileage term</th>
+<th>Minimum top-up</th>
+<th>Unit price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-401</td>
+<td>9.6, rounded 10</td>
+<td>10 × $2.85 = $28.50</td>
+<td>$45.00 − $28.50 = $16.50</td>
+<td>$45.00</td>
+</tr>
+<tr>
+<td>T-402</td>
+<td>21.3, rounded 21</td>
+<td>21 × $2.85 = $59.85</td>
+<td>none</td>
+<td>$59.85</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>7.4 Claims.</strong> Vehicle trips group by payer and day, so both units share one claim.</p>
+<p><strong>7.5 Service lines and sending.</strong> The claim has two lines: mileage driven before a cancellation,
+31 miles, $88.35; and the cancellation minimum, $16.50. Its total, $104.85, is the two unit prices
+added together. The claim goes on Sedgwick&rsquo;s monthly invoice.</p>
+<h3>9.5 A Chickasaw month becomes one $7,000 claim</h3>
+<p>Chickasaw pays a fixed $7,000 a month for up to 65 transports. In March 2026 RideCare ran 41
+Chickasaw transports for 23 clients.</p>
+<p><strong>7.1 Settings.</strong> The schedule in effect on 2026-03-01, the period&rsquo;s first day, is found. The cap,
+65 transports a month, is not exceeded, so there is no warning.</p>
+<p><strong>7.2 Priced units.</strong> The unit of work is the period. Once March 31 has ended in Central time, the
+month becomes one unit, and all 41 transports link to it.</p>
+<p><strong>7.3 Pricing.</strong> The unit has one term: one period at $7,000.00.</p>
+<p><strong>7.4 Claims.</strong> Periods group by payer and period, so March is one claim, dated March 1 to 31,
+with no client on it.</p>
+<p><strong>7.5 Service lines and sending.</strong> The claim has one line, &ldquo;Monthly transportation services&rdquo;,
+$7,000.00. The user runs Chickasaw&rsquo;s invoice as of March 31, and the invoice carries that one row.
+A month with no transports still produces the $7,000 claim, because the fee is owed either way.</p>
 </article>
 
 <footer>
