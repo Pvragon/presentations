@@ -1359,8 +1359,10 @@ of endpoint.</p>
 </tbody>
 </table></div>
 <p>Distance is kept at full precision as evidence. Each quantity is rounded once per priced unit, by the line&rsquo;s rounding, and every test on it (a threshold, a band, a document trigger) uses the rounded value, so a transport of 30.4 miles reads as 30 and is not over 30. A condition on a count or on a published fuel price compares the value as recorded.</p>
-<p>The vehicle path is used only to reproduce claims from before 2025-12-01. It follows the route the
-way Echo1 computes <code>start_to_end_distance</code> today (<code>transport-leg-distances.ts</code>):</p>
+<p>The vehicle path is used only to reproduce claims from before 2025-12-01. Rebilling those claims
+from Echo1 is a separate, later build: the vehicle path is recorded here as a requirement of that
+build, not of this one. It follows the route the way Echo1 computes <code>start_to_end_distance</code> today
+(<code>transport-leg-distances.ts</code>):</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
