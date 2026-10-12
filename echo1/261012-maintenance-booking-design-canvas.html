@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="prez-comments" content="on">
+<title>Maintenance booking · design canvas</title>
+<style>
+/* ── Page chrome (around the frames) ─────────────────────────────────── */
+:root{
+  --c-bg:#F4F5F7; --c-surface:#FFFFFF; --c-text:#15181E; --c-muted:#4B5361; --c-line:#D5D9E0;
+  --c-decided-bg:#E8F6EE; --c-decided-line:#2F8A57; --c-decided-text:#14532D;
+  --c-eng-bg:#E6F4F6; --c-eng-line:#2A8291; --c-eng-text:#134E57;
+  --c-open-bg:#FDF3E2; --c-open-line:#B7791F; --c-open-text:#6B4508;
+  --c-new-bg:#E8F0FE; --c-new-line:#5B8DEF; --c-new-text:#1E3A8A;
+  --c-today-bg:#EEF0F3; --c-today-line:#9AA3B2;
+  --c-focus:#5B8DEF;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  /* ── Product tokens: Echo1 (Untitled UI on Tailwind v4, app/src/styles/theme.css) ── */
+  --p-font:'Inter',-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --p-bg:#FAFAFA; --p-surface:#FFFFFF; --p-text:#171717; --p-text2:#404040; --p-muted:#525252; --p-faint:#737373;
+  --p-line:#E5E5E5; --p-line-strong:#D4D4D4; --p-hover:#F5F5F5;
+  --p-brand:#326C6D; --p-brand-hover:#285556; --p-brand-50:#E6F4F4; --p-brand-200:#A0D4D5; --p-brand-900:#204243;
+  --p-ok:#15803D; --p-ok-bg:#F0FDF4; --p-ok-ring:#BBF7D0; --p-ok-dot:#16A34A;
+  --p-warn:#A16207; --p-warn-bg:#FEFCE8; --p-warn-bg2:#FEF9C3; --p-warn-ring:#FEF08A; --p-warn-line:#FDE047; --p-warn-dot:#CA8A04;
+  --p-err:#B91C1C; --p-err-bg:#FEF2F2; --p-err-ring:#FECACA; --p-err-line:#FCA5A5; --p-err-solid:#DC2626;
+  --p-shadow-xs:0 1px 2px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --c-bg:#0E1116; --c-surface:#171B22; --c-text:#E8EAEE; --c-muted:#A7AFBC; --c-line:#2C333E;
+    --c-decided-bg:#12291C; --c-decided-line:#4CB37A; --c-decided-text:#BDEBCF;
+    --c-eng-bg:#10272B; --c-eng-line:#45A9B8; --c-eng-text:#BCE6EC;
+    --c-open-bg:#2C2210; --c-open-line:#D69E2E; --c-open-text:#F6DFA9;
+    --c-new-bg:#16233D; --c-new-line:#6E9BF2; --c-new-text:#C9D9FB;
+    --c-today-bg:#1D232C; --c-today-line:#5C6676;
+  }
+}
+:root[data-theme="dark"]{
+  --c-bg:#0E1116; --c-surface:#171B22; --c-text:#E8EAEE; --c-muted:#A7AFBC; --c-line:#2C333E;
+  --c-decided-bg:#12291C; --c-decided-line:#4CB37A; --c-decided-text:#BDEBCF;
+  --c-eng-bg:#10272B; --c-eng-line:#45A9B8; --c-eng-text:#BCE6EC;
+  --c-open-bg:#2C2210; --c-open-line:#D69E2E; --c-open-text:#F6DFA9;
+  --c-new-bg:#16233D; --c-new-line:#6E9BF2; --c-new-text:#C9D9FB;
+  --c-today-bg:#1D232C; --c-today-line:#5C6676;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--c-bg);color:var(--c-text);font-family:var(--font);line-height:1.5;overflow-x:hidden}
+.page{max-width:1440px;margin:0 auto;padding:48px 16px 96px}
+@media (min-width:720px){.page{padding:56px 40px 120px}}
+h1,h2,h3{margin:0;line-height:1.2}
+p{margin:0}
+a{color:inherit}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted)}
+.title{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.02em;margin-top:8px}
+.thesis{font-size:clamp(17px,2vw,20px);color:var(--c-muted);margin-top:12px;max-width:62ch}
+.toc{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:20px;font-size:14px}
+.toc a{color:var(--c-muted)}
+section{margin-top:72px}
+section>h2{font-size:24px;font-weight:800;margin-bottom:8px}
+section>.lead{color:var(--c-muted);max-width:75ch;margin-bottom:20px}
+.kicker{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-muted)}
+
+/* ── 1 · Mental model ── */
+.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.card{background:var(--c-surface);border:1px solid var(--c-line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.card .action{font-size:22px;font-weight:800}
+.reasons{display:flex;flex-direction:column;gap:10px}
+.reasons div{display:grid;grid-template-columns:minmax(110px,150px) 1fr;gap:10px}
+.reasons span{color:var(--c-muted)}
+.compare{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));margin-top:16px}
+.compare>div{border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--c-line)}
+.compare .unsafe{background:#FEF3F2;color:#3B0D09}
+.compare .unsafe strong{color:#B42318}
+.compare .safe{background:#ECFDF3;color:#0B2E1A}
+.compare .safe strong{color:#067647}
+.guardrails{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;font-size:15px;color:var(--c-muted)}
+.guardrails strong{color:var(--c-text)}
+.states{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--c-muted)}
+
+/* ── 2 · Process flow ── */
+.legend{display:flex;gap:16px;font-size:14px;color:var(--c-muted);margin-bottom:12px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
+.scroll{overflow-x:auto;padding-bottom:8px}
+.lanes{display:grid;grid-template-columns:150px repeat(var(--steps,5),176px);gap:10px;min-width:max-content}
+.actor{background:var(--c-text);color:var(--c-bg);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+.actor b{font-size:16px}
+.actor small{opacity:.8}
+.step{border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;font-size:13.5px}
+.step .n{font-size:13px;font-weight:800}
+.step b{font-size:14.5px}
+.step.new{background:var(--c-new-bg);border:1px solid var(--c-new-line)}
+.step.new .n{color:var(--c-new-text)}
+.step.today{background:var(--c-today-bg);border:1px solid var(--c-today-line)}
+.step.empty{border:1px dashed var(--c-line)}
+.flow-title{font-size:18px;font-weight:800;margin:28px 0 10px}
+
+/* ── 3 · Screens ── */
+.row{margin-top:44px}
+.row>h3{font-size:20px;font-weight:800;margin-bottom:6px}
+.row>p{color:var(--c-muted);margin-bottom:16px;max-width:75ch}
+.frames{display:flex;gap:36px;align-items:flex-start;overflow-x:auto;padding:8px 8px 16px;scroll-snap-type:x proximity}
+.frame{flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column;gap:10px;border-radius:16px;outline:3px solid transparent;outline-offset:6px;transition:outline-color .3s}
+.frame:target{outline-color:var(--c-focus)}
+.frame-name{font-size:14px;font-weight:700;color:var(--c-muted)}
+.frame-note{font-size:13px;color:var(--c-muted);max-width:390px}
+.screen{background:var(--p-bg);color:var(--p-text);font-family:var(--p-font);font-size:14px;line-height:20px;border:1px solid var(--c-line);border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08);position:relative}
+.phone{width:390px;height:844px;display:flex;flex-direction:column}
+.desktop{width:var(--w,1280px);height:var(--h,860px);zoom:var(--scale,.6);border-radius:12px}
+@media (max-width:719px){.phone{zoom:.82}.desktop{zoom:calc(var(--scale,.6) * .5)}}
+
+/* Echo1 product parts */
+.ic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.ic.sm{width:16px;height:16px}
+.ic.lg{width:24px;height:24px}
+.pb{display:inline-flex;align-items:center;gap:4px;font-size:12px;line-height:18px;font-weight:500;padding:2px 8px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--ring);white-space:nowrap}
+.pb.ok{background:var(--p-ok-bg);color:var(--p-ok);--ring:var(--p-ok-ring)}
+.pb.warn{background:var(--p-warn-bg);color:var(--p-warn);--ring:var(--p-warn-ring)}
+.pb.err{background:var(--p-err-bg);color:var(--p-err);--ring:var(--p-err-ring)}
+.pb.gray{background:#FAFAFA;color:var(--p-text);--ring:var(--p-line)}
+.pb.brand{background:var(--p-brand-50);color:var(--p-brand);--ring:var(--p-brand-200)}
+.dc{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--p-line);background:#FAFAFA;border-radius:999px;padding:2px 8px;font-size:12px;line-height:18px;font-weight:500;color:var(--p-text2);white-space:nowrap}
+.dc i{width:6px;height:6px;border-radius:50%;background:var(--dot,#A3A3A3)}
+.dc.pending{--dot:var(--p-warn-dot)} .dc.brand{--dot:var(--p-brand)} .dc.ok{--dot:var(--p-ok-dot)} .dc.err{--dot:var(--p-err-solid)} .dc.gray{--dot:#A3A3A3}
+.b{min-height:44px;border-radius:8px;padding:10px 14px;font:600 14px/20px var(--p-font);display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;border:0;cursor:pointer;white-space:nowrap}
+.b.pri{background:var(--p-brand);color:#fff;box-shadow:var(--p-shadow-xs),inset 0 0 0 1px rgba(10,13,18,.18),inset 0 -2px 0 rgba(10,13,18,.05)}
+.b.sec{background:#fff;color:var(--p-text2);box-shadow:inset 0 0 0 1px var(--p-line-strong),var(--p-shadow-xs)}
+.b.ter{background:transparent;color:var(--p-muted)}
+.b.danger{background:var(--p-err-solid);color:#fff}
+.b.sm{min-height:36px;padding:8px 12px}
+.b.xs{min-height:32px;padding:6px 10px;font-size:13px}
+.b.full{width:100%}
+.b.icon{min-width:44px;padding:10px}
+.al{border-radius:8px;border:1px solid;padding:12px 14px;display:flex;gap:10px;font-size:14px}
+.al b{display:block;font-weight:600}
+.al .t{color:var(--p-text2)}
+.al.warn{border-color:var(--p-warn-line);background:var(--p-warn-bg);color:var(--p-warn)}
+.al.err{border-color:var(--p-err-line);background:var(--p-err-bg);color:var(--p-err)}
+.al.brand{border-color:var(--p-brand-200);background:var(--p-brand-50);color:var(--p-brand-900)}
+.al.ok{border-color:#86EFAC;background:var(--p-ok-bg);color:var(--p-ok)}
+.al .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.rc{background:#fff;border:1px solid var(--p-line);border-radius:12px;padding:16px;box-shadow:var(--p-shadow-xs);display:flex;flex-direction:column;gap:12px}
+.rc .ey{font-size:12px;color:var(--p-muted)}
+.rc h4{margin:0;font-size:16px;line-height:24px;font-weight:600}
+.meta{display:flex;align-items:center;gap:6px;color:var(--p-muted);font-size:14px}
+.map{height:120px;border-radius:8px;background:linear-gradient(135deg,#E6F4F4 0%,#EEF2F2 45%,#E5E5E5 100%);position:relative;overflow:hidden}
+.map::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 46px,rgba(255,255,255,.7) 46px 49px),repeating-linear-gradient(0deg,transparent 0 38px,rgba(255,255,255,.7) 38px 41px)}
+.map::after{content:"";position:absolute;left:20%;top:55%;width:60%;height:3px;background:var(--p-brand);transform:rotate(-14deg);border-radius:2px}
+.lb{display:block;font-size:14px;font-weight:500;color:var(--p-text2);margin-bottom:6px}
+.in{border:1px solid var(--p-line-strong);border-radius:8px;padding:10px 12px;font-size:14px;color:var(--p-text);background:#fff;box-shadow:var(--p-shadow-xs);min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.in.ph{color:var(--p-faint)}
+.in.area{min-height:72px;align-items:flex-start}
+.hint{font-size:13px;color:var(--p-muted);margin-top:6px}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;font-size:14px}
+.kv dt{color:var(--p-muted)} .kv dd{margin:0;color:var(--p-text)}
+.divider{height:1px;background:var(--p-line);margin:2px 0}
+.daylbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--p-muted);margin-top:4px}
+.slot{border:1px solid var(--p-line-strong);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;font-size:14px;background:#fff;min-height:44px}
+.slot.sel{border:2px solid var(--p-brand);background:var(--p-brand-50);padding:9px 11px}
+.slot.taken{color:var(--p-faint);background:#FAFAFA}
+.radio{width:18px;height:18px;border-radius:50%;border:1px solid var(--p-line-strong);background:#fff;flex:0 0 auto}
+.slot.sel .radio{border:5px solid var(--p-brand)}
+.check{width:18px;height:18px;border-radius:4px;border:1px solid var(--p-line-strong);background:#fff;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center}
+.check.on{background:var(--p-brand);border-color:var(--p-brand);color:#fff}
+.timeline{display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--p-muted)}
+.timeline div{display:flex;gap:8px;align-items:flex-start}
+.timeline i{width:8px;height:8px;border-radius:50%;background:var(--p-line-strong);margin-top:6px;flex:0 0 auto}
+.timeline i.on{background:var(--p-brand)}
+.timeline b{color:var(--p-text);font-weight:500}
+
+/* driver shell */
+.d-head{background:#fff;border-bottom:1px solid var(--p-line);padding:10px 14px 14px;flex:0 0 auto}
+.d-row{display:flex;justify-content:space-between;align-items:center}
+.d-acts{display:flex;align-items:center;gap:2px;color:#A3A3A3}
+.d-acts span{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;position:relative}
+.bell-n{position:absolute;top:4px;right:3px;background:var(--p-err-solid);color:#fff;font-size:10px;line-height:14px;font-weight:600;border-radius:999px;padding:0 5px}
+.avatar{width:32px!important;height:32px!important;border-radius:50%;background:var(--p-brand-50);color:var(--p-brand);font-size:12px;font-weight:600;margin-left:4px}
+.d-ey{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--p-muted);margin-top:6px}
+.d-h1{font-size:20px;line-height:30px;font-weight:600}
+.d-sub{font-size:14px;color:var(--p-muted)}
+.d-body{flex:1 1 auto;overflow:hidden;padding:16px 12px 0;display:flex;flex-direction:column;gap:14px}
+.chips{display:flex;gap:6px;overflow:hidden}
+.chip{font-size:13px;font-weight:600;border-radius:8px;padding:6px 10px;background:#fff;box-shadow:inset 0 0 0 1px var(--p-line-strong);color:var(--p-text2);white-space:nowrap}
+.chip.on{background:var(--p-brand);color:#fff;box-shadow:none}
+.d-nav{flex:0 0 auto;border-top:1px solid var(--p-line);background:#fff;box-shadow:0 -4px 12px rgba(0,0,0,.04);display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px 8px 10px}
+.d-nav span{min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:500;color:var(--p-muted);border-radius:8px}
+.d-nav span.on{background:#FAFAFA;color:var(--p-text)}
+.sheet-ov{position:absolute;inset:0;background:rgba(10,10,10,.55);backdrop-filter:blur(3px)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:12px 12px 0 0;max-height:90%;display:flex;flex-direction:column;box-shadow:0 -12px 32px rgba(0,0,0,.18)}
+.sh-h{padding:16px 16px 12px;border-bottom:1px solid var(--p-line);display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.sh-h h4{margin:0;font-size:18px;line-height:28px;font-weight:600}
+.sh-h small{display:block;color:var(--p-muted);font-size:14px}
+.sh-b{padding:16px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.sh-f{padding:12px 16px 16px;box-shadow:inset 0 1px var(--p-line);display:flex;gap:10px}
+.sh-f .b{flex:1 1 0}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--p-line-strong);margin:8px auto 0}
+.due{border:1px solid var(--p-line);border-radius:8px;padding:12px;display:flex;gap:10px;background:#FAFAFA}
+.due .ti{width:36px;height:36px;border-radius:8px;background:#fff;border:1px solid var(--p-line);display:flex;align-items:center;justify-content:center;color:var(--p-brand);flex:0 0 auto}
+.due b{display:block;font-weight:600}
+.due small{display:block;color:var(--p-muted);font-size:13px}
+.modal-c{position:absolute;left:16px;right:16px;bottom:16px;background:#fff;border-radius:12px;padding:20px;box-shadow:0 20px 24px -4px rgba(10,13,18,.08),0 8px 8px -4px rgba(10,13,18,.03);display:flex;flex-direction:column;gap:10px}
+.modal-c h4{margin:0 0 4px;font-size:18px;line-height:28px;font-weight:600}
+.fopt{border:1px solid var(--p-line);border-radius:8px;padding:12px;display:flex;gap:12px;align-items:center}
+.fopt .ti{width:40px;height:40px;border-radius:8px;background:#FAFAFA;display:flex;align-items:center;justify-content:center;color:var(--p-muted);flex:0 0 auto}
+.fopt b{display:block;font-weight:500}
+.fopt small{display:block;color:var(--p-muted);font-size:13px}
+.fopt.new{border:2px solid var(--p-brand);background:var(--p-brand-50)}
+.fopt.new .ti{color:var(--p-brand);background:#fff}
+
+/* staff shell */
+.staff{display:grid;grid-template-columns:248px 1fr;height:100%}
+.side{background:#fff;border-right:1px solid var(--p-line);padding:20px 12px;display:flex;flex-direction:column;gap:2px;font-size:14px;color:var(--p-text2)}
+.side .logo{font-weight:700;font-size:18px;color:var(--p-brand-900);padding:0 10px 18px}
+.side span{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;font-weight:600}
+.side span.on{background:#FAFAFA;color:var(--p-text)}
+.side span.sub{padding-left:40px;font-weight:500;color:var(--p-muted)}
+.main{padding:28px 32px;overflow:hidden;display:flex;flex-direction:column;gap:20px;position:relative}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start}
+.topbar h5{margin:0;font-size:24px;line-height:32px;font-weight:600}
+.topbar small{display:block;color:var(--p-muted);font-size:14px;margin-top:2px}
+.tabs{display:flex;gap:20px;border-bottom:1px solid var(--p-line)}
+.tab{padding:0 2px 11px;font-size:14px;font-weight:600;color:var(--p-faint);border-bottom:2px solid transparent;display:flex;gap:8px;align-items:center;margin-bottom:-1px}
+.tab.on{color:var(--p-brand);border-color:var(--p-brand)}
+.cnt{font-size:12px;line-height:18px;font-weight:500;padding:0 8px;border-radius:999px;background:#FAFAFA;border:1px solid var(--p-line);color:var(--p-text2)}
+.tab.on .cnt{background:var(--p-brand-50);border-color:var(--p-brand-200);color:var(--p-brand)}
+.panel{background:#fff;border:1px solid var(--p-line);border-radius:12px;box-shadow:var(--p-shadow-xs);overflow:hidden}
+.panel-h{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--p-line)}
+.panel-h b{font-size:16px;font-weight:600}
+.panel-h small{color:var(--p-muted);font-size:14px;margin-left:8px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{background:#FAFAFA;color:var(--p-muted);font-weight:500;font-size:12px;text-align:left;padding:10px 16px;border-bottom:1px solid var(--p-line)}
+.tbl td{padding:12px 16px;border-bottom:1px solid var(--p-line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td small{display:block;color:var(--p-muted);font-size:13px}
+.tbl .acts{display:flex;gap:8px;justify-content:flex-end}
+.warntxt{color:var(--p-warn);font-size:13px;display:flex;gap:4px;align-items:center}
+.ov{position:absolute;inset:0;background:rgba(10,10,10,.5)}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:640px;background:#fff;display:flex;flex-direction:column;box-shadow:-12px 0 32px rgba(0,0,0,.14)}
+.dh{padding:16px 24px;border-bottom:1px solid var(--p-line);position:relative}
+.dh h5{margin:0;font-size:18px;line-height:28px;font-weight:600;display:flex;gap:8px;align-items:center}
+.dh small{display:block;color:var(--p-muted);font-size:14px}
+.dh .x{position:absolute;top:14px;right:14px;color:#A3A3A3}
+.db{padding:24px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:20px}
+.df{padding:16px 24px;box-shadow:inset 0 1px var(--p-line);display:flex;justify-content:flex-end;gap:12px}
+.sect h6{margin:0 0 10px;font-size:14px;font-weight:600;color:var(--p-text)}
+.tray{position:absolute;top:56px;right:16px;width:384px;background:#fff;border:1px solid var(--p-line);border-radius:12px;box-shadow:0 20px 24px -4px rgba(10,13,18,.08);overflow:hidden}
+.tray-h{padding:14px 16px;border-bottom:1px solid var(--p-line);display:flex;justify-content:space-between;align-items:center}
+.tray-h b{font-size:16px;font-weight:600;display:flex;gap:8px;align-items:center}
+.tray-h a{font-size:14px;font-weight:600;color:var(--p-brand);text-decoration:none}
+.nt{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--p-line)}
+.nt.unread{background:#FAFAFA}
+.nt .dot{width:8px;height:8px;border-radius:50%;background:var(--p-brand);margin-top:12px;flex:0 0 auto}
+.nt .dot.off{background:transparent}
+.nt .ti{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.nt .ti.red{background:var(--p-err-bg);color:var(--p-err)} .nt .ti.brand{background:var(--p-brand-50);color:var(--p-brand)} .nt .ti.yel{background:var(--p-warn-bg);color:var(--p-warn)}
+.nt .tt{display:flex;justify-content:space-between;gap:8px;font-weight:500}
+.nt .tt small{color:var(--p-muted);font-weight:400;font-size:12px;white-space:nowrap}
+.nt p{color:var(--p-muted);font-size:14px}
+/* week calendar */
+.wk{display:grid;grid-template-columns:56px repeat(5,1fr);border-top:1px solid var(--p-line)}
+.wk .hd{padding:10px;font-size:13px;font-weight:600;color:var(--p-text2);border-bottom:1px solid var(--p-line);border-left:1px solid var(--p-line);text-align:center}
+.wk .hd small{display:block;color:var(--p-muted);font-weight:500}
+.wk .hrs{display:flex;flex-direction:column}
+.wk .hrs span{height:44px;font-size:11px;color:var(--p-faint);text-align:right;padding-right:8px;transform:translateY(-7px)}
+.wk .col{position:relative;border-left:1px solid var(--p-line);height:484px;background:repeating-linear-gradient(180deg,transparent 0 43px,var(--p-line) 43px 44px)}
+.ev{position:absolute;left:6px;right:6px;border-radius:6px;padding:6px 8px;font-size:12px;line-height:16px;overflow:hidden}
+.ev b{display:block;font-weight:600}
+.ev.open{background:#fff;border:1px dashed var(--p-brand);color:var(--p-brand)}
+.ev.req{background:var(--p-warn-bg);border:1px solid var(--p-warn-line);color:var(--p-warn)}
+.ev.book{background:var(--p-brand);color:#fff}
+.ev.book small{opacity:.85}
+
+:focus-visible{outline:3px solid var(--c-focus);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.frame{transition:none}}
+
+/* ── 4 · Notes, 5 · Impact ── */
+.notes{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.note{border-radius:12px;padding:16px;border:1px solid;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.note b{font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.note.decided{background:var(--c-decided-bg);border-color:var(--c-decided-line);color:var(--c-decided-text)}
+.note.eng{background:var(--c-eng-bg);border-color:var(--c-eng-line);color:var(--c-eng-text)}
+.note.open{background:var(--c-open-bg);border-color:var(--c-open-line);color:var(--c-open-text)}
+.note code{font-family:var(--mono);font-size:13px}
+.notes-h{font-size:16px;font-weight:800;margin:24px 0 12px}
+.impact{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}
+.impact ul{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+  <symbol id="i-tri" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7zM5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4zM8 2v16M16 6v16"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></symbol>
+</svg>
+<main class="page">
+
+  <!-- 0 · Header -->
+  <header>
+    <div class="eyebrow">#530 · 868meq0e5 + 868mgg224 · Echo1 · RideCARE</div>
+    <h1 class="title">Driver maintenance booking, and crash alerts</h1>
+    <p class="thesis">An approved appointment reserves the vehicle, and a Samsara crash alert pulls it off the road. Either way, only the fleet manager puts it back in service.</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#mental-model">Mental model</a><a href="#process-flow">Process flow</a><a href="#screens">Screens</a><a href="#notes">Decisions and notes</a><a href="#impact">Impact</a>
+    </nav>
+  </header>
+
+  <!-- 1 · Mental model -->
+  <section id="mental-model">
+    <h2>Mental model</h2>
+    <p class="lead">Today, booking maintenance happens in Teams and email to Bison Auto, and Echo1 never hears about it. Crashes reach leadership by phone. In both cases dispatch can keep assigning a vehicle that isn't on the road.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="kicker">Why users need this</div>
+        <div class="reasons">
+          <div><strong>Service is due</strong><span>Samsara tells the driver. The driver messages someone at Bison and may never hear back with a time.</span></div>
+          <div><strong>Booked, but dispatched</strong><span>Dispatch has no record of the appointment, so trips still land on the vehicle while it's in the shop.</span></div>
+          <div><strong>Crash on the road</strong><span>Leadership finds out and phones the driver. The vehicle still shows In Service in Echo1.</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kicker">The one action</div>
+        <div class="action">“Request maintenance”</div>
+        <p>On the driver's reminder banner and in Forms. It opens one drawer that holds the whole request: what's due, open times at Bison, the status, and later <strong>Car returned</strong>. The driver never changes the vehicle's status; Echo1 and the fleet manager do.</p>
+        <div class="states">
+          <span class="dc pending"><i></i>Pending</span><span>→</span>
+          <span class="dc brand"><i></i>New time offered</span><span>→</span>
+          <span class="dc ok"><i></i>Approved</span><span>→</span>
+          <span class="dc brand"><i></i>In shop</span><span>→</span>
+          <span class="dc brand"><i></i>Returned</span><span>→</span>
+          <span class="dc ok"><i></i>Completed</span>
+          <span style="margin-left:6px">or</span><span class="dc err"><i></i>Denied</span><span class="dc gray"><i></i>Cancelled</span>
+        </div>
+        <div class="states">Vehicle: <span class="pb ok">In Service</span><span>⇄</span><span class="pb warn">In Maintenance</span></div>
+      </div>
+    </div>
+    <div class="compare">
+      <div class="unsafe"><strong>Tempting: give the vehicle back automatically</strong><span>Put it back In Service when the driver taps “Car returned” or when the window ends. A vehicle still on the lift, or one that failed its repair, goes straight back to dispatch, and nobody confirms the work was done.</span></div>
+      <div class="safe"><strong>Chosen: the fleet manager closes every appointment</strong><span>“Car returned” only tells the fleet manager. The vehicle stays In Maintenance until they confirm. An appointment still open after its window is flagged as overdue on the Fleet page, never closed by itself. Crash alerts follow the same rule.</span></div>
+    </div>
+    <div class="guardrails"><strong>Guardrails:</strong>
+      <span>Drivers act only on their own vehicle</span>
+      <span>Approve, deny, close and slots need <code>fleet:write</code></span>
+      <span>Deny needs a reason</span>
+      <span>Only dispatch blocks the driver</span>
+      <span>A failed notification never blocks a status change</span>
+    </div>
+  </section>
+
+  <!-- 2 · Process flow -->
+  <section id="process-flow">
+    <h2>Process flow</h2>
+    <p class="lead">Two flows. Booking runs from Samsara's due notice to the fleet manager's sign-off. A crash skips the request entirely: the alert takes the vehicle off the road first.</p>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--c-new-bg);border:1px solid var(--c-new-line)"></i>New</span>
+      <span><i class="swatch" style="background:var(--c-today-bg);border:1px solid var(--c-today-line)"></i>Exists today</span>
+    </div>
+
+    <div class="flow-title">A · Booking scheduled maintenance (#530)</div>
+    <div class="scroll">
+      <div class="lanes" style="--steps:9">
+        <div class="actor"><b>Samsara</b><small>RideCARE's account</small></div>
+        <div class="step new"><span class="n">1</span><b>Maintenance due</b>Scheduled Maintenance alert posts to Echo1's webhook (set up with Roman)</div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+
+        <div class="actor"><b>Echo1</b><small>App + server</small></div>
+        <div class="step empty"></div>
+        <div class="step new"><span class="n">2</span><b>Record the due item</b>Banner and bell for every driver of that vehicle</div>
+        <div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">5</span><b>Reserve the vehicle</b>Flag trips already on it in the window; tell the driver</div>
+        <div class="step empty"></div>
+        <div class="step today"><span class="n">7</span><b>Window starts</b>Vehicle goes In Maintenance; dispatch and the optimizer already skip it</div>
+        <div class="step empty"></div><div class="step empty"></div>
+
+        <div class="actor"><b>Driver</b><small>Driver app</small></div>
+        <div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">3</span><b>Request maintenance</b>Pick an open slot (or propose windows) in the drawer</div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+        <div class="step today"><span class="n">7</span><b>Drops the car at Bison</b>After a reminder</div>
+        <div class="step new"><span class="n">8</span><b>Car returned</b>Taps it in the drawer</div>
+        <div class="step empty"></div>
+
+        <div class="actor"><b>Fleet manager</b><small>or management · Fleet page</small></div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">4</span><b>Decide</b>Approve, offer another time, or deny with a reason. Echo1 doesn't track capacity.</div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">9</span><b>Confirm the work</b>Vehicle back In Service. Open past its window? Flagged overdue.</div>
+
+        <div class="actor"><b>Dispatch</b><small>Routes + board</small></div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">6</span><b>Re-dispatch flagged trips</b>May also block the driver for the window</div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+      </div>
+    </div>
+
+    <div class="flow-title">B · Crash on the road (868mgg224)</div>
+    <div class="scroll">
+      <div class="lanes" style="--steps:5">
+        <div class="actor"><b>Samsara</b><small>Vehicle gateway + dash cam</small></div>
+        <div class="step today"><span class="n">1</span><b>Crash detected</b>Harsh Event alert fires and sends to Echo1 (alert setup with Roman)</div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+
+        <div class="actor"><b>Echo1</b><small>Server</small></div>
+        <div class="step empty"></div>
+        <div class="step new"><span class="n">2</span><b>Off the road now</b>Crash only (not harsh braking). Vehicle In Maintenance with the reason and Samsara link; trips flagged. Safety-events check catches missed alerts.</div>
+        <div class="step empty"></div><div class="step empty"></div><div class="step empty"></div>
+
+        <div class="actor"><b>Fleet manager + leadership</b><small>Crash list</small></div>
+        <div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">3</span><b>Alerted</b>In-app, plus email or SMS. No phone call needed to find out.</div>
+        <div class="step empty"></div>
+        <div class="step new"><span class="n">5</span><b>Back in service</b>Fleet manager reviews and puts the vehicle back, in one step</div>
+
+        <div class="actor"><b>Dispatch</b><small>Board</small></div>
+        <div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">3</span><b>Sees the flag</b>Re-dispatches the vehicle's trips</div>
+        <div class="step empty"></div><div class="step empty"></div>
+
+        <div class="actor"><b>Driver</b><small>Driver app</small></div>
+        <div class="step empty"></div><div class="step empty"></div>
+        <div class="step new"><span class="n">3</span><b>Vehicle flagged</b>Sees why on the home screen</div>
+        <div class="step new"><span class="n">4</span><b>Note + Alert dispatch</b>Adds a vehicle note, alerts dispatch with location, files the crash report (exists today)</div>
+        <div class="step empty"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · Screens -->
+  <section id="screens">
+    <h2>Screens</h2>
+    <p class="lead">Drawn on Echo1's real driver shell and Fleet page: teal brand, Untitled UI badges and buttons, the Active / Past / Forms bottom nav. Names, units and numbers are invented.</p>
+
+    <!-- Row A · Driver happy path -->
+    <div class="row">
+      <h3>Driver: book, drop off, return (click 1 → 6)</h3>
+      <p>Jordan Rivera drives Unit 14. Samsara says its oil change is due. Jordan books Thursday morning at Bison, drops the car off, and taps Car returned when it's done.</p>
+      <div class="frames">
+
+        <!-- 1 -->
+        <div class="frame" id="screen-1">
+          <div class="frame-name">1 · Due notice on Active rides</div>
+          <div class="screen phone">
+            <div class="d-head">
+              <div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span>
+                <div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg><em class="bell-n">1</em></span><span class="avatar">JR</span></div></div>
+              <div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Mon, Oct 12, 7:42 AM</div>
+            </div>
+            <div class="d-body">
+              <div class="al warn" role="status">
+                <svg class="ic"><use href="#i-tool"/></svg>
+                <div><b>Unit 14 is due for an oil change</b><span class="t">Due by Oct 22 or 48,000 mi. Now at 47,620 mi.</span>
+                  <div class="acts"><a class="b pri sm" href="#screen-2">Request maintenance</a><button class="b sec sm" type="button">Remind me later</button></div></div>
+              </div>
+              <div class="chips"><span class="chip on">All</span><span class="chip">Today</span><span class="chip">Scheduled</span><span class="chip">In progress</span></div>
+              <div class="rc">
+                <div class="ey">Route · 3 stops</div>
+                <h4>OKC North AM</h4>
+                <div class="meta"><svg class="ic sm"><use href="#i-clock"/></svg>8:15 AM – 11:40 AM</div>
+                <div class="map"></div>
+                <span class="b pri full">Open route</span>
+              </div>
+            </div>
+            <nav class="d-nav"><span class="on"><svg class="ic"><use href="#i-home"/></svg>Active</span><span><svg class="ic"><use href="#i-cal"/></svg>Past</span><span><svg class="ic"><use href="#i-file"/></svg>Forms</span></nav>
+          </div>
+          <p class="frame-note">The banner uses Echo1's warning alert. “Remind me later” hides it until tomorrow; it comes back until Jordan books or the fleet manager dismisses the item.</p>
+        </div>
+
+        <!-- 2 -->
+        <div class="frame" id="screen-2">
+          <div class="frame-name">2 · Maintenance drawer: pick a time</div>
+          <div class="screen phone">
+            <div class="d-head">
+              <div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg></span><span class="avatar">JR</span></div></div>
+              <div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Mon, Oct 12, 7:43 AM</div>
+            </div>
+            <div class="d-body"></div>
+            <div class="sheet-ov"></div>
+            <div class="sheet" role="dialog" aria-label="Maintenance for Unit 14">
+              <div class="grab"></div>
+              <div class="sh-h"><div><h4>Maintenance · Unit 14</h4><small>Bison Auto · <span style="color:var(--p-brand);font-weight:600">(405) 555-0142</span></small></div><span class="b ter icon" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="sh-b">
+                <div class="due"><div class="ti"><svg class="ic"><use href="#i-tool"/></svg></div><div><b>Oil change</b><small>Due by Oct 22 or 48,000 mi · from Samsara</small></div></div>
+                <div><span class="lb">Pick an open time</span>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <div class="daylbl">Thu, Oct 15</div>
+                    <div class="slot sel"><span>8:00 – 10:00 AM</span><span class="radio"></span></div>
+                    <div class="slot"><span>1:00 – 3:00 PM</span><span class="radio"></span></div>
+                    <div class="daylbl">Fri, Oct 16</div>
+                    <div class="slot"><span>1:00 – 3:00 PM</span><span class="radio"></span></div>
+                  </div>
+                </div>
+                <div><span class="lb">Note for the fleet manager (optional)</span><div class="in area ph">Anything Bison should know?</div></div>
+              </div>
+              <div class="sh-f"><span class="b sec">Cancel</span><a class="b pri" href="#screen-3"><svg class="ic sm"><use href="#i-send"/></svg>Send request</a></div>
+            </div>
+          </div>
+          <p class="frame-note">Slots are the ones the fleet manager published (P3), listed by day because a list fits a phone better than a grid. Driver screens use bottom-aligned dialogs today, so the drawer is a bottom sheet.</p>
+        </div>
+
+        <!-- 3 -->
+        <div class="frame" id="screen-3">
+          <div class="frame-name">3 · Request sent: Pending</div>
+          <div class="screen phone">
+            <div class="d-head">
+              <div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg></span><span class="avatar">JR</span></div></div>
+              <div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Mon, Oct 12, 7:44 AM</div>
+            </div>
+            <div class="d-body">
+              <div class="al brand" role="status">
+                <svg class="ic"><use href="#i-clock"/></svg>
+                <div><b>Maintenance request sent</b><span class="t">Unit 14 · Thu, Oct 15, 8:00 – 10:00 AM. Waiting for the fleet manager.</span>
+                  <div class="acts"><a class="b sec sm" href="#screen-4">View request</a></div></div>
+              </div>
+              <div class="chips"><span class="chip on">All</span><span class="chip">Today</span><span class="chip">Scheduled</span><span class="chip">In progress</span></div>
+              <div class="rc"><div class="ey">Route · 3 stops</div><h4>OKC North AM</h4><div class="meta"><svg class="ic sm"><use href="#i-clock"/></svg>8:15 AM – 11:40 AM</div><div class="map"></div><span class="b pri full">Open route</span></div>
+            </div>
+            <nav class="d-nav"><span class="on"><svg class="ic"><use href="#i-home"/></svg>Active</span><span><svg class="ic"><use href="#i-cal"/></svg>Past</span><span><svg class="ic"><use href="#i-file"/></svg>Forms</span></nav>
+          </div>
+          <p class="frame-note">The banner turns into the request's status, so the driver isn't nagged to book again. The fleet manager gets a notice in-app and by email.</p>
+        </div>
+
+        <!-- 4 -->
+        <div class="frame" id="screen-4">
+          <div class="frame-name">4 · Approved</div>
+          <div class="screen phone">
+            <div class="d-head">
+              <div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg><em class="bell-n">1</em></span><span class="avatar">JR</span></div></div>
+              <div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Mon, Oct 12, 9:10 AM</div>
+            </div>
+            <div class="d-body"></div>
+            <div class="sheet-ov"></div>
+            <div class="sheet" role="dialog" aria-label="Maintenance for Unit 14">
+              <div class="grab"></div>
+              <div class="sh-h"><div><h4>Maintenance · Unit 14</h4><small>Bison Auto · <span style="color:var(--p-brand);font-weight:600">(405) 555-0142</span></small></div><span class="b ter icon" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="sh-b">
+                <div class="al ok"><svg class="ic"><use href="#i-ok"/></svg><div><b>Booked: Thu, Oct 15, 8:00 – 10:00 AM</b><span class="t">Unit 14 is off dispatch for this window. Drop it at Bison Auto, 2100 N Classen Blvd.</span></div></div>
+                <dl class="kv"><dt>Status</dt><dd><span class="dc ok"><i></i>Approved</span></dd><dt>Work</dt><dd>Oil change</dd><dt>Approved by</dt><dd>Fleet manager · Mon 9:08 AM</dd><dt>Note</dt><dd>“Leave keys at the front desk.”</dd></dl>
+                <div class="divider"></div>
+                <div class="timeline">
+                  <div><i class="on"></i><span><b>Approved</b> · Mon 9:08 AM</span></div>
+                  <div><i class="on"></i><span><b>Requested</b> · Mon 7:44 AM</span></div>
+                  <div><i></i><span>Reminder Wed 5:00 PM and Thu 7:00 AM</span></div>
+                </div>
+              </div>
+              <div class="sh-f"><span class="b sec">Cancel booking</span><a class="b pri" href="#screen-5">Done</a></div>
+            </div>
+          </div>
+          <p class="frame-note">Reminder timing and whether it goes by SMS are still with Macie and Misty (Q7). The driver only cancels; changing the time goes through the fleet manager.</p>
+        </div>
+
+        <!-- 5 -->
+        <div class="frame" id="screen-5">
+          <div class="frame-name">5 · In shop: Car returned</div>
+          <div class="screen phone">
+            <div class="d-head">
+              <div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg></span><span class="avatar">JR</span></div></div>
+              <div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Thu, Oct 15, 9:52 AM</div>
+            </div>
+            <div class="d-body">
+              <div class="al brand" role="status">
+                <svg class="ic"><use href="#i-tool"/></svg>
+                <div><b>Unit 14 is in the shop</b><span class="t">Since 8:00 AM at Bison Auto. Tap when you have the vehicle back.</span>
+                  <div class="acts"><a class="b pri sm" href="#screen-6"><svg class="ic sm"><use href="#i-check"/></svg>Car returned</a></div></div>
+              </div>
+              <div class="rc" style="align-items:center;text-align:center;padding:28px 16px;color:var(--p-muted)">
+                <svg class="ic lg"><use href="#i-cal"/></svg>
+                <div style="font-weight:600;color:var(--p-text)">No rides until Unit 14 is back</div>
+                <div>Dispatch has the window blocked. Rides after 10:00 AM show here once the vehicle is back in service.</div>
+              </div>
+            </div>
+            <nav class="d-nav"><span class="on"><svg class="ic"><use href="#i-home"/></svg>Active</span><span><svg class="ic"><use href="#i-cal"/></svg>Past</span><span><svg class="ic"><use href="#i-file"/></svg>Forms</span></nav>
+          </div>
+          <p class="frame-note">At the window start Echo1 sets Unit 14 to In Maintenance. That's the status dispatch and the optimizer already skip, so no dispatch code changes for this part.</p>
+        </div>
+
+        <!-- 6 -->
+        <div class="frame" id="screen-6">
+          <div class="frame-name">6 · Returned: waiting on the fleet manager</div>
+          <div class="screen phone">
+            <div class="d-head">
+              <div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg></span><span class="avatar">JR</span></div></div>
+              <div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Thu, Oct 15, 9:53 AM</div>
+            </div>
+            <div class="d-body">
+              <div class="al brand" role="status">
+                <svg class="ic"><use href="#i-clock"/></svg>
+                <div><b>Marked returned at 9:53 AM</b><span class="t">The fleet manager confirms the work, then Unit 14 goes back in service. You'll get a notice.</span></div>
+              </div>
+              <div class="rc">
+                <div class="ey">Maintenance · Unit 14</div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><h4>Oil change</h4><span class="dc brand"><i></i>Returned</span></div>
+                <div class="timeline">
+                  <div><i class="on"></i><span><b>Returned</b> · Thu 9:53 AM</span></div>
+                  <div><i class="on"></i><span><b>In shop</b> · Thu 8:00 AM</span></div>
+                  <div><i class="on"></i><span><b>Approved</b> · Mon 9:08 AM</span></div>
+                  <div><i></i><span>Completed · waiting on the fleet manager</span></div>
+                </div>
+              </div>
+            </div>
+            <nav class="d-nav"><span class="on"><svg class="ic"><use href="#i-home"/></svg>Active</span><span><svg class="ic"><use href="#i-cal"/></svg>Past</span><span><svg class="ic"><use href="#i-file"/></svg>Forms</span></nav>
+          </div>
+          <p class="frame-note">“Car returned” never puts the vehicle back in service by itself. See the fleet manager's sign-off in frame 13.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row B · Driver other states -->
+    <div class="row">
+      <h3>Driver: when the answer isn't yes</h3>
+      <p>A new time offered, a denial, booking before slots exist, and starting from Forms with nothing due.</p>
+      <div class="frames">
+
+        <div class="frame" id="screen-7">
+          <div class="frame-name">7 · New time offered</div>
+          <div class="screen phone">
+            <div class="d-head"><div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg><em class="bell-n">1</em></span><span class="avatar">JR</span></div></div><div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Mon, Oct 12, 9:10 AM</div></div>
+            <div class="d-body"></div><div class="sheet-ov"></div>
+            <div class="sheet" role="dialog" aria-label="Maintenance for Unit 14"><div class="grab"></div>
+              <div class="sh-h"><div><h4>Maintenance · Unit 14</h4><small>Oil change</small></div><span class="b ter icon" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="sh-b">
+                <div><span class="dc brand"><i></i>New time offered</span></div>
+                <div class="al brand"><svg class="ic"><use href="#i-cal"/></svg><div><b>Fri, Oct 16, 1:00 – 3:00 PM</b><span class="t">“Thursday morning is full. Friday afternoon works.” — Fleet manager</span></div></div>
+                <dl class="kv"><dt>You asked for</dt><dd style="text-decoration:line-through;color:var(--p-muted)">Thu, Oct 15, 8:00 – 10:00 AM</dd></dl>
+              </div>
+              <div class="sh-f"><span class="b sec">Pick another time</span><span class="b pri">Accept Friday</span></div>
+            </div>
+          </div>
+          <p class="frame-note">Accepting books it straight away. Picking another time sends a new request back to the fleet manager.</p>
+        </div>
+
+        <div class="frame" id="screen-8">
+          <div class="frame-name">8 · Denied</div>
+          <div class="screen phone">
+            <div class="d-head"><div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg><em class="bell-n">1</em></span><span class="avatar">JR</span></div></div><div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Mon, Oct 12, 9:10 AM</div></div>
+            <div class="d-body"></div><div class="sheet-ov"></div>
+            <div class="sheet" role="dialog" aria-label="Maintenance for Unit 14"><div class="grab"></div>
+              <div class="sh-h"><div><h4>Maintenance · Unit 14</h4><small>Oil change</small></div><span class="b ter icon" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="sh-b">
+                <div><span class="dc err"><i></i>Denied</span></div>
+                <div class="al err"><svg class="ic"><use href="#i-alert"/></svg><div><b>Not booked</b><span class="t">“Unit 14 is going to Bison on the 19th for brakes. The oil change will be done then.” — Fleet manager</span></div></div>
+                <p style="color:var(--p-muted)">The due item stays open. You can request again if you need to.</p>
+              </div>
+              <div class="sh-f"><span class="b sec">Close</span><span class="b pri">Request again</span></div>
+            </div>
+          </div>
+          <p class="frame-note">A denial always carries a reason. The due notice stays, so the item can't silently drop.</p>
+        </div>
+
+        <div class="frame" id="screen-9">
+          <div class="frame-name">9 · Before slots exist: propose times</div>
+          <div class="screen phone">
+            <div class="d-head"><div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg></span><span class="avatar">JR</span></div></div><div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Jordan Rivera • Mon, Oct 12, 7:43 AM</div></div>
+            <div class="d-body"></div><div class="sheet-ov"></div>
+            <div class="sheet" role="dialog" aria-label="Maintenance for Unit 14"><div class="grab"></div>
+              <div class="sh-h"><div><h4>Maintenance · Unit 14</h4><small>Bison Auto · <span style="color:var(--p-brand);font-weight:600">(405) 555-0142</span></small></div><span class="b ter icon" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="sh-b">
+                <div class="due"><div class="ti"><svg class="ic"><use href="#i-tool"/></svg></div><div><b>Oil change</b><small>Due by Oct 22 or 48,000 mi · from Samsara</small></div></div>
+                <div><span class="lb">When could you drop it off? (up to 3)</span>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <div class="in"><span>Thu, Oct 15 · 8:00 – 10:00 AM</span><svg class="ic sm" style="color:#A3A3A3"><use href="#i-x"/></svg></div>
+                    <div class="in"><span>Fri, Oct 16 · 1:00 – 3:00 PM</span><svg class="ic sm" style="color:#A3A3A3"><use href="#i-x"/></svg></div>
+                    <span class="b sec sm" style="align-self:flex-start"><svg class="ic sm"><use href="#i-plus"/></svg>Add a time</span>
+                  </div></div>
+                <div><span class="lb">Note (optional)</span><div class="in area ph">Anything Bison should know?</div></div>
+              </div>
+              <div class="sh-f"><span class="b sec">Cancel</span><span class="b pri"><svg class="ic sm"><use href="#i-send"/></svg>Send request</span></div>
+            </div>
+          </div>
+          <p class="frame-note">P2 ships before the slot calendar (P3), so drivers propose windows and the fleet manager picks one. Same drawer, same states.</p>
+        </div>
+
+        <div class="frame" id="screen-10">
+          <div class="frame-name">10 · From Forms, nothing due</div>
+          <div class="screen phone">
+            <div class="d-head"><div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-left"/></svg>Back</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg></span><span class="avatar">JR</span></div></div><div class="d-ey">My Driving</div><div class="d-h1">Driver Forms</div><div class="d-sub">Submitted forms and new reports</div></div>
+            <div class="d-body"></div><div class="sheet-ov"></div>
+            <div class="modal-c" role="dialog" aria-label="Submit New Form">
+              <h4>Submit New Form</h4>
+              <div class="fopt new"><div class="ti"><svg class="ic"><use href="#i-cal"/></svg></div><div><b>Book maintenance</b><small>Request a time at Bison Auto</small></div><span class="pb brand" style="margin-left:auto">New</span></div>
+              <div class="fopt"><div class="ti"><svg class="ic"><use href="#i-tool"/></svg></div><div><b>Maintenance Request</b><small>Submit a vehicle maintenance issue</small></div></div>
+              <div class="fopt"><div class="ti"><svg class="ic"><use href="#i-tri"/></svg></div><div><b>Crash Report</b><small>Report a vehicle crash</small></div></div>
+              <div class="fopt"><div class="ti"><svg class="ic"><use href="#i-file"/></svg></div><div><b>Vehicle Inspection (DVIR)</b><small>Pre- or post-trip inspection</small></div></div>
+              <span class="b sec full">Cancel</span>
+            </div>
+          </div>
+          <p class="frame-note">With nothing due, “Book maintenance” opens the same drawer with a free-text “What needs doing?” in place of the due item. The existing “Maintenance Request” stays as the defect report. Whether the two merge is Q9.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row C · Fleet manager -->
+    <div class="row">
+      <h3>Fleet manager: queue, approve, slots, sign-off</h3>
+      <p>A new Maintenance tab on the Fleet page, beside Vehicles, Assets, Gateways and Drivers. Anyone with <code>fleet:write</code> (managers, including the fleet manager, and tenant admins) can act.</p>
+      <div class="frames">
+
+        <div class="frame" id="screen-11">
+          <div class="frame-name">11 · Fleet → Maintenance</div>
+          <div class="screen desktop" style="--w:1280px;--h:860px;--scale:.6">
+            <div class="staff">
+              <div class="side"><div class="logo">Echo1</div>
+                <span><svg class="ic"><use href="#i-map"/></svg>Transportation</span>
+                <span class="on"><svg class="ic"><use href="#i-truck"/></svg>Fleet</span>
+                <span><svg class="ic"><use href="#i-pin"/></svg>Situational Awareness</span>
+                <span><svg class="ic"><use href="#i-file"/></svg>Reports</span>
+                <span><svg class="ic"><use href="#i-file"/></svg>Billing</span>
+              </div>
+              <div class="main">
+                <div class="topbar"><div><h5>Fleet</h5><small>Vehicles, assets, gateways, drivers and maintenance.</small></div><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg><em class="bell-n">2</em></span><span class="avatar">FM</span></div></div>
+                <div class="tabs"><span class="tab">Vehicles <span class="cnt">38</span></span><span class="tab">Assets <span class="cnt">12</span></span><span class="tab">Gateways <span class="cnt">36</span></span><span class="tab">Drivers <span class="cnt">41</span></span><span class="tab on">Maintenance <span class="cnt">3</span></span></div>
+                <div class="panel">
+                  <div class="panel-h"><div><b>Requests</b><small>2 waiting</small></div><span class="b sec sm"><svg class="ic sm"><use href="#i-cal"/></svg>Slot calendar</span></div>
+                  <table class="tbl"><thead><tr><th>Vehicle</th><th>Driver</th><th>Work</th><th>Requested time</th><th>On this vehicle then</th><th></th></tr></thead><tbody>
+                    <tr><td><b>Unit 14</b><small>Oil change · due Oct 22</small></td><td>Jordan Rivera</td><td>Oil change</td><td>Thu, Oct 15<small>8:00 – 10:00 AM</small></td><td><span class="warntxt"><svg class="ic sm"><use href="#i-tri"/></svg>2 trips</span></td><td><div class="acts"><span class="b sec xs">Deny</span><span class="b sec xs">Offer time</span><a class="b pri xs" href="#screen-12">Review</a></div></td></tr>
+                    <tr><td><b>Unit 9</b><small>No due item</small></td><td>Dana Okafor</td><td>“Squeal from front left when braking”</td><td>Fri, Oct 16<small>1:00 – 3:00 PM</small></td><td style="color:var(--p-muted)">None</td><td><div class="acts"><span class="b sec xs">Deny</span><span class="b sec xs">Offer time</span><span class="b pri xs">Review</span></div></td></tr>
+                  </tbody></table>
+                </div>
+                <div class="panel">
+                  <div class="panel-h"><div><b>Needs closing</b><small>1 overdue</small></div></div>
+                  <table class="tbl"><tbody>
+                    <tr><td><b>Unit 22</b><small>Tire rotation</small></td><td>Sam Patel</td><td>Window ended Fri, Oct 9, 3:00 PM</td><td><span class="dc brand"><i></i>Returned</span> <span class="pb err">Overdue</span></td><td><div class="acts"><a class="b pri xs" href="#screen-13">Close appointment</a></div></td></tr>
+                  </tbody></table>
+                </div>
+                <div class="panel">
+                  <div class="panel-h"><div><b>Due from Samsara</b><small>4 open</small></div></div>
+                  <table class="tbl"><tbody>
+                    <tr><td><b>Unit 14</b></td><td>Oil change</td><td>By Oct 22 or 48,000 mi</td><td><span class="dc pending"><i></i>Requested</span></td><td></td></tr>
+                    <tr><td><b>Unit 31</b></td><td>Annual inspection</td><td>By Nov 2</td><td><span class="dc gray"><i></i>Not booked</span></td><td><div class="acts"><span class="b ter xs">Dismiss</span></div></td></tr>
+                  </tbody></table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="frame-note">The queue shows trips already on the vehicle in the requested window before anyone approves. Overdue appointments stay here until closed.</p>
+        </div>
+
+        <div class="frame" id="screen-12">
+          <div class="frame-name">12 · Review request drawer</div>
+          <div class="screen desktop" style="--w:1280px;--h:860px;--scale:.6">
+            <div class="staff">
+              <div class="side"><div class="logo">Echo1</div><span><svg class="ic"><use href="#i-map"/></svg>Transportation</span><span class="on"><svg class="ic"><use href="#i-truck"/></svg>Fleet</span><span><svg class="ic"><use href="#i-pin"/></svg>Situational Awareness</span></div>
+              <div class="main"><div class="topbar"><div><h5>Fleet</h5></div></div><div class="tabs"><span class="tab">Vehicles</span><span class="tab on">Maintenance <span class="cnt">3</span></span></div></div>
+            </div>
+            <div class="ov"></div>
+            <div class="drawer" role="dialog" aria-label="Maintenance request">
+              <div class="dh"><h5>Maintenance request <span class="dc pending"><i></i>Pending</span></h5><small>Unit 14 · Jordan Rivera · sent Mon 7:44 AM</small><span class="x"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="db">
+                <div class="sect"><h6>Request</h6><dl class="kv"><dt>Work</dt><dd>Oil change (Samsara: due by Oct 22 or 48,000 mi; now 47,620 mi)</dd><dt>Time</dt><dd>Thu, Oct 15, 8:00 – 10:00 AM (published slot)</dd><dt>Driver note</dt><dd style="color:var(--p-muted)">None</dd></dl></div>
+                <div class="al warn"><svg class="ic"><use href="#i-tri"/></svg><div><b>2 trips are on Unit 14 in this window</b><span class="t">OKC North AM (8:15 AM) and one pickup at 9:30 AM. Approving flags them for dispatch to move.</span></div></div>
+                <div class="sect"><h6>Your decision</h6>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <div class="slot sel"><span><b>Approve</b> Thu, Oct 15, 8:00 – 10:00 AM</span><span class="radio"></span></div>
+                    <div class="slot"><span><b>Offer another time</b></span><span class="radio"></span></div>
+                    <div class="slot"><span><b>Deny</b> (reason required)</span><span class="radio"></span></div>
+                  </div></div>
+                <div><span class="lb">Note to the driver (optional)</span><div class="in area">Leave keys at the front desk.</div></div>
+              </div>
+              <div class="df"><span class="b sec">Cancel</span><span class="b pri">Approve and notify driver</span></div>
+            </div>
+          </div>
+          <p class="frame-note">Built on the staff slide-out drawer (640 px). Echo1 doesn't count bays or mechanics; the fleet manager decides whether Bison has room.</p>
+        </div>
+
+        <div class="frame" id="screen-13">
+          <div class="frame-name">13 · Close the appointment</div>
+          <div class="screen desktop" style="--w:1280px;--h:860px;--scale:.6">
+            <div class="staff">
+              <div class="side"><div class="logo">Echo1</div><span><svg class="ic"><use href="#i-map"/></svg>Transportation</span><span class="on"><svg class="ic"><use href="#i-truck"/></svg>Fleet</span></div>
+              <div class="main"><div class="topbar"><div><h5>Fleet</h5></div></div><div class="tabs"><span class="tab">Vehicles</span><span class="tab on">Maintenance <span class="cnt">3</span></span></div></div>
+            </div>
+            <div class="ov"></div>
+            <div class="drawer" role="dialog" aria-label="Unit 22">
+              <div class="dh"><h5>Unit 22 <span class="pb warn">In Maintenance</span></h5><small>Tire rotation · Bison Auto</small><span class="x"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="db">
+                <div class="al warn"><svg class="ic"><use href="#i-clock"/></svg><div><b>Overdue: window ended Fri, Oct 9, 3:00 PM</b><span class="t">Sam Patel marked the car returned Fri 2:40 PM. Unit 22 stays off dispatch until you close this.</span></div></div>
+                <div class="sect"><h6>Appointment</h6><div class="timeline">
+                  <div><i class="on"></i><span><b>Returned</b> by Sam Patel · Fri 2:40 PM</span></div>
+                  <div><i class="on"></i><span><b>In shop</b> · Fri 1:00 PM</span></div>
+                  <div><i class="on"></i><span><b>Approved</b> by Fleet manager · Wed 4:12 PM</span></div>
+                  <div><i class="on"></i><span><b>Requested</b> · Wed 11:05 AM</span></div>
+                </div></div>
+                <div><span class="lb">Work done (optional)</span><div class="in area">Rotated, all four at 38 psi.</div></div>
+                <div style="display:flex;gap:10px;align-items:center"><span class="check on"><svg class="ic sm" style="width:12px;height:12px"><use href="#i-check"/></svg></span><span>Put Unit 22 back in service</span></div>
+              </div>
+              <div class="df"><span class="b sec">Not done yet</span><span class="b pri">Close appointment</span></div>
+            </div>
+          </div>
+          <p class="frame-note">The only way back to In Service. “Not done yet” keeps the vehicle out and lets the fleet manager set a new end time.</p>
+        </div>
+
+        <div class="frame" id="screen-14">
+          <div class="frame-name">14 · Slot calendar (P3)</div>
+          <div class="screen desktop" style="--w:1280px;--h:860px;--scale:.6">
+            <div class="staff">
+              <div class="side"><div class="logo">Echo1</div><span><svg class="ic"><use href="#i-map"/></svg>Transportation</span><span class="on"><svg class="ic"><use href="#i-truck"/></svg>Fleet</span></div>
+              <div class="main">
+                <div class="topbar"><div><h5>Maintenance slots</h5><small>Open times at Bison Auto and RideCARE. Drivers see these in their Maintenance drawer.</small></div><div style="display:flex;gap:8px"><span class="b sec sm"><svg class="ic sm"><use href="#i-left"/></svg>Oct 12 – 16</span><span class="b pri sm"><svg class="ic sm"><use href="#i-plus"/></svg>Add slot</span></div></div>
+                <div class="panel">
+                  <div class="wk">
+                    <div class="hd" style="border-left:0"></div>
+                    <div class="hd">Mon<small>Oct 12</small></div><div class="hd">Tue<small>Oct 13</small></div><div class="hd">Wed<small>Oct 14</small></div><div class="hd">Thu<small>Oct 15</small></div><div class="hd">Fri<small>Oct 16</small></div>
+                    <div class="hrs"><span></span><span>8 AM</span><span>9 AM</span><span>10 AM</span><span>11 AM</span><span>12 PM</span><span>1 PM</span><span>2 PM</span><span>3 PM</span><span>4 PM</span><span>5 PM</span></div>
+                    <div class="col"><div class="ev open" style="top:44px;height:88px"><b>Open</b>8:00 – 10:00 AM<br>Repeats weekly</div></div>
+                    <div class="col"><div class="ev open" style="top:264px;height:88px"><b>Open</b>1:00 – 3:00 PM</div></div>
+                    <div class="col"></div>
+                    <div class="col"><div class="ev book" style="top:44px;height:88px"><b>Unit 14 · J. Rivera</b><small>Oil change · booked</small></div><div class="ev open" style="top:264px;height:88px"><b>Open</b>1:00 – 3:00 PM</div></div>
+                    <div class="col"><div class="ev req" style="top:264px;height:88px"><b>2 requests</b>Unit 9 · Unit 31</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="frame-note">Slots are entered by hand for now (Q11): date, start, end, an optional note such as “oil changes only”, and an option to repeat weekly. No capacity: several drivers can ask for one slot, and approving one marks it taken.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row D · Dispatch -->
+    <div class="row">
+      <h3>Dispatch: the reserved vehicle</h3>
+      <p>Dispatch sees the appointment where vehicles are picked, and decides whether the driver is blocked too.</p>
+      <div class="frames">
+        <div class="frame" id="screen-15">
+          <div class="frame-name">15 · Route drawer: vehicle picker</div>
+          <div class="screen desktop" style="--w:1280px;--h:860px;--scale:.6">
+            <div class="staff">
+              <div class="side"><div class="logo">Echo1</div><span class="on"><svg class="ic"><use href="#i-map"/></svg>Transportation</span><span class="sub">Routes</span><span><svg class="ic"><use href="#i-truck"/></svg>Fleet</span></div>
+              <div class="main"><div class="topbar"><div><h5>Routes</h5><small>Thu, Oct 15</small></div></div></div>
+            </div>
+            <div class="ov"></div>
+            <div class="drawer" role="dialog" aria-label="Route OKC North AM">
+              <div class="dh"><h5>OKC North AM <span class="pb warn">Needs a vehicle</span></h5><small>Thu, Oct 15 · 8:15 AM – 11:40 AM · 3 stops</small><span class="x"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="db">
+                <div class="al warn"><svg class="ic"><use href="#i-tool"/></svg><div><b>Unit 14 was moved off this route</b><span class="t">It's booked for maintenance Thu 8:00 – 10:00 AM (approved Mon 9:08 AM). Pick another vehicle.</span></div></div>
+                <div class="sect"><h6>Driver and vehicle</h6>
+                  <span class="lb">Driver</span><div class="in" style="margin-bottom:12px">Jordan Rivera <svg class="ic sm" style="color:#A3A3A3"><use href="#i-down"/></svg></div>
+                  <span class="lb">Vehicle</span><div class="in ph">Select a vehicle <svg class="ic sm"><use href="#i-down"/></svg></div>
+                  <div class="panel" style="margin-top:6px">
+                    <div class="nt" style="border-bottom:1px solid var(--p-line)"><div><b>Unit 18</b><p>6 seats · Unassigned</p></div></div>
+                    <div class="nt" style="border-bottom:1px solid var(--p-line)"><div><b>Unit 27</b><p>4 seats · Unassigned</p></div></div>
+                    <div class="nt" style="opacity:.6"><div><b>Unit 14</b> <span class="pb warn">In Maintenance 8:00 – 10:00 AM</span><p>Booked at Bison Auto · free from 10:00 AM</p></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="df"><span class="b sec">Cancel</span><span class="b pri">Save</span></div>
+            </div>
+          </div>
+          <p class="frame-note">Today the picker hides anything not In Service. Before the window starts, Unit 14 is still In Service, so the picker has to read the reservation and show it disabled with the reason.</p>
+        </div>
+
+        <div class="frame" id="screen-16">
+          <div class="frame-name">16 · Appointment: block the driver too</div>
+          <div class="screen desktop" style="--w:1280px;--h:860px;--scale:.6">
+            <div class="staff">
+              <div class="side"><div class="logo">Echo1</div><span class="on"><svg class="ic"><use href="#i-map"/></svg>Transportation</span><span><svg class="ic"><use href="#i-truck"/></svg>Fleet</span></div>
+              <div class="main"><div class="topbar"><div><h5>Transports Dashboard</h5></div></div></div>
+            </div>
+            <div class="ov"></div>
+            <div class="drawer" role="dialog" aria-label="Maintenance appointment">
+              <div class="dh"><h5>Maintenance appointment <span class="dc ok"><i></i>Approved</span></h5><small>Unit 14 · Jordan Rivera · Thu, Oct 15, 8:00 – 10:00 AM</small><span class="x"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="db">
+                <div class="sect"><h6>Trips moved off Unit 14</h6>
+                  <table class="tbl"><tbody>
+                    <tr><td>OKC North AM<small>8:15 AM · 3 stops</small></td><td><span class="pb warn">Needs a vehicle</span></td></tr>
+                    <tr><td>Pickup T-20481<small>9:30 AM</small></td><td><span class="pb ok">Moved to Unit 18</span></td></tr>
+                  </tbody></table></div>
+                <div class="sect"><h6>Driver</h6>
+                  <div style="display:flex;gap:10px;align-items:flex-start"><span class="check"></span><div><b style="font-weight:500">Block Jordan Rivera for this window too</b><p style="color:var(--p-muted)">Leave unchecked if Jordan can drive another vehicle while Unit 14 is in the shop.</p></div></div>
+                </div>
+              </div>
+              <div class="df"><span class="b sec">Close</span><span class="b pri">Save</span></div>
+            </div>
+          </div>
+          <p class="frame-note">Vehicle-only is the default; dispatch decides about the driver (Q3). Blocking the driver needs a new time-boxed unavailability, since Echo1 only has weekly standard days today.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row E · Crash -->
+    <div class="row">
+      <h3>Crash: off the road first (868mgg224)</h3>
+      <p>Sam Patel's Unit 22 is in a crash at 2:14 PM. Samsara's alert reaches Echo1, which pulls the vehicle and tells the people who act.</p>
+      <div class="frames">
+
+        <div class="frame" id="screen-17">
+          <div class="frame-name">17 · Driver: vehicle flagged</div>
+          <div class="screen phone">
+            <div class="d-head"><div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg><em class="bell-n">1</em></span><span class="avatar">SP</span></div></div><div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Sam Patel • Tue, Oct 13, 2:16 PM</div></div>
+            <div class="d-body">
+              <div class="al err" role="alert">
+                <svg class="ic"><use href="#i-tri"/></svg>
+                <div><b>Unit 22 was taken off the road</b><span class="t">Samsara reported a crash at 2:14 PM. Dispatch and the fleet manager have been alerted. Your remaining rides are being moved.</span>
+                  <div class="acts"><a class="b pri sm" href="#screen-18"><svg class="ic sm"><use href="#i-send"/></svg>Alert dispatch</a><span class="b sec sm"><svg class="ic sm"><use href="#i-edit"/></svg>Add a note</span></div></div>
+              </div>
+              <div class="rc">
+                <div class="ey">If you need emergency help</div>
+                <span class="b danger full"><svg class="ic sm"><use href="#i-phone"/></svg>Call 911</span>
+                <span class="b sec full"><svg class="ic sm"><use href="#i-file"/></svg>File a crash report</span>
+              </div>
+            </div>
+            <nav class="d-nav"><span class="on"><svg class="ic"><use href="#i-home"/></svg>Active</span><span><svg class="ic"><use href="#i-cal"/></svg>Past</span><span><svg class="ic"><use href="#i-file"/></svg>Forms</span></nav>
+          </div>
+          <p class="frame-note">The red alert follows the existing safety alert banner. The 911 button belongs to JP's #528 and is shown only so the screen reads true. The crash report form exists today.</p>
+        </div>
+
+        <div class="frame" id="screen-18">
+          <div class="frame-name">18 · Alert dispatch</div>
+          <div class="screen phone">
+            <div class="d-head"><div class="d-row"><span class="b sec sm"><svg class="ic sm"><use href="#i-clock"/></svg>Refresh</span><div class="d-acts"><span><svg class="ic"><use href="#i-bell"/></svg></span><span class="avatar">SP</span></div></div><div class="d-ey">My Driving</div><div class="d-h1">Active rides</div><div class="d-sub">Sam Patel • Tue, Oct 13, 2:17 PM</div></div>
+            <div class="d-body"></div><div class="sheet-ov"></div>
+            <div class="sheet" role="dialog" aria-label="Alert dispatch"><div class="grab"></div>
+              <div class="sh-h"><div><h4>Alert dispatch</h4><small>Unit 22 · goes to dispatch, leadership and the fleet manager</small></div><span class="b ter icon" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="sh-b">
+                <div><span class="lb">What happened?</span><div class="in area">Rear-ended at NW 23rd and Classen. No passengers on board. Car won't start, needs a tow.</div></div>
+                <div style="display:flex;gap:10px;align-items:center"><span class="check on"><svg class="ic sm" style="width:12px;height:12px"><use href="#i-check"/></svg></span><span>Share my location (NW 23rd St &amp; N Classen Blvd)</span></div>
+                <div style="display:flex;gap:10px;align-items:center"><span class="check on"><svg class="ic sm" style="width:12px;height:12px"><use href="#i-check"/></svg></span><span>Also save as a note on Unit 22</span></div>
+                <p class="hint">Sent in-app and by SMS. No phone call; dispatch will call you if needed.</p>
+              </div>
+              <div class="sh-f"><span class="b sec">Cancel</span><span class="b pri"><svg class="ic sm"><use href="#i-send"/></svg>Send to dispatch</span></div>
+            </div>
+          </div>
+          <p class="frame-note">Also how a tow gets reported until we know how Samsara flags tows (Q12). Available any time from the vehicle, not only after an alert.</p>
+        </div>
+
+        <div class="frame" id="screen-19">
+          <div class="frame-name">19 · Staff: alert, then back in service</div>
+          <div class="screen desktop" style="--w:1280px;--h:860px;--scale:.6">
+            <div class="staff">
+              <div class="side"><div class="logo">Echo1</div><span><svg class="ic"><use href="#i-map"/></svg>Transportation</span><span class="on"><svg class="ic"><use href="#i-truck"/></svg>Fleet</span></div>
+              <div class="main"><div class="topbar"><div><h5>Fleet</h5></div></div></div>
+            </div>
+            <div class="ov"></div>
+            <div class="drawer" role="dialog" aria-label="Unit 22">
+              <div class="dh"><h5>Unit 22 <span class="pb warn">In Maintenance</span></h5><small>Ford Transit 350 · Assigned driver: Sam Patel</small><span class="x"><svg class="ic"><use href="#i-x"/></svg></span></div>
+              <div class="db">
+                <div class="al err"><svg class="ic"><use href="#i-tri"/></svg><div><b>Crash reported by Samsara · Tue 2:14 PM</b><span class="t">Harsh Event: crash, near NW 23rd St. 3 rides moved off this vehicle. <span style="color:var(--p-err);font-weight:600;text-decoration:underline">View in Samsara</span></span></div></div>
+                <div class="sect"><h6>Notes</h6><div class="timeline">
+                  <div><i class="on"></i><span><b>Sam Patel</b> · 2:17 PM · “Rear-ended at NW 23rd and Classen. No passengers on board. Car won't start, needs a tow.”</span></div>
+                </div></div>
+                <div class="sect"><h6>Status history</h6>
+                  <table class="tbl"><tbody>
+                    <tr><td><span class="pb ok">In Service</span> → <span class="pb warn">In Maintenance</span></td><td>Samsara crash alert</td><td>Echo1 · Tue 2:14 PM</td></tr>
+                    <tr><td><span class="pb warn">In Maintenance</span> → <span class="pb ok">In Service</span></td><td>Appointment closed</td><td>Fleet manager · Mon, Oct 5</td></tr>
+                  </tbody></table></div>
+              </div>
+              <div class="df"><span class="b sec"><svg class="ic sm"><use href="#i-edit"/></svg>Add note</span><span class="b pri">Put back in service</span></div>
+            </div>
+            <div class="tray" style="right:660px">
+              <div class="tray-h"><b>Notifications <span class="pb brand">2 unread</span></b><span style="font-size:14px;font-weight:600;color:var(--p-brand)">Mark all read</span></div>
+              <div class="nt unread"><span class="dot"></span><span class="ti red"><svg class="ic sm"><use href="#i-alert"/></svg></span><div style="flex:1"><div class="tt">Crash reported · Unit 22 <small>2m ago</small></div><p>Samsara crash alert. Set to In Maintenance, 3 rides moved.</p></div></div>
+              <div class="nt unread"><span class="dot"></span><span class="ti yel"><svg class="ic sm"><use href="#i-tri"/></svg></span><div style="flex:1"><div class="tt">Sam Patel alerted dispatch <small>just now</small></div><p>“Rear-ended at NW 23rd and Classen. No passengers on board…”</p></div></div>
+            </div>
+          </div>
+          <p class="frame-note">A false alarm costs one click: the alert says what triggered it, and “Put back in service” is the fleet manager's. Every status change now records who, when and why.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Decisions and notes -->
+  <section id="notes">
+    <h2>Decisions and notes</h2>
+    <p class="lead">Settled with Tom Drennan (RideCARE) and Victor on Oct 9–12. Full reasoning and sources are in the #530 proposal.</p>
+    <div class="notes-h">Decided</div>
+    <div class="notes">
+      <div class="note decided"><b>Decided — off dispatch</b>The vehicle, by default. Dispatch can block the driver too for a given appointment.</div>
+      <div class="note decided"><b>Decided — who approves</b>The fleet manager (Mitchell Temple, manager role) or management (Misty Messenger, Johnny Burgos). <code>fleet:write</code> is enough; no new role.</div>
+      <div class="note decided"><b>Decided — completion</b>Mechanics aren't on Echo1. The driver taps Car returned; the fleet manager confirms. Overdue appointments are flagged on the Fleet page and never close by themselves.</div>
+      <div class="note decided"><b>Decided — capacity</b>Echo1 doesn't track slot capacity. The fleet manager decides when a request comes in.</div>
+      <div class="note decided"><b>Decided — where drivers go</b>No new tab. A drawer from the reminder banner or Forms holds the whole request and its status.</div>
+      <div class="note decided"><b>Decided — banner</b>Drivers can hide the reminder. It comes back until they book or the item is dismissed.</div>
+      <div class="note decided"><b>Decided — slots</b>In scope (P3). The fleet manager enters Bison and RideCARE's open slots by hand until a calendar exists to read from.</div>
+      <div class="note decided"><b>Decided — source of truth</b>Samsara holds service schedules. Due notices go to anyone who drives that vehicle, plus the fleet manager and management.</div>
+      <div class="note decided"><b>Decided — crashes</b>A Samsara crash alert puts the vehicle In Maintenance at once and alerts the fleet manager and leadership. Only the fleet manager puts it back. No RingCentral work now (#536 is the later path).</div>
+    </div>
+    <div class="notes-h">Engineering</div>
+    <div class="notes">
+      <div class="note eng"><b>Engineering — Samsara webhook</b>Echo1 is subscribed only to four route-stop events. <code>AlertIncident</code> is on the allowed list but not subscribed, and <code>classifyEvent</code> acknowledges unknown events without acting. Crash and maintenance alerts both need a subscription and a handler.</div>
+      <div class="note eng"><b>Engineering — maintenance source</b>Samsara's schedules API is beta and returns intervals, not due dates. The plan is the Scheduled Maintenance alert to the webhook. Check <code>PredictiveMaintenanceAlert</code> and <code>WorkOrderCreatedOrChanged</code> first. Fallback: intervals against <code>last_odometer_miles</code>.</div>
+      <div class="note eng"><b>Engineering — crash backup</b>Samsara's safety events API lists <code>Crash</code> events. Poll every few minutes, dedupe on the Samsara id. Needs the “Read Safety Events &amp; Scores” scope.</div>
+      <div class="note eng"><b>Engineering — new tables</b><code>vehicle_maintenance_due</code>, <code>maintenance_appointment</code>, <code>maintenance_slot</code>, <code>vehicle_note</code>, <code>vehicle_status_change</code>. One migration PR under the post-baseline gate; the last two are shared by both tickets.</div>
+      <div class="note eng"><b>Engineering — dispatch</b>In Maintenance is already skipped by dispatch and the optimizer. New: the picker reads reservations before the window (frame 15), and a time-boxed driver block.</div>
+      <div class="note eng"><b>Engineering — UI that's new</b>No calendar or week view exists (frame 14). Driver screens use bottom dialogs, not drawers. Fleet gets a fifth tab. The project-status note “Fleet admin is not driver shell” needs updating.</div>
+      <div class="note eng"><b>Engineering — notifications</b>New template keys for due, requested, approved, new time, denied, reminder, returned, overdue and crash. A <code>maintenanceRecipients</code> list modeled on <code>crashReportRecipients</code>. Driver SMS respects opt-in.</div>
+    </div>
+    <div class="notes-h">Open</div>
+    <div class="notes">
+      <div class="note open"><b>Open — tows · RideCARE's Samsara admin</b>Samsara documents no tow alert. What flags a tow today? Answer expected Oct 13. Until then, drivers report tows with Alert dispatch (frame 18).</div>
+      <div class="note open"><b>Open — reminders (Q7) · Macie, Misty</b>When reminders go out, and whether SMS or email is allowed for due notices and appointment reminders.</div>
+      <div class="note open"><b>Open — defect reports (Q9) · Macie, Misty</b>Does the existing Maintenance Request feed this flow, or stay a separate defect report (frame 10)?</div>
+      <div class="note open"><b>Open — Samsara setup · Roman</b>Creating the Scheduled Maintenance and crash alerts and pointing them at Echo1's webhook is Samsara-side work.</div>
+      <div class="note open"><b>Open — naming · Victor</b>“Book maintenance” beside “Maintenance Request” in Forms may confuse drivers. Rename the old one to “Report a vehicle issue”?</div>
+    </div>
+  </section>
+
+  <!-- 5 · Impact -->
+  <section id="impact">
+    <h2>Impact</h2>
+    <div class="impact">
+      <div class="card"><div class="kicker">What this fixes</div><ul>
+        <li>Drivers see due maintenance in Echo1 without opening Samsara (Tom's minimum).</li>
+        <li>Booking moves out of Teams and email, with a status the driver can check.</li>
+        <li>Dispatch can't assign a vehicle that's booked into the shop (William's rule).</li>
+        <li>Nothing returns to service without the fleet manager confirming it.</li>
+        <li>Crashes reach the fleet manager and leadership in seconds, with the vehicle already off the road.</li>
+        <li>Every vehicle status change records who, when and why.</li>
+      </ul></div>
+      <div class="card"><div class="kicker">What it still needs</div><ul>
+        <li>Answers on tows (Q12), reminders (Q7) and defect reports (Q9).</li>
+        <li>Roman to set up the Samsara alerts; test one maintenance and one crash alert end to end before P1 and the crash work ship.</li>
+        <li>The migration in its own PR, coordinated with deploys.</li>
+        <li>Someone to keep slots current; stale slots mean drivers pick times Bison can't take.</li>
+        <li>Rough size: P0 ~1 day, P1 4–5, P2 8–10, P3 5–7, crash and tow 4–6.</li>
+      </ul></div>
+    </div>
+  </section>
+
+</main>
+<script src="/prez-header.js" defer></script>
+</body>
+</html>
