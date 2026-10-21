@@ -1,5 +1,5 @@
 ---
-version: 0.3.0
+version: 0.3.1
 last_updated: 2026-10-21
 ---
 
@@ -318,7 +318,7 @@ A stale heartbeat at 2 minutes is one missed 60-second wake plus margin. A block
 ## Certification
 
 1. The final fitness walk runs at the last gate, beside the compliance evaluator, and every pass record must be at the final commit.
-2. `harness.py certify-ready` refuses if anything fails or a PLAYTEST note is missing.
+2. `harness.py certify-ready` refuses if anything fails, a PLAYTEST note is missing, or a DEFECT or JOB-FAILURE finding is still open. The check runs before a certifier is dispatched, so an unfinished run never costs a certification round.
 3. The **certifier**, a fresh agent, reads the script's verify records, re-runs five at random, and writes CERTIFICATION.md.
 4. The run stays certified-pending until the owner's final review, then it is finished.
 5. The retrospective records which mechanisms helped. Each miss the owner caught becomes a probe in the domain pack, and each harness miss becomes a test fixture.

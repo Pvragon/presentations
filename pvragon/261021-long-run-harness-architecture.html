@@ -147,7 +147,7 @@
   </div>
   <h1>The long-run <span class="accent">harness architecture</span></h1>
   <p class="lede">How a goal stated in conversation becomes an unattended run of hours or days: an attended intake, rotating orchestrator shifts that dispatch fresh workers, outside referees at every level, and a certifier at the end.</p>
-  <div class="meta"><span>Skill v0.2.0, as of 2026-10-21</span><span>Page v0.3.0</span><span>Updated 2026-10-21</span></div>
+  <div class="meta"><span>Skill v0.2.0, as of 2026-10-21</span><span>Page v0.3.1</span><span>Updated 2026-10-21</span></div>
 </header>
 
 <article>
@@ -657,7 +657,7 @@
 <h2>Certification</h2>
 <ol>
 <li>The final fitness walk runs at the last gate, beside the compliance evaluator, and every pass record must be at the final commit.</li>
-<li><code>harness.py certify-ready</code> refuses if anything fails or a PLAYTEST note is missing.</li>
+<li><code>harness.py certify-ready</code> refuses if anything fails, a PLAYTEST note is missing, or a DEFECT or JOB-FAILURE finding is still open. The check runs before a certifier is dispatched, so an unfinished run never costs a certification round.</li>
 <li>The <strong>certifier</strong>, a fresh agent, reads the script&rsquo;s verify records, re-runs five at random, and writes CERTIFICATION.md.</li>
 <li>The run stays certified-pending until the owner&rsquo;s final review, then it is finished.</li>
 <li>The retrospective records which mechanisms helped. Each miss the owner caught becomes a probe in the domain pack, and each harness miss becomes a test fixture.</li>
