@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="prez-comments" content="on">
+<title>Transport Lifecycle Articles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column; diagrams break wider inside their own scroll boxes */
+:root{
+  --bg:#f6f7f5; --panel:#ffffff; --fg:#1c2421; --muted:#5d6b66; --line:#d5dcd8;
+  --accent:#1f6f5c; --accent-soft:#e1efe9; --bill:#1f6f5c; --nobill:#a3442f; --nobill-soft:#f6e6e1; --warn:#8a6100; --warn-soft:#f7edd2;
+  --display:"Fraunces",Georgia,serif; --body:"Source Sans 3","Segoe UI",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121816; --panel:#1a2220; --fg:#e4ebe8; --muted:#97a6a0; --line:#2e3a36;
+  --accent:#6cc5a8; --accent-soft:#1d332c; --bill:#6cc5a8; --nobill:#e48a72; --nobill-soft:#3a2420; --warn:#e3b85a; --warn-soft:#352b14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --panel:#1a2220; --fg:#e4ebe8; --muted:#97a6a0; --line:#2e3a36;
+  --accent:#6cc5a8; --accent-soft:#1d332c; --bill:#6cc5a8; --nobill:#e48a72; --nobill-soft:#3a2420; --warn:#e3b85a; --warn-soft:#352b14; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 var(--body)}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:32px 64px;display:grid;gap:40px}
+h1,h2{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0}
+h1{font-size:2rem;line-height:1.15}
+h2{font-size:1.35rem}
+h3{font-size:1rem;margin:0}
+p{margin:0;max-width:65ch}
+section{display:grid;gap:14px;min-width:0}
+code,.mono{font-family:var(--mono);font-size:.85em}
+.eyebrow{font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 .75rem var(--mono);padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.chip.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.lede{font-size:1.1rem;color:var(--muted)}
+a{color:var(--accent)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:640px){.pair{grid-template-columns:1fr}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:8px;min-width:0}
+ul{margin:0;padding-left:1.1em;display:grid;gap:6px}
+.arts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:640px){.arts{grid-template-columns:1fr}}
+.art{border-top:3px solid var(--accent);background:var(--panel);padding:14px;display:grid;gap:6px;align-content:start}
+.art .n{font:500 .75rem var(--mono);color:var(--accent)}
+.art p{font-size:.92rem;color:var(--muted)}
+.scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px}
+svg text{font-family:var(--body);fill:var(--fg)}
+svg .m{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.yes{color:var(--bill);font-weight:600}.no{color:var(--nobill);font-weight:600}
+.rule{font-family:var(--display);font-size:1.2rem;line-height:1.4;border-left:3px solid var(--accent);padding-left:14px;max-width:60ch}
+.find{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:12px 14px;border-radius:8px;background:var(--panel);border:1px solid var(--line)}
+.sev{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:4px;align-self:start}
+.sev.hi{background:var(--nobill-soft);color:var(--nobill)}.sev.md{background:var(--warn-soft);color:var(--warn)}.sev.lo{background:var(--accent-soft);color:var(--accent)}
+.find p{font-size:.95rem}.find .src{grid-column:2;font-size:.82rem;color:var(--muted)}
+.list{display:grid;gap:10px}
+footer{font-size:.85rem;color:var(--muted)}
+.spine{display:grid;gap:6px}
+.stg{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:grid;grid-template-columns:2rem 8rem minmax(0,1fr) minmax(0,1fr);gap:4px 14px;align-items:baseline}
+@media (max-width:600px){.stg{grid-template-columns:2rem minmax(0,1fr)}.stg code,.stg small{grid-column:2}}
+.stg.sh,.sw{background:var(--accent-soft)}
+.stg .n{font:500 .72rem var(--mono);color:var(--muted)}
+.stg code,.stg small{overflow-wrap:anywhere;font-size:.85rem;color:var(--muted);line-height:1.35}
+.key{font-size:.9rem;color:var(--muted);display:flex;align-items:center;gap:8px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}
+.fan{display:grid;grid-template-columns:auto auto 1fr;gap:20px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px}
+@media (max-width:640px){.fan{grid-template-columns:1fr}.to{transform:none}}
+.col{display:grid;gap:6px;justify-items:start;min-width:0}
+.pill{font:500 .9rem var(--mono);padding:6px 14px;border-radius:99px;border:1px solid var(--line)}
+.pill.on{border:2px solid var(--accent);color:var(--accent)}
+.down{color:var(--muted);padding-left:18px;line-height:1}
+.to{font-size:.85rem;color:var(--muted);padding-bottom:8px;white-space:nowrap}
+.oc{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;width:100%}
+.o{padding:10px 12px;border-radius:6px;background:var(--nobill-soft);font-weight:600;display:grid;gap:2px}
+.o.b{background:var(--accent-soft)}
+.o em,.leaf em{font-style:normal;font-weight:400;font-size:.82rem;color:var(--nobill)}
+.o.b em,.leaf.b em{color:var(--bill)}
+svg text{font-family:var(--body);fill:var(--fg)}
+svg .lab{font:500 12px var(--mono);fill:var(--muted);paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
+.tree{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:14px}
+.q{border:1.5px solid var(--fg);border-radius:6px;padding:10px 14px;font-weight:600;max-width:46ch}
+.br3,.br2{display:grid;gap:14px;align-items:start}
+.br3{grid-template-columns:1fr 1fr 2fr}.br2{grid-template-columns:1fr 1fr}
+@media (max-width:700px){.br3,.br2{grid-template-columns:1fr}}
+.br{display:grid;gap:8px;min-width:0;border-left:2px solid var(--line);padding-left:12px}
+.lab{font:500 .72rem var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.leaf{padding:10px 12px;border-radius:6px;background:var(--nobill-soft);font-weight:600;display:grid;gap:3px}
+.leaf.b{background:var(--accent-soft)}
+.stg{grid-template-columns:2rem 7rem minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr)!important}
+.stg.hd{background:none;border:none;padding-block:0;font:500 .7rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stg .v{font-size:.88rem;overflow-wrap:anywhere}.stg .v i{color:var(--warn);font-style:normal;font-size:.8rem}
+@media (max-width:700px){.stg{grid-template-columns:2rem minmax(0,1fr)!important}.stg code,.stg small,.stg .v{grid-column:2}.stg.hd{display:none}}
+h3.sub{margin-top:10px;font-size:1.05rem}
+.tpl{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px}
+.crumb{display:flex;flex-wrap:wrap;gap:4px;font:500 .75rem var(--mono)}
+.crumb span{padding:4px 10px;border-radius:4px;background:var(--bg);color:var(--muted)}
+.crumb span.on{background:var(--accent);color:var(--panel)}
+.tpl-rows{display:grid;gap:8px}
+.tpl-rows div{display:grid;grid-template-columns:10rem minmax(0,1fr);gap:12px;font-size:.93rem}
+@media (max-width:500px){.tpl-rows div{grid-template-columns:1fr;gap:0}}
+.lab2{font-weight:600}
+.acc{display:grid;gap:4px}.acc span{border:1px solid var(--line);border-radius:4px;padding:7px 10px;font-size:.9rem;color:var(--muted)}
+.note{font-size:.85rem;color:var(--muted)}
+.vals{font:400 .82rem/1.6 var(--mono);color:var(--fg)}
+.pages{display:flex;flex-wrap:wrap;gap:8px}.pages span{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:6px 12px;font-size:.9rem}
+.quote{font-weight:600;border-left:3px solid var(--accent);padding-left:10px}
+.links{display:grid;gap:8px}
+.lk{display:grid;grid-template-columns:minmax(0,12rem) 1.5rem minmax(0,10rem) minmax(0,1fr);gap:8px;align-items:baseline;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 14px;font-size:.93rem}
+.lk .ar{color:var(--accent);font-weight:600}.lk .why{color:var(--muted)}
+@media (max-width:640px){.lk{grid-template-columns:minmax(0,1fr) 1.5rem minmax(0,1fr)}.lk .why{grid-column:1/-1}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header style="display:grid;gap:12px">
+  <div class="eyebrow">ClickUp 868ky8j5n · Echo1 Help Center</div>
+  <h1>Rewrite the transport lifecycle help articles</h1>
+  <div class="meta">
+    <span class="chip done">Done · closed Oct 11</span><span class="chip">High</span><span class="chip">William Titus</span><span class="chip">Created Aug 28</span>
+  </div>
+  <p class="lede">The three articles about a ride's life in Echo1 disagree with each other and with the product. The fix is three new articles where every fact lives in exactly one place.</p>
+</header>
+
+<section>
+  <h2>The problem and the fix</h2>
+  <div class="pair">
+    <div class="box"><h3>What's wrong today</h3><ul>
+      <li>The status guide uses old-system field names. Dispatchers go looking for statuses Echo1 doesn't have.</li>
+      <li>Cancellation billing is stated wrong in two places, in opposite directions.</li>
+      <li>Claim statuses are written three different ways.</li>
+      <li>One article says five stages, then lists six.</li>
+      <li>The same definitions sit in two articles, which is how they drifted.</li>
+    </ul></div>
+    <div class="box"><h3>Ground rules for the rewrite</h3><ul>
+      <li>Echo1 only. No old-system names, no TANF, no "Track 1–5".</li>
+      <li>Every payer is treated the same: a cancellation turns on whether the driver started travelling.</li>
+      <li>Outcomes and billing rules live only in Article 2. The other two link to it.</li>
+      <li>Don't document the <code>undispatched</code> outcome.</li>
+    </ul></div>
+  </div>
+  <div class="arts">
+    <div class="art"><span class="n">Article 1</span><h3>Transport Lifecycle</h3><p>Teaches the six stages, one template per stage. Where a ride is and what moves it on.</p></div>
+    <div class="art"><span class="n">Article 2</span><h3>Cancel, Void &amp; Billability</h3><p>How a plain-language choice becomes an outcome and a billing decision. The highest-stakes page.</p></div>
+    <div class="art"><span class="n">Article 3</span><h3>Icon &amp; Column Key</h3><p>UI only, organized by page. No definitions; links to Article 2.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Article 1: six stages, each owned by a table</h2>
+  <p>Stages 2–4 all write to <code>transport</code>. That's why status, outcome and review status are three separate fields.</p>
+  <div class="spine">
+    <div class="stg hd"><span></span><span>Stage</span><span>Table</span><span>Field</span><span>Values</span></div>
+    <div class="stg"><span class="n">1</span><b>Request</b><code>transport_request</code><small>request_status</small><span class="v">pending · dispatched · voided · missed <i>+ rejected (new)</i></span></div>
+    <div class="stg sh"><span class="n">2</span><b>Dispatch</b><code>transport · route · stop</code><small>transport_status</small><span class="v">scheduled</span></div>
+    <div class="stg sh"><span class="n">3</span><b>Drive</b><code>transport · transport_history</code><small>transport_status, then transport_outcome</small><span class="v">in_progress → closed, plus an outcome</span></div>
+    <div class="stg sh"><span class="n">4</span><b>Ops Review</b><code>transport</code><small>billing_review_status</small><span class="v">Pending · Needs Attention · Processed · Non-Billable</span></div>
+    <div class="stg"><span class="n">5</span><b>Billing</b><code>claim · service_line · invoice</code><small>adjudication status + claim status</small><span class="v">Two fields, see below</span></div>
+    <div class="stg"><span class="n">6</span><b>Close</b><code>—</code><small>—</small><span class="v">Period close</span></div>
+  </div>
+  <p class="key"><span class="sw"></span>Shaded stages all write to the <code>transport</code> table. That's why status, outcome and review status are three fields.</p>
+
+  <h3 class="sub">Every stage section uses the same template</h3>
+  <div class="tpl">
+    <div class="crumb"><span>Request</span><span>Dispatch</span><span class="on">Drive</span><span>Ops Review</span><span>Billing</span><span>Close</span></div>
+    <div class="tpl-rows">
+      <div><span class="lab2">Table</span><span>Which table owns this stage</span></div>
+      <div><span class="lab2">In one line</span><span>What happens here, in plain words</span></div>
+      <div><span class="lab2">Fields &amp; values</span><span>The state field and its values (the table above)</span></div>
+      <div><span class="lab2">Enters / leaves when</span><span>The gate in and out, called out on its own</span></div>
+      <div><span class="lab2">Who acts</span><span>The role that moves it forward</span></div>
+    </div>
+    <div class="acc"><span>▸ Grid &amp; icons at this stage</span><span>▸ Field values explained</span><span>▸ Exceptions</span></div>
+    <p class="note">The stage strip at the top repeats on every stage section as a breadcrumb, with the current stage highlighted.</p>
+  </div>
+
+  <h3 class="sub">Stage 5 has two status fields. Don't merge them.</h3>
+  <div class="pair">
+    <div class="box"><span class="eyebrow">On transport</span><h3><code>billing_adjudication_status</code></h3><p>What the payer did with this ride.</p><p class="vals">Exported · In Process · Resubmitted · Paid · Denied · Hold · Suspended · Non-Billable</p></div>
+    <div class="box"><span class="eyebrow">On claim</span><h3>Claim status</h3><p>Where the claim we sent stands.</p><p class="vals">draft · billed · paid · partially_paid · non_billable · <s>void</s> voided</p><p class="note">The code has more claim statuses than the ticket lists. See the review below.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>The idea the old articles miss</h2>
+  <p>A transport has only three statuses. Completed, Cancelled and Voided are outcomes, recorded when the ride closes. Status says where the ride is now; outcome says what happened to it.</p>
+  <div class="fan">
+    <div class="col">
+      <span class="eyebrow">Status · where is it now</span>
+      <span class="pill">scheduled</span><span class="down">↓</span>
+      <span class="pill">in_progress</span><span class="down">↓</span>
+      <span class="pill on">closed</span>
+    </div>
+    <div class="to">closes with one →</div>
+    <div class="col">
+      <span class="eyebrow">Outcome · what happened</span>
+      <div class="oc">
+        <div class="o b">Completed<em>billable</em></div>
+        <div class="o b">Cancelled<em>billable</em></div>
+        <div class="o">Aborted<em>not billable</em></div>
+        <div class="o">Withdrawn<em>not billable</em></div>
+        <div class="o">Invalid<em>not billable</em></div>
+        <div class="o">RC Error<em>not billable</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Article 2: nobody picks a status</h2>
+  <p>The driver or dispatcher picks what actually happened. Outcome and billing follow from that choice, and both screens share one mapping, so they can't disagree.</p>
+  <div class="scroll">
+  <svg viewBox="0 0 820 504" width="820" height="504" role="img" aria-label="Cancel and void decision tree with three questions"><g id="tree"></g></svg>
+  </div>
+  <div class="scroll" style="padding:0">
+  <table>
+    <thead><tr><th>Outcome</th><th>Travel started</th><th>Notice given</th><th>Billable</th></tr></thead>
+    <tbody>
+      <tr><td>Completed</td><td>yes</td><td>—</td><td class="yes">yes</td></tr>
+      <tr><td>Cancelled</td><td>yes</td><td>no</td><td class="yes">yes</td></tr>
+      <tr><td>Aborted</td><td>yes</td><td>yes</td><td class="no">no</td></tr>
+      <tr><td>Withdrawn</td><td>no</td><td>yes</td><td class="no">no</td></tr>
+      <tr><td>Invalid</td><td>—</td><td>—</td><td class="no">no</td></tr>
+      <tr><td>RC Error</td><td>yes</td><td>—</td><td class="no">no</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="rule">We bill when we spent something, the client could have prevented it and didn't, and it wasn't our fault.</p>
+  <div class="box"><h3>Two corrections that must land</h3><ul>
+    <li><b>Aborted is never billable.</b> One old article says "TANF billable", another says "TANF exception applies". Both are wrong.</li>
+    <li><b>Withdrawn means "driver never left, with notice".</b> The old text drops the notice part, which is what makes it non-billable.</li>
+  </ul></div>
+</section>
+
+<section>
+  <h2>Article 3: Icon &amp; Column Key</h2>
+  <p>Screen elements only. It's organized by page, because that's how people use it: they're looking at a screen and want to know what an icon means.</p>
+  <div class="pages"><span>Transports Dashboard</span><span>Historic Transports</span><span>Transport Requests</span><span>Billing</span><span>Claims</span></div>
+  <div class="pair">
+    <div class="box"><h3>Take out</h3><ul><li>Every outcome definition</li><li>Every billability rule</li></ul><p class="note">The outcome column links to Article 2 instead.</p></div>
+    <div class="box"><h3>Reword</h3><p><span class="mono">✉</span> becomes:</p><p class="quote">Communication pending: notification triggered, not yet sent.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Visuals the articles need</h2>
+  <div class="scroll" style="padding:0">
+  <table>
+    <thead><tr><th>Visual</th><th>Goes in</th><th>On this page</th></tr></thead>
+    <tbody>
+      <tr><td>Lifecycle strip: six stages with table names, repeated as a breadcrumb atop each stage</td><td>Article 1</td><td class="yes">Yes</td></tr>
+      <tr><td>Status → outcome fan-out, billable outcomes marked</td><td>Article 1, Stage 3</td><td class="yes">Yes</td></tr>
+      <tr><td>Cancel/void decision tree</td><td>Article 2</td><td class="yes">Yes</td></tr>
+      <tr><td>Role swimlane across the six stages, replacing the old roles table</td><td>Article 1</td><td class="no">No. The ticket doesn't say who acts at each stage, so the writer has to source it.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>How the articles link to each other</h2>
+  <p>Each fact lives in one article. The others point to it instead of repeating it.</p>
+  <div class="links">
+    <div class="lk"><b>Article 1 · Stage 3</b><span class="ar">→</span><b>Article 2</b><span class="why">To choose the outcome when a ride closes</span></div>
+    <div class="lk"><b>Article 1 · each stage</b><span class="ar">→</span><b>Article 3</b><span class="why">For that stage's page icons</span></div>
+    <div class="lk"><b>Article 3 · outcome column</b><span class="ar">→</span><b>Article 2</b><span class="why">For what each outcome means and whether it bills</span></div>
+    <div class="lk"><b>Article 2</b><span class="ar">→</span><b>Article 1 · Stage 4</b><span class="why">For what happens after the outcome is set</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Review: where the ticket has drifted from the code</h2>
+  <p>Checked against <code>origin/main</code> on Oct 21. The ticket was written Aug 28, and the schema has moved since.</p>
+  <div class="list">
+    <div class="find"><span class="sev hi">Fix</span><p>Claim status list is stale. The ticket lists <code>void</code>, which is now deprecated in favor of <code>voided</code>. It also misses <code>denied</code>, <code>rejected</code>, <code>resubmitted</code>, <code>merged</code>, <code>overpaid</code> and <code>reconciled</code>.</p><span class="src">app/db/schema/enums.ts:211</span></div>
+    <div class="find"><span class="sev hi">Fix</span><p>Request status has a fifth value, <code>rejected</code>. The Stage 1 row lists only four.</p><span class="src">enums.ts:44 · added by CU-868mgwe6y</span></div>
+    <div class="find"><span class="sev md">Decide</span><p>The Withdrawn row says "notice: yes", but the tree reaches Withdrawn on "no travel" without asking about notice. If the driver never left and nobody told us, which outcome is it? The tree and the table should give one answer.</p><span class="src">Ticket, Article 2</span></div>
+    <div class="find"><span class="sev md">Decide</span><p>The <code>undispatched</code> exclusion was pending 868ky88p1. That bug is now released, so the "don't document it" line can be revisited. Either way, Article 3's outcome filters may show it.</p><span class="src">enums.ts:78 · 868ky88p1 released</span></div>
+    <div class="find"><span class="sev md">Watch</span><p>New billing classes (<code>crisis</code>, <code>contracted</code>, <code>self_funded_drc</code>, <code>reject</code>) were added to requests. Nothing writes them yet, but once they do, "every payer bills cancellations the same way" may stop being true.</p><span class="src">enums.ts:55 · CU-868mgwerq</span></div>
+    <div class="find"><span class="sev lo">Note</span><p>RC Error is marked "travel started: yes". Our own error can also happen before a driver leaves. It's non-billable either way, so "—" would be more accurate.</p><span class="src">Ticket, Article 2 table</span></div>
+    <div class="find"><span class="sev lo">Note</span><p>Visual 4, the role swimlane, has no role data in the ticket. Whoever builds it has to source who acts at each stage.</p><span class="src">Ticket, Visuals</span></div>
+  </div>
+</section>
+
+<footer>Source: ClickUp 868ky8j5n, condensed. Ticket text is unchanged; nothing was posted back.</footer>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg", g=document.getElementById("tree");
+function el(tag,a,txt){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;g.appendChild(e);return e}
+function q(x,y,w,t){el("rect",{x,y,width:w,height:46,rx:6,fill:"var(--panel)",stroke:"var(--fg)","stroke-width":1.5});el("text",{x:x+w/2,y:y+28,"text-anchor":"middle","font-size":"15","font-weight":"600"},t)}
+function leaf(x,y,name,sub,b){
+  el("rect",{x,y,width:200,height:68,rx:6,fill:b?"var(--accent-soft)":"var(--nobill-soft)"});
+  el("text",{x:x+14,y:y+23,"font-size":"15","font-weight":"600"},name);
+  el("text",{x:x+14,y:y+41,"font-size":"12.5","font-weight":"600",style:"fill:"+(b?"var(--bill)":"var(--nobill)")},b?"Billable":"Not billable");
+  el("text",{x:x+14,y:y+58,"font-size":"12.5",style:"fill:var(--muted)"},sub)}
+// elbow connector: down from the parent's center, across, then straight down into the child, so the arrowhead always points the way the line runs; the label sits under the tip, off the line
+function edge(x1,y1,x2,y2,label){
+  const tip=y2-28, mid=(y1+tip)/2;
+  el("path",{d:`M${x1} ${y1} V${mid} H${x2} V${tip}`,stroke:"var(--muted)",fill:"none","stroke-width":1.4});
+  el("path",{d:`M${x2-5} ${tip-7} L${x2} ${tip} L${x2+5} ${tip-7}`,stroke:"var(--muted)",fill:"none","stroke-width":1.4});
+  el("text",{x:x2,y:y2-10,"text-anchor":"middle",class:"lab"},label)}
+q(200,10,420,"Is this a real ride, or a record that shouldn't exist?");
+edge(410,56,110,140,"record shouldn't exist");
+edge(410,56,325,140,"our own failure");
+edge(410,56,685,140,"real ride, not happening");
+leaf(10,140,"Invalid","Duplicate, wrong client, test",0);
+leaf(225,140,"RC Error","Notifies management",0);
+q(560,140,250,"Did the driver start travel?");
+edge(685,186,440,260,"no");
+edge(685,186,685,300,"yes");
+leaf(340,260,"Withdrawn","Nothing was spent",0);
+q(570,300,230,"Did the client give notice?");
+edge(685,346,485,426,"no");
+edge(685,346,700,426,"yes");
+leaf(385,426,"Cancelled","Sent a vehicle, not told",1);
+leaf(600,426,"Aborted","They told us in time",0);
+</script>
+</body>
+</html>
