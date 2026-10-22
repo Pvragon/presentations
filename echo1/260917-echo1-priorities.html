@@ -23,7 +23,7 @@
   body{margin:0;background:var(--near-black);color:var(--text-muted);font-family:var(--sans);
     line-height:1.65;-webkit-font-smoothing:antialiased;font-size:17px;}
   #wave-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-  .wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 24px 96px;}
+  .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 24px 96px;}
   a{color:var(--heading);text-decoration-color:var(--accent-secondary);}
   a:hover{color:var(--text-main);}
   h1,h2,h3,h4{line-height:1.2;letter-spacing:-.015em;text-wrap:balance;}
@@ -49,6 +49,16 @@
   article h4{font-size:13.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
     margin:36px 0 12px;color:var(--heading);display:flex;align-items:center;gap:10px;}
   article h4::before{content:"";display:inline-block;width:22px;height:3px;border-radius:2px;background:var(--accent-secondary);}
+  article h2,article h3{scroll-margin-top:84px;}
+  nav.toc{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:18px 22px 14px;margin:30px 0 6px;}
+  nav.toc .toc-h{font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--heading);font-weight:700;margin:0 0 10px;}
+  nav.toc ol{margin:0;padding-left:0;list-style:none;}
+  nav.toc li{margin:0 0 6px;}
+  nav.toc ol ol{margin:5px 0 2px;padding-left:22px;}
+  nav.toc li{padding-left:0;}
+  nav.toc ol ol li{margin:0 0 3px;font-size:.94em;}
+  nav.toc a{color:var(--text-main);text-decoration:none;border-bottom:1px solid var(--line);}
+  nav.toc a:hover{color:var(--heading);border-bottom-color:var(--heading);}
   article p{margin:0 0 14px;}
   article strong{color:var(--text-main);font-weight:700;}
   article ul,article ol{margin:0 0 16px;padding-left:26px;}
@@ -126,9 +136,11 @@
   @media (prefers-reduced-motion:reduce){ #wave-bg{display:none;} }
 </style>
 <style id="priorities-pass">
+:root{--done:#2f9e5b}
 .wrap{max-width:1280px}
 @media (min-width:1100px){.grid-wrap table.plan td{font-size:15px}}
 .plan-cards{display:none}
+.grid-wrap{position:relative}
 .grid-wrap table.plan{table-layout:fixed;width:100%}
 .grid-wrap table.plan col.c-week{width:110px}
 .grid-wrap table.plan td,.grid-wrap table.plan th{overflow-wrap:anywhere}
@@ -136,17 +148,42 @@
 .grid-wrap table.plan tbody tr td{background:transparent;border-top:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
 .grid-wrap table.plan tbody tr.wk-0 td{background:var(--card-2)}
 .grid-wrap table.plan tbody tr td.week:not(:empty)~td,.grid-wrap table.plan tbody tr td.week:not(:empty){border-top:1px solid var(--line)}
-.grid-wrap table.plan a.item.risk,.week-card a.item.risk{color:var(--accent-secondary);border-bottom-color:var(--accent-secondary)}
-a.risk-mark{color:var(--accent-secondary);text-decoration:none;font-weight:700;margin-left:2px}
-.risk-note{font-size:14px;color:var(--text-muted);margin:10px 0 0;scroll-margin-top:90px}
-.risk-note:target{color:var(--text-main)}
-.risk-swatch{color:var(--accent-secondary);font-weight:700}
 .grid-wrap table.plan td.week{white-space:nowrap;font-weight:700;color:var(--heading)}
 .grid-wrap table.plan tbody td:not(.week){white-space:normal;font-weight:400;color:var(--text-muted)}
 .grid-wrap table.plan td.merged{text-align:center}
-.week-card .who{min-width:92px}
-.grid-wrap table.plan a.item{color:var(--text-main);text-decoration:none;border-bottom:1px dotted var(--heading)}
-.grid-wrap table.plan a.item:hover,.grid-wrap table.plan a.item:focus{color:var(--accent-secondary);border-bottom-style:solid;outline:none}
+.entry{display:block;margin:0 0 4px}
+.entry:last-child{margin-bottom:0}
+a.item{color:var(--text-main);text-decoration:none;border-bottom:1px dotted var(--heading)}
+a.item:hover,a.item:focus{color:var(--accent-secondary);border-bottom-style:solid;outline:none}
+a.item.risk{color:var(--accent-secondary);border-bottom-color:var(--accent-secondary)}
+a.risk-mark{color:var(--accent-secondary);text-decoration:none;font-weight:700;margin-left:2px}
+/* done: faded, with a green check */
+.item.done{color:var(--text-subtle) !important;border-bottom-color:transparent !important;opacity:.75}
+.done-mark{color:var(--done);font-weight:800;margin-right:5px}
+table.desc tr.done td{color:var(--text-subtle)}
+table.desc tr.done td.item-name{color:var(--text-muted)}
+/* slipped: a dashed ghost where it was planned, a badge where it is now */
+.ghost{display:inline-block;color:var(--text-subtle);border:1px dashed color-mix(in srgb,var(--accent-secondary) 55%,var(--line));border-radius:6px;padding:0 6px;font-size:.92em;background:transparent}
+.slip-badge{display:inline-block;margin-left:6px;padding:0 6px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;color:var(--accent-secondary);background:color-mix(in srgb,var(--accent-secondary) 12%,transparent);vertical-align:1px}
+.moved-note{font-size:12px;color:var(--text-subtle)}
+svg.slip-arrows{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;color:var(--accent-secondary);z-index:2}
+/* past weeks accordion */
+details.past-weeks{border-bottom:1px solid var(--line)}
+details.past-weeks>summary{cursor:pointer;list-style:none;padding:12px 16px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;background:var(--card-2);font-size:14.5px}
+details.past-weeks>summary::-webkit-details-marker{display:none}
+details.past-weeks>summary::before{content:"\25B8";color:var(--heading);transition:transform .15s;display:inline-block}
+details.past-weeks[open]>summary::before{transform:rotate(90deg)}
+.pw-title{font-weight:700;color:var(--heading)}
+.pw-range{color:var(--text-muted)}
+.pw-stats{color:var(--text-muted);margin-left:auto}
+details.past-weeks table.plan{opacity:.92}
+.grid-wrap>table.plan>thead{display:table-header-group}
+details.past-weeks[open]~table.plan thead{display:none}
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:var(--text-muted);margin:10px 0 0;scroll-margin-top:90px}
+.legend .lg{display:inline-flex;align-items:baseline;gap:6px}
+.legend .slip-badge{margin-left:0}
+.risk-swatch{color:var(--accent-secondary);font-weight:700}
 table.desc td.item-name{font-weight:700;color:var(--text-main);white-space:normal;min-width:180px}
 table.desc td.owner{white-space:nowrap;color:var(--text-muted)}
 table.desc tr:target td{background:color-mix(in srgb,var(--accent-secondary) 18%,transparent);transition:background .3s}
@@ -162,13 +199,16 @@ table.desc tr{scroll-margin-top:90px}
   .plan-cards{display:block}
   table.desc tr:target{background:color-mix(in srgb,var(--accent-secondary) 18%,transparent);border-color:var(--accent-secondary)}
   table.desc tr:target td{background:transparent}
+  .plan-cards details.past-weeks{border:1px solid var(--line);border-radius:10px;margin:0 0 10px;overflow:hidden}
+  .plan-cards details.past-weeks[open]{padding:0 8px 2px}
+  .plan-cards details.past-weeks[open]>summary{margin:0 -8px 10px}
 }
 .week-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px 12px;margin:0 0 10px}
 .week-card .week-title{font-weight:700;color:var(--heading);margin:0 0 6px}
 .week-card ul{list-style:none;margin:0;padding:0}
 .week-card li{padding:4px 0;line-height:1.4;font-size:15px}
-.week-card .who{display:inline-block;min-width:64px;color:var(--text-muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
-.week-card a.item{color:var(--text-main);text-decoration:none;border-bottom:1px dotted var(--heading)}
+.week-card li .entry{display:inline}
+.week-card .who{display:inline-block;min-width:92px;color:var(--text-muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
 </style>
 </head>
 <body>
@@ -182,64 +222,48 @@ table.desc tr{scroll-margin-top:90px}
   </div>
   <h1>Echo1 priorities, <span class="accent">autumn 2026</span></h1>
   <p class="lede">The Echo1 engineering plan, week by week, through the end of October.</p>
-  <div class="meta"><span>Prepared 17 September 2026</span></div>
+  <div class="meta"><span>Prepared 17 September 2026 &amp;middot; Updated 22 October 2026</span></div>
 </header>
 
 <article>
 <h2>The plan by week</h2>
-<div class="table-scroll grid-wrap"><table class="plan">
-<colgroup><col class="c-week"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"></colgroup>
-<thead><tr><th>Week Ending</th><th>JP</th><th>Victor</th><th>Roman</th><th>Raf</th><th>Alex (PT)</th></tr></thead><tbody>
-<tr class="wk-1"><td class="week" rowspan=2>09/18 (38)</td><td><a class="item" href="#item-stabilize-and-finalize-route-editing">Stabilize and finalize route editing</a></td><td><a class="item" href="#item-client-login-area">Client Login Area</a></td><td><a class="item" href="#item-close-eligibility-check">Close eligibility check</a></td><td><a class="item" href="#item-wrap-up-optimizer-for-now">Wrap up Optimizer for now</a></td><td><a class="item" href="#item-finalize-client-facility-page">Finalize Client &amp; Facility Page</a></td></tr>
-<tr class="wk-1"><td colspan="2" class="merged"><a class="item" href="#item-nebraska-readiness">Nebraska Readiness</a></td><td></td><td><a class="item" href="#item-facility-typing">Facility Typing</a></td><td></td></tr>
-<tr class="wk-0"><td class="week" rowspan=3>09/25 (39)</td><td><a class="item" href="#item-mgmt-trip-log-edits">Mgmt Trip Log Edits</a></td><td><a class="item" href="#item-nebraska-close-out">Nebraska Close Out</a></td><td><a class="item" href="#item-driver-forms-dvir-purchase-receipts">Driver Forms (DVIR + Purchase Receipts)</a></td><td><a class="item" href="#item-v1-shutdown">V1 Shutdown</a></td><td><a class="item" href="#item-data-export-tool">Data Export Tool</a></td></tr>
-<tr class="wk-0"><td colspan="2" class="merged"><a class="item" href="#item-fix-email-parser-facility-problem-qa-dispatch-validation-and-autocomplete-display">Fix Email Parser Facility problem QA/Dispatch Validation &lt;&gt; Autocomplete Display</a></td><td><a class="item" href="#item-billing-resubmission-workflow-a">Billing Resubmission Workflow (A)</a></td><td><a class="item" href="#item-permissions-overhaul-incl-jp">Permissions Overhaul (incl. JP)</a></td><td></td></tr>
-<tr class="wk-0"><td><a class="item" href="#item-driver-vehicle-assignment-fix">Driver Vehicle Assignment Fix</a></td><td><a class="item" href="#item-overhaul-the-processing-workflow">Overhaul the processing workflow</a></td><td><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></td><td><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></td><td></td></tr>
-<tr class="wk-1"><td class="week">10/02 (40)</td><td><a class="item" href="#item-crisis-rebuild-manager-dispatch-approval">Crisis Rebuild &amp; Manager Dispatch Approval</a></td><td><a class="item" href="#item-eta-logic-upgrade">ETA Logic Upgrade</a></td><td><a class="item" href="#item-billing-resubmission-workflow-b">Billing Resubmission Workflow (B)</a></td><td><a class="item" href="#item-audit-log-transport-events">Audit Log &amp; Transport Events</a></td><td><a class="item" href="#item-audit-docs-download-tool">Audit Docs Download Tool</a></td></tr>
-<tr class="wk-1"><td class="week"></td><td></td><td></td><td><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></td><td><a class="item" href="#item-transport-events-ui">Transport Events UI</a></td><td></td></tr>
-<tr class="wk-0"><td class="week">10/09 (41)</td><td><a class="item risk" href="#item-overhaul-situational-awareness">Overhaul situational awareness</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></td><td><a class="item risk" href="#item-improved-client-risk-flags-and-transport-notes">Improved Client Risk Flags and Transport Notes</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></td><td><a class="item" href="#item-contract-billing-workflow">Contract Billing Workflow</a></td><td><a class="item" href="#item-transport-events-ui">Transport Events UI</a></td><td><a class="item" href="#item-reporting-tools-ops-report-dispatcher-productivity">Reporting Tools (Ops Report, Dispatcher Productivity)</a></td></tr>
-<tr class="wk-0"><td class="week"></td><td><a class="item risk" href="#item-data-grid-realtime-and-locking-issues">Data Grid Realtime and Locking Issues</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></td><td><a class="item risk" href="#item-intake-form-configuration-finalization">Intake Form &amp; Configuration Finalization</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></td><td></td><td><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></td><td></td></tr>
-<tr class="wk-1"><td class="week">10/16 (42)</td><td><a class="item risk" href="#item-huy-s-gap-finder-call-center-cancel-queue">Huy&#x27;s Gap Finder &amp; Call Center Cancel Queue</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></td><td></td><td><a class="item" href="#item-finance-dashboard-analytics">Finance Dashboard &amp; Analytics</a></td><td><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></td><td></td></tr>
-<tr class="wk-0"><td class="week">10/23 (43)</td><td></td><td></td><td></td><td><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></td><td></td></tr>
-<tr class="wk-1"><td class="week">10/30 (44)</td><td></td><td></td><td></td><td><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></td><td></td></tr>
-<tr class="wk-0"><td class="week">11/06 (45)</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr class="wk-1"><td class="week">11/13 (46)</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr class="wk-0"><td class="week">11/20 (47)</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr class="wk-1"><td class="week">11/27 (48)</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr class="wk-0"><td class="week">12/04 (49)</td><td></td><td></td><td></td><td></td><td></td></tr>
-</tbody></table></div>
+<div class="table-scroll grid-wrap">
+<details class="past-weeks"><summary><span class="pw-title">Earlier weeks</span> <span class="pw-range">09/18 (38) &ndash; 10/16 (42)</span> <span class="pw-stats">9 of 33 done</span></summary><table class="plan"><colgroup><col class="c-week"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"></colgroup><thead><tr><th>Week Ending</th><th>JP</th><th>Victor</th><th>Roman</th><th>Raf</th><th>Alex (PT)</th></tr></thead><tbody><tr class="wk-1"><td class="week" rowspan=2>09/18 (38)</td><td><span class="entry"><a class="item" href="#item-stabilize-and-finalize-route-editing">Stabilize and finalize route editing</a></span></td><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-client-login-area">Client Login Area</a></span></td><td><span class="entry"><a class="item" href="#item-close-eligibility-check">Close eligibility check</a></span></td><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-wrap-up-optimizer-for-now">Wrap up Optimizer for now</a></span></td><td><span class="entry"><a class="item" href="#item-finalize-client-facility-page">Finalize Client &amp; Facility Page</a></span></td></tr><tr class="wk-1"><td colspan="2" class="merged"><span class="entry"><a class="item" href="#item-nebraska-readiness">Nebraska Readiness</a></span></td><td></td><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-facility-typing">Facility Typing</a></span></td><td></td></tr><tr class="wk-0"><td class="week" rowspan=3>09/25 (39)</td><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-mgmt-trip-log-edits">Mgmt Trip Log Edits</a></span></td><td><span class="entry"><a class="item" href="#item-nebraska-close-out">Nebraska Close Out</a></span></td><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-driver-forms-dvir-purchase-receipts">Driver Forms (DVIR + Purchase Receipts)</a></span></td><td><span class="entry"><a class="item" href="#item-v1-shutdown">V1 Shutdown</a></span></td><td><span class="entry"><a class="item" href="#item-data-export-tool">Data Export Tool</a></span></td></tr><tr class="wk-0"><td colspan="2" class="merged"><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-fix-email-parser-facility-problem-qa-dispatch-validation-and-autocomplete-display">Fix Email Parser Facility problem QA/Dispatch Validation &lt;&gt; Autocomplete Display</a></span></td><td><span class="entry"><a class="item" href="#item-billing-resubmission-workflow-a">Billing Resubmission Workflow (A)</a></span></td><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-permissions-overhaul-incl-jp">Permissions Overhaul (incl. JP)</a></span></td><td></td></tr><tr class="wk-0"><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-driver-vehicle-assignment-fix">Driver Vehicle Assignment Fix</a></span></td><td><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-overhaul-the-processing-workflow">Overhaul the processing workflow</a></span></td><td><span class="entry"><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></span></td><td><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></td><td></td></tr><tr class="wk-1"><td class="week">10/02 (40)</td><td><span class="entry"><a class="item" href="#item-crisis-rebuild-manager-dispatch-approval">Crisis Rebuild &amp; Manager Dispatch Approval</a></span></td><td><span class="entry"><a class="item" href="#item-eta-logic-upgrade">ETA Logic Upgrade</a></span></td><td><span class="entry"><a class="item" href="#item-billing-resubmission-workflow-b">Billing Resubmission Workflow (B)</a></span></td><td><span class="entry"><a class="item" href="#item-audit-log-transport-events">Audit Log &amp; Transport Events</a></span></td><td><span class="entry"><a class="item" href="#item-audit-docs-download-tool">Audit Docs Download Tool</a></span></td></tr><tr class="wk-1"><td class="week"></td><td></td><td></td><td><span class="entry"><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></span></td><td><span class="entry"><a class="item" href="#item-transport-events-ui">Transport Events UI</a></span></td><td></td></tr><tr class="wk-0"><td class="week">10/09 (41)</td><td><span class="entry"><a class="item risk" href="#item-overhaul-situational-awareness">Overhaul situational awareness</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></td><td><span class="entry"><a class="item risk" href="#item-improved-client-risk-flags-and-transport-notes">Improved Client Risk Flags and Transport Notes</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></td><td><span class="entry"><a class="item" href="#item-contract-billing-workflow">Contract Billing Workflow</a></span></td><td><span class="entry"><a class="item" href="#item-transport-events-ui">Transport Events UI</a></span></td><td><span class="entry"><a class="item" href="#item-reporting-tools-ops-report-dispatcher-productivity">Reporting Tools (Ops Report, Dispatcher Productivity)</a></span></td></tr><tr class="wk-0"><td class="week"></td><td><span class="entry"><a class="item risk" href="#item-data-grid-realtime-and-locking-issues">Data Grid Realtime and Locking Issues</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></td><td><span class="entry"><a class="item risk" href="#item-intake-form-configuration-finalization">Intake Form &amp; Configuration Finalization</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></td><td></td><td><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></td><td></td></tr><tr class="wk-1"><td class="week">10/16 (42)</td><td><span class="entry"><a class="item risk" href="#item-huy-s-gap-finder-call-center-cancel-queue">Huy&#x27;s Gap Finder &amp; Call Center Cancel Queue</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></td><td></td><td><span class="entry"><a class="item" href="#item-finance-dashboard-analytics">Finance Dashboard &amp; Analytics</a></span></td><td><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></td><td></td></tr></tbody></table></details>
+<table class="plan"><colgroup><col class="c-week"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"><col class="c-owner"></colgroup><thead><tr><th>Week Ending</th><th>JP</th><th>Victor</th><th>Roman</th><th>Raf</th><th>Alex (PT)</th></tr></thead><tbody><tr class="wk-0"><td class="week">10/23 (43)</td><td></td><td></td><td></td><td><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></td><td></td></tr><tr class="wk-1"><td class="week">10/30 (44)</td><td></td><td></td><td></td><td><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></td><td></td></tr><tr class="wk-0"><td class="week">11/06 (45)</td><td></td><td></td><td></td><td></td><td></td></tr><tr class="wk-1"><td class="week">11/13 (46)</td><td></td><td></td><td></td><td></td><td></td></tr><tr class="wk-0"><td class="week">11/20 (47)</td><td></td><td></td><td></td><td></td><td></td></tr><tr class="wk-1"><td class="week">11/27 (48)</td><td></td><td></td><td></td><td></td><td></td></tr><tr class="wk-0"><td class="week">12/04 (49)</td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<svg class="slip-arrows" aria-hidden="true"></svg></div>
 <div class="plan-cards">
-<div class="week-card"><div class="week-title">09/18 (38)</div><ul><li><span class="who">JP</span><a class="item" href="#item-stabilize-and-finalize-route-editing">Stabilize and finalize route editing</a></li><li><span class="who">Victor</span><a class="item" href="#item-client-login-area">Client Login Area</a></li><li><span class="who">Roman</span><a class="item" href="#item-close-eligibility-check">Close eligibility check</a></li><li><span class="who">Raf</span><a class="item" href="#item-wrap-up-optimizer-for-now">Wrap up Optimizer for now</a></li><li><span class="who">Alex (PT)</span><a class="item" href="#item-finalize-client-facility-page">Finalize Client &amp; Facility Page</a></li><li><span class="who">JP + Victor</span><a class="item" href="#item-nebraska-readiness">Nebraska Readiness</a></li><li><span class="who">Raf</span><a class="item" href="#item-facility-typing">Facility Typing</a></li></ul></div>
-<div class="week-card"><div class="week-title">09/25 (39)</div><ul><li><span class="who">JP</span><a class="item" href="#item-mgmt-trip-log-edits">Mgmt Trip Log Edits</a></li><li><span class="who">Victor</span><a class="item" href="#item-nebraska-close-out">Nebraska Close Out</a></li><li><span class="who">Roman</span><a class="item" href="#item-driver-forms-dvir-purchase-receipts">Driver Forms (DVIR + Purchase Receipts)</a></li><li><span class="who">Raf</span><a class="item" href="#item-v1-shutdown">V1 Shutdown</a></li><li><span class="who">Alex (PT)</span><a class="item" href="#item-data-export-tool">Data Export Tool</a></li><li><span class="who">JP + Victor</span><a class="item" href="#item-fix-email-parser-facility-problem-qa-dispatch-validation-and-autocomplete-display">Fix Email Parser Facility problem QA/Dispatch Validation &lt;&gt; Autocomplete Display</a></li><li><span class="who">Roman</span><a class="item" href="#item-billing-resubmission-workflow-a">Billing Resubmission Workflow (A)</a></li><li><span class="who">Raf</span><a class="item" href="#item-permissions-overhaul-incl-jp">Permissions Overhaul (incl. JP)</a></li><li><span class="who">JP</span><a class="item" href="#item-driver-vehicle-assignment-fix">Driver Vehicle Assignment Fix</a></li><li><span class="who">Victor</span><a class="item" href="#item-overhaul-the-processing-workflow">Overhaul the processing workflow</a></li><li><span class="who">Roman</span><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></li><li><span class="who">Raf</span><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></li></ul></div>
-<div class="week-card"><div class="week-title">10/02 (40)</div><ul><li><span class="who">JP</span><a class="item" href="#item-crisis-rebuild-manager-dispatch-approval">Crisis Rebuild &amp; Manager Dispatch Approval</a></li><li><span class="who">Victor</span><a class="item" href="#item-eta-logic-upgrade">ETA Logic Upgrade</a></li><li><span class="who">Roman</span><a class="item" href="#item-billing-resubmission-workflow-b">Billing Resubmission Workflow (B)</a></li><li><span class="who">Raf</span><a class="item" href="#item-audit-log-transport-events">Audit Log &amp; Transport Events</a></li><li><span class="who">Alex (PT)</span><a class="item" href="#item-audit-docs-download-tool">Audit Docs Download Tool</a></li><li><span class="who">Roman</span><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></li><li><span class="who">Raf</span><a class="item" href="#item-transport-events-ui">Transport Events UI</a></li></ul></div>
-<div class="week-card"><div class="week-title">10/09 (41)</div><ul><li><span class="who">JP</span><a class="item risk" href="#item-overhaul-situational-awareness">Overhaul situational awareness</a><a class="risk-mark" href="#risk-note">*</a></li><li><span class="who">Victor</span><a class="item risk" href="#item-improved-client-risk-flags-and-transport-notes">Improved Client Risk Flags and Transport Notes</a><a class="risk-mark" href="#risk-note">*</a></li><li><span class="who">Roman</span><a class="item" href="#item-contract-billing-workflow">Contract Billing Workflow</a></li><li><span class="who">Raf</span><a class="item" href="#item-transport-events-ui">Transport Events UI</a></li><li><span class="who">Alex (PT)</span><a class="item" href="#item-reporting-tools-ops-report-dispatcher-productivity">Reporting Tools (Ops Report, Dispatcher Productivity)</a></li><li><span class="who">JP</span><a class="item risk" href="#item-data-grid-realtime-and-locking-issues">Data Grid Realtime and Locking Issues</a><a class="risk-mark" href="#risk-note">*</a></li><li><span class="who">Victor</span><a class="item risk" href="#item-intake-form-configuration-finalization">Intake Form &amp; Configuration Finalization</a><a class="risk-mark" href="#risk-note">*</a></li><li><span class="who">Raf</span><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></li></ul></div>
-<div class="week-card"><div class="week-title">10/16 (42)</div><ul><li><span class="who">JP</span><a class="item risk" href="#item-huy-s-gap-finder-call-center-cancel-queue">Huy&#x27;s Gap Finder &amp; Call Center Cancel Queue</a><a class="risk-mark" href="#risk-note">*</a></li><li><span class="who">Roman</span><a class="item" href="#item-finance-dashboard-analytics">Finance Dashboard &amp; Analytics</a></li><li><span class="who">Raf</span><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></li></ul></div>
-<div class="week-card"><div class="week-title">10/23 (43)</div><ul><li><span class="who">Raf</span><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></li></ul></div>
-<div class="week-card"><div class="week-title">10/30 (44)</div><ul><li><span class="who">Raf</span><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></li></ul></div>
+<details class="past-weeks"><summary><span class="pw-title">Earlier weeks</span> <span class="pw-stats">9 of 33 done</span></summary><div class="week-card"><div class="week-title">09/18 (38)</div><ul><li><span class="who">JP</span><span class="entry"><a class="item" href="#item-stabilize-and-finalize-route-editing">Stabilize and finalize route editing</a></span></li><li><span class="who">Victor</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-client-login-area">Client Login Area</a></span></li><li><span class="who">Roman</span><span class="entry"><a class="item" href="#item-close-eligibility-check">Close eligibility check</a></span></li><li><span class="who">Raf</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-wrap-up-optimizer-for-now">Wrap up Optimizer for now</a></span></li><li><span class="who">Alex (PT)</span><span class="entry"><a class="item" href="#item-finalize-client-facility-page">Finalize Client &amp; Facility Page</a></span></li><li><span class="who">JP + Victor</span><span class="entry"><a class="item" href="#item-nebraska-readiness">Nebraska Readiness</a></span></li><li><span class="who">Raf</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-facility-typing">Facility Typing</a></span></li></ul></div><div class="week-card"><div class="week-title">09/25 (39)</div><ul><li><span class="who">JP</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-mgmt-trip-log-edits">Mgmt Trip Log Edits</a></span></li><li><span class="who">Victor</span><span class="entry"><a class="item" href="#item-nebraska-close-out">Nebraska Close Out</a></span></li><li><span class="who">Roman</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-driver-forms-dvir-purchase-receipts">Driver Forms (DVIR + Purchase Receipts)</a></span></li><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-v1-shutdown">V1 Shutdown</a></span></li><li><span class="who">Alex (PT)</span><span class="entry"><a class="item" href="#item-data-export-tool">Data Export Tool</a></span></li><li><span class="who">JP + Victor</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-fix-email-parser-facility-problem-qa-dispatch-validation-and-autocomplete-display">Fix Email Parser Facility problem QA/Dispatch Validation &lt;&gt; Autocomplete Display</a></span></li><li><span class="who">Roman</span><span class="entry"><a class="item" href="#item-billing-resubmission-workflow-a">Billing Resubmission Workflow (A)</a></span></li><li><span class="who">Raf</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-permissions-overhaul-incl-jp">Permissions Overhaul (incl. JP)</a></span></li><li><span class="who">JP</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-driver-vehicle-assignment-fix">Driver Vehicle Assignment Fix</a></span></li><li><span class="who">Victor</span><span class="entry"><span class="done-mark" title="Done">&#10003;</span><a class="item done" href="#item-overhaul-the-processing-workflow">Overhaul the processing workflow</a></span></li><li><span class="who">Roman</span><span class="entry"><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></span></li><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></li></ul></div><div class="week-card"><div class="week-title">10/02 (40)</div><ul><li><span class="who">JP</span><span class="entry"><a class="item" href="#item-crisis-rebuild-manager-dispatch-approval">Crisis Rebuild &amp; Manager Dispatch Approval</a></span></li><li><span class="who">Victor</span><span class="entry"><a class="item" href="#item-eta-logic-upgrade">ETA Logic Upgrade</a></span></li><li><span class="who">Roman</span><span class="entry"><a class="item" href="#item-billing-resubmission-workflow-b">Billing Resubmission Workflow (B)</a></span></li><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-audit-log-transport-events">Audit Log &amp; Transport Events</a></span></li><li><span class="who">Alex (PT)</span><span class="entry"><a class="item" href="#item-audit-docs-download-tool">Audit Docs Download Tool</a></span></li><li><span class="who">Roman</span><span class="entry"><a class="item" href="#item-payer-table-rework">Payer Table Rework</a></span></li><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-transport-events-ui">Transport Events UI</a></span></li></ul></div><div class="week-card"><div class="week-title">10/09 (41)</div><ul><li><span class="who">JP</span><span class="entry"><a class="item risk" href="#item-overhaul-situational-awareness">Overhaul situational awareness</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></li><li><span class="who">Victor</span><span class="entry"><a class="item risk" href="#item-improved-client-risk-flags-and-transport-notes">Improved Client Risk Flags and Transport Notes</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></li><li><span class="who">Roman</span><span class="entry"><a class="item" href="#item-contract-billing-workflow">Contract Billing Workflow</a></span></li><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-transport-events-ui">Transport Events UI</a></span></li><li><span class="who">Alex (PT)</span><span class="entry"><a class="item" href="#item-reporting-tools-ops-report-dispatcher-productivity">Reporting Tools (Ops Report, Dispatcher Productivity)</a></span></li><li><span class="who">JP</span><span class="entry"><a class="item risk" href="#item-data-grid-realtime-and-locking-issues">Data Grid Realtime and Locking Issues</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></li><li><span class="who">Victor</span><span class="entry"><a class="item risk" href="#item-intake-form-configuration-finalization">Intake Form &amp; Configuration Finalization</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></li><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></li></ul></div><div class="week-card"><div class="week-title">10/16 (42)</div><ul><li><span class="who">JP</span><span class="entry"><a class="item risk" href="#item-huy-s-gap-finder-call-center-cancel-queue">Huy&#x27;s Gap Finder &amp; Call Center Cancel Queue</a><a class="risk-mark" href="#risk-note" title="Needed sooner than shown; schedule risk">*</a></span></li><li><span class="who">Roman</span><span class="entry"><a class="item" href="#item-finance-dashboard-analytics">Finance Dashboard &amp; Analytics</a></span></li><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></li></ul></div></details>
+<div class="week-card"><div class="week-title">10/23 (43)</div><ul><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></li></ul></div>
+<div class="week-card"><div class="week-title">10/30 (44)</div><ul><li><span class="who">Raf</span><span class="entry"><a class="item" href="#item-nist-800-53-compliance">NIST 800-53 Compliance</a></span></li></ul></div>
+
+
+
+
+
 </div>
-<p class="risk-note" id="risk-note"><span class="risk-swatch">*</span> Needed sooner than shown but actually already a schedule risk for the period shown.</p>
+<p class="legend"><span class="lg"><span class="done-mark">&#10003;</span> Done</span><span class="lg"><span class="ghost">Item</span> Planned here originally</span><span class="lg"><span class="slip-badge">&darr; from 09/25</span> Moved later</span><span class="lg" id="risk-note"><span class="risk-swatch">*</span> Needed sooner than shown; already a schedule risk for the period shown</span></p>
 
 <h2>What each item is</h2>
 <div class="table-scroll"><table class="desc">
 <thead><tr><th>Item</th><th>Owner</th><th>Description</th></tr></thead><tbody>
 <tr id="item-stabilize-and-finalize-route-editing"><td class="item-name">Stabilize and finalize route editing</td><td class="owner">JP</td><td>Dispatchers add, remove and reorder stops in Routes.  Change drivers and vehicles for not-started, in progress, and completed transports.</td></tr>
-<tr id="item-client-login-area"><td class="item-name">Client Login Area</td><td class="owner">Victor</td><td>Login for requesting agencies and facilities to see and review their own transports.</td></tr>
+<tr id="item-client-login-area" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Client Login Area</td><td class="owner">Victor</td><td>Login for requesting agencies and facilities to see and review their own transports.</td></tr>
 <tr id="item-close-eligibility-check"><td class="item-name">Close eligibility check</td><td class="owner">Roman</td><td>The dispatcher&#x27;s pre-dispatch confirmation that a rider and payer qualify for the transport.</td></tr>
-<tr id="item-wrap-up-optimizer-for-now"><td class="item-name">Wrap up Optimizer for now</td><td class="owner">Raf</td><td>Remaining automatic route planner fixes to achieve Macie&#x27;s goals for daily use.  Will revisit more complex improvements later.</td></tr>
+<tr id="item-wrap-up-optimizer-for-now" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Wrap up Optimizer for now</td><td class="owner">Raf</td><td>Remaining automatic route planner fixes to achieve Macie&#x27;s goals for daily use.  Will revisit more complex improvements later.</td></tr>
 <tr id="item-finalize-client-facility-page"><td class="item-name">Finalize Client &amp; Facility Page</td><td class="owner">Alex (PT)</td><td>Client and facility merge, duplicate detection and an unlinked-record finder, verified-identity fixes, and edit-drawer bugs that lose data.</td></tr>
 <tr id="item-nebraska-readiness"><td class="item-name">Nebraska Readiness</td><td class="owner">JP</td><td>State filter and column, sticky filters, out-of-state address warning, badge number field, Nebraska intake forms, vehicle and gateway onboarding.</td></tr>
 <tr id="item-nebraska-close-out"><td class="item-name">Nebraska Close Out</td><td class="owner">Victor</td><td>Driver-submitted form export rebuilt (fuel, incident and others), purchase receipts, and a short, accurate transport request type list.</td></tr>
-<tr id="item-facility-typing"><td class="item-name">Facility Typing</td><td class="owner">Alex (PT)</td><td>Staff can set and edit a facility&#x27;s type and subtype, such as hospital or crisis center.</td></tr>
-<tr id="item-mgmt-trip-log-edits"><td class="item-name">Mgmt Trip Log Edits</td><td class="owner">JP</td><td>Manager signature in lieu of a driver&#x27;s marks logs as completed. Manager ability to finish completely unstarted logs and sign with affidavit.</td></tr>
-<tr id="item-driver-forms-dvir-purchase-receipts"><td class="item-name">Driver Forms (DVIR + Purchase Receipts)</td><td class="owner">Roman</td><td>Two driver forms: the daily vehicle inspection report (DVIR) and receipts for purchases during a trip.</td></tr>
+<tr id="item-facility-typing" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Facility Typing</td><td class="owner">Alex (PT)</td><td>Staff can set and edit a facility&#x27;s type and subtype, such as hospital or crisis center.</td></tr>
+<tr id="item-mgmt-trip-log-edits" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Mgmt Trip Log Edits</td><td class="owner">JP</td><td>Manager signature in lieu of a driver&#x27;s marks logs as completed. Manager ability to finish completely unstarted logs and sign with affidavit.</td></tr>
+<tr id="item-driver-forms-dvir-purchase-receipts" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Driver Forms (DVIR + Purchase Receipts)</td><td class="owner">Roman</td><td>Two driver forms: the daily vehicle inspection report (DVIR) and receipts for purchases during a trip.</td></tr>
 <tr id="item-v1-shutdown"><td class="item-name">V1 Shutdown</td><td class="owner">Raf</td><td>Remaining reports and data moved off the old platform, and the old platform decommissioned.</td></tr>
 <tr id="item-data-export-tool"><td class="item-name">Data Export Tool</td><td class="owner">Alex (PT)</td><td>Self-serve spreadsheet export of transport data with chosen filters and fields.</td></tr>
-<tr id="item-fix-email-parser-facility-problem-qa-dispatch-validation-and-autocomplete-display"><td class="item-name">Fix Email Parser Facility problem / QA-Dispatch Validation and Autocomplete Display</td><td class="owner">JP</td><td>Emailed requests match the correct existing facility, and the dispatcher&#x27;s address confirmation shows what was matched.</td></tr>
+<tr id="item-fix-email-parser-facility-problem-qa-dispatch-validation-and-autocomplete-display" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Fix Email Parser Facility problem / QA-Dispatch Validation and Autocomplete Display</td><td class="owner">JP</td><td>Emailed requests match the correct existing facility, and the dispatcher&#x27;s address confirmation shows what was matched.</td></tr>
 <tr id="item-billing-resubmission-workflow-a"><td class="item-name">Billing Resubmission Workflow (A)</td><td class="owner">Roman</td><td>Ability for billing personnel to void, edit, and resubmit denied and partially paid claims as needed to work claims to completion.</td></tr>
 <tr id="item-payer-table-rework"><td class="item-name">Payer Table Rework</td><td class="owner">Roman</td><td>Payer table rebuilt to carry detailed contract terms per payer, with payer identities consolidated.</td></tr>
-<tr id="item-permissions-overhaul-incl-jp"><td class="item-name">Permissions Overhaul (incl. JP)</td><td class="owner">Raf</td><td>Permissions rebuilt so each layer (role, individual grants, tenant features) can narrow the one before it, with a per-action register.</td></tr>
-<tr id="item-driver-vehicle-assignment-fix"><td class="item-name">Driver Vehicle Assignment Fix</td><td class="owner">JP</td><td>Echo1 becomes the source of truth for driver-vehicle assignment, per trip, with one-way sync to Samsara and dispatcher-only changes.</td></tr>
-<tr id="item-overhaul-the-processing-workflow"><td class="item-name">Overhaul the processing workflow</td><td class="owner">Victor</td><td>Redesigned screen and steps for reviewing, correcting and marking a completed ride processed for billing.</td></tr>
+<tr id="item-permissions-overhaul-incl-jp" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Permissions Overhaul (incl. JP)</td><td class="owner">Raf</td><td>Permissions rebuilt so each layer (role, individual grants, tenant features) can narrow the one before it, with a per-action register.</td></tr>
+<tr id="item-driver-vehicle-assignment-fix" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Driver Vehicle Assignment Fix</td><td class="owner">JP</td><td>Echo1 becomes the source of truth for driver-vehicle assignment, per trip, with one-way sync to Samsara and dispatcher-only changes.</td></tr>
+<tr id="item-overhaul-the-processing-workflow" class=done><td class="item-name"><span class=done-mark>&#10003;</span>Overhaul the processing workflow</td><td class="owner">Victor</td><td>Redesigned screen and steps for reviewing, correcting and marking a completed ride processed for billing.</td></tr>
 <tr id="item-nist-800-53-compliance"><td class="item-name">NIST 800-53 Compliance</td><td class="owner">Raf</td><td>Echo1&#x27;s security controls, documentation and evidence aligned with the NIST 800-53 federal security framework.</td></tr>
 <tr id="item-crisis-rebuild-manager-dispatch-approval"><td class="item-name">Crisis Rebuild &amp; Manager Dispatch Approval</td><td class="owner">JP</td><td>Crisis-versus-scheduled classification carried from intake to billing, plus manager approval before dispatch where required.</td></tr>
 <tr id="item-eta-logic-upgrade"><td class="item-name">ETA Logic Upgrade</td><td class="owner">Victor</td><td>Separate contractual and operational arrival clocks, and a missed crisis ETA report.</td></tr>
@@ -260,7 +284,7 @@ table.desc tr{scroll-margin-top:90px}
 
 <footer>
   <p>Source: the 260917 Echo1 Priorities sheet. Tickets are in the Echo1 &middot; Wave 2 board in ClickUp.</p>
-  <p class="mono">Internal &middot; Pvragon &middot; built 2026-09-18</p>
+  <p class="mono">Internal &middot; Pvragon &middot; built 2026-10-22</p>
 </footer>
 
 </div>
@@ -320,7 +344,7 @@ table.desc tr{scroll-margin-top:90px}
   var pan = viewer.querySelector('.pan');
   var vtitle = viewer.querySelector('.vtitle');
   var zlevel = viewer.querySelector('.zlevel');
-  var svg = null, home = null, natW = 0, natH = 0, z = 1, tx = 0, ty = 0;
+  var svg = null, home = null, homeMax = '', natW = 0, natH = 0, z = 1, tx = 0, ty = 0;
   function draw() {
     pan.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + z + ')';
     zlevel.textContent = Math.round(z * 100) + '%';
@@ -356,6 +380,7 @@ table.desc tr{scroll-margin-top:90px}
     var cap = fig.querySelector('figcaption .nm');
     vtitle.textContent = cap ? cap.textContent : (fig.getAttribute('data-title') || '');
     pan.style.width = natW + 'px';
+    homeMax = svg.style.maxWidth; svg.style.maxWidth = 'none';   // the page caps a figure; the viewer must not
     pan.appendChild(svg);
     viewer.hidden = false;
     document.body.classList.add('viewing');
@@ -364,6 +389,7 @@ table.desc tr{scroll-margin-top:90px}
   function close() {
     if (!svg) return;
     svg.style.width = '100%';
+    svg.style.maxWidth = homeMax;
     home.insertBefore(svg, home.firstChild);
     svg = null; home = null;
     viewer.hidden = true;
@@ -432,5 +458,35 @@ table.desc tr{scroll-margin-top:90px}
 })();
 </script>
 <script src="/prez-header.js" defer></script>
+<script id="slip-arrows">
+(function(){
+  var wrap=document.querySelector('.grid-wrap'); if(!wrap) return;
+  var svg=wrap.querySelector('svg.slip-arrows'), NS='http://www.w3.org/2000/svg';
+  function draw(){
+    var W=wrap.getBoundingClientRect(), sx=wrap.scrollLeft, sy=wrap.scrollTop;
+    svg.setAttribute('width',1); svg.setAttribute('height',1);   // overflow:visible draws the paths; a full-size layer would add a scrollbar
+    svg.innerHTML='<defs><marker id="slip-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>';
+    wrap.querySelectorAll('[data-move-from]').forEach(function(g){
+      if(!g.offsetParent) return;
+      var t=wrap.querySelector('[data-move-to~="'+g.getAttribute('data-move-from')+'"]'); if(!t||!t.offsetParent) return;
+      // elbow route in the column's left gutter, so the line never crosses another item's text
+      var a=g.getBoundingClientRect(), b=t.getBoundingClientRect(), td=g.closest('td').getBoundingClientRect();
+      var gx=td.left+5-W.left+sx, y1=a.top+a.height/2-W.top+sy, y2=b.top+Math.min(b.height/2,11)-W.top+sy;
+      var x1=a.left-W.left+sx-1, x2=b.left-W.left+sx-3;
+      if(y2-y1<6) return;
+      var p=document.createElementNS(NS,'path');
+      p.setAttribute('d','M'+x1+','+y1+' H'+gx+' V'+y2+' H'+x2);
+      p.setAttribute('fill','none'); p.setAttribute('stroke','currentColor'); p.setAttribute('stroke-width','1.6');
+      p.setAttribute('stroke-dasharray','5 4'); p.setAttribute('marker-end','url(#slip-head)'); p.setAttribute('opacity','.9');
+      p.setAttribute('stroke-linejoin','round');
+      svg.appendChild(p);
+    });
+  }
+  window.addEventListener('resize',draw); window.addEventListener('load',draw);
+  wrap.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',draw);});
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(draw);
+  draw();
+})();
+</script>
 </body>
 </html>
