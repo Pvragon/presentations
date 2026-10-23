@@ -595,7 +595,7 @@ table.slips tr.done td{color:var(--text-muted)}
   // sticky headers sit below the page's own fixed share header, if there is one
   // the hosted prez page floats a Home/Share/Comments pill (closed shadow root, ~52px tall) over the top right;
   // it cannot be measured from here, so the sticky header clears it by hostname
-  root.style.setProperty('--sticky-top', /(^|\.)prgn\.ai$/.test(location.hostname)?'60px':'0px');
+  root.style.setProperty('--sticky-top', /(^|[.])prgn[.]ai$/.test(location.hostname)?'60px':'0px');
   // Visible = no closed <details> holds it and nothing hides it. Chrome lays out a collapsed section's content, so
   // offsetParent and getBoundingClientRect alone report phantom positions for it.
   function shown(el){ if(!el||!el.offsetParent||el.closest('details:not([open])')) return false; var e=el.closest('.entry')||el; return getComputedStyle(e).display!=='none'; }
