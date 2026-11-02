@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="prez-comments" content="on">
 <title>Scarab God Builds Compared</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -173,9 +174,9 @@ code{font-family:var(--mono);font-size:.88em}
 </style>
 <script>
 (function(){
-const MAP={"Cover of Darkness": "cards/cover-of-darkness.jpg", "Gisa and Geralf": "cards/gisa-and-geralf.jpg", "Underground Sea": "cards/underground-sea.jpg", "The Scarab God": "cards/the-scarab-god.jpg", "Crippling Fear": "cards/crippling-fear.jpg", "Zombie Master": "cards/zombie-master.jpg", "Counterspell": "cards/counterspell.jpg", "Sacrifice": "cards/sacrifice.jpg"};
+const MAP={"Cover of Darkness": "cards/cover-of-darkness.jpg", "Underground Sea": "cards/underground-sea.jpg", "Gisa and Geralf": "cards/gisa-and-geralf.jpg", "Crippling Fear": "cards/crippling-fear.jpg", "The Scarab God": "cards/the-scarab-god.jpg", "Zombie Master": "cards/zombie-master.jpg", "Counterspell": "cards/counterspell.jpg", "Sacrifice": "cards/sacrifice.jpg"};
 if(!Object.keys(MAP).length)return;
-const re=new RegExp("(?<![A-Za-z0-9])(Cover of Darkness|Gisa and Geralf|Underground Sea|The Scarab God|Crippling Fear|Zombie Master|Counterspell|Sacrifice)(?![A-Za-z0-9])",'g');
+const re=new RegExp("(?<![A-Za-z0-9])(Cover of Darkness|Underground Sea|Gisa and Geralf|Crippling Fear|The Scarab God|Zombie Master|Counterspell|Sacrifice)(?![A-Za-z0-9])",'g');
 const root=document.querySelector('.wrap')||document.body;
 const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){const p=n.parentElement;if(!p||p.closest('script,style,svg,title,.cardref,#cardpop'))return NodeFilter.FILTER_REJECT;re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;}});
 const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
