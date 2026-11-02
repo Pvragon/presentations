@@ -177,9 +177,9 @@ code{font-family:var(--mono);font-size:.88em}
 </style>
 <script>
 (function(){
-const MAP={"Gisa and Geralf": "cards/gisa-and-geralf.jpg", "Underground Sea": "cards/underground-sea.jpg", "The Scarab God": "cards/the-scarab-god.jpg", "Crippling Fear": "cards/crippling-fear.jpg", "Zombie Master": "cards/zombie-master.jpg", "Counterspell": "cards/counterspell.jpg", "Graf Harvest": "cards/graf-harvest.jpg", "Sacrifice": "cards/sacrifice.jpg"};
+const MAP={"Underground Sea": "cards/underground-sea.jpg", "Gisa and Geralf": "cards/gisa-and-geralf.jpg", "The Scarab God": "cards/the-scarab-god.jpg", "Crippling Fear": "cards/crippling-fear.jpg", "Zombie Master": "cards/zombie-master.jpg", "Counterspell": "cards/counterspell.jpg", "Graf Harvest": "cards/graf-harvest.jpg", "Sacrifice": "cards/sacrifice.jpg"};
 if(!Object.keys(MAP).length)return;
-const re=new RegExp("(?<![A-Za-z0-9])(Gisa and Geralf|Underground Sea|The Scarab God|Crippling Fear|Zombie Master|Counterspell|Graf Harvest|Sacrifice)(?![A-Za-z0-9])",'g');
+const re=new RegExp("(?<![A-Za-z0-9])(Underground Sea|Gisa and Geralf|The Scarab God|Crippling Fear|Zombie Master|Counterspell|Graf Harvest|Sacrifice)(?![A-Za-z0-9])",'g');
 const root=document.querySelector('.wrap')||document.body;
 const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){const p=n.parentElement;if(!p||p.closest('script,style,svg,title,.cardref,#cardpop'))return NodeFilter.FILTER_REJECT;re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;}});
 const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
