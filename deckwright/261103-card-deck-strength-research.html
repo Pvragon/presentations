@@ -140,11 +140,18 @@
 .tabs button{flex:0 0 auto;font:600 13.5px var(--sans);color:var(--text-muted);background:var(--card-2);border:1px solid var(--line-strong);border-radius:999px;padding:7px 14px;cursor:pointer;white-space:nowrap}
 .tabs button:hover{color:var(--text-main)}
 .tabs button[aria-selected="true"]{color:var(--text-main);background:var(--accent-primary);border-color:var(--accent-secondary)}
-.tabpanel[hidden]{display:none}
 @media (min-width:700px){.tabs{flex-wrap:wrap;overflow-x:visible}}
+.tabpanel[hidden]{display:none}
 .tabpanel{overflow-wrap:anywhere;min-width:0}
 .tabpanel pre{overflow-x:auto;max-width:100%}
 .tabpanel :not(pre)>code{overflow-wrap:anywhere;word-break:break-word}
+sup.cite{line-height:0;margin-left:1px}
+sup.cite a{font-size:11px;font-weight:700;color:var(--heading);text-decoration:none;padding:0 2px}
+.cite a,.evtag{position:relative;cursor:help}
+.evtag{font-size:11px;font-weight:700;color:var(--text-subtle);text-decoration:none;border-bottom:1px dotted var(--text-subtle)}
+.cite a::after,.evtag::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:max-content;max-width:min(340px,80vw);padding:8px 10px;border-radius:8px;background:var(--accent-primary);color:var(--text-main);border:1px solid var(--line-strong);font:400 12.5px/1.45 var(--sans);text-align:left;white-space:normal;overflow-wrap:anywhere;display:none;pointer-events:none;z-index:20}
+.cite a:hover::after,.cite a:focus-visible::after,.evtag:hover::after{display:block}
+.tabpanel li:target{background:var(--band-soft);border-radius:6px}
 </style></head>
 <body>
 <canvas id="wave-bg" aria-hidden="true"></canvas>
@@ -155,183 +162,203 @@
     <div class="eyebrow">Deckwright · Research · Card and deck strength</div>
     <img class="logo" alt="Pvragon" src="data:image/png;base64,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">
   </div>
-  <h1>Card and deck strength research</h1>
+  <h1>How to estimate card and deck strength in Magic</h1>
   
-  <div class="meta"></div>
+  <div class="meta"><span>Version 1.0.0</span><span>Updated 2026-11-03</span></div>
 </header>
 
 <article><nav class="tabs" role="tablist"><button role="tab" data-tab="synthesis" aria-selected="true">Synthesis</button><button role="tab" data-tab="sp1" aria-selected="false">SP1 Ground truth</button><button role="tab" data-tab="sp2" aria-selected="false">SP2 Statistical</button><button role="tab" data-tab="sp3" aria-selected="false">SP3 Deterministic</button><button role="tab" data-tab="sp4" aria-selected="false">SP4 Decomposed sim</button><button role="tab" data-tab="sp5" aria-selected="false">SP5 Self-play RL</button><button role="tab" data-tab="sp6" aria-selected="false">SP6 Card encoding</button><button role="tab" data-tab="sp7" aria-selected="false">SP7 Engines & AI</button></nav><section class="tabpanel" role="tabpanel" id="tab-synthesis">
-<p>Scorecard: <code>docs/research/sp8-synthesis/scorecard.json</code>. Tool: <code>python3 docs/research/sp8-synthesis/spike/rank.py report docs/research/sp8-synthesis/scorecard.json</code>.
-Scores are 1-5, higher is better for us (cheaper, less data, easier, better evidence). Every score cites a landed SP1-SP7 note.</p>
-<h2>Answer</h2>
-<p>Build <strong>Feature-based pod ratings (Deckwright C21 features + sim pieces, rating residual)</strong>. It is a
-conditional logit over real Commander pods: each deck&rsquo;s strength is a weighted sum of Deckwright C21
-features and SP4 consistency pieces, plus a small per-deck rating that is shrunk to zero [2][3][4][6].
-It scores decks never seen in data, is checked by pod-winner log loss [1], and needs about 1,000 cEDH
-pods with decklists that TopDeck.gg already exposes [1]. Self-play RL is deferred [5].</p>
-<h2>Ranking</h2>
-<p>Weights: accuracy_evidence 0.25, validation_target 0.15, data_needs 0.20, compute_cost 0.10,
-multiplayer_fit 0.15, build_effort 0.15. Reasons: evidence matters most; outcome data is the binding
-constraint (SP1, SP4), so data counts more than compute, which is cheap for all but engine methods.</p>
+<h2>The short answer</h2>
+<p>Learn strength from real games, the way Moneyball did for baseball. Collect tables of four Commander
+players where we know every decklist and who won. Describe each deck by what its cards do, using the
+features Deckwright&rsquo;s card parser already reads: how much fast mana, card draw, tutors and interaction
+it has, and how often it can assemble its combo by turn 6<sup class="cite"><a href="#synthesis-ref-3" data-tip="Deterministic models (SP3 tab): Deckwright’s rules-text scoring and its hand-judged benchmark.">3</a><span class="cite-sep">,</span><a href="#synthesis-ref-4" data-tip="Piece simulation (SP4 tab): mana, draw, combo and interaction pieces, and how to combine them.">4</a></sup>. Then fit a model that learns how much each
+of those features adds to a deck&rsquo;s chance of winning. A deck&rsquo;s strength is its predicted win chance at
+a four-player table. A card&rsquo;s strength is how much that prediction moves when the card goes in or out.</p>
+<p>The game data to start exists today. TopDeck.gg publishes table-by-table results from competitive
+Commander (cEDH) tournaments, with decklists, through a free API<sup class="cite"><a href="#synthesis-ref-1" data-tip="Ground truth data (SP1 tab): what outcome data exists for Magic and how to validate an estimate.">1</a><span class="cite-sep">,</span><a href="#synthesis-ref-8" data-tip="TopDeck.gg tournament API. https://topdeck.gg/docs/tournaments-v2">8</a></sup>. About 1,000 tables is enough for a
+first model, and fitting it takes seconds on a laptop<sup class="cite"><a href="#synthesis-ref-1" data-tip="Ground truth data (SP1 tab): what outcome data exists for Magic and how to validate an estimate.">1</a><span class="cite-sep">,</span><a href="#synthesis-ref-2" data-tip="Statistical methods (SP2 tab): ratings, deck-stat models, plus-minus and the games each needs.">2</a></sup>.</p>
+<p>Full game simulation with self-learning AI players comes last in the plan. It costs 15 to 45 hours of
+computing per deck on this machine, and nobody has shown it working for four-player Magic<sup class="cite"><a href="#synthesis-ref-5" data-tip="Self-learning players (SP5 tab): what AlphaZero-style training would cost for Commander.">5</a></sup>.</p>
+<h2>Why this is hard</h2>
+<p>A strength number is only useful if it predicts who wins, and checking that needs game results.
+Baseball analysts had a century of box scores. Commander has very little public game data. Four
+players share a table, decks vary enormously, and most casual games are never recorded anywhere<sup class="cite"><a href="#synthesis-ref-1" data-tip="Ground truth data (SP1 tab): what outcome data exists for Magic and how to validate an estimate.">1</a></sup>.</p>
+<p>A method that only agrees with expert opinion has not been shown to predict winning.</p>
+<h2>The four ways to estimate strength</h2>
+<p><strong>Reading the cards.</strong> Score each card from its rules text, the way Deckwright does now: parse what the
+card does, then add up values for its effects. It needs no game data and works on any card, including
+brand-new ones. Its weakness is that the values are set by hand. On 344 pairs of cards that its authors
+judged by hand, Deckwright picks the same stronger card 88% of the time, but nobody has checked its
+scores against games won<sup class="cite"><a href="#synthesis-ref-3" data-tip="Deterministic models (SP3 tab): Deckwright’s rules-text scoring and its hand-judged benchmark.">3</a></sup>.
+Chess engines ran on hand-written scoring like this for decades, and they got much stronger once the
+weights were tuned against real game results<sup class="cite"><a href="#synthesis-ref-11" data-tip="Texel’s tuning method, Chess Programming Wiki. https://www.chessprogramming.org/Texel%27s_Tuning_Method">11</a></sup>. The recommendation adds that tuning step for Magic.</p>
+<p><strong>Statistics from game records.</strong> This is the Moneyball approach. The simplest version gives each deck
+a rating, like a chess Elo, that rises when it wins and falls when it loses. Ratings are the best-tested
+method anywhere, but they can&rsquo;t rate a deck that has never played, and telling a 30% deck from an
+average 25% deck takes about 610 games<sup class="cite"><a href="#synthesis-ref-2" data-tip="Statistical methods (SP2 tab): ratings, deck-stat models, plus-minus and the games each needs.">2</a></sup>. A second version describes each deck by its stats instead of
+its name, which lets it score unplayed decks. A third borrows basketball&rsquo;s plus-minus, which credits
+each player for how the team does while they are on the floor. Applied to Magic, it credits each card
+for how its decks do. Plus-minus needs a great deal of data per card, and nobody has published a use of
+it for Magic<sup class="cite"><a href="#synthesis-ref-2" data-tip="Statistical methods (SP2 tab): ratings, deck-stat models, plus-minus and the games each needs.">2</a></sup>.</p>
+<p><strong>Simulating pieces of the game.</strong> Some questions about a deck can be answered exactly with probability,
+or with a quick simulation, without playing whole games. How often does it hit its land drops? How often
+does it see every combo piece by turn 6? How often does it have interaction by turn 4? Each answer is a
+number we can compute in under a second. On their own these numbers don&rsquo;t say how much each one matters
+for winning; that weight still has to come from game results<sup class="cite"><a href="#synthesis-ref-4" data-tip="Piece simulation (SP4 tab): mana, draw, combo and interaction pieces, and how to combine them.">4</a></sup>.</p>
+<p><strong>Simulating whole games.</strong> Run complete games between computer players, either an existing engine&rsquo;s
+built-in AI or players that teach themselves by playing millions of games, as AlphaZero did for chess
+and Go. Forge, the open-source engine with the only working four-player Commander AI, played 265 games
+an hour on this machine. That figure is a ceiling, because the 120-second game clock cut many games
+short<sup class="cite"><a href="#synthesis-ref-7" data-tip="Engines and AI (SP7 tab): Forge, XMage, Magarena, MageZero and Argentum, and the measured Forge speed.">7</a></sup>. Engine AIs are weak players, so engine win rates mix deck strength with poor piloting.
+Self-learning players would fix the piloting, but at the cost above, and with no published four-player
+result<sup class="cite"><a href="#synthesis-ref-5" data-tip="Self-learning players (SP5 tab): what AlphaZero-style training would cost for Commander.">5</a></sup>.</p>
+<h2>The recommendation, in more detail</h2>
+<p>Deckwright&rsquo;s card reading supplies the features. The piece simulations add consistency numbers, such as
+combo-by-turn-6 odds. Real game results set the weights.</p>
+<p>The model predicts, for each deck at a table, its chance of being the winner. Each deck also gets a
+small personal adjustment that grows only when its results clearly beat or trail what its features
+predict. A heavily played deck can then earn a rating of its own, while a new deck is scored from its
+features alone.</p>
+<p>It can score decks nobody has played, which plain ratings can&rsquo;t. Commander has far more possible decks
+than recorded games. Deckwright&rsquo;s existing scores become inputs the model can weigh.</p>
+<h2>How we would know it works</h2>
+<p>Hold back about 300 tournament tables the model never sees during fitting, split by date and by event.
+A good model predicts those winners better than a coin flip (25% each at four seats) and better than
+plain ratings on decks it has never seen.</p>
+<p>Two numbers set expectations. Showing that one deck wins 30% of the time against the 25% baseline takes
+about 610 games of that deck. Telling apart two decks five points apart takes about 1,150 games each<sup class="cite"><a href="#synthesis-ref-5" data-tip="Self-learning players (SP5 tab): what AlphaZero-style training would cost for Commander.">5</a></sup>.
+Claims about a single deck will therefore come from pooling games by commander.</p>
+<p>Confidence today is medium-low. Every part works on made-up test data, and nothing has yet been scored
+on real Commander games<sup class="cite"><a href="#synthesis-ref-2" data-tip="Statistical methods (SP2 tab): ratings, deck-stat models, plus-minus and the games each needs.">2</a><span class="cite-sep">,</span><a href="#synthesis-ref-4" data-tip="Piece simulation (SP4 tab): mana, draw, combo and interaction pieces, and how to combine them.">4</a></sup>.</p>
+<h2>What it needs</h2>
+<p>Phase one needs about 1,000 cEDH tables from 20 or more TopDeck.gg events, each with the winner and all
+four decklists. The API is free with an account key, and it asks for a visible credit<sup class="cite"><a href="#synthesis-ref-1" data-tip="Ground truth data (SP1 tab): what outcome data exists for Magic and how to validate an estimate.">1</a><span class="cite-sep">,</span><a href="#synthesis-ref-8" data-tip="TopDeck.gg tournament API. https://topdeck.gg/docs/tournaments-v2">8</a></sup>. Draft data from
+17Lands, which has far more games, is a cheap place to test the methods before Commander<sup class="cite"><a href="#synthesis-ref-9" data-tip="17Lands public datasets. https://www.17lands.com/public_datasets">9</a></sup>. For casual
+tables, EDHTop16 and Playgroup.gg publish win rates by commander (Playgroup.gg tracks about 47,000 games
+a month) that can check the rankings but are too coarse to fit on<sup class="cite"><a href="#synthesis-ref-1" data-tip="Ground truth data (SP1 tab): what outcome data exists for Magic and how to validate an estimate.">1</a><span class="cite-sep">,</span><a href="#synthesis-ref-10" data-tip="Playgroup.gg commander tier list. https://playgroup.gg/commanders/tier-list">10</a></sup>.</p>
+<p>Three things are missing from public data. There are no table-level logs of casual Commander games.
+TopDeck.gg records no turn order or game length. Nothing separates a strong pilot from a strong deck<sup class="cite"><a href="#synthesis-ref-1" data-tip="Ground truth data (SP1 tab): what outcome data exists for Magic and how to validate an estimate.">1</a></sup>.</p>
+<h2>The plan</h2>
+<ol>
+<li><strong>Test set and baselines.</strong> Build the TopDeck.gg fetcher and match decklists to cards, about one to
+   two days of work. Score three simple predictors on held-back tables: everyone equal, plain ratings,
+   and Deckwright&rsquo;s current scores. Done when 1,000 tables are loaded and all three are scored.</li>
+<li><strong>The feature model.</strong> Fit the weights on Deckwright&rsquo;s features and the piece simulations. Done when
+   it beats plain ratings on held-back decks and its weights point the sensible way (more fast mana
+   helps, for example).</li>
+<li><strong>Card values for Deckwright.</strong> Turn the fitted weights into a value for each card, and compare them
+   with Deckwright&rsquo;s current rankings on held-back decks. Done when the new values predict winners
+   better than Deckwright alone. Then they go to the Deckwright build.</li>
+<li><strong>Simulation, only if needed.</strong> If the model still misses on high-skill or combo decks, add Forge
+   simulation results as an extra input, then consider self-learning players. Done only if the
+   addition improves predictions by more than run-to-run noise.</li>
+</ol>
+<h2>What it means for Deckwright</h2>
+<p>Deckwright&rsquo;s parser has a record for 35,353 cards, 23,766 of
+them with at least one parsed role, including who decides, who pays and what the drawbacks are. Those become the model&rsquo;s features, and its card
+encoding should stay as it is. Forge&rsquo;s card scripts agreed with it on 67% of features across 83 staple
+cards, and the misses were mostly mapping gaps, so Forge works best as an outside checker each time the
+parser changes<sup class="cite"><a href="#synthesis-ref-6" data-tip="Card encoding (SP6 tab): Deckwright against Forge, XMage, MTGJSON and Scryfall, with the Forge cross-check.">6</a></sup>.</p>
+<p>Deckwright has no game results to check against. Its only accuracy evidence is agreement with its
+authors, and player count and power bracket enter as assumptions that nothing measures. The feature model adds the missing check against game results. Deckwright keeps its advantages: it
+needs no game data, little computing, and it is already built.</p>
+<p>Cards Deckwright can&rsquo;t fully parse, such as Pendant of Prosperity, should get wider uncertainty, since a
+feature it couldn&rsquo;t read is missing from the prediction.</p>
+<h2>What we learned from the existing engines</h2>
+<ul>
+<li>Forge is the only engine with a working four-player Commander AI. Its GPL license means we would
+  talk to it over a network connection and never build it into our code<sup class="cite"><a href="#synthesis-ref-7" data-tip="Engines and AI (SP7 tab): Forge, XMage, Magarena, MageZero and Argentum, and the measured Forge speed.">7</a></sup>.</li>
+<li>Forge&rsquo;s game clock counts a game cut off by the clock as a win. Its win rates need the clock
+  raised, or cut-off games flagged, before we use them<sup class="cite"><a href="#synthesis-ref-7" data-tip="Engines and AI (SP7 tab): Forge, XMage, Magarena, MageZero and Argentum, and the measured Forge speed.">7</a></sup>.</li>
+<li>XMage&rsquo;s default AI can see hidden cards, which flatters decks that react to opponents.
+  MageZero, a fork of XMage, is the best existing template for self-learning players<sup class="cite"><a href="#synthesis-ref-7" data-tip="Engines and AI (SP7 tab): Forge, XMage, Magarena, MageZero and Argentum, and the measured Forge speed.">7</a></sup>.</li>
+<li>Magarena has the simplest deck-strength test: play two decks against each other with a fixed AI,
+  many times. It is two-player only and no longer maintained<sup class="cite"><a href="#synthesis-ref-7" data-tip="Engines and AI (SP7 tab): Forge, XMage, Magarena, MageZero and Argentum, and the measured Forge speed.">7</a></sup>.</li>
+</ul>
+<h2>How the methods ranked</h2>
+<p>Scores run from 1 to 5 on evidence of accuracy, a clear accuracy check, data needs, computing cost, fit
+for four-player games and build effort, weighted most toward evidence and data needs.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
-<th>rank</th>
-<th>id</th>
-<th>score</th>
+<th>Rank</th>
+<th>Method</th>
+<th>Score</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>1</td>
-<td>feature-ratings</td>
+<td>Feature model (recommended)</td>
 <td>3.90</td>
 </tr>
 <tr>
 <td>2</td>
-<td>deck-stat</td>
+<td>Deck-stat model</td>
 <td>3.65</td>
 </tr>
 <tr>
 <td>3</td>
-<td>ratings</td>
+<td>Deck ratings</td>
 <td>3.65</td>
 </tr>
 <tr>
 <td>4</td>
-<td>deckwright</td>
+<td>Deckwright as is</td>
 <td>3.35</td>
 </tr>
 <tr>
 <td>5</td>
-<td>pm-prior</td>
+<td>Plus-minus, Deckwright start</td>
 <td>3.15</td>
 </tr>
 <tr>
 <td>6</td>
-<td>heuristic</td>
+<td>Card-field formula</td>
 <td>3.10</td>
 </tr>
 <tr>
 <td>7</td>
-<td>plus-minus</td>
+<td>Plus-minus</td>
 <td>3.10</td>
 </tr>
 <tr>
 <td>8</td>
-<td>forge-sim</td>
+<td>Forge simulation</td>
 <td>3.05</td>
 </tr>
 <tr>
 <td>9</td>
-<td>decomp-sim</td>
+<td>Piece simulation</td>
 <td>2.95</td>
 </tr>
 <tr>
 <td>10</td>
-<td>rl-anchored</td>
+<td>Self-learning, checked</td>
 <td>2.85</td>
 </tr>
 <tr>
 <td>11</td>
-<td>rl-deck</td>
+<td>Self-learning per deck</td>
 <td>2.75</td>
 </tr>
 </tbody>
 </table></div>
-<p>Top choice stable under ±0.1 weight shifts: yes</p>
-<p>The lead is 0.25 over deck-stat and ratings. No single ±0.1 shift of any weight moves the top.
-Plain ratings would win only if outcome data were plentiful per deck; it is not.</p>
-<h2>Recommendation</h2>
-<p><strong>Feature-based pod ratings (Deckwright C21 features + sim pieces, rating residual)</strong>, components
-<code>ratings</code>, <code>deck-stat</code>, <code>deckwright</code>, <code>decomp-sim</code>.
-- Model: P(seat i wins) = softmax over the pod of (w · x_i + r_i). x_i is C21 feature counts (mana,
-  draw, tutor, interaction, veto cost) plus SP4 pieces (on-curve, combo by turn 6, interaction by turn 4) [3][4][6].
-  r_i is a deck or commander rating with a strong L2 penalty, so it moves only when data supports it [2].
-- Why: ratings alone are the best-validated method but cannot score an unplayed deck and need about 610
-  games per deck [1][2]. Shared feature weights fix both. Deterministic structure plus fitted weights beat
-  hand weights in chess (Texel) [3]; Deckwright&rsquo;s own scores then become features, not verdicts [3].
-- Card strength: the marginal change in w · x when a card is added or cut. It is explainable through C21 [6].
-- Not chosen now: plus-minus (data-hungry per card), Forge simulation (biased pilot, 264 games/h), RL
-  (15-45 h per deck, no four-player evidence) [2][5][7].</p>
-<h2>Reliability</h2>
-<p>How we would know it works (<code>docs/research/sp1-ground-truth/validation.md</code> [1]):
-- Primary metric: <strong>log loss</strong> on pod winners, and <strong>skill</strong> = 1 - log_loss / ln(seats). Skill above 0 beats
-  chance; ln 4 = 1.386 for four seats. Secondary: Brier and top-1 accuracy.
-- Hold-out split by time and by event, fixed before tuning.
-- Target: skill above 0.02 on about 300 held-out pods, and above plain ratings on decks unseen in training.
-- Deck-level claims: a 30% deck vs the 25% seat baseline needs <strong>610</strong> games (SP2, power 0.8) [2]. Separating
-  two decks 5 points apart through agents needs <strong>1,153</strong> games per deck at four seats (SP5) [5].
-  So single-deck claims must pool by commander; the model is judged on game-level log loss.
-- Today&rsquo;s confidence: medium-low. Every component works on synthetic data only; none is yet scored on
-  real Commander pods [2][4]. Deckwright&rsquo;s 0.881 pair agreement is with its authors, not outcomes [3].</p>
-<h2>Data and compute</h2>
-<ul>
-<li>Phase 1 data: about 1,000 cEDH pods with winner and all four decklists from the TopDeck.gg API, 20+
-  events, 700 fit / 300 hold-out, free with a key [1]. 17Lands PremierDraft as a high-volume control [1].</li>
-<li>Phase 2 data: EDHTop16 standings and Playgroup.gg commander win rates (about 47k games a month) as
-  coarse cross-checks for casual tables [1].</li>
-<li>Phase 3 data: a tracker partnership for casual per-game logs, if casual pods disagree with cEDH [1].</li>
-<li>Compute for the recommendation: seconds per fit on a laptop; C21 lookups and SP4 pieces under 1 s per deck [4][6].</li>
-<li>Engine compute, only for later phases: Forge measured 264 games per hour (264.5, 8 workers, four seats,
-  120 s clock) in <code>docs/research/sp7-engines-ai/forge-speed.json</code> [7]. That is about 3.8 h per 1,000 games and an upper bound.</li>
-<li>RL, if ever: 15-45 h per deck on this host&rsquo;s 20 threads; a general agent is 63 days on Forge [5].</li>
-</ul>
-<h2>Roadmap</h2>
-<ol>
-<li><strong>Validation set and baselines.</strong> Build the TopDeck.gg fetcher and decklist-to-card mapper (1-2 days) [1].
-   Score uniform, plain ratings and Deckwright-only predictions by log loss on a time-split hold-out [1][2].
-   <strong>Exit:</strong> 1,000 pods with full decklists loaded, drop rate reported, baseline skill numbers recorded.</li>
-<li><strong>Feature-based pod ratings.</strong> Fit w on C21 features and SP4 pieces, residual r with cross-validated L2 [2][4][6].
-   <strong>Exit:</strong> hold-out skill at least 0.02 and better than plain ratings on unseen decks; weights have sane signs.</li>
-<li><strong>Card attribution and Deckwright feed.</strong> Turn w into per-card marginal values; add pm-prior for staples
-   with enough seats; compare with Deckwright&rsquo;s current ranks [2][3].
-   <strong>Exit:</strong> card values agree with outcomes better than Deckwright alone on held-out decks, then hand to the Deckwright build run.</li>
-<li><strong>Engine and RL features (optional).</strong> Only if a validated gap remains for high-skill or combo decks:
-   add Forge sim win rates as a biased feature, then the SP5 per-deck agent route [5][7].
-   <strong>Exit:</strong> the added feature improves hold-out log loss by more than its noise across repeated splits.</li>
-</ol>
-<h2>Deckwright</h2>
-<p>Deckwright today trails the recommendation on three criteria (<code>gaps(scorecard)</code>) [3]:
-- validation_target (2 vs 5): it has only a hand-judged pair benchmark, no outcome target.
-- accuracy_evidence (2 vs 4): 0.881 pair agreement and tau 0.642 measure agreement with its authors [3].
-- multiplayer_fit (2 vs 4): bracket and player count enter as priors, never measured against pods [3].
-It already leads on data needs, compute cost and build effort.
-What Deckwright already gives the recommendation:
-- C21 effect rows: the feature vector x, covering 35,353 cards, with decider, payer and drawbacks [6].
-- <code>packages/strength</code> scores per job and context, usable as extra features or as a prior [3].
-- Parse coverage per card, which should widen uncertainty where parsing failed (Pendant, Overkill) [3].
-Assessment only; nothing is sent to the Deckwright build run here.</p>
-<h2>Card encoding</h2>
-<p>SP6 verdict: <strong>keep</strong>. Deckwright C21 stays the encoding for strength features [6].
-- C21 names all six shared features plus decider, payer and drawbacks; Forge leaves these implicit [6].
-- Forge scripts are a read-only test oracle: 67% agreement on 83 staples, misses mostly mapping gaps [6].
-- Re-run the cross-check after each parser bump; take care with tutor and steal features [6].</p>
-<h2>Engine lessons</h2>
-<p>From SP7 (<code>docs/research/sp7-engines-ai/README.md</code>) [7]:
-- Forge is the only engine with a working four-player Commander AI; GPL-3.0, so talk to it over a socket [7].
-- Forge counts clock-capped games as wins; flag or raise the clock before using its win rates [7].
-- XMage&rsquo;s default MAD bot sees hidden cards, which inflates reactive decks; MageZero on XMage is the RL template [7].
-- Magarena&rsquo;s DeckStrCal is the simplest deck-strength template and pairs honest and cheat AIs; 1v1 only, dormant [7].
-- Engine win rates measure deck times a weak pilot: a biased feature, never ground truth [7].</p>
-<h2>Ground truth</h2>
-<p>What validates the recommendation today (<code>docs/research/sp1-ground-truth/README.md</code> [1]):
-- cEDH pod winners with decklists from the TopDeck.gg API; EDHTop16 standings as a cross-check [1].
-- Commander-level win rates from Playgroup.gg for casual tables, as a ranking check only [1].
-- 17Lands per-game Limited data to test methods at volume before Commander [1].
-What is missing [1]:
-- Public casual four-seat per-game logs.
-- Turn order and game length in TopDeck.gg tables.
-- Any way to separate pilot skill from deck strength; draws carry no winner.</p>
+<p>Shifting any one weight by 0.1 leaves the feature model first. Plain ratings need many games per deck, and Commander has few<sup class="cite"><a href="#synthesis-ref-2" data-tip="Statistical methods (SP2 tab): ratings, deck-stat models, plus-minus and the games each needs.">2</a></sup>.</p>
 <h2>Sources</h2>
 <ol>
-<li>SP1 ground truth: <code>docs/research/sp1-ground-truth/README.md</code>, <code>docs/research/sp1-ground-truth/validation.md</code></li>
-<li>SP2 statistical methods: <code>docs/research/sp2-statistical/sp2-statistical-methods.md</code></li>
-<li>SP3 deterministic models: <code>docs/research/sp3-deterministic/note.md</code></li>
-<li>SP4 decomposed simulation: <code>docs/research/sp4-decomposed-sim/note.md</code></li>
-<li>SP5 self-play RL: <code>docs/research/sp5-self-play-rl/note.md</code></li>
-<li>SP6 card encoding: <code>docs/research/sp6-card-encoding/sp6-card-encoding.md</code></li>
-<li>SP7 engines and AI: <code>docs/research/sp7-engines-ai/README.md</code>, <code>docs/research/sp7-engines-ai/forge-speed.json</code></li>
+<li id="synthesis-ref-1">Ground truth data (<a href="#sp1" class="tablink">SP1 tab</a>): what outcome data exists for Magic and how to validate an estimate.</li>
+<li id="synthesis-ref-2">Statistical methods (<a href="#sp2" class="tablink">SP2 tab</a>): ratings, deck-stat models, plus-minus and the games each needs.</li>
+<li id="synthesis-ref-3">Deterministic models (<a href="#sp3" class="tablink">SP3 tab</a>): Deckwright&rsquo;s rules-text scoring and its hand-judged benchmark.</li>
+<li id="synthesis-ref-4">Piece simulation (<a href="#sp4" class="tablink">SP4 tab</a>): mana, draw, combo and interaction pieces, and how to combine them.</li>
+<li id="synthesis-ref-5">Self-learning players (<a href="#sp5" class="tablink">SP5 tab</a>): what AlphaZero-style training would cost for Commander.</li>
+<li id="synthesis-ref-6">Card encoding (<a href="#sp6" class="tablink">SP6 tab</a>): Deckwright against Forge, XMage, MTGJSON and Scryfall, with the Forge cross-check.</li>
+<li id="synthesis-ref-7">Engines and AI (<a href="#sp7" class="tablink">SP7 tab</a>): Forge, XMage, Magarena, MageZero and Argentum, and the measured Forge speed.</li>
+<li id="synthesis-ref-8">TopDeck.gg tournament API. https://topdeck.gg/docs/tournaments-v2</li>
+<li id="synthesis-ref-9">17Lands public datasets. https://www.17lands.com/public_datasets</li>
+<li id="synthesis-ref-10">Playgroup.gg commander tier list. https://playgroup.gg/commanders/tier-list</li>
+<li id="synthesis-ref-11">Texel&rsquo;s tuning method, Chess Programming Wiki. https://www.chessprogramming.org/Texel%27s_Tuning_Method</li>
 </ol>
 </section><section class="tabpanel" role="tabpanel" id="tab-sp1" hidden><h2>SP1 Ground truth: outcome data inventory</h2>
 
@@ -462,87 +489,87 @@ Placement-aware metrics (rank of each seat, not just the winner) are future work
 (ridge regression on cards) and deck-stat regression. All four run in the spike
 <code>docs/research/sp2-statistical/spike/sp2stats.py</code> (stdlib Python) on 4-player pods where only
 the winner is known.</p>
-<p>Tags: [V] = checked this session (page fetched, or number reproduced by the spike).
-[GK] = general knowledge, not re-checked.</p>
+<p>Tags: <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> = checked this session (page fetched, or number reproduced by the spike).
+<abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> = general knowledge, not re-checked.</p>
 <h2>Ratings</h2>
 <p class="callout"><strong>How it works:</strong> Give each deck one number. Elo updates a rating after each game in proportion
-to how surprising the result was [GK] (https://en.wikipedia.org/wiki/Elo_rating_system [V]).
+to how surprising the result was <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> (https://en.wikipedia.org/wiki/Elo_rating_system <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>).
 Glicko-2 adds a rating deviation and a volatility, so a deck with few games has wide uncertainty
-[V] (http://www.glicko.net/glicko/glicko2.pdf). TrueSkill handles teams and free-for-all games
-with Bayesian factor graphs [GK] (https://en.wikipedia.org/wiki/TrueSkill). Weng and Lin&rsquo;s
+<abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (http://www.glicko.net/glicko/glicko2.pdf). TrueSkill handles teams and free-for-all games
+with Bayesian factor graphs <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> (https://en.wikipedia.org/wiki/TrueSkill). Weng and Lin&rsquo;s
 approximations (the basis of OpenSkill) give similar online updates for multiplayer rankings
-[V] (https://jmlr.org/papers/v12/weng11a.html, https://github.com/vivekjoshy/openskill.py).
+<abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (https://jmlr.org/papers/v12/weng11a.html, https://github.com/vivekjoshy/openskill.py).
 Plackett-Luce models a full finishing order as a chain of softmax choices
-[V] (https://cran.r-project.org/package=PlackettLuce). Bradley-Terry is its two-player case
-[GK] (https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model).
+<abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (https://cran.r-project.org/package=PlackettLuce). Bradley-Terry is its two-player case
+<abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> (https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model).
 Commander records usually keep only the winner. Cut Plackett-Luce to first place and you get the
 spike&rsquo;s model: P(deck i wins) = exp(r_i) / sum over the pod of exp(r_j). This is a conditional
-logit (https://en.wikipedia.org/wiki/Conditional_logistic_regression [GK]). The spike fits it in
+logit (https://en.wikipedia.org/wiki/Conditional_logistic_regression <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>). The spike fits it in
 one batch by maximum likelihood with a small L2 penalty, solved by Newton steps.</p>
 <p class="callout"><strong>Where it has worked:</strong> Chess (Elo, Glicko), Xbox matchmaking (TrueSkill), and open-source
-game ladders (OpenSkill) [GK]. Arena and MTGO matchmaking use hidden ratings [GK].</p>
+game ladders (OpenSkill) <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>. Arena and MTGO matchmaking use hidden ratings <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.</p>
 <p class="callout"><strong>Cost:</strong> Needs pod membership and the winner per game, plus several games per deck. Gives no
 card-level answer. A rating describes a deck <em>with its pilot</em>, and pilots are confounded with decks.</p>
 <p class="callout"><strong>Validation:</strong> Fit on earlier games and score later ones by log loss against the ln(4) baseline
-(see Validation). On the fixture world it recovers the true deck order with Spearman 0.98 [V].</p>
+(see Validation). On the fixture world it recovers the true deck order with Spearman 0.98 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <h2>Card win rates</h2>
 <p><strong>How it works:</strong> For each card, count the deck-seats whose deck holds it, and how many of
 those seats won. The baseline is not 0.5: in a pod of n the fair share is 1/n, so the spike sums
 <code>expected = sum(1/seats)</code> and shrinks toward it: <code>rate = (wins + k*b) / (games + k)</code> with
-<code>b = expected/games</code> and k = 20 prior games. A card in every deck rates exactly 1/seats [V].
+<code>b = expected/games</code> and k = 20 prior games. A card in every deck rates exactly 1/seats <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.
 17Lands&rsquo; GIH WR (win rate of games where the card was in hand: opening hand or drawn) and IWD
 (improvement when drawn: GIH WR minus win rate when not drawn) refine this for Limited using
-in-game draw data [GK] (https://www.17lands.com/metrics_definitions; page is script-rendered,
+in-game draw data <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> (https://www.17lands.com/metrics_definitions; page is script-rendered,
 definitions not re-read).</p>
 <p><strong>Where it has worked:</strong> 17Lands draft data, where tens of thousands of games per card per set
-make GIH WR the community&rsquo;s standard card-quality signal [GK]. EDHREC publishes inclusion rates,
-not win rates, which measure popularity rather than strength [GK] (https://edhrec.com).</p>
+make GIH WR the community&rsquo;s standard card-quality signal <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>. EDHREC publishes inclusion rates,
+not win rates, which measure popularity rather than strength <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> (https://edhrec.com).</p>
 <p><strong>Cost:</strong> Cheapest method: decklists plus winners. Its flaw is co-occurrence: a card that rides
 in strong decks inherits their wins. In the fixture world <code>card_passenger</code> adds nothing yet rates
-0.284 against a 0.25 baseline [V], because it mostly sits beside <code>card_strong</code> (0.347 [V]).
-Filler cards that happen to sit in strong decks reach 0.40 [V].</p>
+0.284 against a 0.25 baseline <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>, because it mostly sits beside <code>card_strong</code> (0.347 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>).
+Filler cards that happen to sit in strong decks reach 0.40 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p><strong>Validation:</strong> Compare against a known-effect card (a synthetic world, or a card added to a fixed
 set of decks). Needs <code>games_needed</code> deck-seats per card for a given effect size (see Spike results).</p>
 <h2>Plus-minus</h2>
 <p><strong>How it works:</strong> Adjusted plus-minus from basketball: regress each stint&rsquo;s point margin on
 indicators of who was on the floor, so each player is credited net of teammates
-[V] (https://www.82games.com/ilardi1.htm, Ilardi 2007). Regularised APM (RAPM) adds a ridge
-penalty because teammates are collinear [GK] (https://en.wikipedia.org/wiki/Ridge_regression,
+<abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (https://www.82games.com/ilardi1.htm, Ilardi 2007). Regularised APM (RAPM) adds a ridge
+penalty because teammates are collinear <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> (https://en.wikipedia.org/wiki/Ridge_regression,
 https://en.wikipedia.org/wiki/Plus%E2%80%93minus_(sports)). For Commander the spike uses one row
 per deck-seat, y = won - 1/seats, X = 0/1 per card in the deck, ridge with no intercept.</p>
-<p><strong>Where it has worked:</strong> NBA player evaluation (APM, RAPM and later RPM variants) [GK].
-Not known to be used for Magic cards in public [GK].</p>
+<p><strong>Where it has worked:</strong> NBA player evaluation (APM, RAPM and later RPM variants) <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.
+Not known to be used for Magic cards in public <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.</p>
 <p><strong>Cost:</strong> Same data as card win rates. Needs many distinct decks so cards are not perfectly
 collinear: two cards that always appear together cannot be separated by any amount of data.
 Shrinks rare cards to zero, which is safe but hides real effects until data piles up.
 No pair or synergy terms; adding them multiplies the parameter count.</p>
 <p><strong>Validation:</strong> In the fixture world it credits <code>card_strong</code> +0.133 per seat and gives
-<code>card_passenger</code> +0.0003 [V], where the raw win rate was fooled. A huge penalty (l2 = 1e6) shrinks
-all effects toward zero, as it should [V]. Real use needs cross-validated choice of <code>l2</code>.</p>
+<code>card_passenger</code> +0.0003 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>, where the raw win rate was fooled. A huge penalty (l2 = 1e6) shrinks
+all effects toward zero, as it should <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Real use needs cross-validated choice of <code>l2</code>.</p>
 <h2>Deck-stat regression</h2>
 <p><strong>How it works:</strong> Same conditional logit as Ratings, but each deck is described by a stat vector
 (fast mana count, average mana value, interaction count, and so on) instead of an identity.
-It returns one weight per stat, which is logistic regression on deck stats in a pod setting [GK].
+It returns one weight per stat, which is logistic regression on deck stats in a pod setting <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.
 Because weights are shared, it scores decks it has never seen.</p>
 <p><strong>Where it has worked:</strong> Win-probability models in sport and esports regress outcomes on
-pre-game features [GK]. Commander&rsquo;s &ldquo;power level&rdquo; talk and the bracket system&rsquo;s game-changer list
+pre-game features <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>. Commander&rsquo;s &ldquo;power level&rdquo; talk and the bracket system&rsquo;s game-changer list
 are informal versions: they name stats (fast mana, tutors, extra turns) thought to drive winning
-[V] (https://magic.wizards.com/en/news/announcements/introducing-commander-brackets-beta).</p>
+<abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (https://magic.wizards.com/en/news/announcements/introducing-commander-brackets-beta).</p>
 <p><strong>Cost:</strong> Needs decklists turned into stats, which is a feature-engineering job (SP8 territory).
 Stats correlate with each other and with pilot skill. Omitted stats bias the included ones.</p>
 <p><strong>Validation:</strong> On the fixture world it finds <code>fast_mana</code> = 1.01 (true card effect 1.2, diluted by
-per-deck noise) and <code>avg_cmc</code> = 0.18, which drives nothing [V]. Hold-out log loss on new decks is
+per-deck noise) and <code>avg_cmc</code> = 0.18, which drives nothing <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Hold-out log loss on new decks is
 the real test.</p>
 <h2>Validation</h2>
 <ul>
 <li><strong>Log loss:</strong> mean of -ln p(winner), p clipped at 1e-12. Baseline is mean ln(seats), ln 4 = 1.386
-  for 4-player pods. A proper scoring rule, so honest probabilities score best [GK].</li>
+  for 4-player pods. A proper scoring rule, so honest probabilities score best <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.</li>
 <li><strong>Brier:</strong> mean over games of the sum over seats of (p - won)^2. Uniform guessing in a 4-pod
-  scores 0.75 [V] (https://en.wikipedia.org/wiki/Brier_score).</li>
+  scores 0.75 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (https://en.wikipedia.org/wiki/Brier_score).</li>
 <li><strong>Top-1:</strong> share of games where the highest-probability deck won. Chance is 0.25.</li>
 <li><strong>Time order:</strong> fit on earlier games, score later ones. Random splits leak deck and meta drift.</li>
 <li><strong>Sample size:</strong> <code>games_needed(p0, p1)</code> is the one-sample two-sided normal approximation
-  (https://en.wikipedia.org/wiki/Sample_size_determination [GK]). It counts deck-seats, not pods.</li>
+  (https://en.wikipedia.org/wiki/Sample_size_determination <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>). It counts deck-seats, not pods.</li>
 <li><strong>Known-effect checks:</strong> synthetic worlds with planted cards (the fixture world) test whether a
   method can find a true effect and ignore a passenger. Every method here passes one.</li>
 </ul>
@@ -557,15 +584,15 @@ the real test.</p>
   conditional logit correct for opponents only if pods mix across levels often enough to link them.</li>
 <li><strong>Selection bias:</strong> records come from players who log games: tournament players (cEDH), app users,
   or streamers. Their decks, pilots and metas differ from kitchen-table play, and they may log wins
-  more than losses [GK] (https://en.wikipedia.org/wiki/Selection_bias).</li>
-<li><strong>Few public records:</strong> cEDH tournament standings exist (https://edhtop16.com [V]), but casual
+  more than losses <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr> (https://en.wikipedia.org/wiki/Selection_bias).</li>
+<li><strong>Few public records:</strong> cEDH tournament standings exist (https://edhtop16.com <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>), but casual
   game outcomes with full decklists are rare in public. Seat and turn order are rarely recorded,
   and the spike ignores them (bias named, not modelled). SP1 owns the data inventory.</li>
 </ul>
 <h2>Spike results</h2>
 <p>Command: <code>python3 docs/research/sp2-statistical/spike/sp2stats.py report --games G --decks D
 --features F</code> on the acceptance fixture world (16 decks, 2,000 four-player games, 20 draws,
-<code>card_strong</code> +1.2 log-strength, <code>card_passenger</code> +0). All numbers [V], reproduced this session.</p>
+<code>card_strong</code> +1.2 log-strength, <code>card_passenger</code> +0). All numbers <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>, reproduced this session.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -601,7 +628,7 @@ the real test.</p>
 </tbody>
 </table></div>
 <p>Sample size: telling a 30% card from the 25% baseline at alpha 0.05 and power 0.8 takes
-<code>games_needed(0.25, 0.30)</code> = 610 deck-seats. A 27% card takes 3,736; a 35% card takes 157 [V].
+<code>games_needed(0.25, 0.30)</code> = 610 deck-seats. A 27% card takes 3,736; a 35% card takes 157 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.
 So a card needs hundreds of logged games before its win rate means anything, which only a few
 hundred staples will reach in any plausible public dataset.</p>
 <h2>Verdict</h2>
@@ -631,78 +658,78 @@ Engine sources read at Forge <code>7c34365</code> (2026-11-03), XMage <code>5a57
 <p class="callout"><strong>rules-text.</strong> Parse oracle text into structured effects, then value the effects. Deckwright&rsquo;s
 <code>packages/roles</code> reads each ability line, types it (activated, triggered, mode, cost, static) and matches
 effect rules, giving roles with a credit in [0, 1] and effect records with cost, speed, scope, repeat and
-beneficiary [V] (<code>packages/roles/src/deckwright_roles/roles.py</code>). Its <code>packages/strength</code> turns those effects
-into a value per job and context [V]. Engines also parse text, but into executable scripts rather than value:
-Forge card scripts (<a href="https://github.com/Card-Forge/forge/wiki/Card-scripting-API">wiki</a>) [V], and text-to-code
-models such as Latent Predictor Networks on MTG and Hearthstone cards (https://arxiv.org/abs/1603.06744) [V].
-Full rules-text understanding is hard in principle: MTG is Turing complete (https://arxiv.org/abs/1904.09828) [V].</p>
+beneficiary <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (<code>packages/roles/src/deckwright_roles/roles.py</code>). Its <code>packages/strength</code> turns those effects
+into a value per job and context <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Engines also parse text, but into executable scripts rather than value:
+Forge card scripts (<a href="https://github.com/Card-Forge/forge/wiki/Card-scripting-API">wiki</a>) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>, and text-to-code
+models such as Latent Predictor Networks on MTG and Hearthstone cards (https://arxiv.org/abs/1603.06744) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.
+Full rules-text understanding is hard in principle: MTG is Turing complete (https://arxiv.org/abs/1904.09828) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p class="callout"><strong>heuristic.</strong> Hand-weighted formulas over card fields: rarity, type, mana value, power and toughness,
 keywords, a removal flag. XMage&rsquo;s draft bot uses this when a set has no rating file:
-rarity base + 2 x type weight + mana-cost score + 40 x removal, scaled by 0.5 [V]
+rarity base + 2 x type weight + mana-cost score + 40 x removal, scaled by 0.5 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>
 (<code>Mage.Common/src/main/java/mage/cards/RateCard.java</code>). The usual analogue is the Hearthstone &ldquo;vanilla test&rdquo;
-(stats per mana) [GK]. A second kind is the lookup list: Forge ships 193 per-set draft rank files and
-XMage 48 rating CSVs, many built from 17Lands data [V] (<code>forge-gui/res/draft/rankings/</code>,
+(stats per mana) <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>. A second kind is the lookup list: Forge ships 193 per-set draft rank files and
+XMage 48 rating CSVs, many built from 17Lands data <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (<code>forge-gui/res/draft/rankings/</code>,
 <code>Utils/gen-draft-rates-17Lands.py</code>).</p>
 <p class="callout"><strong>engine-eval.</strong> A static evaluation of a game state used by search: sum life, cards and per-permanent
 values for each side. Forge, XMage and Magarena all do this (see the engine lines below). Chess engines are the
-canonical case: material plus positional terms (https://www.chessprogramming.org/Evaluation) [V].</p>
+canonical case: material plus positional terms (https://www.chessprogramming.org/Evaluation) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p>Engine evaluation functions, from source:
-- <strong>Forge</strong> <code>forge-ai/src/main/java/forge/ai/CreatureEvaluator.java</code> [V]: creature value = 80, +20 if not a
+- <strong>Forge</strong> <code>forge-ai/src/main/java/forge/ai/CreatureEvaluator.java</code> <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>: creature value = 80, +20 if not a
   token, +15/power, +10/toughness, +5/mana value, then keyword terms (flying +10/power, deathtouch +25,
   indestructible +70, hexproof +35, defender minus 9/power + 40, and so on), activated abilities, mana ability +10.
-- <strong>Forge</strong> <code>forge-ai/src/main/java/forge/ai/simulation/GameStateEvaluator.java</code> [V]: board score = hand-card terms, 2 x team life minus 2 x opponent life, a mana-base term, plus each battlefield card&rsquo;s value
+- <strong>Forge</strong> <code>forge-ai/src/main/java/forge/ai/simulation/GameStateEvaluator.java</code> <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>: board score = hand-card terms, 2 x team life minus 2 x opponent life, a mana-base term, plus each battlefield card&rsquo;s value
   (creatures via the evaluator above, lands by colours produced, other permanents 50 + 30 x mana value).
-- <strong>XMage</strong> <code>Mage.Server.Plugins/Mage.Player.AI/src/mage/player/ai/score/GameStateEvaluator2.java</code> [V]: score =
+- <strong>XMage</strong> <code>Mage.Server.Plugins/Mage.Player.AI/src/mage/player/ai/score/GameStateEvaluator2.java</code> <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>: score =
   life score difference + permanent score difference + hand-size difference; win = 100,000,000.
-- <strong>XMage</strong> <code>Mage.Server.Plugins/Mage.Player.AI/src/mage/player/ai/score/ArtificialScoringSystem.java</code> [V]: life
+- <strong>XMage</strong> <code>Mage.Server.Plugins/Mage.Player.AI/src/mage/player/ai/score/ArtificialScoringSystem.java</code> <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>: life
   maps through a concave table (0 to 10,000 over 0 to 20 life, +100 per point above 20); creatures score
   300 x power + 200 x toughness + ability scores; the card-definition value is a constant 3 marked TODO.
-- <strong>Magarena</strong> <code>src/magic/ai/ArtificialScoringSystem.java</code> [V]: the same life and poison tables and
+- <strong>Magarena</strong> <code>src/magic/ai/ArtificialScoringSystem.java</code> <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>: the same life and poison tables and
   300/200 power/toughness weights (XMage&rsquo;s file is a port), but the card term uses a per-card <code>value=</code> field
-  from each script, e.g. <code>release/Magarena/scripts/Grizzly_Bears.txt</code> has <code>value=3.745</code> [V]. Those values
-  came from Gatherer community ratings [GK].</p>
+  from each script, e.g. <code>release/Magarena/scripts/Grizzly_Bears.txt</code> has <code>value=3.745</code> <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Those values
+  came from Gatherer community ratings <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.</p>
 <h2>Q2 Where they have worked</h2>
 <p><strong>MTG.</strong> All three open-source engines ship playable AIs on hand-tuned evaluators and still use them as of
-November 2026 [V] (https://github.com/Card-Forge/forge, https://github.com/magefree/mage,
+November 2026 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (https://github.com/Card-Forge/forge, https://github.com/magefree/mage,
 https://github.com/magarena/magarena). They are good enough for casual play and draft bots, not strong
-play [GK]. XMage&rsquo;s bot deliberately prefers 17Lands-derived file ratings over its own heuristic:
-&ldquo;any bonuses on top make bot&rsquo;s picks worse, checked on real human picks from 17Lands&rdquo; [V] (<code>RateCard.java</code>).
-Deckwright uses a rules-text model in production for Commander role and strength advice [V].</p>
+play <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>. XMage&rsquo;s bot deliberately prefers 17Lands-derived file ratings over its own heuristic:
+&ldquo;any bonuses on top make bot&rsquo;s picks worse, checked on real human picks from 17Lands&rdquo; <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (<code>RateCard.java</code>).
+Deckwright uses a rules-text model in production for Commander role and strength advice <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p><strong>Chess.</strong> Hand-written evaluation functions with tuned weights powered top engines for decades; Texel&rsquo;s
 method fits those weights by logistic regression on game results
-(https://www.chessprogramming.org/Texel%27s_Tuning_Method) [V]. Stockfish moved to the learned NNUE
-evaluation (https://www.chessprogramming.org/NNUE, https://github.com/official-stockfish/Stockfish) [V],
-which is the lesson: deterministic structure plus fitted weights beat hand weights, and learned beat both [GK].
+(https://www.chessprogramming.org/Texel%27s_Tuning_Method) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Stockfish moved to the learned NNUE
+evaluation (https://www.chessprogramming.org/NNUE, https://github.com/official-stockfish/Stockfish) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>,
+which is the lesson: deterministic structure plus fitted weights beat hand weights, and learned beat both <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.
 Classic piece values (1/3/3/5/9) are the material prior every evaluator starts from
-(https://en.wikipedia.org/wiki/Chess_piece_relative_value) [V].</p>
+(https://en.wikipedia.org/wiki/Chess_piece_relative_value) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p><strong>Hearthstone and others.</strong> Community stat-per-mana formulas (vanilla test) were used to value cards before
-deck-tracker win rates; once played-win-rate data existed (HSReplay), it replaced them for strength [GK].
+deck-tracker win rates; once played-win-rate data existed (HSReplay), it replaced them for strength <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.
 In Limited MTG the same happened with 17Lands GIH WR (https://www.17lands.com/card_ratings,
-https://www.17lands.com/metrics_definitions) [V].</p>
+https://www.17lands.com/metrics_definitions) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <h2>Q3 Cost</h2>
-<p><strong>Build.</strong> A heuristic is days of work: a formula over Scryfall fields (https://scryfall.com/docs/api) [V];
-this session&rsquo;s spike took about 100 lines (<code>spike/build_scores.py</code>) [V]. An engine evaluator rides on a full
-rules engine, which is years of work: Forge and XMage are large multi-module Java projects [V]. A rules-text
-parser is between: Deckwright&rsquo;s <code>packages/roles</code> is about 5,000 lines of Python at parser version 2.29.0 [V].</p>
+<p><strong>Build.</strong> A heuristic is days of work: a formula over Scryfall fields (https://scryfall.com/docs/api) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>;
+this session&rsquo;s spike took about 100 lines (<code>spike/build_scores.py</code>) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. An engine evaluator rides on a full
+rules engine, which is years of work: Forge and XMage are large multi-module Java projects <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. A rules-text
+parser is between: Deckwright&rsquo;s <code>packages/roles</code> is about 5,000 lines of Python at parser version 2.29.0 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p><strong>Per new set.</strong> Heuristics need nothing unless new keywords appear. Rules-text parsers need new patterns for new
-mechanics; Deckwright tracks this as a parse coverage score per card [V] (<code>roles.py</code> <code>_coverage</code>). Engines must
-script every card before the evaluator sees it [GK]. Lookup lists need fresh 17Lands data each set [V].</p>
-<p><strong>Maintain.</strong> Weights drift silently; nothing in Forge or XMage re-fits them [V] (constants in source).
-Deckwright re-fits nine named priors by Bradley-Terry on its benchmark [V]
+mechanics; Deckwright tracks this as a parse coverage score per card <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (<code>roles.py</code> <code>_coverage</code>). Engines must
+script every card before the evaluator sees it <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>. Lookup lists need fresh 17Lands data each set <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
+<p><strong>Maintain.</strong> Weights drift silently; nothing in Forge or XMage re-fits them <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (constants in source).
+Deckwright re-fits nine named priors by Bradley-Terry on its benchmark <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>
 (<code>packages/strength/src/deckwright_strength/fit.py</code>).</p>
 <h2>Q4 Accuracy</h2>
 <p><strong>Engine evaluators.</strong> Validated against nothing measurable. Forge has direction-only unit tests (an allied
 permanent raises the score; a loss scores terminal) in
-<code>forge-gui-desktop/src/test/java/forge/ai/simulation/GameStateEvaluatorTest.java</code> [V]; XMage and Magarena have no
-evaluator tests by file name [V]. No repo compares evaluator output to outcomes. Accuracy unknown.</p>
+<code>forge-gui-desktop/src/test/java/forge/ai/simulation/GameStateEvaluatorTest.java</code> <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>; XMage and Magarena have no
+evaluator tests by file name <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. No repo compares evaluator output to outcomes. Accuracy unknown.</p>
 <p><strong>XMage heuristic.</strong> Its source states a regression over 8,622 cards from all 17Lands sets with
-&ldquo;spearman 0.46&rdquo; against file ratings [V] (<code>RateCard.java</code>). The target is 17Lands-derived ratings, not
+&ldquo;spearman 0.46&rdquo; against file ratings <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (<code>RateCard.java</code>). The target is 17Lands-derived ratings, not
 win rates, and the script is not in the repo, so the number is unverified.</p>
 <p><strong>Deckwright strength.</strong> Fitted file reports held-out pair agreement 0.881 and Kendall tau 0.642 on
-344 hand-judged pairs over 153 cards [V] (<code>packages/strength/src/deckwright_strength/data/fitted.json</code>).
+344 hand-judged pairs over 153 cards <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr> (<code>packages/strength/src/deckwright_strength/data/fitted.json</code>).
 The pairs are hand-judged, not outcomes.</p>
 <p><strong>Spike (this session).</strong> 17Lands Premier Draft card ratings for FRA, fetched 2026-11-03, cards with at least
-500 games in hand, joined to Scryfall [V]. Spearman against GIH WR, n = 112:</p>
+500 games in hand, joined to Scryfall <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Spearman against GIH WR, n = 112:</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -729,21 +756,21 @@ The pairs are hand-judged, not outcomes.</p>
 </tr>
 </tbody>
 </table></div>
-<p>At 1,000+ games (n = 41) the heuristic reaches 0.210 and the stats heuristic -0.090 [V]. Sampling noise caps any
+<p>At 1,000+ games (n = 41) the heuristic reaches 0.210 and the stats heuristic -0.090 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Sampling noise caps any
 scorer: estimated reliability of GIH WR here is 0.46 (binomial noise variance / observed variance), so the
-ceiling is about 0.68 [V]. A hand heuristic gets under a fifth of that ceiling; human pick order gets about
+ceiling is about 0.68 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. A hand heuristic gets under a fifth of that ceiling; human pick order gets about
 70%. Historical sets (FDN, TLA) returned zero counts from the public endpoint, so only the live set was usable.</p>
 <h2>Q5 Deckwright&rsquo;s current method</h2>
 <p>Deckwright is a rules-text model in two layers. <code>packages/roles</code> (<code>packages/roles/src/deckwright_roles/roles.py</code>)
 parses oracle text into 15 function roles and 14 plan roles with credits in [0, 1]; opponent-decided effects
-earn half credit and a Scryfall-tag-only role earns 0.5 [V]. It predicts <em>what a card does</em>, not how strong it
+earn half credit and a Scryfall-tag-only role earns 0.5 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. It predicts <em>what a card does</em>, not how strong it
 is. It was checked against Scryfall tagger tags as a recall report (<code>packages/roles/src/deckwright_roles/recall.py</code>,
 https://tagger.scryfall.com) and against anchor cards such as Sol Ring as ramp and Swords to Plowshares as
-removal (<code>packages/roles/src/deckwright_roles/check_real.py</code>) [V]. <code>packages/strength</code> then predicts a value
+removal (<code>packages/roles/src/deckwright_roles/check_real.py</code>) <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. <code>packages/strength</code> then predicts a value
 and rank per card, job and context (bracket, players, strategy) from those effects only, never name, price or
-popularity [V]. It was checked against a frozen benchmark of hand-judged pairs and reference cases
-(<code>packages/bench</code>), with the numbers in Q4 [V]. Research note 14 found the earlier trunk ranked Pendant of
-Prosperity above Sol Ring and Overkill above every removal spell [V].</p>
+popularity <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. It was checked against a frozen benchmark of hand-judged pairs and reference cases
+(<code>packages/bench</code>), with the numbers in Q4 <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Research note 14 found the earlier trunk ranked Pendant of
+Prosperity above Sol Ring and Overkill above every removal spell <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p>Gaps:
 - Never checked against outcome data; the benchmark is 344 hand-judged pairs, so it measures agreement with its authors.
 - Commander has no per-card win rates, so the Q4 spike cannot be repeated for its domain; SP1 must supply data.
@@ -753,14 +780,14 @@ Prosperity above Sol Ring and Overkill above every removal spell [V].</p>
 <h2>Q6 Where deterministic models fit in a hybrid</h2>
 <p>Use them where they are strong: cheap, explainable, available on day one of a set. Three roles.</p>
 <p><strong>Prior.</strong> A deterministic score is a prior for a statistical model (SP2) that shrinks toward it when data is
-thin, as Texel tuning starts from hand values [V]. The spike says this prior is weak for raw heuristics
+thin, as Texel tuning starts from hand values <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. The spike says this prior is weak for raw heuristics
 (rho 0.13) and only rarity carries much signal, so prior strength should be low and fitted.</p>
 <p><strong>Features.</strong> Rules-text output (roles, effect scope, speed, cost) is the most useful part: it gives a statistical
-or learned model inputs that generalise to unseen cards. Deckwright&rsquo;s effect records are already this [V].</p>
+or learned model inputs that generalise to unseen cards. Deckwright&rsquo;s effect records are already this <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>.</p>
 <p><strong>Pruning for simulation.</strong> Engine evaluators exist to cut search: rank moves and stop rollouts early (SP4, SP5).
-Here they need only rank boards roughly, which is what Forge, XMage and Magarena use them for [V]. Card value
+Here they need only rank boards roughly, which is what Forge, XMage and Magarena use them for <abbr class="evtag" data-tip="Verified against the cited source during the research">V</abbr>. Card value
 should come from outcomes (17Lands in Limited, SP1 data in Commander), with deterministic scores as fallback
-and as explanation [GK].</p>
+and as explanation <abbr class="evtag" data-tip="General knowledge, not checked against a source">GK</abbr>.</p>
 </section><section class="tabpanel" role="tabpanel" id="tab-sp4" hidden><h2>SP4 Decomposed constrained simulation</h2>
 
 <p>Verdict: cheap, transparent and exact where it matters, but it measures consistency, not
@@ -778,8 +805,8 @@ that. It asks narrow questions a deck must answer, each cheap to compute (genera
 <p>Each answer is a probability in [0, 1]. Questions with a closed form use the hypergeometric
 distribution. Questions with choices (which land to play, which spell to cast) use a
 constrained game: a goldfish (no opponent) played for a fixed number of turns, as in Karsten&rsquo;s
-Commander curve model [1] and Deckwright&rsquo;s goldfish simulators [3]. A combiner, fitted on
-decks with known outcomes, maps the feature vector to one strength score [9].</p>
+Commander curve model<sup class="cite"><a href="#sp4-ref-1" data-tip="Frank Karsten, MTG-Math, optimal_curve_commander.py and source-count tables. https://github.com/frankkarsten/MTG-Math">1</a></sup> and Deckwright&rsquo;s goldfish simulators<sup class="cite"><a href="#sp4-ref-3" data-tip="Deckwright: docs/research/10-simulation-study.md, packages/analysis/src/deckwright_analysis/goldfish.py, packages/manabase/src/deckwright_manabase/simulate.py (worktree pilot-lr4).">3</a></sup>. A combiner, fitted on
+decks with known outcomes, maps the feature vector to one strength score<sup class="cite"><a href="#sp4-ref-9" data-tip="17lands public datasets and card metrics (game in hand win rate). https://www.17lands.com/public_datasets">9</a></sup>.</p>
 <h2>Pieces</h2>
 <p>Which pieces carry most of deck strength: speed of the win condition first, then interaction
 density, then mana consistency. Power-level discussion and cEDH practice treat &ldquo;turn the deck
@@ -798,27 +825,27 @@ That is by construction of the fixture, so it only shows the method can find a d
 <tr>
 <td>Mana, generic</td>
 <td>k lands by turn t</td>
-<td>Exact: hypergeometric [1][2]</td>
+<td>Exact: hypergeometric<sup class="cite"><a href="#sp4-ref-1" data-tip="Frank Karsten, MTG-Math, optimal_curve_commander.py and source-count tables. https://github.com/frankkarsten/MTG-Math">1</a><span class="cite-sep">,</span><a href="#sp4-ref-2" data-tip="EDHREC, “Simulating Available Mana: Beyond the Hypergeometric Distribution”. https://edhrec.com/articles/simultaing-available-mana-beyond-the-hypergeometric-distribution">2</a></sup></td>
 </tr>
 <tr>
 <td>Mana, colored</td>
 <td>lands seen can pay pips, one drop a turn</td>
-<td>Exact by enumerating land classes (multivariate hypergeometric); Monte Carlo is simpler [2]</td>
+<td>Exact by enumerating land classes (multivariate hypergeometric); Monte Carlo is simpler<sup class="cite"><a href="#sp4-ref-2" data-tip="EDHREC, “Simulating Available Mana: Beyond the Hypergeometric Distribution”. https://edhrec.com/articles/simultaing-available-mana-beyond-the-hypergeometric-distribution">2</a></sup></td>
 </tr>
 <tr>
 <td>Mana with rocks, ramp, MDFCs</td>
 <td>mana on turn t</td>
-<td>Simulation: sequencing matters [2][3]</td>
+<td>Simulation: sequencing matters<sup class="cite"><a href="#sp4-ref-2" data-tip="EDHREC, “Simulating Available Mana: Beyond the Hypergeometric Distribution”. https://edhrec.com/articles/simultaing-available-mana-beyond-the-hypergeometric-distribution">2</a><span class="cite-sep">,</span><a href="#sp4-ref-3" data-tip="Deckwright: docs/research/10-simulation-study.md, packages/analysis/src/deckwright_analysis/goldfish.py, packages/manabase/src/deckwright_manabase/simulate.py (worktree pilot-lr4).">3</a></sup></td>
 </tr>
 <tr>
 <td>Draws</td>
 <td>cards seen by turn t</td>
-<td>Exact under a fixed draw rule; draw engines need simulation [1]</td>
+<td>Exact under a fixed draw rule; draw engines need simulation<sup class="cite"><a href="#sp4-ref-1" data-tip="Frank Karsten, MTG-Math, optimal_curve_commander.py and source-count tables. https://github.com/frankkarsten/MTG-Math">1</a></sup></td>
 </tr>
 <tr>
 <td>Combo assembly</td>
 <td>every piece seen by turn t</td>
-<td>Exact: inclusion-exclusion; tutors need simulation [8]</td>
+<td>Exact: inclusion-exclusion; tutors need simulation<sup class="cite"><a href="#sp4-ref-8" data-tip="Commander Spellbook, combo database. https://commanderspellbook.com">8</a></sup></td>
 </tr>
 <tr>
 <td>Combo castable</td>
@@ -833,12 +860,12 @@ That is by construction of the fixture, so it only shows the method can find a d
 <tr>
 <td>Interaction timing</td>
 <td>answer held up when needed</td>
-<td>Needs an opponent model; simulation or engine [4][5]</td>
+<td>Needs an opponent model; simulation or engine<sup class="cite"><a href="#sp4-ref-4" data-tip="Forge AI documentation. https://github.com/Card-Forge/forge/wiki/ai">4</a><span class="cite-sep">,</span><a href="#sp4-ref-5" data-tip="P. Cowling, C. Ward, E. Powley, “Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering”, IEEE TCIAIG 4(4), 2012.">5</a></sup></td>
 </tr>
 <tr>
 <td>Mulligans</td>
 <td>effect on all of the above</td>
-<td>Simulation with a mulligan policy [6]</td>
+<td>Simulation with a mulligan policy<sup class="cite"><a href="#sp4-ref-6" data-tip="Mulligan rules (Commander free mulligan, London mulligan). https://mtg.wiki/page/Mulligan">6</a></sup></td>
 </tr>
 </tbody>
 </table></div>
@@ -850,7 +877,7 @@ casting order, mulligan decisions, tutors, and anything about the opponents (gen
 <ul>
 <li><strong>Hand weights.</strong> Points per feature, as power-level calculators do. No validation (general knowledge).</li>
 <li><strong>Linear least squares</strong> on features against win rate. Used in the spike (D4). Signs are
-  readable; a negative weight on a known-good feature flags a bad feature or confounding [9].</li>
+  readable; a negative weight on a known-good feature flags a bad feature or confounding<sup class="cite"><a href="#sp4-ref-9" data-tip="17lands public datasets and card metrics (game in hand win rate). https://www.17lands.com/public_datasets">9</a></sup>.</li>
 <li><strong>Logistic / Bradley-Terry</strong> on pairwise or pod results, if outcomes are game-level (general knowledge).</li>
 <li><strong>Tree models</strong> catch interactions (combo speed only matters with protection), but need far
   more data than a 3-6 feature linear model (general knowledge).</li>
@@ -861,15 +888,15 @@ combo_t6 0.287; the generator&rsquo;s true weights were 0.15, 0.10, 0.30.</p>
 <h2>Where it has worked</h2>
 <ul>
 <li><strong>Land counts and mana bases.</strong> Karsten&rsquo;s hypergeometric source tables and Commander curve
-  simulator are the standard reference; Deckwright reproduced his model game for game [1][3].</li>
-<li><strong>Available-mana simulation</strong> beyond the hypergeometric, including rocks [2]; landlord does
-  the same for 60-card decks [10].</li>
+  simulator are the standard reference; Deckwright reproduced his model game for game<sup class="cite"><a href="#sp4-ref-1" data-tip="Frank Karsten, MTG-Math, optimal_curve_commander.py and source-count tables. https://github.com/frankkarsten/MTG-Math">1</a><span class="cite-sep">,</span><a href="#sp4-ref-3" data-tip="Deckwright: docs/research/10-simulation-study.md, packages/analysis/src/deckwright_analysis/goldfish.py, packages/manabase/src/deckwright_manabase/simulate.py (worktree pilot-lr4).">3</a></sup>.</li>
+<li><strong>Available-mana simulation</strong> beyond the hypergeometric, including rocks<sup class="cite"><a href="#sp4-ref-2" data-tip="EDHREC, “Simulating Available Mana: Beyond the Hypergeometric Distribution”. https://edhrec.com/articles/simultaing-available-mana-beyond-the-hypergeometric-distribution">2</a></sup>; landlord does
+  the same for 60-card decks<sup class="cite"><a href="#sp4-ref-10" data-tip="landlord, mana base simulator. https://github.com/mtgoncurve/landlord">10</a></sup>.</li>
 <li><strong>Deckwright goldfish simulators</strong>: seeded land-only goldfish for colored untapped mana, and a
-  generic-mana goldfish with rocks, used as consistency checks in its strength report [3].</li>
+  generic-mana goldfish with rocks, used as consistency checks in its strength report<sup class="cite"><a href="#sp4-ref-3" data-tip="Deckwright: docs/research/10-simulation-study.md, packages/analysis/src/deckwright_analysis/goldfish.py, packages/manabase/src/deckwright_manabase/simulate.py (worktree pilot-lr4).">3</a></sup>.</li>
 <li><strong>Constrained games in research</strong>: Monte Carlo search over determinized Magic games with
-  simplified rules [5]; Forge&rsquo;s AI plays full games but is weak for strength estimation [4].</li>
+  simplified rules<sup class="cite"><a href="#sp4-ref-5" data-tip="P. Cowling, C. Ward, E. Powley, “Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering”, IEEE TCIAIG 4(4), 2012.">5</a></sup>; Forge&rsquo;s AI plays full games but is weak for strength estimation<sup class="cite"><a href="#sp4-ref-4" data-tip="Forge AI documentation. https://github.com/Card-Forge/forge/wiki/ai">4</a></sup>.</li>
 <li><strong>Card-level outcome decomposition</strong>: 17lands &ldquo;game in hand win rate&rdquo; credits single cards
-  with outcomes in Limited, which shows feature-to-outcome fitting at scale [9].</li>
+  with outcomes in Limited, which shows feature-to-outcome fitting at scale<sup class="cite"><a href="#sp4-ref-9" data-tip="17lands public datasets and card metrics (game in hand win rate). https://www.17lands.com/public_datasets">9</a></sup>.</li>
 </ul>
 <p>Nowhere found: a published Commander strength model built from decomposed pieces and validated
 against pod outcomes. That gap is the question SP1 data would answer (general knowledge).</p>
@@ -878,14 +905,14 @@ against pod outcomes. That gap is the question SP1 data would answer (general kn
 <li>Exact pieces: microseconds per feature. A full profile of a 99-card deck takes under 10 ms
   in the spike (exact formulas) (general knowledge, measured below).</li>
 <li>Monte Carlo: 20,000 trials of one piece take about 50 ms in pure Python. A full goldfish with
-  rocks and sequencing is about 1 s per 200,000 games per deck in vectorized numpy [3].</li>
-<li>Build: pieces are days of work each; a goldfish with ramp and tutors is weeks [3].</li>
+  rocks and sequencing is about 1 s per 200,000 games per deck in vectorized numpy<sup class="cite"><a href="#sp4-ref-3" data-tip="Deckwright: docs/research/10-simulation-study.md, packages/analysis/src/deckwright_analysis/goldfish.py, packages/manabase/src/deckwright_manabase/simulate.py (worktree pilot-lr4).">3</a></sup>.</li>
+<li>Build: pieces are days of work each; a goldfish with ramp and tutors is weeks<sup class="cite"><a href="#sp4-ref-3" data-tip="Deckwright: docs/research/10-simulation-study.md, packages/analysis/src/deckwright_analysis/goldfish.py, packages/manabase/src/deckwright_manabase/simulate.py (worktree pilot-lr4).">3</a></sup>.</li>
 <li>Data: the combiner needs labeled decks. That cost dominates (see Validation).</li>
 </ul>
 <h2>Validation</h2>
 <p>How the combined score is checked: fit weights on training decks, score held-out decks, report
 Spearman rank correlation between score and observed win rate, and compare with the best single
-feature. A combiner that does not beat its best feature adds nothing [9].</p>
+feature. A combiner that does not beat its best feature adds nothing<sup class="cite"><a href="#sp4-ref-9" data-tip="17lands public datasets and card metrics (game in hand win rate). https://www.17lands.com/public_datasets">9</a></sup>.</p>
 <p>How much outcome data: two noise sources (general knowledge, binomial arithmetic).</p>
 <ul>
 <li><strong>Per-deck win rate noise.</strong> In 4-seat pods the base rate is 0.25. With g games the standard
@@ -917,7 +944,7 @@ synthetic outcome table (60 train / 40 holdout, 4 seats):</p>
 <li>Only lands make mana (D3); no rocks, ramp, tutors, draw engines or mulligans (D2).</li>
 <li>Interaction is &ldquo;seen by turn 4&rdquo;; it ignores timing, targets and what opponents do.</li>
 <li>Draw rule follows the spec (first player skips the turn-1 draw). Comprehensive Rules 103.8
-  lets every player draw on turn 1 in most multiplayer games [7], so on-play values run one card low.</li>
+  lets every player draw on turn 1 in most multiplayer games<sup class="cite"><a href="#sp4-ref-7" data-tip="Magic: The Gathering Comprehensive Rules, rule 103.8. https://magic.wizards.com/en/rules">7</a></sup>, so on-play values run one card low.</li>
 <li>Exact formulas replace Monte Carlo inside <code>profile</code>; Monte Carlo is kept for checks and
   for future pieces with choices.</li>
 </ul>
@@ -971,100 +998,100 @@ two-player engine with scripted opponents at least, or self-play (SP5).</p>
 engine games. Each step adds opponent realism and cost by roughly 10-100x.</p>
 <h2>Sources</h2>
 <ol>
-<li>Frank Karsten, MTG-Math, <code>optimal_curve_commander.py</code> and source-count tables. https://github.com/frankkarsten/MTG-Math</li>
-<li>EDHREC, &ldquo;Simulating Available Mana: Beyond the Hypergeometric Distribution&rdquo;. https://edhrec.com/articles/simultaing-available-mana-beyond-the-hypergeometric-distribution</li>
-<li>Deckwright: <code>docs/research/10-simulation-study.md</code>, <code>packages/analysis/src/deckwright_analysis/goldfish.py</code>, <code>packages/manabase/src/deckwright_manabase/simulate.py</code> (worktree pilot-lr4).</li>
-<li>Forge AI documentation. https://github.com/Card-Forge/forge/wiki/ai</li>
-<li>P. Cowling, C. Ward, E. Powley, &ldquo;Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering&rdquo;, IEEE TCIAIG 4(4), 2012.</li>
-<li>Mulligan rules (Commander free mulligan, London mulligan). https://mtg.wiki/page/Mulligan</li>
-<li>Magic: The Gathering Comprehensive Rules, rule 103.8. https://magic.wizards.com/en/rules</li>
-<li>Commander Spellbook, combo database. https://commanderspellbook.com</li>
-<li>17lands public datasets and card metrics (game in hand win rate). https://www.17lands.com/public_datasets</li>
-<li>landlord, mana base simulator. https://github.com/mtgoncurve/landlord</li>
+<li id="sp4-ref-1">Frank Karsten, MTG-Math, <code>optimal_curve_commander.py</code> and source-count tables. https://github.com/frankkarsten/MTG-Math</li>
+<li id="sp4-ref-2">EDHREC, &ldquo;Simulating Available Mana: Beyond the Hypergeometric Distribution&rdquo;. https://edhrec.com/articles/simultaing-available-mana-beyond-the-hypergeometric-distribution</li>
+<li id="sp4-ref-3">Deckwright: <code>docs/research/10-simulation-study.md</code>, <code>packages/analysis/src/deckwright_analysis/goldfish.py</code>, <code>packages/manabase/src/deckwright_manabase/simulate.py</code> (worktree pilot-lr4).</li>
+<li id="sp4-ref-4">Forge AI documentation. https://github.com/Card-Forge/forge/wiki/ai</li>
+<li id="sp4-ref-5">P. Cowling, C. Ward, E. Powley, &ldquo;Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering&rdquo;, IEEE TCIAIG 4(4), 2012.</li>
+<li id="sp4-ref-6">Mulligan rules (Commander free mulligan, London mulligan). https://mtg.wiki/page/Mulligan</li>
+<li id="sp4-ref-7">Magic: The Gathering Comprehensive Rules, rule 103.8. https://magic.wizards.com/en/rules</li>
+<li id="sp4-ref-8">Commander Spellbook, combo database. https://commanderspellbook.com</li>
+<li id="sp4-ref-9">17lands public datasets and card metrics (game in hand win rate). https://www.17lands.com/public_datasets</li>
+<li id="sp4-ref-10">landlord, mana base simulator. https://github.com/mtgoncurve/landlord</li>
 </ol>
 </section><section class="tabpanel" role="tabpanel" id="tab-sp5" hidden><h2>Self-play RL for Commander strength (SP5)</h2>
 
 <p>Research only. No agent, environment or training run was built. Numbers come from
-<code>spike/rl_cost.py</code> applied to SP7&rsquo;s measured <code>forge-speed.json</code> [10].</p>
+<code>spike/rl_cost.py</code> applied to SP7&rsquo;s measured <code>forge-speed.json</code><sup class="cite"><a href="#sp5-ref-10" data-tip="SP7 measured Forge speed: docs/research/sp7-engines-ai/forge-speed.json and forge-speed.md (this repo).">10</a></sup>.</p>
 <h2>How it works</h2>
 <ul>
 <li>An agent plays copies of itself (or a pool of past selves) and learns a policy (what to do) and a
-  value (who will win) from the results [1][8].</li>
+  value (who will win) from the results<sup class="cite"><a href="#sp5-ref-1" data-tip="Silver et al., “A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play”, Science 2018. https://www.science.org/doi/10.1126/science.aar6404">1</a><span class="cite-sep">,</span><a href="#sp5-ref-8" data-tip="Schulman et al., “Proximal Policy Optimization Algorithms”, 2017. https://arxiv.org/abs/1707.06347">8</a></sup>.</li>
 <li>For strength measurement, a well-trained agent piloting a deck gives a deck&rsquo;s <em>ceiling</em> win rate,
   not the autopilot floor that scripted AI gives. MageZero showed this on XMage: one deck rose from
-  16% to 66% against minimax bots [6].</li>
+  16% to 66% against minimax bots<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>.</li>
 <li>Card strength then follows by ablation: swap a card, retrain or fine-tune, re-measure (general knowledge).</li>
 </ul>
 <h2>Algorithms</h2>
 <ul>
-<li><strong>MCTS + network (AlphaZero family)</strong> [1]: search guided by a policy/value net. Best fit for
-  Magic&rsquo;s long turns and huge, structured action space. MageZero already runs it on XMage [6].</li>
-<li><strong>ISMCTS</strong> [7]: MCTS over information sets, sampling hidden cards per iteration. Ensemble
-  determinization was studied on Magic itself [11]. Cheap, no training; a strong baseline and
+<li><strong>MCTS + network (AlphaZero family)</strong><sup class="cite"><a href="#sp5-ref-1" data-tip="Silver et al., “A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play”, Science 2018. https://www.science.org/doi/10.1126/science.aar6404">1</a></sup>: search guided by a policy/value net. Best fit for
+  Magic&rsquo;s long turns and huge, structured action space. MageZero already runs it on XMage<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>.</li>
+<li><strong>ISMCTS</strong><sup class="cite"><a href="#sp5-ref-7" data-tip="Cowling, Powley and Whitehouse, “Information Set Monte Carlo Tree Search”, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894">7</a></sup>: MCTS over information sets, sampling hidden cards per iteration. Ensemble
+  determinization was studied on Magic itself<sup class="cite"><a href="#sp5-ref-11" data-tip="Cowling, Ward and Powley, “Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering”, IEEE TCIAIG 2012.">11</a></sup>. Cheap, no training; a strong baseline and
   the search half of any learned agent.</li>
-<li><strong>Self-play PPO</strong> [8]: model-free policy gradient. Simple and multiplayer-friendly (OpenAI Five [12]),
+<li><strong>Self-play PPO</strong><sup class="cite"><a href="#sp5-ref-8" data-tip="Schulman et al., “Proximal Policy Optimization Algorithms”, 2017. https://arxiv.org/abs/1707.06347">8</a></sup>: model-free policy gradient. Simple and multiplayer-friendly (OpenAI Five<sup class="cite"><a href="#sp5-ref-12" data-tip="OpenAI et al., “Dota 2 with Large Scale Deep Reinforcement Learning” (OpenAI Five), 2019. https://arxiv.org/abs/1912.06680">12</a></sup>),
   but sample-hungry; with Forge at hundreds of games/hour it would not converge (see Compute cost).</li>
-<li><strong>CFR-style search (ReBeL, Student of Games)</strong> [3][4]: sound for hidden information, with
+<li><strong>CFR-style search (ReBeL, Student of Games)</strong><sup class="cite"><a href="#sp5-ref-3" data-tip="Brown et al., “Combining Deep Reinforcement Learning and Search for Imperfect-Information Games” (ReBeL), NeurIPS 2020. https://arxiv.org/abs/2007.13544">3</a><span class="cite-sep">,</span><a href="#sp5-ref-4" data-tip="Schmid et al., “Student of Games: A unified learning algorithm for both perfect and imperfect information games”, Science Advances 2023. https://www.science.org/doi/10.1126/sciadv.adg3256">4</a></sup>: sound for hidden information, with
   guarantees only in two-player zero-sum. Public belief states over a 99-card library and
   hands are far larger than poker&rsquo;s; not practical here (general knowledge).</li>
 <li><strong>Fit:</strong> AlphaZero-style MCTS with ISMCTS-style sampling of hidden cards, trained per deck
-  against a pool, as MageZero does [6][7]. PPO only if a fast engine exists.</li>
+  against a pool, as MageZero does<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a><span class="cite-sep">,</span><a href="#sp5-ref-7" data-tip="Cowling, Powley and Whitehouse, “Information Set Monte Carlo Tree Search”, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894">7</a></sup>. PPO only if a fast engine exists.</li>
 </ul>
 <h2>Hidden information</h2>
 <ul>
 <li><strong>Determinization:</strong> sample opponents&rsquo; hands and library orders consistent with what is
   known, search each sample, vote. Simple but suffers strategy fusion and leaks: MageZero&rsquo;s
-  search sees future draws, so its numbers flatter reactive decks [6][7].</li>
+  search sees future draws, so its numbers flatter reactive decks<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a><span class="cite-sep">,</span><a href="#sp5-ref-7" data-tip="Cowling, Powley and Whitehouse, “Information Set Monte Carlo Tree Search”, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894">7</a></sup>.</li>
 <li><strong>Information sets (ISMCTS):</strong> one tree over what the acting player can observe; removes
-  most leakage at some cost in strength per simulation [7].</li>
-<li><strong>Belief states:</strong> ReBeL and Student of Games search over public belief states [3][4]; the
+  most leakage at some cost in strength per simulation<sup class="cite"><a href="#sp5-ref-7" data-tip="Cowling, Powley and Whitehouse, “Information Set Monte Carlo Tree Search”, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894">7</a></sup>.</li>
+<li><strong>Belief states:</strong> ReBeL and Student of Games search over public belief states<sup class="cite"><a href="#sp5-ref-3" data-tip="Brown et al., “Combining Deep Reinforcement Learning and Search for Imperfect-Information Games” (ReBeL), NeurIPS 2020. https://arxiv.org/abs/2007.13544">3</a><span class="cite-sep">,</span><a href="#sp5-ref-4" data-tip="Schmid et al., “Student of Games: A unified learning algorithm for both perfect and imperfect information games”, Science Advances 2023. https://www.science.org/doi/10.1126/sciadv.adg3256">4</a></sup>; the
   state for Commander (four 99-card libraries, hidden hands) is intractable without heavy abstraction.</li>
 <li><strong>Recommendation:</strong> information-set sampling at search time, network inputs without hidden
-  cards (MageZero already strips them from the net) [6][7].</li>
+  cards (MageZero already strips them from the net)<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a><span class="cite-sep">,</span><a href="#sp5-ref-7" data-tip="Cowling, Powley and Whitehouse, “Information Set Monte Carlo Tree Search”, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894">7</a></sup>.</li>
 </ul>
 <h2>Multiplayer</h2>
 <ul>
 <li>At <strong>2</strong> seats the game is zero-sum and self-play has equilibrium guarantees (ReBeL, Student of
-  Games) [3][4]. Every extra seat breaks them.</li>
+  Games)<sup class="cite"><a href="#sp5-ref-3" data-tip="Brown et al., “Combining Deep Reinforcement Learning and Search for Imperfect-Information Games” (ReBeL), NeurIPS 2020. https://arxiv.org/abs/2007.13544">3</a><span class="cite-sep">,</span><a href="#sp5-ref-4" data-tip="Schmid et al., “Student of Games: A unified learning algorithm for both perfect and imperfect information games”, Science Advances 2023. https://www.science.org/doi/10.1126/sciadv.adg3256">4</a></sup>. Every extra seat breaks them.</li>
 <li>At 3 to <strong>6</strong> seats the game is non-zero-sum between subsets: no Nash guarantee holds,
-  yet Pluribus still beat pros at 6-player poker with self-play plus search [2].</li>
+  yet Pluribus still beat pros at 6-player poker with self-play plus search<sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a></sup>.</li>
 <li><strong>Kingmaking:</strong> a losing player decides who wins. Win-rate labels then depend on table
   behaviour, not deck strength alone (general knowledge).</li>
 <li><strong>Politics:</strong> deals, threat assessment and &ldquo;attack the leader&rdquo;. CICERO needed human data and
   language to play Diplomacy&rsquo;s 7-player cooperation well; pure self-play learned
-  strategies humans would not follow [5].</li>
+  strategies humans would not follow<sup class="cite"><a href="#sp5-ref-5" data-tip="Meta FAIR Diplomacy Team, “Human-level play in the game of Diplomacy by combining language models with strategic reasoning” (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097">5</a></sup>.</li>
 <li><strong>As seats grow:</strong> games get longer (D2, linear in this model), the action space and hidden
   state grow, credit assignment gets noisier, and the base win rate falls to 1/seats, so
-  evaluation needs more games per deck to see the same gap (see Validation) [2] (general knowledge).</li>
-<li>MageZero is two-player only; its graph encoding keeps the player node generic for later [6].</li>
+  evaluation needs more games per deck to see the same gap (see Validation)<sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a></sup> (general knowledge).</li>
+<li>MageZero is two-player only; its graph encoding keeps the player node generic for later<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>.</li>
 </ul>
 <h2>Basic guidance</h2>
 <p>Intake Q4: pure self-play or bootstrap from existing play?
-- <strong>Pure self-play</strong> from random play works in perfect-information two-player games (AlphaZero) [1],
+- <strong>Pure self-play</strong> from random play works in perfect-information two-player games (AlphaZero)<sup class="cite"><a href="#sp5-ref-1" data-tip="Silver et al., “A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play”, Science 2018. https://www.science.org/doi/10.1126/science.aar6404">1</a></sup>,
   but random Magic play rarely finishes a Commander game in a 120 s clock (general knowledge).
 - <strong>Bootstrap from Forge AI:</strong> imitate Forge&rsquo;s scripted AI first, then improve by self-play.
-  AlphaStar bootstrapped from human replays then used league self-play [9]; MageZero starts
-  against minimax bots and adds an opponent pool [6].
-- <strong>Human data:</strong> CICERO regularized toward human play (piKL) to stay compatible with people [5].
+  AlphaStar bootstrapped from human replays then used league self-play<sup class="cite"><a href="#sp5-ref-9" data-tip="Vinyals et al., “Grandmaster level in StarCraft II using multi-agent reinforcement learning” (AlphaStar), Nature 2019. https://www.nature.com/articles/s41586-019-1724-z">9</a></sup>; MageZero starts
+  against minimax bots and adds an opponent pool<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>.
+- <strong>Human data:</strong> CICERO regularized toward human play (piKL) to stay compatible with people<sup class="cite"><a href="#sp5-ref-5" data-tip="Meta FAIR Diplomacy Team, “Human-level play in the game of Diplomacy by combining language models with strategic reasoning” (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097">5</a></sup>.
   Commander logs with decisions are not public at scale (general knowledge).
 - <strong>Recommendation:</strong> bootstrap from Forge AI and keep a fixed Forge-AI opponent seat as an anchor;
-  pure self-play at 4+ seats risks table conventions no human table shares [5][9].</p>
+  pure self-play at 4+ seats risks table conventions no human table shares<sup class="cite"><a href="#sp5-ref-5" data-tip="Meta FAIR Diplomacy Team, “Human-level play in the game of Diplomacy by combining language models with strategic reasoning” (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097">5</a><span class="cite-sep">,</span><a href="#sp5-ref-9" data-tip="Vinyals et al., “Grandmaster level in StarCraft II using multi-agent reinforcement learning” (AlphaStar), Nature 2019. https://www.nature.com/articles/s41586-019-1724-z">9</a></sup>.</p>
 <h2>Engine and environment</h2>
 <ul>
 <li><strong>Wrap Forge:</strong> best rules coverage and four-player Commander. Measured: <strong>264.5 games/hour</strong>
-  at 8 workers, 4 seats, clock 120 s (<code>forge-speed.json</code>) [10]. Many games hit the clock, so
-  real game time is longer and this rate is an upper bound [10].</li>
+  at 8 workers, 4 seats, clock 120 s (<code>forge-speed.json</code>)<sup class="cite"><a href="#sp5-ref-10" data-tip="SP7 measured Forge speed: docs/research/sp7-engines-ai/forge-speed.json and forge-speed.md (this repo).">10</a></sup>. Many games hit the clock, so
+  real game time is longer and this rate is an upper bound<sup class="cite"><a href="#sp5-ref-10" data-tip="SP7 measured Forge speed: docs/research/sp7-engines-ai/forge-speed.json and forge-speed.md (this repo).">10</a></sup>.</li>
 <li><strong>Wrap XMage:</strong> MageZero&rsquo;s route, with a working JVM-to-Python bridge (HTTP + msgpack) and
-  about 800 two-player games/hour on 16 threads [6].</li>
-<li><strong>Build a fast engine:</strong> AlphaZero-class training needs millions of games [1]; with Forge
+  about 800 two-player games/hour on 16 threads<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>.</li>
+<li><strong>Build a fast engine:</strong> AlphaZero-class training needs millions of games<sup class="cite"><a href="#sp5-ref-1" data-tip="Silver et al., “A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play”, Science 2018. https://www.science.org/doi/10.1126/science.aar6404">1</a></sup>; with Forge
   that is months (see Compute cost). A rules engine covering Commander is a multi-year
   effort; a 50x speedup is an assumption, not a measurement (D4, general knowledge).</li>
 <li>Learned agents add network inference per decision; an MCTS budget of hundreds of simulations
-  per move multiplies engine cost again [6] (general knowledge). The cost table ignores this, so it
+  per move multiplies engine cost again<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup> (general knowledge). The cost table ignores this, so it
   is a floor.</li>
 </ul>
 <h2>Compute cost</h2>
-<p>From <code>forge-speed.json</code> [10] via <code>rl_cost.py table</code>. Throughput scales linearly with workers
+<p>From <code>forge-speed.json</code><sup class="cite"><a href="#sp5-ref-10" data-tip="SP7 measured Forge speed: docs/research/sp7-engines-ai/forge-speed.json and forge-speed.md (this repo).">10</a></sup> via <code>rl_cost.py table</code>. Throughput scales linearly with workers
 and speedup; game length linearly with seats (D2, a stated limit). Workers capped at 20 threads.</p>
 <div class="table-scroll"><table>
 <thead>
@@ -1144,54 +1171,54 @@ and speedup; game length linearly with seats (D2, a stated limit). Workers cappe
 </table></div>
 <p>Rationale for game counts:
 - <strong>20,000 per deck:</strong> MageZero runs about 1,000 games per generation for many generations
-  per deck [6]; 20 generations is the scale its README reports.
+  per deck<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>; 20 generations is the scale its README reports.
 - <strong>1,000,000 general:</strong> a general agent across decks needs orders of magnitude more; Pluribus
-  used 8 days on 64 cores [2]; one million is a modest floor (general knowledge).
-- <strong>20,000,000:</strong> AlphaZero used 21 to 44 million self-play games per game [1].
+  used 8 days on 64 cores<sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a></sup>; one million is a modest floor (general knowledge).
+- <strong>20,000,000:</strong> AlphaZero used 21 to 44 million self-play games per game<sup class="cite"><a href="#sp5-ref-1" data-tip="Silver et al., “A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play”, Science 2018. https://www.science.org/doi/10.1126/science.aar6404">1</a></sup>.
 - Speedup 50 is an assumption for a lean engine without Forge&rsquo;s GUI-era overhead (D4, general knowledge).
 - Excluded: MCTS simulations per move, network inference, retraining per card swap. Each
-  multiplies the hours above [6] (general knowledge).</p>
+  multiplies the hours above<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup> (general knowledge).</p>
 <h2>Hardware</h2>
 <ul>
 <li>This machine: 20 CPU threads, Intel Arc A770M 16 GB, no NVIDIA, so no CUDA (intake §10).</li>
-<li>Engines (Forge, XMage) are CPU-bound JVMs; the 20 threads cap workers [10].</li>
-<li>Networks: PyTorch supports Intel GPUs through the XPU backend [13]; small policy/value nets
+<li>Engines (Forge, XMage) are CPU-bound JVMs; the 20 threads cap workers<sup class="cite"><a href="#sp5-ref-10" data-tip="SP7 measured Forge speed: docs/research/sp7-engines-ai/forge-speed.json and forge-speed.md (this repo).">10</a></sup>.</li>
+<li>Networks: PyTorch supports Intel GPUs through the XPU backend<sup class="cite"><a href="#sp5-ref-13" data-tip="PyTorch, “Getting Started on Intel GPU” (XPU backend). https://docs.pytorch.org/docs/stable/notes/get_start_xpu.html">13</a></sup>; small policy/value nets
   (MageZero-sized) train and infer on the A770M. Some CUDA-only tooling will not run (general knowledge).</li>
-<li>The bottleneck is game generation on CPU, not the GPU; Pluribus trained with no GPU at all [2].</li>
+<li>The bottleneck is game generation on CPU, not the GPU; Pluribus trained with no GPU at all<sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a></sup>.</li>
 </ul>
 <h2>Where it has worked</h2>
 <ul>
-<li><strong>AlphaZero</strong> [1]: chess, shogi, Go from pure self-play; perfect information, two players.</li>
-<li><strong>Pluribus</strong> [2]: six-player no-limit poker beat pros; hidden information, multiplayer, CPU only.</li>
-<li><strong>ReBeL / Student of Games</strong> [3][4]: one algorithm for perfect and imperfect information, two-player.</li>
-<li><strong>CICERO</strong> [5]: human-level 7-player Diplomacy with negotiation; needed human data.</li>
-<li><strong>AlphaStar / OpenAI Five</strong> [9][12]: huge action spaces and hidden state, at enormous compute.</li>
-<li><strong>MageZero</strong> [6]: AlphaZero-style per-deck agents on XMage; two-player Magic, Commander weakly.</li>
-<li><strong>Magic MCTS research</strong> [11]: determinized MCTS played Magic better than rule-based play.</li>
+<li><strong>AlphaZero</strong><sup class="cite"><a href="#sp5-ref-1" data-tip="Silver et al., “A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play”, Science 2018. https://www.science.org/doi/10.1126/science.aar6404">1</a></sup>: chess, shogi, Go from pure self-play; perfect information, two players.</li>
+<li><strong>Pluribus</strong><sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a></sup>: six-player no-limit poker beat pros; hidden information, multiplayer, CPU only.</li>
+<li><strong>ReBeL / Student of Games</strong><sup class="cite"><a href="#sp5-ref-3" data-tip="Brown et al., “Combining Deep Reinforcement Learning and Search for Imperfect-Information Games” (ReBeL), NeurIPS 2020. https://arxiv.org/abs/2007.13544">3</a><span class="cite-sep">,</span><a href="#sp5-ref-4" data-tip="Schmid et al., “Student of Games: A unified learning algorithm for both perfect and imperfect information games”, Science Advances 2023. https://www.science.org/doi/10.1126/sciadv.adg3256">4</a></sup>: one algorithm for perfect and imperfect information, two-player.</li>
+<li><strong>CICERO</strong><sup class="cite"><a href="#sp5-ref-5" data-tip="Meta FAIR Diplomacy Team, “Human-level play in the game of Diplomacy by combining language models with strategic reasoning” (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097">5</a></sup>: human-level 7-player Diplomacy with negotiation; needed human data.</li>
+<li><strong>AlphaStar / OpenAI Five</strong><sup class="cite"><a href="#sp5-ref-9" data-tip="Vinyals et al., “Grandmaster level in StarCraft II using multi-agent reinforcement learning” (AlphaStar), Nature 2019. https://www.nature.com/articles/s41586-019-1724-z">9</a><span class="cite-sep">,</span><a href="#sp5-ref-12" data-tip="OpenAI et al., “Dota 2 with Large Scale Deep Reinforcement Learning” (OpenAI Five), 2019. https://arxiv.org/abs/1912.06680">12</a></sup>: huge action spaces and hidden state, at enormous compute.</li>
+<li><strong>MageZero</strong><sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>: AlphaZero-style per-deck agents on XMage; two-player Magic, Commander weakly.</li>
+<li><strong>Magic MCTS research</strong><sup class="cite"><a href="#sp5-ref-11" data-tip="Cowling, Ward and Powley, “Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering”, IEEE TCIAIG 2012.">11</a></sup>: determinized MCTS played Magic better than rule-based play.</li>
 <li>Nothing has shown learned agents for four-player Commander (general knowledge).</li>
 </ul>
 <h2>Validation</h2>
 <ul>
 <li>Agent win rates become deck strength by playing each deck many times at a fixed table of
-  reference opponents (a Forge-AI anchor plus agents) and reading its win rate against 1/seats [2][6].</li>
+  reference opponents (a Forge-AI anchor plus agents) and reading its win rate against 1/seats<sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a><span class="cite-sep">,</span><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a></sup>.</li>
 <li>Card strength: win-rate change when a card is swapped, under the same agents (general knowledge).</li>
 <li>Sample size: <code>games_for_ci</code> with the normal approximation; <code>games_to_rank</code> needs each
   deck&rsquo;s rate within half the gap (general knowledge).</li>
 <li>games per deck to separate 5 points at 4 seats: 1153</li>
 <li>At 2 seats it is 1,537 and at 6 seats 854 games. At 661 games/h (4 seats, 20 workers) that
-  is about 1.7 h per deck in Forge [10].</li>
+  is about 1.7 h per deck in Forge<sup class="cite"><a href="#sp5-ref-10" data-tip="SP7 measured Forge speed: docs/research/sp7-engines-ai/forge-speed.json and forge-speed.md (this repo).">10</a></sup>.</li>
 <li>Check against SP1 outcome data (real tables) and SP2 statistics; agent ceilings should rank
   decks the same way human win rates do, or the method fails (general knowledge).</li>
 </ul>
 <h2>Verdict</h2>
 <p><strong>Defer.</strong> Learned self-play agents are the only method that measures a deck&rsquo;s ceiling under
 skilled play, and per-deck AlphaZero-style training is affordable on Forge (15-45 h per deck,
-2 to 6 seats) [6][10]. But a general agent across decks is months on Forge, hidden information
+2 to 6 seats)<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a><span class="cite-sep">,</span><a href="#sp5-ref-10" data-tip="SP7 measured Forge speed: docs/research/sp7-engines-ai/forge-speed.json and forge-speed.md (this repo).">10</a></sup>. But a general agent across decks is months on Forge, hidden information
 still leaks, kingmaking and politics make multiplayer labels noisy, and nothing has shown it
-for four-player Commander [2][5]. Build it only if (1) cheaper methods (SP2-SP4) leave a
+for four-player Commander<sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a><span class="cite-sep">,</span><a href="#sp5-ref-5" data-tip="Meta FAIR Diplomacy Team, “Human-level play in the game of Diplomacy by combining language models with strategic reasoning” (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097">5</a></sup>. Build it only if (1) cheaper methods (SP2-SP4) leave a
 validated gap for high-skill decks, (2) SP1 provides outcome data to check agent rankings, and
 (3) either per-deck scope is accepted or a 50x-faster engine exists. Start from MageZero&rsquo;s
-design on a duel, with ISMCTS sampling and a Forge-AI anchor seat [6][7].</p>
+design on a duel, with ISMCTS sampling and a Forge-AI anchor seat<sup class="cite"><a href="#sp5-ref-6" data-tip="MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note docs/research/sp7-engines-ai/magezero.md">6</a><span class="cite-sep">,</span><a href="#sp5-ref-7" data-tip="Cowling, Powley and Whitehouse, “Information Set Monte Carlo Tree Search”, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894">7</a></sup>.</p>
 <h2>Scorecard</h2>
 <div class="table-scroll"><table>
 <thead>
@@ -1205,7 +1232,7 @@ design on a duel, with ISMCTS sampling and a Forge-AI anchor seat [6][7].</p>
 <tr>
 <td>accuracy evidence</td>
 <td>medium</td>
-<td>Strong in games like poker and Go [1][2]; none for 4-player Commander</td>
+<td>Strong in games like poker and Go<sup class="cite"><a href="#sp5-ref-1" data-tip="Silver et al., “A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play”, Science 2018. https://www.science.org/doi/10.1126/science.aar6404">1</a><span class="cite-sep">,</span><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a></sup>; none for 4-player Commander</td>
 </tr>
 <tr>
 <td>validation target</td>
@@ -1225,7 +1252,7 @@ design on a duel, with ISMCTS sampling and a Forge-AI anchor seat [6][7].</p>
 <tr>
 <td>multiplayer fit</td>
 <td>low-medium</td>
-<td>No equilibrium past 2 seats; kingmaking, politics [2][5]</td>
+<td>No equilibrium past 2 seats; kingmaking, politics<sup class="cite"><a href="#sp5-ref-2" data-tip="Brown and Sandholm, “Superhuman AI for multiplayer poker” (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400">2</a><span class="cite-sep">,</span><a href="#sp5-ref-5" data-tip="Meta FAIR Diplomacy Team, “Human-level play in the game of Diplomacy by combining language models with strategic reasoning” (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097">5</a></sup></td>
 </tr>
 <tr>
 <td>build effort</td>
@@ -1236,19 +1263,19 @@ design on a duel, with ISMCTS sampling and a Forge-AI anchor seat [6][7].</p>
 </table></div>
 <h2>Sources</h2>
 <ol>
-<li>Silver et al., &ldquo;A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play&rdquo;, Science 2018. https://www.science.org/doi/10.1126/science.aar6404</li>
-<li>Brown and Sandholm, &ldquo;Superhuman AI for multiplayer poker&rdquo; (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400</li>
-<li>Brown et al., &ldquo;Combining Deep Reinforcement Learning and Search for Imperfect-Information Games&rdquo; (ReBeL), NeurIPS 2020. https://arxiv.org/abs/2007.13544</li>
-<li>Schmid et al., &ldquo;Student of Games: A unified learning algorithm for both perfect and imperfect information games&rdquo;, Science Advances 2023. https://www.science.org/doi/10.1126/sciadv.adg3256</li>
-<li>Meta FAIR Diplomacy Team, &ldquo;Human-level play in the game of Diplomacy by combining language models with strategic reasoning&rdquo; (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097</li>
-<li>MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note <code>docs/research/sp7-engines-ai/magezero.md</code></li>
-<li>Cowling, Powley and Whitehouse, &ldquo;Information Set Monte Carlo Tree Search&rdquo;, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894</li>
-<li>Schulman et al., &ldquo;Proximal Policy Optimization Algorithms&rdquo;, 2017. https://arxiv.org/abs/1707.06347</li>
-<li>Vinyals et al., &ldquo;Grandmaster level in StarCraft II using multi-agent reinforcement learning&rdquo; (AlphaStar), Nature 2019. https://www.nature.com/articles/s41586-019-1724-z</li>
-<li>SP7 measured Forge speed: <code>docs/research/sp7-engines-ai/forge-speed.json</code> and <code>forge-speed.md</code> (this repo).</li>
-<li>Cowling, Ward and Powley, &ldquo;Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering&rdquo;, IEEE TCIAIG 2012.</li>
-<li>OpenAI et al., &ldquo;Dota 2 with Large Scale Deep Reinforcement Learning&rdquo; (OpenAI Five), 2019. https://arxiv.org/abs/1912.06680</li>
-<li>PyTorch, &ldquo;Getting Started on Intel GPU&rdquo; (XPU backend). https://docs.pytorch.org/docs/stable/notes/get_start_xpu.html</li>
+<li id="sp5-ref-1">Silver et al., &ldquo;A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play&rdquo;, Science 2018. https://www.science.org/doi/10.1126/science.aar6404</li>
+<li id="sp5-ref-2">Brown and Sandholm, &ldquo;Superhuman AI for multiplayer poker&rdquo; (Pluribus), Science 2019. https://www.science.org/doi/10.1126/science.aay2400</li>
+<li id="sp5-ref-3">Brown et al., &ldquo;Combining Deep Reinforcement Learning and Search for Imperfect-Information Games&rdquo; (ReBeL), NeurIPS 2020. https://arxiv.org/abs/2007.13544</li>
+<li id="sp5-ref-4">Schmid et al., &ldquo;Student of Games: A unified learning algorithm for both perfect and imperfect information games&rdquo;, Science Advances 2023. https://www.science.org/doi/10.1126/sciadv.adg3256</li>
+<li id="sp5-ref-5">Meta FAIR Diplomacy Team, &ldquo;Human-level play in the game of Diplomacy by combining language models with strategic reasoning&rdquo; (CICERO), Science 2022. https://www.science.org/doi/10.1126/science.ade9097</li>
+<li id="sp5-ref-6">MageZero, AlphaZero-style agents on XMage. https://github.com/WillWroble/MageZero ; SP7 note <code>docs/research/sp7-engines-ai/magezero.md</code></li>
+<li id="sp5-ref-7">Cowling, Powley and Whitehouse, &ldquo;Information Set Monte Carlo Tree Search&rdquo;, IEEE TCIAIG 2012. https://doi.org/10.1109/TCIAIG.2012.2200894</li>
+<li id="sp5-ref-8">Schulman et al., &ldquo;Proximal Policy Optimization Algorithms&rdquo;, 2017. https://arxiv.org/abs/1707.06347</li>
+<li id="sp5-ref-9">Vinyals et al., &ldquo;Grandmaster level in StarCraft II using multi-agent reinforcement learning&rdquo; (AlphaStar), Nature 2019. https://www.nature.com/articles/s41586-019-1724-z</li>
+<li id="sp5-ref-10">SP7 measured Forge speed: <code>docs/research/sp7-engines-ai/forge-speed.json</code> and <code>forge-speed.md</code> (this repo).</li>
+<li id="sp5-ref-11">Cowling, Ward and Powley, &ldquo;Ensemble Determinization in Monte Carlo Tree Search for the Imperfect Information Card Game Magic: The Gathering&rdquo;, IEEE TCIAIG 2012.</li>
+<li id="sp5-ref-12">OpenAI et al., &ldquo;Dota 2 with Large Scale Deep Reinforcement Learning&rdquo; (OpenAI Five), 2019. https://arxiv.org/abs/1912.06680</li>
+<li id="sp5-ref-13">PyTorch, &ldquo;Getting Started on Intel GPU&rdquo; (XPU backend). https://docs.pytorch.org/docs/stable/notes/get_start_xpu.html</li>
 </ol>
 </section><section class="tabpanel" role="tabpanel" id="tab-sp6" hidden><h2>SP6 Card encoding comparison</h2>
 
@@ -2054,7 +2081,9 @@ not cloned; module names from the README). No code copied.</p>
 </script>
 <script src="/prez-header.js" defer></script>
 <script>
-(function(){var b=document.querySelectorAll('.tabs button');function show(k,push){var ok=false;b.forEach(function(x){var on=x.dataset.tab===k;x.setAttribute('aria-selected',on);if(on)ok=true});if(!ok)return;document.querySelectorAll('.tabpanel').forEach(function(p){p.hidden=p.id!=='tab-'+k});if(push)history.replaceState(null,'','#'+k);var t=document.querySelector('.tabs');if(window.scrollY>t.offsetTop)window.scrollTo(0,t.offsetTop)}
-b.forEach(function(x){x.addEventListener('click',function(){show(x.dataset.tab,true)})});var h=location.hash.slice(1);if(h)show(h,false);})();
+(function(){var b=document.querySelectorAll('.tabs button');function show(k,push){var ok=false;b.forEach(function(x){var on=x.dataset.tab===k;x.setAttribute('aria-selected',on);if(on)ok=true});if(!ok)return false;document.querySelectorAll('.tabpanel').forEach(function(p){p.hidden=p.id!=='tab-'+k});if(push)history.replaceState(null,'','#'+k);var t=document.querySelector('.tabs');if(window.scrollY>t.offsetTop)window.scrollTo(0,t.offsetTop);return true}
+b.forEach(function(x){x.addEventListener('click',function(){show(x.dataset.tab,true)})});
+document.addEventListener('click',function(e){var a=e.target.closest('a.tablink');if(a){e.preventDefault();show(a.getAttribute('href').slice(1),true)}});
+var h=location.hash.slice(1);if(h&&!show(h,false)){var el=document.getElementById(h);if(el){var p=el.closest('.tabpanel');if(p){show(p.id.slice(4),false);el.scrollIntoView()}}}})();
 </script></body>
 </html>
