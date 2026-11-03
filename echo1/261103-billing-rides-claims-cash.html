@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="prez-comments" content="on">
+<title>Billing: rides, claims and cash</title>
+<style>
+:root{--bg:#fbfbf9;--text:#1c1c1a;--muted:#5c5b56;--rule:#e2e1dc;--grid:#ebeae5;--bar:#a9a7a0;--bar-mid:#82807a;--bar-strong:#55544e;--accent:#d4501c;--age1:#a9a7a0;--age2:#82807a;--age3:#55544e;--tip:#ffffff;--shadow:rgb(0 0 0 / .14);color-scheme:light;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161615;--text:#ecebe6;--muted:#a9a8a0;--rule:#2f2f2c;--grid:#262624;--bar:#62615c;--bar-mid:#7c7b75;--bar-strong:#96958e;--accent:#e66a37;--age1:#55544f;--age2:#8a8983;--age3:#c4c3bc;--tip:#232321;--shadow:rgb(0 0 0 / .5);color-scheme:dark;}}
+:root[data-theme="dark"]{--bg:#161615;--text:#ecebe6;--muted:#a9a8a0;--rule:#2f2f2c;--grid:#262624;--bar:#62615c;--bar-mid:#7c7b75;--bar-strong:#96958e;--accent:#e66a37;--age1:#55544f;--age2:#8a8983;--age3:#c4c3bc;--tip:#232321;--shadow:rgb(0 0 0 / .5);color-scheme:dark;}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1040px;margin:0 auto;padding:64px 16px 72px}
+h1{font-size:clamp(26px,4.2vw,34px);line-height:1.15;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:21px;line-height:1.25;margin:0 0 14px}
+h3{font-size:17px;line-height:1.3;margin:36px 0 8px}
+p,ul{max-width:70ch;margin:0 0 12px}
+ul{padding-left:20px}
+li{margin:0 0 6px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+.lead{font-size:18px;max-width:60ch;margin:0 0 30px}
+.win{color:var(--muted);font-size:14px;margin:0 0 8px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 28px}
+.kpi .l,.kpi .d{color:var(--muted);font-size:14px}
+.kpi .v{font-size:32px;font-weight:650;line-height:1.15;font-variant-numeric:tabular-nums;margin:2px 0}
+.kpi .v.hi{color:var(--accent)}
+section{margin-top:60px;padding-top:26px;border-top:1px solid var(--rule)}
+.num{font-variant-numeric:tabular-nums}
+/* horizontal bar rows: label | track | value */
+.rows{display:grid;grid-template-columns:minmax(150px,260px) minmax(0,1fr) 84px;column-gap:14px;row-gap:7px;align-items:center;margin:8px 0 18px}
+.rows .l{font-size:14px;text-align:right;line-height:1.25}
+.rows .v{font-size:14px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rows .tot{font-weight:650}
+.rows .t{position:relative;height:20px;border-left:1px solid var(--bar-mid);outline:none}
+.rows .t:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.wf .t i{position:absolute;top:2px;bottom:2px;min-width:2px;background:var(--bar);border-radius:2px}
+.wf .t i.tot{background:var(--bar-strong)}
+.wf .t i.acc{background:var(--accent)}
+.rows.wf{grid-template-columns:minmax(150px,260px) minmax(0,1fr) 124px}
+.pc{color:var(--muted);font-weight:400}
+.age .t{display:flex;align-items:stretch;padding:2px 0}
+.age .t i{display:block;min-width:1px}
+.a1{background:var(--bar)}.a2{background:var(--bar-mid)}.a3{background:var(--bar-strong)}
+.age .t i.a1,.sw.g1{background:var(--age1)}.age .t i.a2,.sw.g2{background:var(--age2)}.age .t i.a3,.sw.g3{background:var(--age3)}
+.key{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px;color:var(--muted);margin:10px 0 4px}
+.key span{display:inline-flex;align-items:center;gap:7px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px}
+/* tables */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0 14px}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums;width:100%}
+th,td{padding:7px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
+th{color:var(--muted);font-weight:600;vertical-align:bottom}
+th:first-child,td:first-child{text-align:left;padding-left:0}
+td.txt,th.txt{text-align:left;white-space:normal;min-width:240px}
+tfoot td{font-weight:650;border-bottom:0;border-top:1px solid var(--bar-mid)}
+.monthly{min-width:860px}
+.monthly th{white-space:normal;min-width:44px}
+.monthly th,.monthly td{padding:7px 8px}
+.monthly th:first-child,.monthly td:first-child{padding-left:0}
+.monthly td:first-child,.monthly th:first-child{position:sticky;left:0;background:var(--bg)}
+.reasons{min-width:620px}
+.narrow{max-width:520px}
+/* stage grid: a small bar in every cell, one shared scale */
+.stage{max-width:780px}
+.stage thead th{text-align:left}
+.stage thead th:last-child{text-align:right}
+.stage tbody th{font-weight:400;color:var(--text);text-align:left;padding-left:0;white-space:normal;min-width:96px;vertical-align:top}
+.stage td{min-width:60px;outline:none;cursor:default;text-align:left;vertical-align:top}
+.stage td:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.stage .n{display:block}
+.stage .n.z{color:var(--muted)}
+.stage .b{display:block;height:10px;margin-top:3px}
+.stage .b i{display:block;height:100%;background:var(--bar);border-radius:1px}
+.stage .b i.acc{background:var(--accent)}
+.stage td.tt{font-weight:650;text-align:right}
+/* vertical bar charts */
+.vchart{position:relative;margin:4px 0 12px}
+.vchart svg{display:block;width:100%;overflow:visible}
+.vchart .hit{outline:none}
+.vchart .hit:focus-visible{stroke:var(--accent);stroke-width:2}
+/* tooltip */
+#tip{position:fixed;z-index:20;max-width:300px;min-width:180px;background:var(--tip);color:var(--text);border:1px solid var(--rule);border-radius:8px;padding:8px 11px;font-size:13px;line-height:1.45;box-shadow:0 6px 22px var(--shadow);pointer-events:none;font-variant-numeric:tabular-nums}
+#tip b{display:block;margin-bottom:2px}
+#tip .r{display:flex;justify-content:space-between;gap:16px;color:var(--muted)}
+details{margin-top:60px;border-top:1px solid var(--rule);padding-top:20px}
+summary{cursor:pointer;font-size:17px;font-weight:600}
+details ul{margin-top:14px;color:var(--text)}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi .v{font-size:27px}
+  .rows{grid-template-columns:minmax(0,1fr) 76px;row-gap:2px}
+  .rows.wf{grid-template-columns:minmax(0,1fr) 116px}
+  .rows .l{grid-column:1/-1;text-align:left;margin-top:8px}
+  .lead{font-size:17px}
+  section{margin-top:44px}
+  table{font-size:13px}
+  th,td{padding:6px 5px}
+  td:first-child,th:first-child{white-space:normal}
+  .stage td{min-width:46px}
+  .stage tbody th{min-width:84px}
+}
+@media (max-width:600px){
+  .stack thead tr,.stack tbody tr{display:grid;column-gap:10px;border-bottom:1px solid var(--grid);padding:6px 0}
+  .stack.reasons tr{grid-template-columns:minmax(0,1fr) 44px 72px}
+  .stack.collect tr{grid-template-columns:minmax(0,1fr) 64px}
+  .stack th,.stack td{border:0;padding:1px 0;white-space:normal}
+  .stack .txt{grid-column:1/-1;min-width:0;color:var(--muted)}
+  .reasons{min-width:0}
+  .monthly{min-width:0}
+  .monthly .ph{display:none}
+  .monthly th,.monthly td{padding:6px 3px}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Billing: rides, claims and cash</h1>
+<p class="sub">Rides through Oct 31, 2026 · data as of Nov 3, 2026</p>
+<p class="lead">Payers have paid 88% of what was claimed on June to October rides. Most of the gap between what the rides are worth and what was claimed is contract work, which echo1 doesn’t invoice or track yet.</p>
+<p class="win">June to October rides</p>
+<div class="kpis"><div class="kpi"><div class="l">Billable value</div><div class="v">$4.60M</div><div class="d">12,840 rides</div></div><div class="kpi"><div class="l">Claimed</div><div class="v">$3.19M</div><div class="d">69% of value</div></div><div class="kpi"><div class="l">Received</div><div class="v">$2.81M</div><div class="d">61% of value · 88% of claimed</div></div><div class="kpi"><div class="l">Contract work</div><div class="v hi">$1.04M</div><div class="d">not tracked in echo1</div></div></div>
+</header>
+
+<section id="s1">
+<h2>1. June to October, from ride value to cash</h2>
+<div class="rows wf" role="img" aria-label="Billable value $4.60M, claimed $3.19M, received $2.81M"><div class="l tot">Billable value</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Billable value&lt;/b&gt;$4,603,023"><i class="tot" style="left:0.00%;width:100.00%"></i></div><div class="v tot">$4.60M <span class="pc">· 100%</span></div><div class="l acc">Contract work</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Contract work&lt;/b&gt;−$1,038,613"><i class="acc" style="left:77.44%;width:22.56%"></i></div><div class="v acc">−$1.04M <span class="pc">· 23%</span></div><div class="l ">Outside Oklahoma</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Outside Oklahoma&lt;/b&gt;−$78,521"><i class="" style="left:75.73%;width:1.71%"></i></div><div class="v ">−$79k <span class="pc">· 2%</span></div><div class="l ">Insurance rides not on a claim yet</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Insurance rides not on a claim yet&lt;/b&gt;−$295,944"><i class="" style="left:69.30%;width:6.43%"></i></div><div class="v ">−$296k <span class="pc">· 6%</span></div><div class="l ">Claim vs estimate</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Claim vs estimate&lt;/b&gt;$4,310"><i class="" style="left:69.30%;width:0.09%"></i></div><div class="v ">+$4k <span class="pc">· &lt;1%</span></div><div class="l tot">Claimed</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Claimed&lt;/b&gt;$3,194,255"><i class="tot" style="left:0.00%;width:69.39%"></i></div><div class="v tot">$3.19M <span class="pc">· 69%</span></div><div class="l ">Waiting on payers</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Waiting on payers&lt;/b&gt;−$175,608"><i class="" style="left:65.58%;width:3.82%"></i></div><div class="v ">−$176k <span class="pc">· 4%</span></div><div class="l ">Denied</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Denied&lt;/b&gt;−$209,759"><i class="" style="left:61.02%;width:4.56%"></i></div><div class="v ">−$210k <span class="pc">· 5%</span></div><div class="l ">Short-paid and other</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Short-paid and other&lt;/b&gt;−$1,140"><i class="" style="left:61.00%;width:0.02%"></i></div><div class="v ">−$1k <span class="pc">· &lt;1%</span></div><div class="l tot">Received</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Received&lt;/b&gt;$2,807,748"><i class="tot" style="left:0.00%;width:61.00%"></i></div><div class="v tot">$2.81M <span class="pc">· 61%</span></div></div>
+<ul>
+<li>October’s $164k waiting on payers is normal lag. Half of all money arrives within 16 days of the ride, and 87% within 90 days.</li>
+<li>June has $192k of denied claims, almost all SoonerCare (CO-A1) on claims sent from V1.</li>
+</ul>
+<div class="tw"><table class="monthly"><thead><tr><th>Month</th><th class="ph">Rides</th><th>Billable value</th><th class="ph">Contract work</th><th class="ph">Outside Oklahoma</th><th class="ph">Not on a claim yet</th><th>Claimed</th><th class="ph">Claimed %</th><th>Received</th><th>Received %</th><th class="ph">Denied</th><th class="ph">Waiting</th></tr></thead><tbody><tr><td>June</td><td class="ph">2,480</td><td>$906,445</td><td class="ph">$132,870</td><td class="ph">$6,949</td><td class="ph">$60,608</td><td>$713,821</td><td class="ph">79%</td><td>$520,139</td><td>57%</td><td class="ph">$192,205</td><td class="ph">$2,597</td></tr><tr><td>July</td><td class="ph">2,628</td><td>$995,827</td><td class="ph">$207,002</td><td class="ph">$10,163</td><td class="ph">$71,760</td><td>$707,437</td><td class="ph">71%</td><td>$698,430</td><td>70%</td><td class="ph">$7,373</td><td class="ph">$0</td></tr><tr><td>August</td><td class="ph">2,493</td><td>$920,516</td><td class="ph">$202,318</td><td class="ph">$8,109</td><td class="ph">$53,875</td><td>$648,376</td><td class="ph">70%</td><td>$641,663</td><td>70%</td><td class="ph">$5,330</td><td class="ph">$1,397</td></tr><tr><td>September</td><td class="ph">2,605</td><td>$868,851</td><td class="ph">$229,986</td><td class="ph">$13,594</td><td class="ph">$56,498</td><td>$568,997</td><td class="ph">65%</td><td>$558,282</td><td>64%</td><td class="ph">$2,531</td><td class="ph">$7,864</td></tr><tr><td>October</td><td class="ph">2,634</td><td>$911,384</td><td class="ph">$266,437</td><td class="ph">$39,706</td><td class="ph">$53,203</td><td>$555,624</td><td class="ph">61%</td><td>$389,234</td><td>43%</td><td class="ph">$2,320</td><td class="ph">$163,750</td></tr></tbody><tfoot><tr><td>Total</td><td class="ph">12,840</td><td>$4,603,023</td><td class="ph">$1,038,613</td><td class="ph">$78,521</td><td class="ph">$295,944</td><td>$3,194,255</td><td class="ph">69%</td><td>$2,807,748</td><td>61%</td><td class="ph">$209,759</td><td class="ph">$175,608</td></tr></tfoot></table></div>
+</section>
+
+<section id="s2">
+<h2>2. Where echo1 rides are stuck, July to October</h2>
+<p>8,029 rides entered in echo1 since July. Earlier rides, and most of July, were claimed in V1, so the June to October totals above are larger.</p>
+<h3>Where each ride is, by month of the ride</h3>
+<div class="tw"><table class="stage"><thead><tr><th></th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Total</th></tr></thead><tbody><tr><th scope="row">Not processed</th><td tabindex="0" data-tip="&lt;b&gt;July 2026 · Not processed&lt;/b&gt;16 of 228 rides (7%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Not processed&lt;/span&gt;&lt;span&gt;11&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Needs attention&lt;/span&gt;&lt;span&gt;5&lt;/span&gt;&lt;/span&gt;"><span class="n">16</span><span class="b"><i class="" style="width:0.9%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;August 2026 · Not processed&lt;/b&gt;37 of 2,071 rides (2%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Not processed&lt;/span&gt;&lt;span&gt;34&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Needs attention&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;&lt;/span&gt;"><span class="n">37</span><span class="b"><i class="" style="width:2.2%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;September 2026 · Not processed&lt;/b&gt;12 of 2,827 rides (0%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Not processed&lt;/span&gt;&lt;span&gt;5&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Needs attention&lt;/span&gt;&lt;span&gt;7&lt;/span&gt;&lt;/span&gt;"><span class="n">12</span><span class="b"><i class="" style="width:0.7%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;October 2026 · Not processed&lt;/b&gt;55 of 2,831 rides (2%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Not processed&lt;/span&gt;&lt;span&gt;10&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Needs attention&lt;/span&gt;&lt;span&gt;45&lt;/span&gt;&lt;/span&gt;"><span class="n">55</span><span class="b"><i class="" style="width:3.2%"></i></span></td><td class="tt">120</td></tr><tr><th scope="row">Not billed</th><td tabindex="0" data-tip="&lt;b&gt;July 2026 · Not billed&lt;/b&gt;73 of 228 rides (32%)"><span class="n">73</span><span class="b"><i class="" style="width:4.3%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;August 2026 · Not billed&lt;/b&gt;147 of 2,071 rides (7%)"><span class="n">147</span><span class="b"><i class="" style="width:8.7%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;September 2026 · Not billed&lt;/b&gt;257 of 2,827 rides (9%)"><span class="n">257</span><span class="b"><i class="" style="width:15.2%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;October 2026 · Not billed&lt;/b&gt;179 of 2,831 rides (6%)"><span class="n">179</span><span class="b"><i class="" style="width:10.6%"></i></span></td><td class="tt">656</td></tr><tr><th scope="row">Bill to contract</th><td tabindex="0" data-tip="&lt;b&gt;July 2026 · Bill to contract&lt;/b&gt;139 of 228 rides (61%)"><span class="n">139</span><span class="b"><i class="acc" style="width:8.2%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;August 2026 · Bill to contract&lt;/b&gt;651 of 2,071 rides (31%)"><span class="n">651</span><span class="b"><i class="acc" style="width:38.4%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;September 2026 · Bill to contract&lt;/b&gt;825 of 2,827 rides (29%)"><span class="n">825</span><span class="b"><i class="acc" style="width:48.7%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;October 2026 · Bill to contract&lt;/b&gt;899 of 2,831 rides (32%)"><span class="n">899</span><span class="b"><i class="acc" style="width:53.1%"></i></span></td><td class="tt">2,514</td></tr><tr><th scope="row">Billed, rework needed</th><td tabindex="0" data-tip="&lt;b&gt;July 2026 · Billed, rework needed&lt;/b&gt;0 of 228 rides (0%)"><span class="n z">0</span><span class="b"><i class="" style="width:0.0%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;August 2026 · Billed, rework needed&lt;/b&gt;15 of 2,071 rides (1%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Denied&lt;/span&gt;&lt;span&gt;8&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Rejected&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Reversed&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Voided&lt;/span&gt;&lt;span&gt;1&lt;/span&gt;&lt;/span&gt;"><span class="n">15</span><span class="b"><i class="" style="width:0.9%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;September 2026 · Billed, rework needed&lt;/b&gt;11 of 2,827 rides (0%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Denied&lt;/span&gt;&lt;span&gt;8&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Rejected&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;&lt;/span&gt;"><span class="n">11</span><span class="b"><i class="" style="width:0.6%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;October 2026 · Billed, rework needed&lt;/b&gt;10 of 2,831 rides (0%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Denied&lt;/span&gt;&lt;span&gt;10&lt;/span&gt;&lt;/span&gt;"><span class="n">10</span><span class="b"><i class="" style="width:0.6%"></i></span></td><td class="tt">36</td></tr><tr><th scope="row">Billed, waiting</th><td tabindex="0" data-tip="&lt;b&gt;July 2026 · Billed, waiting&lt;/b&gt;0 of 228 rides (0%)"><span class="n z">0</span><span class="b"><i class="" style="width:0.0%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;August 2026 · Billed, waiting&lt;/b&gt;7 of 2,071 rides (0%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Billed&lt;/span&gt;&lt;span&gt;4&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Resubmitted&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;&lt;/span&gt;"><span class="n">7</span><span class="b"><i class="" style="width:0.4%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;September 2026 · Billed, waiting&lt;/b&gt;28 of 2,827 rides (1%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Billed&lt;/span&gt;&lt;span&gt;16&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Resubmitted&lt;/span&gt;&lt;span&gt;12&lt;/span&gt;&lt;/span&gt;"><span class="n">28</span><span class="b"><i class="" style="width:1.7%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;October 2026 · Billed, waiting&lt;/b&gt;512 of 2,831 rides (18%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Billed&lt;/span&gt;&lt;span&gt;487&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Resubmitted&lt;/span&gt;&lt;span&gt;25&lt;/span&gt;&lt;/span&gt;"><span class="n">512</span><span class="b"><i class="" style="width:30.2%"></i></span></td><td class="tt">547</td></tr><tr><th scope="row">Billed, paid</th><td tabindex="0" data-tip="&lt;b&gt;July 2026 · Billed, paid&lt;/b&gt;0 of 228 rides (0%)"><span class="n z">0</span><span class="b"><i class="" style="width:0.0%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;August 2026 · Billed, paid&lt;/b&gt;1,214 of 2,071 rides (59%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Paid&lt;/span&gt;&lt;span&gt;814&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Reconciled&lt;/span&gt;&lt;span&gt;396&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Partially paid&lt;/span&gt;&lt;span&gt;4&lt;/span&gt;&lt;/span&gt;"><span class="n">1,214</span><span class="b"><i class="" style="width:71.7%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;September 2026 · Billed, paid&lt;/b&gt;1,694 of 2,827 rides (60%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Paid&lt;/span&gt;&lt;span&gt;1,675&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Reconciled&lt;/span&gt;&lt;span&gt;16&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Partially paid&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;&lt;/span&gt;"><span class="n">1,694</span><span class="b"><i class="" style="width:100.0%"></i></span></td><td tabindex="0" data-tip="&lt;b&gt;October 2026 · Billed, paid&lt;/b&gt;1,176 of 2,831 rides (42%)&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Paid&lt;/span&gt;&lt;span&gt;1,173&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Partially paid&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;&lt;/span&gt;"><span class="n">1,176</span><span class="b"><i class="" style="width:69.4%"></i></span></td><td class="tt">4,084</td></tr></tbody></table></div>
+<p>Denied, rejected or voided claims are 0.6% of the money echo1 has billed. Not billed includes 157 cancelled rides with no charge. 72 non-billable rides are left out.</p>
+
+<h3>Why rides aren’t claimed yet</h3>
+<p>499 rides worth about $136,500 passed billing review without a claim. Another 120 (about $25,400) aren’t through billing review yet.</p>
+<div class="tw"><table class="reasons stack"><thead><tr><th>Reason</th><th>Rides</th><th>Est. value</th><th class="txt">Next step</th></tr></thead><tbody><tr><td>Coverage not found or inactive</td><td>188</td><td>$53,259</td><td class="txt">Correct the member’s details or find the right payer</td></tr><tr><td>Coverage not verified</td><td>78</td><td>$27,058</td><td class="txt">Verify coverage; the claim build skips these</td></tr><tr><td>No member ID</td><td>61</td><td>$15,826</td><td class="txt">Run a coverage check by name and date of birth</td></tr><tr><td>Trip log cancelled</td><td>58</td><td>$13,075</td><td class="txt">Charge the cancellation or mark Non-Billable</td></tr><tr><td>Trip log not complete</td><td>60</td><td>$12,531</td><td class="txt">Driver to finish and sign the trip log</td></tr><tr><td>Ready</td><td>43</td><td>$12,400</td><td class="txt">None; the next claim build takes them</td></tr><tr><td>Coverage check not run</td><td>9</td><td>$2,030</td><td class="txt">Run the bulk check on Transactions</td></tr><tr><td>Coverage active, payer not set</td><td>2</td><td>$320</td><td class="txt">Set the payer on the request</td></tr></tbody></table></div>
+
+<h3>Waiting on payers</h3>
+<p>524 claims ($179,862) are with payers, 22 of them resubmissions. Almost all are under 30 days old.</p>
+<div class="key"><span><i class="sw g1"></i>Under 30 days</span><span><i class="sw g2"></i>31 to 60</span><span><i class="sw g3"></i>61 to 90</span></div>
+<div class="rows age"><div class="l">SoonerCare</div><div class="t" tabindex="0" data-tip="&lt;b&gt;SoonerCare&lt;/b&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Under 30 days&lt;/span&gt;&lt;span&gt;$77,491&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;31 to 60&lt;/span&gt;&lt;span&gt;$1,969&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;61 to 90&lt;/span&gt;&lt;span&gt;$0&lt;/span&gt;&lt;/span&gt;"><i class="a1" style="width:97.52%"></i><i class="a2" style="width:2.48%"></i></div><div class="v">$79,460</div><div class="l">DMH</div><div class="t" tabindex="0" data-tip="&lt;b&gt;DMH&lt;/b&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Under 30 days&lt;/span&gt;&lt;span&gt;$66,240&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;31 to 60&lt;/span&gt;&lt;span&gt;$2,129&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;61 to 90&lt;/span&gt;&lt;span&gt;$589&lt;/span&gt;&lt;/span&gt;"><i class="a1" style="width:83.36%"></i><i class="a2" style="width:2.68%"></i><i class="a3" style="width:0.74%"></i></div><div class="v">$68,958</div><div class="l">Humana Oklahoma Healthy Horizons</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Humana Oklahoma Healthy Horizons&lt;/b&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Under 30 days&lt;/span&gt;&lt;span&gt;$9,397&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;31 to 60&lt;/span&gt;&lt;span&gt;$2,733&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;61 to 90&lt;/span&gt;&lt;span&gt;$589&lt;/span&gt;&lt;/span&gt;"><i class="a1" style="width:11.83%"></i><i class="a2" style="width:3.44%"></i><i class="a3" style="width:0.74%"></i></div><div class="v">$12,719</div><div class="l">Oklahoma Complete Health</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Oklahoma Complete Health&lt;/b&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Under 30 days&lt;/span&gt;&lt;span&gt;$8,726&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;31 to 60&lt;/span&gt;&lt;span&gt;$2,638&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;61 to 90&lt;/span&gt;&lt;span&gt;$637&lt;/span&gt;&lt;/span&gt;"><i class="a1" style="width:10.98%"></i><i class="a2" style="width:3.32%"></i><i class="a3" style="width:0.80%"></i></div><div class="v">$12,001</div><div class="l">Aetna Better Health of Oklahoma</div><div class="t" tabindex="0" data-tip="&lt;b&gt;Aetna Better Health of Oklahoma&lt;/b&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;Under 30 days&lt;/span&gt;&lt;span&gt;$5,354&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;31 to 60&lt;/span&gt;&lt;span&gt;$930&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;r&quot;&gt;&lt;span&gt;61 to 90&lt;/span&gt;&lt;span&gt;$440&lt;/span&gt;&lt;/span&gt;"><i class="a1" style="width:6.74%"></i><i class="a2" style="width:1.17%"></i><i class="a3" style="width:0.55%"></i></div><div class="v">$6,724</div></div>
+<p>112 claims were resubmitted; $52,353 of their $61,741 is paid so far.</p>
+
+<h3>Contract work</h3>
+<p>1,847 rides have a contract payer, about $600,000. Another 443 prescheduled rides still need their contract payer set by hand. echo1 doesn’t invoice contract payers or record their payments yet.</p>
+<div class="tw"><table class="narrow"><thead><tr><th>Payer</th><th>Rides</th><th>Est. value</th></tr></thead><tbody><tr><td>Oceans Healthcare</td><td>1,018</td><td>$217,826</td></tr><tr><td>Red Rock</td><td>477</td><td>$156,157</td></tr><tr><td>Absentee Shawnee Tribe</td><td>49</td><td>$103,322</td></tr><tr><td>Oakwood Springs</td><td>94</td><td>$46,136</td></tr><tr><td>Veterans Administration (VA)</td><td>50</td><td>$18,955</td></tr><tr><td>Jim Taliaferro</td><td>19</td><td>$13,408</td></tr><tr><td>13 others</td><td>140</td><td>$44,655</td></tr></tbody></table></div>
+<p>101 rides came from facilities or payers outside Oklahoma (about $77,000). The chart counts them under Bill to contract.</p>
+</section>
+
+<section id="s3">
+<h2>3. Why monthly revenue is below the spring</h2>
+<h3>Ride volume</h3>
+<div class="key"><span><i class="sw a3"></i>Prescheduled</span><span><i class="sw a1"></i>Crisis</span></div>
+<div class="vchart" id="vol" role="img" aria-label="Billable rides per month, January to October 2026, prescheduled and crisis"></div>
+<p>Prescheduled rides from about 15 referring programs stopped in May and June, and billable rides fell by about 6,000 a month. Those rides were billed to SoonerCare and the MCOs. Claimed value fell from between $2.1M and $2.4M a month to between $0.56M and $0.71M.</p>
+
+<h3>The Aug 18 rate change</h3>
+<p>From Aug 18 the contract includes the first 30 loaded miles in the $160 base, so a ride under 30 miles is $160 flat. Insurance ride counts stayed at about 1,900 a month, but the change took about $87k off August (from the 18th), $194k off September and $184k off October: $464k so far, 23% of a full month’s value. That is the contract, so it isn’t recoverable.</p>
+
+<h3>Cash received</h3>
+<div class="key"><span><i class="sw a3"></i>Humana</span><span><i class="sw a1"></i>All other payers</span></div>
+<div class="vchart" id="cash" role="img" aria-label="Cash received per payment month, January to October 2026, Humana and all other payers"></div>
+<p>January includes a one-off $655k Humana overpayment on a single ride. Humana took back $310k in April and May by withholding whole payments, and about $345k is still to come off. Contract payers pay outside Waystar and aren’t included.</p>
+</section>
+
+<section id="s4">
+<h2>4. Money that can still be collected</h2>
+<div class="tw"><table class="collect stack"><thead><tr><th>Pile</th><th>Amount</th><th class="txt">Next step</th></tr></thead><tbody><tr><td>Contract work</td><td>$1.04M</td><td class="txt">Confirm outside echo1 that these rides were invoiced and paid. 443 prescheduled rides still need their contract payer set.</td></tr><tr><td>April to June denials, mostly SoonerCare</td><td>$464k</td><td class="txt">Rework and resubmit; still denied as of Nov 3. SoonerCare allows 12 months. Check OHCA portal rebills first; they don’t show in echo1.</td></tr><tr><td>Insurance rides not on a claim yet</td><td>$296k</td><td class="txt">Claim them. June’s $60,608 reaches the 6-month filing limit in December.</td></tr><tr><td>Waiting on payers</td><td>$176k</td><td class="txt">Nothing yet; most are October claims inside normal payment time.</td></tr></tbody></table></div>
+</section>
+
+<details id="defs">
+<summary>What each number means</summary>
+<ul>
+<li>Billable value prices each ride by the payer’s contract on the ride date: $160 a trip plus $4.80 a loaded mile (pickup to drop-off). From Aug 18, 2026 the first 30 loaded miles are included in the $160. Contract payers use their own rates, and rides with no payer use SoonerCare’s. These values are estimates.</li>
+<li>Claimed is the total on claims for that month’s rides, from echo1 or V1. Received is what payers have paid on those claims so far.</li>
+<li>Claim totals land within about 1% of the estimate each month.</li>
+<li>Months are the day of the ride, Oklahoma time. Cash received is by payment date.</li>
+<li>Contract work is rides for contract payers and prescheduled rides with no payer. Rides outside Oklahoma are shown on their own.</li>
+<li>Insurance rides are the ones that should become SoonerCare, DMH or MCO claims.</li>
+<li>echo1 rides are transport numbers 300000 and up, without 18 QA test rides. Claim counts leave out the V1 migration backfill.</li>
+<li>Mileage billing: before Dec 1, 2025 (V1), the whole route minus 30 miles at $2.85 a mile. From Dec 1, 2025, loaded miles at $4.80. From Aug 18, 2026, loaded miles after the first 30.</li>
+<li>Source: echo1 production database.</li>
+</ul>
+</details>
+</main>
+<div id="tip" hidden></div>
+<script>
+(function () {
+  var VOL = [{"m":"2026-01","cri":1787,"pre":6242},{"m":"2026-02","cri":1696,"pre":7668},{"m":"2026-03","cri":1962,"pre":6607},{"m":"2026-04","cri":1904,"pre":6303},{"m":"2026-05","cri":1834,"pre":3031},{"m":"2026-06","cri":1644,"pre":836},{"m":"2026-07","cri":1777,"pre":851},{"m":"2026-08","cri":1828,"pre":665},{"m":"2026-09","cri":1927,"pre":678},{"m":"2026-10","cri":1888,"pre":746}];
+  var CASH = [{"m":"2026-01","dep":2144580,"hum":846904,"by":[["OHCA",995445],["Humana",846904],["Aetna",111217],["OK Complete",191013]],"rawOther":1},{"m":"2026-02","dep":2144552,"hum":778576,"by":[["OHCA",1036222],["Humana",778576],["Aetna",145902],["OK Complete",183853]],"rawOther":-1},{"m":"2026-03","dep":2014649,"hum":306325,"by":[["OHCA",1345799],["Humana",306325],["Aetna",168546],["OK Complete",193979]],"rawOther":0},{"m":"2026-04","dep":1725757,"hum":0,"by":[["OHCA",1401872],["Humana",0],["Aetna",125331],["OK Complete",198554]],"rawOther":0},{"m":"2026-05","dep":1292978,"hum":200075,"by":[["OHCA",855172],["Humana",200075],["Aetna",80635],["OK Complete",157098]],"rawOther":-2},{"m":"2026-06","dep":1528556,"hum":67254,"by":[["OHCA",1245167],["Humana",67254],["Aetna",106985],["OK Complete",109150]],"rawOther":0},{"m":"2026-07","dep":1557812,"hum":71633,"by":[["OHCA",1414378],["Humana",71633],["Aetna",50479],["OK Complete",21322]],"rawOther":0},{"m":"2026-08","dep":936123,"hum":87631,"by":[["OHCA",532571],["Humana",87631],["Aetna",31776],["OK Complete",284145]],"rawOther":0},{"m":"2026-09","dep":762518,"hum":58114,"by":[["OHCA",481492],["Humana",58114],["Aetna",144655],["OK Complete",78257]],"rawOther":0},{"m":"2026-10","dep":746195,"hum":53364,"by":[["OHCA",572263],["Humana",53364],["Aetna",42745],["OK Complete",77822]],"rawOther":1}];
+  var MON = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var fmtN = function (v) { return Math.round(v).toLocaleString('en-US'); };
+  var fmtD = function (v) { return '$' + fmtN(v); };
+  var fmtM = function (v) { return v === 0 ? '$0' : '$' + (v / 1e6).toFixed(1) + 'M'; };
+  var NS = 'http://www.w3.org/2000/svg';
+  function mk(tag, at, txt) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; return e; }
+  function row(l, v) { return '<span class="r"><span>' + l + '</span><span>' + v + '</span></span>'; }
+  // stacked vertical bars, drawn at the container's real width so text stays at its true size
+  function vbars(el, cats, segs, tickFmt, tipFor) {
+    var W = el.clientWidth; if (W < 120) return; // not laid out yet
+    var H = 250, L = 50, Rm = 2, T = 8, B = 24;
+    var tot = cats.map(function (_, i) { return segs.reduce(function (a, s) { return a + s.v[i]; }, 0); });
+    var max = Math.max.apply(null, tot) * 1.04;
+    var p = Math.pow(10, Math.floor(Math.log10(max / 5)));
+    var step = [1, 2, 2.5, 5, 10].map(function (k) { return k * p; }).filter(function (k) { return k >= max / 5; })[0];
+    var top = Math.ceil(max / step) * step;
+    var y = function (v) { return T + (H - T - B) * (1 - v / top); };
+    var gw = (W - L - Rm) / cats.length, bw = Math.min(54, gw * 0.64);
+    var svg = mk('svg', { viewBox: '0 0 ' + W + ' ' + H, height: H });
+    for (var v = 0; v <= top + 1e-9; v += step) {
+      svg.appendChild(mk('line', { x1: L, x2: W - Rm, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--bar-mid)' : 'var(--grid)' }));
+      svg.appendChild(mk('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 12, fill: 'var(--muted)' }, tickFmt(v)));
+    }
+    cats.forEach(function (c, i) {
+      var x0 = L + gw * i, acc = 0;
+      segs.forEach(function (s) {
+        var val = s.v[i]; if (val <= 0) return;
+        svg.appendChild(mk('rect', { x: x0 + (gw - bw) / 2, y: y(acc + val), width: bw, height: Math.max(0, y(acc) - y(acc + val) - (acc ? 1 : 0)), fill: s.c }));
+        acc += val;
+      });
+      svg.appendChild(mk('text', { x: x0 + gw / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--muted)' }, MON[+c.slice(5) - 1].slice(0, 3)));
+      var hit = mk('rect', { class: 'hit', x: x0, y: T, width: gw, height: H - T - B, fill: 'transparent', tabindex: 0 });
+      hit.dataset.tip = tipFor(i);
+      svg.appendChild(hit);
+    });
+    el.replaceChildren(svg);
+  }
+  function draw() {
+    vbars(document.getElementById('vol'), VOL.map(function (r) { return r.m; }),
+      [{ c: 'var(--bar)', v: VOL.map(function (r) { return r.cri; }) }, { c: 'var(--bar-strong)', v: VOL.map(function (r) { return r.pre; }) }], fmtN,
+      function (i) { var r = VOL[i]; return '<b>' + MON[+r.m.slice(5) - 1] + ' 2026</b>' + fmtN(r.cri + r.pre) + ' billable rides' + row('Prescheduled', fmtN(r.pre)) + row('Crisis', fmtN(r.cri)); });
+    vbars(document.getElementById('cash'), CASH.map(function (c) { return c.m; }),
+      [{ c: 'var(--bar-strong)', v: CASH.map(function (c) { return c.hum; }) }, { c: 'var(--bar)', v: CASH.map(function (c) { return c.dep - c.hum; }) }], fmtM,
+      function (i) { var c = CASH[i]; return '<b>' + MON[+c.m.slice(5) - 1] + ' 2026</b>' + fmtD(c.dep) + ' received' + c.by.map(function (b) { return row(b[0], fmtD(b[1])); }).join(''); });
+  }
+  draw();
+  var lastW = 0;
+  new ResizeObserver(function () { var w = document.getElementById('vol').clientWidth; if (w !== lastW) { lastW = w; draw(); } }).observe(document.querySelector('main'));
+
+  // detail on demand: hover, keyboard focus and tap all show the same tooltip
+  var tip = document.getElementById('tip'), cur = null;
+  function show(el, x, y) {
+    cur = el; tip.innerHTML = el.dataset.tip; tip.hidden = false;
+    var r = el.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var anchored = x == null;
+    if (anchored) { x = r.left + r.width / 2; y = r.top; }
+    var left = Math.min(Math.max(8, x - w / 2), window.innerWidth - w - 8);
+    var top = y - h - 12; if (top < 8) top = (anchored ? r.bottom : y) + 16;
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+  }
+  function hide() { cur = null; tip.hidden = true; }
+  var target = function (e) { return e.target.closest ? e.target.closest('[data-tip]') : null; };
+  document.addEventListener('pointermove', function (e) { var t = target(e); if (t && e.pointerType === 'mouse') show(t, e.clientX, e.clientY); });
+  document.addEventListener('pointerout', function (e) { var t = target(e); if (t && e.pointerType === 'mouse' && !t.contains(e.relatedTarget)) hide(); });
+  document.addEventListener('focusin', function (e) { var t = target(e); if (t) show(t); });
+  document.addEventListener('focusout', function (e) { if (target(e)) hide(); });
+  document.addEventListener('click', function (e) { var t = target(e); if (t) show(t); else hide(); });
+  window.addEventListener('scroll', function () { if (cur) hide(); }, { passive: true });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
+})();
+</script>
+<script src="/prez-header.js" defer></script>
+</body>
+</html>
