@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Echo1 billing: $1.4M of $2.3M in billable rides has been paid</title>
+<style>
+/* Pvragon brand tokens and EchoCharts styles. Self-contained: no imports, no remote fonts. */
+:root {
+  --accent-primary: #1E4958;
+  --accent-secondary: #E7511F;
+  --heading: #86C1D6;
+  --bg-body: #112328;
+  --bg-panel: #16303A;
+  --text: #F8FAFC;
+  --text-muted: #9AA9AE;
+  --rule: #2A4A55;
+  --font: "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+body { background: var(--bg-body); color: var(--text); font-family: var(--font); }
+h1, h2, h3 { color: var(--heading); }
+
+.ec-figure { margin: 24px 0; min-width: 0; max-width: 100%; }
+.ec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 12px; }
+.ec-title { margin: 0; font-size: 18px; font-weight: 600; color: var(--heading); line-height: 1.3; }
+.ec-body { width: 100%; min-width: 0; }
+.ec-chart { display: block; overflow: visible; }
+.ec-error { color: var(--accent-secondary); }
+
+.ec-toggle { display: inline-flex; border: 1px solid var(--heading); border-radius: 6px; overflow: hidden; }
+.ec-toggle button {
+  font: 600 14px/1 var(--font); color: var(--heading); background: transparent;
+  border: 0; padding: 8px 14px; cursor: pointer; min-height: 36px;
+}
+.ec-toggle button + button { border-left: 1px solid var(--heading); }
+.ec-toggle button[aria-pressed="true"] { background: var(--heading); color: var(--bg-body); }
+.ec-toggle button:focus-visible { outline: 2px solid var(--accent-secondary); outline-offset: -2px; }
+
+.ec-scroll { max-width: 100%; overflow-x: auto; }
+.ec-table { border-collapse: collapse; font-family: var(--font); font-size: 15px; color: var(--text); min-width: 100%; }
+.ec-table th, .ec-table td { padding: 8px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.ec-table thead th { color: var(--heading); font-weight: 600; border-bottom: 2px solid var(--heading); }
+.ec-table .ec-num { text-align: right; font-variant-numeric: tabular-nums; }
+.ec-table .ec-label { text-align: left; font-weight: 400; white-space: normal; min-width: 9em; }
+.ec-table tr.ec-level-1 .ec-label, .ec-table tr.ec-level-2 .ec-label { color: var(--text-muted); }
+.ec-table tr.ec-total th, .ec-table tr.ec-total td { font-weight: 700; border-top: 2px solid var(--heading); background: var(--bg-panel); }
+</style>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-size: 17px; line-height: 1.55; overflow-wrap: break-word; }
+header, section { max-width: 1200px; margin: 0 auto; padding: 32px 40px; }
+header { padding-bottom: 0; color: var(--text-muted); font-size: 15px; }
+section + section { border-top: 1px solid var(--rule); }
+h1 { font-size: 36px; line-height: 1.2; margin: 8px 0 16px; }
+h2 { font-size: 26px; line-height: 1.25; margin: 0 0 12px; }
+.lede { max-width: 46em; margin: 0 0 8px; }
+.work { max-width: 46em; padding-left: 1.4em; }
+.work li { margin: 0 0 14px; }
+.work p { margin: 2px 0; }
+.work b { color: var(--heading); }
+details { max-width: 46em; }
+summary { cursor: pointer; color: var(--heading); font-weight: 600; }
+@media (max-width: 640px) {
+  header, section { padding: 24px 16px; }
+  h1 { font-size: 27px; }
+  h2 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<header><p>Echo1 billing, rides in Aug 1 - Nov 3 2026. Data as of 2026-11-03 20:09 PT.</p></header>
+<main>
+<section id="hero_waterfall">
+<h1>$1.4M of $2.3M in billable rides has been paid</h1>
+<p class="lede">Payers have paid $1,397,241 so far. Most of the rest sits in four places: long rides billed below contract ($312k), contract work billed by invoice ($244k), claims waiting on payers ($194k) and insurance rides with no claim ($173k).</p>
+<div data-chart="hero_waterfall"></div>
+</section>
+<section id="pipeline_by_month">
+<h2>Older months are mostly paid; October still has claims out</h2>
+<p class="lede">Each bar is one month of service, split by where its rides stand today; August is partial, since Echo1 carried few rides before Aug 11. 4,134 rides are paid, and 569 are billed and waiting on a payer. Bar dollars are what the rides are worth; the waterfall counts claim money, so paid rides show $1.7M here and $1.4M received there.</p>
+<div data-chart="pipeline_by_month"></div>
+</section>
+<section id="s1_value_by_month">
+<h2>Claims trail billable value in every month</h2>
+<p class="lede">Cash received keeps pace with claims through September. It falls behind in October, when many claims are still with payers.</p>
+<div data-chart="s1_value_by_month"></div>
+</section>
+<section id="s2_waterfall_steps">
+<h2>Every gap between billable and paid has a named fix</h2>
+<p class="lede">Each step says what is in it and what clearing it takes, in the same order as the chart.</p>
+<div data-table="s2_waterfall_steps"></div>
+<ol class="work"><li><b>Contract invoices</b><p>Rides for contract customers. They are billed on a monthly invoice and never become claims.</p><p>Fix: Confirm each customer&#x27;s invoice went out and was paid.</p></li><li><b>Not classified</b><p>Rides not yet tagged as contract or insurance work, so nothing has been billed.</p><p>Fix: Tag each ride as contract or insurance so it can be billed.</p></li><li><b>Insurance, no claim</b><p>Insurance rides with no claim yet. Most have no payer on file.</p><p>Fix: Find each rider&#x27;s payer, then add the rides to the next claim build.</p></li><li><b>30-mile under-billing</b><p>Claims for rides over 30 miles, billed below the contract schedule.</p><p>Fix: Correct the rate on these claims and resubmit them.</p></li><li><b>Other pricing gaps</b><p>Small differences between a claim&#x27;s charge and the ride&#x27;s contract price.</p><p>Fix: Check the largest few for a wrong rate.</p></li><li><b>Waiting on payer</b><p>Claims sent and not yet paid.</p><p>Fix: Follow up on claims older than 30 days.</p></li><li><b>Denied or rejected</b><p>Claims the payer turned down or sent back.</p><p>Fix: Fix the reason given and resubmit.</p></li><li><b>Short-paid</b><p>Claims paid for less than the charge.</p><p>Fix: Appeal the shortfall with the payer.</p></li><li><b>Other payment gaps</b><p>Leftover differences between charge and payment on paid claims.</p><p>Fix: No action needed at its current size.</p></li></ol>
+</section>
+<section id="s3_unclaimed_why">
+<h2>Missing payers are the top reason rides go unclaimed</h2>
+<p class="lede">483 insurance rides worth $173k have no claim yet. The largest group has no payer on file because coverage was not found or is inactive. Another 107 rides go out with the next claim build.</p>
+<div data-table="s3_unclaimed_why"></div>
+</section>
+<section id="s4_thirty_mile">
+<h2>Claims for rides over 30 miles are billed short</h2>
+<p class="lede">2,560 billable rides ran over 30 loaded miles. 2,166 of their claims came in $311,904 under the contract schedule.</p>
+<div data-table="s4_thirty_mile"></div>
+</section>
+<section id="s5_recoverable">
+<h2>Correcting the 30-mile rate is the largest recovery</h2>
+<p class="lede">Correcting long-ride claims is worth $312k. Checking contract invoices covers $244k, and billing the open insurance rides adds $173k.</p>
+<div data-table="s5_recoverable"></div>
+<p class="lede">Rides in two actions are counted once in the total: 296 rides, 29,825 miles.</p>
+</section>
+<section id="method">
+<h2>Every number comes from one run of the billing model</h2>
+<details><summary>How the numbers are made</summary>
+<p class="lede">Figures come from the billing model run on 2026-11-03 20:09 PT, for rides in Aug 1 - Nov 3 2026. Ride dollars use the contract price. Claim dollars come from the claim.</p>
+<ul><li>Billable means a ride that was not cancelled and not marked Non-Billable.</li><li>Claimed means a billable ride on a live claim. Merged and voided claims do not count.</li><li>Received means money has been paid on the ride&#x27;s live claim.</li><li>Processing is the ops step that checks each ride before it is billed.</li><li>Months are months of service. August is partial: Echo1 carried few rides before Aug 11. November covers only its first three days.</li><li>Each ride counts once. Miles are loaded miles, pickup to dropoff. Test rides are left out.</li></ul>
+<p>Data as of 2026-11-03 20:09 PT.</p></details>
+</section>
+</main>
+<script type="application/json" id="figures">{"charts":{"hero_waterfall":{"categories":["Aug 1 - Nov 3 2026"],"series":[{"color_role":"start","exact":{"miles":[361954.2],"rides":[7096],"usd":[2340753.09]},"kind":"start","name":"Billable value","values":{"miles":[361954],"rides":[7096],"usd":[2340753]}},{"color_role":"drop","exact":{"miles":[-70207.6],"rides":[-1871],"usd":[-243569.36]},"kind":"drop","name":"Contract invoices","values":{"miles":[-70208],"rides":[-1871],"usd":[-243570]}},{"color_role":"drop","exact":{"miles":[-1530.7],"rides":[-11],"usd":[-9104.0]},"kind":"drop","name":"Not classified","values":{"miles":[-1531],"rides":[-11],"usd":[-9104]}},{"color_role":"drop","exact":{"miles":[-23599.5],"rides":[-483],"usd":[-173081.33]},"kind":"drop","name":"Insurance, no claim","values":{"miles":[-23599],"rides":[-483],"usd":[-173081]}},{"color_role":"drop","exact":{"miles":[0.0],"rides":[0],"usd":[-311904.0]},"kind":"drop","name":"30-mile under-billing","values":{"miles":[0],"rides":[0],"usd":[-311904]}},{"color_role":"drop","exact":{"miles":[0.0],"rides":[0],"usd":[-1929.12]},"kind":"drop","name":"Other pricing gaps","values":{"miles":[0],"rides":[0],"usd":[-1929]}},{"color_role":"subtotal","exact":{"miles":[266616.4],"rides":[4731],"usd":[1601165.28]},"kind":"subtotal","name":"Claimed","values":{"miles":[266616],"rides":[4731],"usd":[1601165]}},{"color_role":"drop","exact":{"miles":[-32109.7],"rides":[-569],"usd":[-194238.88]},"kind":"drop","name":"Waiting on payer","values":{"miles":[-32109],"rides":[-569],"usd":[-194239]}},{"color_role":"drop","exact":{"miles":[-1123.9],"rides":[-28],"usd":[-8250.4]},"kind":"drop","name":"Denied or rejected","values":{"miles":[-1124],"rides":[-28],"usd":[-8250]}},{"color_role":"drop","exact":{"miles":[0.0],"rides":[0],"usd":[-1435.2]},"kind":"drop","name":"Short-paid","values":{"miles":[0],"rides":[0],"usd":[-1435]}},{"color_role":"drop","exact":{"miles":[0.0],"rides":[0],"usd":[0.0]},"kind":"drop","name":"Other payment gaps","values":{"miles":[0],"rides":[0],"usd":[0]}},{"color_role":"end","exact":{"miles":[233382.8],"rides":[4134],"usd":[1397240.8]},"kind":"end","name":"Received","values":{"miles":[233383],"rides":[4134],"usd":[1397241]}}],"title":"Billable to received","type":"waterfall"},"pipeline_by_month":{"categories":["Aug 2026","Sep 2026","Oct 2026","Nov 2026"],"series":[{"color_role":"neutral","exact":{"miles":[506.7,782.6,2245.6,3733.3],"rides":[14,11,35,73],"usd":[4644.8,5384.0,15209.6,27668.8]},"name":"Not processed yet","values":{"miles":[507,783,2245,3733],"rides":[14,11,35,73],"usd":[4645,5384,15209,27669]}},{"color_role":"warn","exact":{"miles":[3117.0,7651.0,6326.2,1390.1],"rides":[62,164,147,42],"usd":[24065.6,57584.0,48086.4,11971.2]},"name":"Processed, not billed","values":{"miles":[3117,7651,6326,1390],"rides":[62,164,147,42],"usd":[24066,57584,48086,11971]}},{"color_role":"contract","exact":{"miles":[17851.4,21439.5,27467.0,2827.4],"rides":[517,585,651,64],"usd":[64881.59,82091.08,79599.16,4568.46]},"name":"Contract work, billed by invoice","values":{"miles":[17851,21440,27467,2827],"rides":[517,585,651,64],"usd":[64882,82091,79599,4568]}},{"color_role":"bad","exact":{"miles":[504.0,340.7,279.2,0.0],"rides":[8,10,10,0],"usd":[3545.6,2963.2,2608.0,0.0]},"name":"Billed, needs rework","values":{"miles":[504,341,279,0],"rides":[8,10,10,0],"usd":[3546,2963,2608,0]}},{"color_role":"wait","exact":{"miles":[149.7,1091.4,26988.6,3880.0],"rides":[5,18,481,65],"usd":[1380.8,7598.4,192385.6,27531.2]},"name":"Billed, waiting on payer","values":{"miles":[150,1091,26988,3880],"rides":[5,18,481,65],"usd":[1381,7598,192386,27531]}},{"color_role":"good","exact":{"miles":[70994.6,96110.7,66277.5,0.0],"rides":[1222,1705,1207,0],"usd":[513908.8,684630.4,478446.4,0.0]},"name":"Billed, paid","values":{"miles":[70995,96111,66277,0],"rides":[1222,1705,1207,0],"usd":[513909,684631,478446,0]}},{"color_role":"muted","exact":{"miles":[8880.3,10673.5,10922.9,559.5],"rides":[251,369,328,30],"usd":[0.0,0.0,0.0,0.0]},"name":"Not billable (no charge)","values":{"miles":[8880,10674,10923,559],"rides":[251,369,328,30],"usd":[0,0,0,0]}}],"title":"Where every ride is, by month of service","type":"stacked_bar"},"s1_value_by_month":{"categories":["Aug 2026","Sep 2026","Oct 2026","Nov 2026"],"series":[{"color_role":"start","exact":{"miles":[93123.4,127415.9,129584.1,11830.8],"rides":[1828,2493,2531,244],"usd":[612427.19,840251.08,816335.16,71739.66]},"name":"Billable","values":{"miles":[93123,127416,129584,11831],"rides":[1828,2493,2531,244],"usd":[612427,840251,816335,71740]}},{"color_role":"subtotal","exact":{"miles":[71648.3,97542.8,93545.3,3880.0],"rides":[1235,1733,1698,65],"usd":[454197.28,568996.8,555624.0,22347.2]},"name":"Claimed","values":{"miles":[71648,97543,93545,3880],"rides":[1235,1733,1698,65],"usd":[454197,568997,555624,22347]}},{"color_role":"end","exact":{"miles":[70994.6,96110.7,66277.5,0.0],"rides":[1222,1705,1207,0],"usd":[448605.6,558281.6,390353.6,0.0]},"name":"Received","values":{"miles":[70995,96111,66277,0],"rides":[1222,1705,1207,0],"usd":[448606,558282,390353,0]}}],"title":"Billable, claimed and received by month of service","type":"bar"}},"meta":{"built_at":"2026-11-04 02:41 PT","data_as_of":"2026-11-03 20:09 PT","definitions":{"billable":"Rides not cancelled and not marked Non-Billable.","claimed":"Billable rides with a live claim (not merged or voided); dollars are live-claim charges.","contract_split":"Contract vs insurance uses the ladder-v2 class; unclassified rides are their own step.","miles":"Loaded miles (pickup to dropoff). A ride with no miles counts 0.","month":"Month of service (claims: claim service month). Nov is Nov 1 to 3.","pipeline":"Billed stages use the waterfall claim-status rides; their dollars are ride value, not claim money.","received":"Billable rides whose live claim has received money; dollars are live-claim received.","rides":"A ride counts 1. QA rides are left out.","shown":"values are whole rides, miles and dollars (largest remainder, so parts add up); exact is unrounded.","usd":"Ride dollars are the model contract price; claim dollars come from the claim."},"months":["Aug 2026","Sep 2026","Oct 2026","Nov 2026"],"pipeline_bridge":{"restaged":{"miles":2897,"rides":44},"stages":[{"hero_step":"Received","miles":233383,"rides":4134,"stage":"Billed, paid","usd_claim":1397241,"usd_difference":279745,"usd_ride_value":1676986},{"hero_step":"Waiting on payer","miles":32109,"rides":569,"stage":"Billed, waiting on payer","usd_claim":194239,"usd_difference":34657,"usd_ride_value":228896},{"hero_step":"Denied / rejected","miles":1124,"rides":28,"stage":"Billed, needs rework","usd_claim":8250,"usd_difference":867,"usd_ride_value":9117}]},"qa_excluded":21,"rides_without_miles":{"all":7,"billable":5},"rounding":{"miles":[{"exact":361954.2,"name":"Billable value","residue":-0.2,"shown":361954},{"exact":-70207.6,"name":"Contract work billed by invoice","residue":-0.4,"shown":-70208},{"exact":-1530.7,"name":"Not yet classified","residue":-0.3,"shown":-1531},{"exact":-23599.5,"name":"Insurance rides not on a claim","residue":0.5,"shown":-23599},{"exact":0.0,"name":"30-mile under-billing","residue":0.0,"shown":0},{"exact":0.0,"name":"Other pricing difference","residue":0.0,"shown":0},{"exact":266616.4,"name":"Claimed","residue":-0.4,"shown":266616},{"exact":-32109.7,"name":"Waiting on payer","residue":0.7,"shown":-32109},{"exact":-1123.9,"name":"Denied / rejected","residue":-0.1,"shown":-1124},{"exact":0.0,"name":"Short-paid","residue":0.0,"shown":0},{"exact":0.0,"name":"Other payment difference","residue":0.0,"shown":0},{"exact":233382.8,"name":"Received","residue":0.2,"shown":233383}],"usd":[{"exact":2340753.09,"name":"Billable value","residue":-0.09,"shown":2340753},{"exact":-243569.36,"name":"Contract work billed by invoice","residue":-0.64,"shown":-243570},{"exact":-9104.0,"name":"Not yet classified","residue":0.0,"shown":-9104},{"exact":-173081.33,"name":"Insurance rides not on a claim","residue":0.33,"shown":-173081},{"exact":-311904.0,"name":"30-mile under-billing","residue":0.0,"shown":-311904},{"exact":-1929.12,"name":"Other pricing difference","residue":0.12,"shown":-1929},{"exact":1601165.28,"name":"Claimed","residue":-0.28,"shown":1601165},{"exact":-194238.88,"name":"Waiting on payer","residue":-0.12,"shown":-194239},{"exact":-8250.4,"name":"Denied / rejected","residue":0.4,"shown":-8250},{"exact":-1435.2,"name":"Short-paid","residue":0.2,"shown":-1435},{"exact":0.0,"name":"Other payment difference","residue":0.0,"shown":0},{"exact":1397240.8,"name":"Received","residue":0.2,"shown":1397241}]},"rulings":["cancelled rides carry no charge","contract work priced at the contract invoice inventory\u2019s terms (per-trip rates; flat monthly fees spread over the month\u2019s rides; Oceans +2 drivers \u00d7 $3,800/month)","covered by a contract or Medicaid when either end is in Oklahoma; out of state = both ends outside","RR-EC and RR-D = Red Rock; ODMHDIS = Jim Taliaferro; GEN-WEB = Medicaid; NE-WEB = Nebraska, payer pending","Red Rock: $6,500/month, no rate for rides over the 120 cap","Contract vs insurance split by ladder-v2 class; dollars stay the model contract price (C1 D2).","Unclassified rides not on a claim are their own step (C1 D3)."],"s5_counted_once":{"miles":29825,"rides":296},"window":"Aug 1 - Nov 3 2026"},"tables":{"s2_waterfall_steps":{"columns":["Aug 1 - Nov 3 2026"],"rows":[{"exact":{"miles":[70207.6],"rides":[1871],"usd":[243569.36]},"label":"Contract invoices","level":0,"total":false,"values":{"miles":[70208],"rides":[1871],"usd":[243570]}},{"exact":{"miles":[19558.7],"rides":[992],"usd":[90791.68]},"label":"Oceans Healthcare (BHC at Porter Health Village)","level":1,"total":false,"values":{"miles":[19559],"rides":[992],"usd":[90792]}},{"exact":{"miles":[7367.6],"rides":[27],"usd":[35796.48]},"label":"Texas Recovery Center (Regard Healthcare)","level":1,"total":false,"values":{"miles":[7368],"rides":[27],"usd":[35796]}},{"exact":{"miles":[17615.5],"rides":[481],"usd":[21179.76]},"label":"Red Rock Behavioral Health","level":1,"total":false,"values":{"miles":[17616],"rides":[481],"usd":[21180]}},{"exact":{"miles":[709.4],"rides":[13],"usd":[21000.0]},"label":"Chickasaw Nation","level":1,"total":false,"values":{"miles":[709],"rides":[13],"usd":[21000]}},{"exact":{"miles":[6977.0],"rides":[91],"usd":[8598.71]},"label":"Oakwood Springs","level":1,"total":false,"values":{"miles":[6977],"rides":[91],"usd":[8599]}},{"exact":{"miles":[1329.4],"rides":[41],"usd":[8100.01]},"label":"Absentee Shawnee Tribe","level":1,"total":false,"values":{"miles":[1329],"rides":[41],"usd":[8100]}},{"exact":{"miles":[93.6],"rides":[4],"usd":[7500.0]},"label":"Choctaw Nation","level":1,"total":false,"values":{"miles":[94],"rides":[4],"usd":[7500]}},{"exact":{"miles":[138.5],"rides":[4],"usd":[7156.0]},"label":"Integris","level":1,"total":false,"values":{"miles":[139],"rides":[4],"usd":[7156]}},{"exact":{"miles":[2236.3],"rides":[43],"usd":[6998.04]},"label":"Oklahoma VA","level":1,"total":false,"values":{"miles":[2236],"rides":[43],"usd":[6998]}},{"exact":{"miles":[2268.5],"rides":[30],"usd":[6475.97]},"label":"Memorial Health System SWOK","level":1,"total":false,"values":{"miles":[2268],"rides":[30],"usd":[6476]}},{"exact":{"miles":[1041.6],"rides":[19],"usd":[6008.54]},"label":"South Central Louisiana HSA","level":1,"total":false,"values":{"miles":[1042],"rides":[19],"usd":[6009]}},{"exact":{"miles":[2465.2],"rides":[20],"usd":[5763.71]},"label":"ODMHSAS - Jim Taliaferro","level":1,"total":false,"values":{"miles":[2465],"rides":[20],"usd":[5764]}},{"exact":{"miles":[2500.6],"rides":[21],"usd":[5153.84]},"label":"Tulsa Center for Behavioral Health (TCBH)","level":1,"total":false,"values":{"miles":[2501],"rides":[21],"usd":[5154]}},{"exact":{"miles":[2516.9],"rides":[19],"usd":[4526.4]},"label":"NE (payer pending)","level":1,"total":false,"values":{"miles":[2517],"rides":[19],"usd":[4526]}},{"exact":{"miles":[1036.3],"rides":[41],"usd":[2646.66]},"label":"Lincoln County","level":1,"total":false,"values":{"miles":[1036],"rides":[41],"usd":[2647]}},{"exact":{"miles":[544.8],"rides":[4],"usd":[1552.68]},"label":"Wichita VA","level":1,"total":false,"values":{"miles":[545],"rides":[4],"usd":[1553]}},{"exact":{"miles":[704.4],"rides":[5],"usd":[1472.4]},"label":"ODMHSAS - OCCIC (transport)","level":1,"total":false,"values":{"miles":[704],"rides":[5],"usd":[1472]}},{"exact":{"miles":[449.2],"rides":[3],"usd":[1280.22]},"label":"Sedgwick County / COMCARE (KS)","level":1,"total":false,"values":{"miles":[449],"rides":[3],"usd":[1280]}},{"exact":{"miles":[448.4],"rides":[9],"usd":[1071.23]},"label":"NorthCare","level":1,"total":false,"values":{"miles":[448],"rides":[9],"usd":[1071]}},{"exact":{"miles":[126.6],"rides":[1],"usd":[262.35]},"label":"ODMHSAS - OFC","level":1,"total":false,"values":{"miles":[127],"rides":[1],"usd":[262]}},{"exact":{"miles":[74.3],"rides":[1],"usd":[144.68]},"label":"ODMHSAS - Carl Albert","level":1,"total":false,"values":{"miles":[74],"rides":[1],"usd":[145]}},{"exact":{"miles":[4.8],"rides":[2],"usd":[90.0]},"label":"ODMHSAS - COCMHC","level":1,"total":false,"values":{"miles":[5],"rides":[2],"usd":[90]}},{"exact":{"miles":[1530.7],"rides":[11],"usd":[9104.0]},"label":"Not classified","level":0,"total":false,"values":{"miles":[1531],"rides":[11],"usd":[9104]}},{"exact":{"miles":[1171.9],"rides":[1],"usd":[5785.6]},"label":"SoonerCare","level":1,"total":false,"values":{"miles":[1172],"rides":[1],"usd":[5786]}},{"exact":{"miles":[358.8],"rides":[10],"usd":[3318.4]},"label":"no payer set","level":1,"total":false,"values":{"miles":[359],"rides":[10],"usd":[3318]}},{"exact":{"miles":[23599.5],"rides":[483],"usd":[173081.33]},"label":"Insurance, no claim","level":0,"total":false,"values":{"miles":[23599],"rides":[483],"usd":[173081]}},{"exact":{"miles":[13391.6],"rides":[285],"usd":[103197.03]},"label":"no payer set","level":1,"total":false,"values":{"miles":[13392],"rides":[285],"usd":[103197]}},{"exact":{"miles":[5357.7],"rides":[125],"usd":[41657.6]},"label":"DMH","level":1,"total":false,"values":{"miles":[5358],"rides":[125],"usd":[41657]}},{"exact":{"miles":[1684.8],"rides":[28],"usd":[11742.4]},"label":"SoonerCare","level":1,"total":false,"values":{"miles":[1685],"rides":[28],"usd":[11742]}},{"exact":{"miles":[1317.2],"rides":[16],"usd":[8656.0]},"label":"Oklahoma Complete Health","level":1,"total":false,"values":{"miles":[1317],"rides":[16],"usd":[8656]}},{"exact":{"miles":[442.8],"rides":[10],"usd":[3380.8]},"label":"Humana Oklahoma Healthy Horizons","level":1,"total":false,"values":{"miles":[443],"rides":[10],"usd":[3381]}},{"exact":{"miles":[209.4],"rides":[4],"usd":[1374.4]},"label":"Aetna Better Health of Oklahoma","level":1,"total":false,"values":{"miles":[209],"rides":[4],"usd":[1374]}},{"exact":{"miles":[210.8],"rides":[1],"usd":[1172.8]},"label":"DHS (Department of Human Services)","level":1,"total":false,"values":{"miles":[211],"rides":[1],"usd":[1173]}},{"exact":{"miles":[446.1],"rides":[2],"usd":[958.72]},"label":"Diversion Hub","level":1,"total":false,"values":{"miles":[446],"rides":[2],"usd":[959]}},{"exact":{"miles":[139.2],"rides":[1],"usd":[396.72]},"label":"Veterans Administration (VA)","level":1,"total":false,"values":{"miles":[139],"rides":[1],"usd":[397]}},{"exact":{"miles":[16.2],"rides":[3],"usd":[209.73]},"label":"Oceans Healthcare","level":1,"total":false,"values":{"miles":[16],"rides":[3],"usd":[210]}},{"exact":{"miles":[97.2],"rides":[1],"usd":[196.2]},"label":"Jim Taliaferro","level":1,"total":false,"values":{"miles":[97],"rides":[1],"usd":[196]}},{"exact":{"miles":[96.4],"rides":[1],"usd":[104.17]},"label":"Oakwood Springs","level":1,"total":false,"values":{"miles":[96],"rides":[1],"usd":[104]}},{"exact":{"miles":[184.0],"rides":[4],"usd":[34.76]},"label":"Red Rock","level":1,"total":false,"values":{"miles":[184],"rides":[4],"usd":[35]}},{"exact":{"miles":[4.4],"rides":[1],"usd":[0.0]},"label":"Norman Regional","level":1,"total":false,"values":{"miles":[4],"rides":[1],"usd":[0]}},{"exact":{"miles":[1.7],"rides":[1],"usd":[0.0]},"label":"OU Hospital","level":1,"total":false,"values":{"miles":[2],"rides":[1],"usd":[0]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[311904.0]},"label":"30-mile under-billing","level":0,"total":false,"values":{"miles":[0],"rides":[0],"usd":[311904]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[115344.0]},"label":"SoonerCare","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[115344]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[114336.0]},"label":"DMH","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[114336]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[34560.0]},"label":"Oklahoma Complete Health","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[34560]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[28080.0]},"label":"Humana Oklahoma Healthy Horizons","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[28080]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[19584.0]},"label":"Aetna Better Health of Oklahoma","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[19584]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[1929.12]},"label":"Other pricing gaps","level":0,"total":false,"values":{"miles":[0],"rides":[0],"usd":[1929]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[1341.12]},"label":"DMH","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[1341]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[308.64]},"label":"Oklahoma Complete Health","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[309]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[192.0]},"label":"Humana Oklahoma Healthy Horizons","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[192]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[61.44]},"label":"SoonerCare","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[61]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[25.92]},"label":"Aetna Better Health of Oklahoma","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[26]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[0.0]},"label":"Medicaid Kansas","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[0]}},{"exact":{"miles":[32109.7],"rides":[569],"usd":[194238.88]},"label":"Waiting on payer","level":0,"total":false,"values":{"miles":[32109],"rides":[569],"usd":[194239]}},{"exact":{"miles":[13892.3],"rides":[251],"usd":[83724.8]},"label":"SoonerCare","level":1,"total":false,"values":{"miles":[13892],"rides":[251],"usd":[83725]}},{"exact":{"miles":[13099.8],"rides":[233],"usd":[78721.6]},"label":"DMH","level":1,"total":false,"values":{"miles":[13100],"rides":[233],"usd":[78722]}},{"exact":{"miles":[2054.6],"rides":[35],"usd":[12965.28]},"label":"Humana Oklahoma Healthy Horizons","level":1,"total":false,"values":{"miles":[2054],"rides":[35],"usd":[12965]}},{"exact":{"miles":[2087.2],"rides":[31],"usd":[12744.0]},"label":"Oklahoma Complete Health","level":1,"total":false,"values":{"miles":[2087],"rides":[31],"usd":[12744]}},{"exact":{"miles":[975.8],"rides":[19],"usd":[6083.2]},"label":"Aetna Better Health of Oklahoma","level":1,"total":false,"values":{"miles":[976],"rides":[19],"usd":[6083]}},{"exact":{"miles":[1123.9],"rides":[28],"usd":[8250.4]},"label":"Denied or rejected","level":0,"total":false,"values":{"miles":[1124],"rides":[28],"usd":[8250]}},{"exact":{"miles":[367.7],"rides":[10],"usd":[2564.8]},"label":"DMH","level":1,"total":false,"values":{"miles":[368],"rides":[10],"usd":[2565]}},{"exact":{"miles":[355.9],"rides":[4],"usd":[2353.6]},"label":"Medicaid Kansas","level":1,"total":false,"values":{"miles":[356],"rides":[4],"usd":[2353]}},{"exact":{"miles":[240.6],"rides":[7],"usd":[1840.0]},"label":"Aetna Better Health of Oklahoma","level":1,"total":false,"values":{"miles":[241],"rides":[7],"usd":[1840]}},{"exact":{"miles":[157.3],"rides":[6],"usd":[1332.0]},"label":"SoonerCare","level":1,"total":false,"values":{"miles":[157],"rides":[6],"usd":[1332]}},{"exact":{"miles":[2.4],"rides":[1],"usd":[160.0]},"label":"Humana Oklahoma Healthy Horizons","level":1,"total":false,"values":{"miles":[2],"rides":[1],"usd":[160]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[1435.2]},"label":"Short-paid","level":0,"total":false,"values":{"miles":[0],"rides":[0],"usd":[1435]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[800.0]},"label":"Aetna Better Health of Oklahoma","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[800]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[635.2]},"label":"SoonerCare","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[635]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[0.0]},"label":"Other payment gaps","level":0,"total":false,"values":{"miles":[0],"rides":[0],"usd":[0]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[0.0]},"label":"claim status paid","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[0]}},{"exact":{"miles":[0.0],"rides":[0],"usd":[0.0]},"label":"claim status reconciled","level":1,"total":false,"values":{"miles":[0],"rides":[0],"usd":[0]}},{"exact":{"miles":[128571.4],"rides":[2962],"usd":[943512.29]},"label":"Total, billable to received","level":0,"total":true,"values":{"miles":[128571],"rides":[2962],"usd":[943512]}}],"title":"What is in each step"},"s3_unclaimed_why":{"columns":["Aug 1 - Nov 3 2026"],"rows":[{"exact":{"miles":[5830.5],"rides":[126],"usd":[42034.9]},"label":"No payer yet: coverage not found or inactive","level":0,"total":false,"values":{"miles":[5831],"rides":[126],"usd":[42035]}},{"exact":{"miles":[4271.4],"rides":[107],"usd":[34011.2]},"label":"Ready for the next claim build","level":0,"total":false,"values":{"miles":[4271],"rides":[107],"usd":[34011]}},{"exact":{"miles":[3655.0],"rides":[68],"usd":[25652.8]},"label":"not processed","level":0,"total":false,"values":{"miles":[3655],"rides":[68],"usd":[25653]}},{"exact":{"miles":[2554.0],"rides":[61],"usd":[25146.4]},"label":"No payer yet: rider identity conflict open","level":0,"total":false,"values":{"miles":[2554],"rides":[61],"usd":[25146]}},{"exact":{"miles":[2075.6],"rides":[44],"usd":[15237.96]},"label":"needs attention","level":0,"total":false,"values":{"miles":[2076],"rides":[44],"usd":[15238]}},{"exact":{"miles":[1750.6],"rides":[42],"usd":[13848.0]},"label":"coverage not active on the attached check","level":0,"total":false,"values":{"miles":[1751],"rides":[42],"usd":[13848]}},{"exact":{"miles":[1213.6],"rides":[4],"usd":[6467.2]},"label":"Ready, but prescheduled and hidden from the default view","level":0,"total":false,"values":{"miles":[1214],"rides":[4],"usd":[6467]}},{"exact":{"miles":[713.0],"rides":[7],"usd":[3442.93]},"label":"No payer yet: prescheduled, contract payer not set","level":0,"total":false,"values":{"miles":[713],"rides":[7],"usd":[3443]}},{"exact":{"miles":[565.5],"rides":[4],"usd":[3356.8]},"label":"Ready, but no member ID (likely rejected)","level":0,"total":false,"values":{"miles":[565],"rides":[4],"usd":[3357]}},{"exact":{"miles":[801.2],"rides":[10],"usd":[1865.54]},"label":"Contract payer: billed by invoice, never a claim","level":0,"total":false,"values":{"miles":[801],"rides":[10],"usd":[1866]}},{"exact":{"miles":[127.4],"rides":[5],"usd":[1174.4]},"label":"No payer yet: coverage check not run","level":0,"total":false,"values":{"miles":[127],"rides":[5],"usd":[1174]}},{"exact":{"miles":[22.7],"rides":[2],"usd":[320.0]},"label":"No payer yet: coverage active, payer not applied","level":0,"total":false,"values":{"miles":[23],"rides":[2],"usd":[320]}},{"exact":{"miles":[10.5],"rides":[2],"usd":[320.0]},"label":"upcoming","level":0,"total":false,"values":{"miles":[10],"rides":[2],"usd":[320]}},{"exact":{"miles":[8.5],"rides":[1],"usd":[203.2]},"label":"claim voided, no live claim","level":0,"total":false,"values":{"miles":[8],"rides":[1],"usd":[203]}},{"exact":{"miles":[23599.5],"rides":[483],"usd":[173081.33]},"label":"Total","level":0,"total":true,"values":{"miles":[23599],"rides":[483],"usd":[173081]}}],"title":"Why insurance rides are not on a claim"},"s4_thirty_mile":{"columns":["Aug 1 - Nov 3 2026"],"rows":[{"exact":{"miles":[36146.2],"rides":[3186],"usd":[451107.85]},"label":"At or under 30 loaded miles","level":0,"total":false,"values":{"miles":[36146],"rides":[3186],"usd":[451108]}},{"exact":{"miles":[260008.2],"rides":[2560],"usd":[1584598.18]},"label":"Over 30 loaded miles","level":0,"total":false,"values":{"miles":[260008],"rides":[2560],"usd":[1584598]}},{"exact":{"miles":[217118.5],"rides":[2166],"usd":[311904.0]},"label":"Under-billed on those claims","level":1,"total":false,"values":{"miles":[217119],"rides":[2166],"usd":[311904]}},{"exact":{"miles":[296154.4],"rides":[5746],"usd":[2035706.03]},"label":"Total billable","level":0,"total":true,"values":{"miles":[296154],"rides":[5746],"usd":[2035706]}}],"title":"Billable rides on the 30-mile contract schedule"},"s5_recoverable":{"columns":["Aug 1 - Nov 3 2026"],"rows":[{"exact":{"miles":[217118.5],"rides":[2166],"usd":[311904.0]},"label":"Correct 30-mile under-billing","level":0,"total":false,"values":{"miles":[217119],"rides":[2166],"usd":[311904]}},{"exact":{"miles":[70207.6],"rides":[1871],"usd":[243569.36]},"label":"Invoice contract work","level":0,"total":false,"values":{"miles":[70208],"rides":[1871],"usd":[243570]}},{"exact":{"miles":[32109.7],"rides":[569],"usd":[194238.88]},"label":"Follow up claims waiting on payer","level":0,"total":false,"values":{"miles":[32109],"rides":[569],"usd":[194239]}},{"exact":{"miles":[23599.5],"rides":[483],"usd":[173081.33]},"label":"Bill insurance rides not on a claim","level":0,"total":false,"values":{"miles":[23599],"rides":[483],"usd":[173081]}},{"exact":{"miles":[1530.7],"rides":[11],"usd":[9104.0]},"label":"Classify rides not yet classified","level":0,"total":false,"values":{"miles":[1531],"rides":[11],"usd":[9104]}},{"exact":{"miles":[1123.9],"rides":[28],"usd":[8250.4]},"label":"Rework denied and rejected claims","level":0,"total":false,"values":{"miles":[1124],"rides":[28],"usd":[8250]}},{"exact":{"miles":[660.7],"rides":[10],"usd":[1435.2]},"label":"Appeal short-paid claims","level":0,"total":false,"values":{"miles":[661],"rides":[10],"usd":[1435]}},{"exact":{"miles":[316525.6],"rides":[4842],"usd":[941583.17]},"label":"Total to act on","level":0,"total":true,"values":{"miles":[316526],"rides":[4842],"usd":[941583]}}],"title":"What can be recovered or acted on"}}}</script>
+<script>
+/* EchoCharts: dependency-free SVG charts and HTML tables in the Pvragon brand.
+   Pure functions return markup strings; mount() wires them into the DOM. */
+(function (root) {
+  "use strict";
+
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  var FONT = "'Noto Sans', 'Helvetica Neue', Arial, sans-serif";
+  var FS = 16;              // smallest chart text, px
+  var LINE = Math.ceil(FS * 1.45);
+  var MEASURES = { rides: "Rides", miles: "Miles", usd: "Dollars" };
+  var UNIT_NOTE = { rides: "In rides", miles: "In miles", usd: "In dollars" };
+
+  // Brand ramp only (R1 V9). Status reads good to bad: good brand green, warn light orange, bad deep orange,
+  // neutral/muted brand greys. wait is the bright hero focus (money stuck at payers): brand orange #E7511F.
+  // Levels darken down the teal ramp: start #86C1D6, subtotal #317891, end #1E4958 (outlined so it shows).
+  var PALETTE = {
+    accent_primary: "#1E4958", accent_secondary: "#E7511F", heading: "#86C1D6", bg_body: "#112328",
+    start: "#86C1D6", subtotal: "#317891", end: "#1E4958", drop: "#5E767D", wait: "#E7511F",
+    good: "#016536", warn: "#EE8764", bad: "#A83712", neutral: "#5E767D", muted: "#DEEAEF", contract: "#86C1D6",
+    billable: "#86C1D6", claimed: "#317891", received: "#1E4958", pending: "#EE8764",
+    lost: "#A83712", extra: "#F6BCA9", text: "#F8FAFC"
+  };
+  var FOCUS_STEP = "Waiting on payer"; // hero focus, drawn in PALETTE.wait (D7)
+  var FALLBACK = ["start", "subtotal", "pending", "lost", "extra", "neutral", "muted", "good"];
+
+  // ---------- formatting ----------
+  function formatValue(value, measure) {
+    if (!Object.prototype.hasOwnProperty.call(MEASURES, measure)) throw new Error("Unknown measure: " + measure);
+    var v = Number(value);
+    if (!isFinite(v)) throw new Error("Not a number: " + value);
+    var n = Math.round(Math.abs(v) + 1e-9 * Math.abs(v)); // half away from zero, tolerate binary noise
+    var s = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var sign = v < 0 && n !== 0 ? "-" : "";
+    return measure === "usd" ? sign + "$" + s : sign + s;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function r2(x) { return Math.round(x * 100) / 100; }
+
+  // ---------- colours ----------
+  function seriesColors(series) {
+    var used = {}, out = [];
+    series.forEach(function (s) { if (PALETTE[s.color_role] && !/^(bg_body|text)$/.test(s.color_role)) used[PALETTE[s.color_role]] = 1; });
+    series.forEach(function (s) {
+      var c = s.color_role !== "bg_body" && s.color_role !== "text" && PALETTE[s.color_role];
+      if (!c) {
+        var role = FALLBACK.filter(function (r) { return !used[PALETTE[r]]; })[0] || FALLBACK[0];
+        c = PALETTE[role]; used[c] = 1;
+      }
+      out.push(c);
+    });
+    return out;
+  }
+  function lum(hex) {
+    var n = parseInt(hex.slice(1), 16);
+    var f = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    return 0.2126 * f(n >> 16) + 0.7152 * f((n >> 8) & 255) + 0.0722 * f(n & 255);
+  }
+  function contrast(a, b) {
+    var x = lum(a), y = lum(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  }
+  // Ink for text inside a bar: whichever of dark or white contrasts more.
+  function inkOn(hex) {
+    return contrast(hex, PALETTE.bg_body) >= contrast(hex, "#FFFFFF") ? PALETTE.bg_body : "#FFFFFF";
+  }
+
+  // A value mark. Fills too close to the page get a heading-teal outline so the bar still shows.
+  function bar(x, y, w, h, fill, data) {
+    var edge = contrast(fill, PALETTE.bg_body) < 2 ? ' stroke="' + PALETTE.heading + '" stroke-width="1"' : "";
+    return '<rect x="' + r2(x) + '" y="' + r2(y) + '" width="' + r2(w) + '" height="' + h + '" fill="' + fill + '"' + edge + data + "/>";
+  }
+
+  // ---------- text measuring and wrapping ----------
+  var ctx2d = null;
+  function textWidth(s, size, bold) {
+    size = size || FS;
+    if (typeof document !== "undefined" && document.createElement) {
+      if (!ctx2d) { var c = document.createElement("canvas"); ctx2d = c.getContext && c.getContext("2d"); }
+      if (ctx2d) { ctx2d.font = (bold ? "600 " : "") + size + "px " + FONT; return ctx2d.measureText(s).width * 1.04 + 1; }
+    }
+    return String(s).length * size * (bold ? 0.64 : 0.6);
+  }
+  function wrap(s, maxW, size, bold) {
+    var words = String(s).split(/\s+/).filter(Boolean), lines = [], cur = "";
+    words.forEach(function (w) {
+      var t = cur ? cur + " " + w : w;
+      if (!cur || textWidth(t, size, bold) <= maxW) cur = t; else { lines.push(cur); cur = w; }
+    });
+    if (cur) lines.push(cur);
+    return lines.length ? lines : [""];
+  }
+  function text(x, y, s, o) {
+    o = o || {};
+    return '<text x="' + r2(x) + '" y="' + r2(y) + '" font-size="' + (o.size || FS) + '"' +
+      (o.anchor ? ' text-anchor="' + o.anchor + '"' : "") + (o.bold ? ' font-weight="600"' : "") +
+      ' fill="' + (o.fill || PALETTE.text) + '"' + (o.cls ? ' class="' + o.cls + '"' : "") + (o.data || "") + ">" + esc(s) + "</text>";
+  }
+  // baseline for a line box starting at top
+  function base(top, size) { return top + (size || FS) * 1.08; }
+
+  function svgOpen(width, height, spec, measure) {
+    return '<svg xmlns="' + SVG_NS + '" class="ec-chart" width="' + width + '" height="' + Math.ceil(height) +
+      '" fill="' + PALETTE.text + '" font-family="' + esc(FONT) + '" role="img" aria-label="' + esc(spec.title || "") + " (" + MEASURES[measure] + ')">' +
+      "<title>" + esc(spec.title || "") + "</title>";
+  }
+
+  // Legend and unit note, wrapped across lines. Returns {svg, h}.
+  function legend(names, colors, measure, W, top) {
+    var out = text(0, base(top), UNIT_NOTE[measure], { fill: PALETTE.heading });
+    var x = textWidth(UNIT_NOTE[measure]) + 20, y = top;
+    names.forEach(function (n, i) {
+      var w = 18 + textWidth(n);
+      if (x > 0 && x + w > W) { x = 0; y += LINE; }
+      out += '<rect class="ec-swatch" x="' + r2(x) + '" y="' + r2(y + 4) + '" width="12" height="12" fill="' + colors[i] + '"/>';
+      var lines = wrap(n, W - 18);
+      lines.forEach(function (ln, j) { out += text(x + 18, base(y + j * LINE), ln); });
+      y += (lines.length - 1) * LINE;
+      x += w + 16;
+      if (lines.length > 1) { x = 0; y += LINE; }
+    });
+    return { svg: out, h: y + LINE - top + 8 };
+  }
+
+  // ---------- bars ----------
+  function checkSeries(spec, measure) {
+    var nc = (spec.categories || []).length;
+    if (!spec.series || !spec.series.length) throw new Error("Chart has no series");
+    spec.series.forEach(function (s) {
+      var v = s.values && s.values[measure];
+      if (!v || v.length !== nc) throw new Error("Series \"" + s.name + "\" has " + (v ? v.length : 0) +
+        " " + measure + " values for " + nc + " categories");
+      v.forEach(function (x) { if (typeof x !== "number" || !isFinite(x)) throw new Error("Series \"" + s.name + "\" has a non-number value"); });
+    });
+  }
+
+  function labTag(series, cat) { return ' data-label-series="' + esc(series) + '" data-label-category="' + esc(cat) + '"'; }
+
+  function renderBars(spec, measure, W, stacked) {
+    checkSeries(spec, measure);
+    var cats = spec.categories, series = spec.series, colors = seriesColors(series);
+    var vals = series.map(function (s) { return s.values[measure]; });
+    var lo = 0, hi = 0, maxLabel = 0;
+    cats.forEach(function (_, c) {
+      var pos = 0, neg = 0;
+      vals.forEach(function (v) {
+        if (stacked) { if (v[c] > 0) pos += v[c]; else neg += v[c]; }
+        else { hi = Math.max(hi, v[c]); lo = Math.min(lo, v[c]); maxLabel = Math.max(maxLabel, textWidth(formatValue(v[c], measure))); }
+      });
+      if (stacked) {
+        hi = Math.max(hi, pos); lo = Math.min(lo, neg);
+        maxLabel = Math.max(maxLabel, textWidth(formatValue(pos + neg, measure), FS, true));
+      }
+    });
+    if (hi === lo) hi = lo + 1;
+    var labelRoom = maxLabel + 8, leftRoom = lo < 0 ? labelRoom : 0;
+    var plotW = Math.max(40, W - labelRoom - leftRoom - 2);
+    var k = plotW / (hi - lo), x0 = leftRoom + (-lo) * k;
+    var X = function (v) { return x0 + v * k; };
+    var lg = legend(series.map(function (s) { return s.name; }), colors, measure, W, 2);
+    var out = lg.svg, y = 2 + lg.h, barH = stacked ? 30 : 22;
+
+    cats.forEach(function (cat, c) {
+      wrap(cat, W, FS, true).forEach(function (ln) { out += text(0, base(y), ln, { bold: true, fill: PALETTE.heading }); y += LINE; });
+      if (!stacked) {
+        vals.forEach(function (v, i) {
+          // A zero draws no bar; its label still sits at the zero line in its own slot (GAP-83).
+          var a = X(Math.min(0, v[c])), w = Math.abs(v[c]) * k, tag = labTag(series[i].name, cat);
+          if (v[c] !== 0) out += bar(a, y + 1, w, barH - 4, colors[i], ' data-series="' + esc(series[i].name) + '" data-category="' + esc(cat) + '" data-value="' + v[c] + '"');
+          var lab = formatValue(v[c], measure);
+          out += v[c] >= 0 ? text(a + w + 5, base(y + 1), lab, { data: tag }) : text(a - 5, base(y + 1), lab, { anchor: "end", data: tag });
+          y += LINE + 4;
+        });
+        y += 8;
+        return;
+      }
+      // stacked: segments in one row, labels inside when they fit, else in lanes below,
+      // each under its segment with a colour swatch. No leader lines (D10): they crossed labels at 390 px.
+      var pos = 0, neg = 0, outside = [], segs = "";
+      vals.forEach(function (v, i) {
+        var val = v[c], tag = labTag(series[i].name, cat);
+        if (val === 0) { outside.push({ cx: X(pos), w: textWidth(formatValue(0, measure)) + 16, s: formatValue(0, measure), color: colors[i], tag: tag }); return; }
+        var from = val > 0 ? pos : neg, to = from + val;
+        if (val > 0) pos = to; else neg = to;
+        var a = X(Math.min(from, to)), w = Math.abs(val) * k, lab = formatValue(val, measure), tw = textWidth(lab);
+        segs += bar(a, y, w, barH, colors[i], ' data-series="' + esc(series[i].name) + '" data-category="' + esc(cat) + '" data-value="' + val + '"');
+        if (tw + 8 <= w && contrast(inkOn(colors[i]), colors[i]) >= 4.5) segs += text(a + w / 2, y + barH / 2 + FS * 0.36, lab, { anchor: "middle", fill: inkOn(colors[i]), data: tag });
+        else outside.push({ cx: a + w / 2, w: tw + 16, s: lab, color: colors[i], tag: tag });
+      });
+      out += segs;
+      var tot = pos + neg;
+      out += text(X(Math.max(pos, 0)) + 5, y + barH / 2 + FS * 0.36, formatValue(tot, measure), { bold: true });
+      y += barH + 4;
+      var lanes = [];
+      outside.forEach(function (l) {
+        var placed = false;
+        for (var li = 0; li <= lanes.length && !placed; li++) {
+          var right = li < lanes.length ? lanes[li] : -Infinity;
+          var x = Math.max(l.cx - l.w / 2, right + 10, 0);
+          if (x + l.w > W) x = W - l.w;
+          if (x >= right + 10 - 0.01 && x >= 0) {
+            lanes[li] = x + l.w;
+            var ly = y + li * LINE;
+            out += '<rect class="ec-swatch" x="' + r2(x) + '" y="' + r2(ly + 4) + '" width="10" height="10" fill="' + l.color + '"/>';
+            out += text(x + 14, base(ly), l.s, { data: l.tag });
+            placed = true;
+          }
+        }
+      });
+      y += lanes.length * LINE + 10;
+    });
+    return svgOpen(W, y + 4, spec, measure) + out + "</svg>";
+  }
+
+  // ---------- waterfall ----------
+  var KINDS = { start: 1, drop: 1, subtotal: 1, end: 1 };
+  function waterfallSteps(spec, measure, category) {
+    formatValue(0, measure);
+    category = category || 0;
+    if (!spec || !spec.series || !spec.series.length) throw new Error("Waterfall has no steps");
+    var run = null;
+    return spec.series.map(function (s, i) {
+      var name = s.name, kind = s.kind, arr = s.values && s.values[measure];
+      if (!KINDS[kind]) throw new Error("Waterfall step \"" + name + "\" has unknown kind " + JSON.stringify(kind));
+      if (!arr || arr.length !== (spec.categories || []).length) throw new Error("Waterfall step \"" + name + "\" has the wrong number of " + measure + " values");
+      var v = arr[category];
+      if (typeof v !== "number" || !isFinite(v)) throw new Error("Waterfall step \"" + name + "\" has no " + measure + " value");
+      if (i === 0 && kind !== "start") throw new Error("Waterfall step \"" + name + "\" must be the start level");
+      if (i > 0 && kind === "start") throw new Error("Waterfall step \"" + name + "\" is a second start level");
+      if (kind === "drop") { var f = run; run += v; return { name: name, kind: kind, value: v, from: f, to: run }; }
+      if (kind !== "start" && Math.abs(v - run) >= 0.005)
+        throw new Error("Waterfall step \"" + name + "\" (" + kind + ") is " + v + " " + measure + " but the running total is " + r2(run));
+      run = v;
+      return { name: name, kind: kind, value: v, from: 0, to: v };
+    });
+  }
+
+  function renderWaterfall(spec, measure, W) {
+    var steps = waterfallSteps(spec, measure, 0), colors = seriesColors(spec.series).map(function (c, i) {
+      return spec.series[i].name === FOCUS_STEP ? PALETTE.wait : c; });
+    var lo = 0, hi = 0, maxLabel = 0;
+    steps.forEach(function (s) {
+      lo = Math.min(lo, s.from, s.to); hi = Math.max(hi, s.from, s.to);
+      maxLabel = Math.max(maxLabel, textWidth(formatValue(s.value, measure), FS, s.kind !== "drop"));
+    });
+    if (hi === lo) hi = lo + 1;
+    var side = W >= 640, nameW = side ? Math.min(340, Math.round(W * 0.3)) : W;
+    var plotL = side ? nameW + 16 : 0, labelRoom = maxLabel + 10;
+    var plotW = Math.max(40, W - plotL - labelRoom - 2);
+    var k = plotW / (hi - lo), X = function (v) { return plotL + (v - lo) * k; };
+    var y = 2, out = text(0, base(y), UNIT_NOTE[measure], { fill: PALETTE.heading });
+    y += LINE + 6;
+    var barH = 22, prevEnd = null;
+    steps.forEach(function (s, i) {
+      var lines = wrap(s.name, nameW - 2, FS, s.kind !== "drop"), nameTop = y;
+      lines.forEach(function (ln, j) { out += text(0, base(nameTop + j * LINE), ln, { bold: s.kind !== "drop" }); });
+      var barTop = side ? y : y + lines.length * LINE + 2;
+      var a = X(Math.min(s.from, s.to)), b = X(Math.max(s.from, s.to)), w = b - a;
+      if (w < 2) { w = 2; if (s.to < s.from) a = b - 2; }
+      // Connector from the last level, unless it would cut through this step's wrapped name (narrow layout).
+      var cx = prevEnd && X(prevEnd.v), nameR = side ? -Infinity : Math.max.apply(null, lines.map(function (ln) {
+        return textWidth(ln, FS, s.kind !== "drop"); })) + 6;
+      if (prevEnd !== null && cx > nameR) out += '<line class="ec-connector" x1="' + r2(cx) + '" y1="' + r2(prevEnd.y) + '" x2="' + r2(cx) + '" y2="' + r2(barTop) + '" stroke="' + PALETTE.neutral + '" stroke-dasharray="3 3"/>';
+      out += bar(a, barTop, w, barH, colors[i], ' data-step="' + esc(s.name) + '" data-series="' + esc(s.name) + '" data-category="' + esc(spec.categories[0]) + '" data-value="' + s.value + '"');
+      out += text(Math.max(a + w, X(Math.max(s.from, s.to))) + 6, base(barTop + 1), formatValue(s.value, measure), { bold: s.kind !== "drop" });
+      prevEnd = { v: s.to, y: barTop + barH };
+      y = Math.max(barTop + barH, nameTop + lines.length * LINE) + (side ? 12 : 14);
+    });
+    return svgOpen(W, y + 2, spec, measure) + out + "</svg>";
+  }
+
+  function renderChart(spec, measure, opts) {
+    formatValue(0, measure);
+    var W = Math.max(200, Math.floor((opts && opts.width) || 800));
+    if (!spec) throw new Error("No chart spec");
+    if (spec.type === "bar") return renderBars(spec, measure, W, false);
+    if (spec.type === "stacked_bar") return renderBars(spec, measure, W, true);
+    if (spec.type === "waterfall") return renderWaterfall(spec, measure, W);
+    throw new Error("Unknown chart type: " + spec.type);
+  }
+
+  // ---------- tables ----------
+  function renderTable(table, measure) {
+    formatValue(0, measure);
+    var cols = table.columns || [];
+    var h = '<table class="ec-table"><thead><tr><th scope="col" class="ec-label"></th>' +
+      cols.map(function (c) { return '<th scope="col" class="ec-num">' + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>";
+    (table.rows || []).forEach(function (r) {
+      var v = (r.values && r.values[measure]) || [];
+      if (v.length !== cols.length) throw new Error("Table row \"" + r.label + "\" has " + v.length + " values for " + cols.length + " columns");
+      var lvl = Math.max(0, Math.min(6, r.level | 0));
+      h += '<tr class="ec-level-' + lvl + (r.total ? " ec-total" : "") + '"><th scope="row" class="ec-label" style="padding-left:' +
+        (8 + lvl * 20) + 'px">' + esc(r.label) + "</th>" +
+        v.map(function (x) { return '<td class="ec-num">' + formatValue(x, measure) + "</td>"; }).join("") + "</tr>";
+    });
+    return h + "</tbody></table>";
+  }
+
+  // ---------- DOM wiring ----------
+  function toggleHtml(m) {
+    return '<div class="ec-toggle" data-measure-toggle role="group" aria-label="Show values as">' +
+      Object.keys(MEASURES).map(function (k) {
+        return '<button type="button" data-measure="' + k + '" aria-pressed="' + (k === m) + '">' + MEASURES[k] + "</button>";
+      }).join("") + "</div>";
+  }
+
+  function mount(rootEl, figures, opts) {
+    var measure = (opts && opts.measure) || "usd";
+    formatValue(0, measure);
+    var figs = [];
+    function draw(f) {
+      var body = f.el.querySelector(".ec-body");
+      try {
+        if (f.kind === "chart") {
+          f.width = body.clientWidth;
+          body.innerHTML = renderChart(f.spec, f.measure, { width: f.width });
+        } else body.innerHTML = '<div class="ec-scroll">' + renderTable(f.spec, f.measure) + "</div>";
+      } catch (e) { body.innerHTML = '<p class="ec-error">Cannot draw this figure: ' + esc(e.message) + "</p>"; }
+      [].forEach.call(f.el.querySelectorAll("[data-measure]"), function (b) {
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-measure") === f.measure));
+      });
+    }
+    function setup(el, kind, spec) {
+      var f = { el: el, kind: kind, spec: spec, measure: measure, width: 0 };
+      el.classList.add("ec-figure");
+      el.innerHTML = '<div class="ec-head"><h3 class="ec-title">' + esc(spec.title || "") + "</h3>" + toggleHtml(measure) +
+        '</div><div class="ec-body"></div>';
+      el.querySelector("[data-measure-toggle]").addEventListener("click", function (ev) {
+        var b = ev.target.closest && ev.target.closest("button[data-measure]");
+        if (!b || b.getAttribute("data-measure") === f.measure) return;
+        f.measure = b.getAttribute("data-measure");
+        draw(f);
+      });
+      figs.push(f);
+      draw(f);
+    }
+    var charts = (figures && figures.charts) || {}, tables = (figures && figures.tables) || {};
+    [].forEach.call(rootEl.querySelectorAll("[data-chart]"), function (el) {
+      var spec = charts[el.getAttribute("data-chart")];
+      if (spec) setup(el, "chart", spec); else el.innerHTML = '<p class="ec-error">No chart named ' + esc(el.getAttribute("data-chart")) + "</p>";
+    });
+    [].forEach.call(rootEl.querySelectorAll("[data-table]"), function (el) {
+      var spec = tables[el.getAttribute("data-table")];
+      if (spec) setup(el, "table", spec); else el.innerHTML = '<p class="ec-error">No table named ' + esc(el.getAttribute("data-table")) + "</p>";
+    });
+    var timer = null;
+    function refit() {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        figs.forEach(function (f) {
+          if (f.kind === "chart" && f.el.querySelector(".ec-body").clientWidth !== f.width) draw(f);
+        });
+      }, 80);
+    }
+    if (typeof window !== "undefined") window.addEventListener("resize", refit);
+    if (typeof ResizeObserver !== "undefined") {
+      var ro = new ResizeObserver(refit);
+      figs.forEach(function (f) { ro.observe(f.el); });
+    }
+  }
+
+  var api = { formatValue: formatValue, waterfallSteps: waterfallSteps, renderChart: renderChart,
+    renderTable: renderTable, mount: mount, PALETTE: PALETTE };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.EchoCharts = api;
+})(typeof window !== "undefined" ? window : this);
+</script>
+<script>
+var figures = JSON.parse(document.getElementById("figures").textContent);
+EchoCharts.mount(document.body, figures, {measure: "usd"});
+</script>
+</body>
+</html>
