@@ -152,7 +152,7 @@
 
 <article>
 <h2>The $45 rate loses about $42 per ride, and 7 in 10 rides lose money</h2>
-<p class="callout"><strong>No. RideCare spends about $111 on an average pre-scheduled ride and earns $69</strong> at $45 a trip plus $2.25 a mile over 30. Across 5,547 rides from June 2025 to August 2026, the loss is about $233k. Breaking even needs a flat fee near $87 or about $6 a mile over 30. Oceans may hold its own contracted rate; this page applies the $45 rate to both groups.</p>
+<p class="callout"><strong>No. RideCare spends about $111 on an average pre-scheduled ride and earns $69</strong> at $45 a trip plus $2.25 a mile over 30. Across 5,547 rides from June 2025 to August 2026, the loss is about $233k. Breaking even needs a flat fee near $87 or about $6 a mile over 30. Oceans may hold its own contracted rate. The $45 rate is applied to both groups here.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -210,12 +210,72 @@
 <text x="329.0" y="388" text-anchor="middle">Rider miles, pickup to drop-off</text>
 </svg></div>
 
-<h2>Driver time, empty miles and short rides cause the loss</h2>
+<h2>Fixed ride time and empty miles make short rides lose money</h2>
 <ul>
-<li><strong>Fixed time per ride.</strong> Each ride takes about 41 minutes of driver time on top of driving: loading, waiting, paperwork. At $28 an hour that is $19 before the van moves.</li>
+<li><strong>Fixed time per ride.</strong> Each ride carries about 41 minutes of paid driver time on top of driving: about 33 for pickup, loading and waiting, plus gaps between rides. At $28 an hour that is $19 before the van moves.</li>
 <li><strong>Empty miles.</strong> The van drives about twice the miles the rider rides. A typical Oceans ride carries the rider 12 miles, and the van drives 27 miles to do it.</li>
 <li><strong>Short rides.</strong> 77% of rides are 30 miles or less, so the mileage fee never applies. They earn the $45 flat fee and cost $56 to $105 each on average.</li>
 </ul>
+<h2>V1&rsquo;s own timestamps confirm the fixed time per ride</h2>
+<ul>
+<li><strong>V1 timestamps.</strong> On 3,448 rides with recorded times, the time from the start of the ride to drop-off is 33 minutes plus driving time. V1 records this separately from Samsara.</li>
+<li><strong>The model&rsquo;s 41 minutes</strong> is the same fixed time plus the gaps between rides and the start and end of each shift.</li>
+<li><strong>Shared routes.</strong> 73% of the contract rides ran on shared multi-rider routes, against 59% of the fleet the model was fit on. If riders on a shared route split the waiting time, fixed time per ride could be lower. The loss holds at half the fixed time (−$31 per ride). V1 may also count a shared route&rsquo;s miles once per rider, which would overstate cost; this was not measured, and closing the gap would need driven miles overstated by about 47%.</li>
+<li><strong>Fleet totals.</strong> Applied ride by ride, the model adds back up to the fleet&rsquo;s Samsara hours and miles within 3%. Correcting for that 3% puts the loss near $39 per ride.</li>
+</ul>
+<h2>The rate loses money under each favorable assumption</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Assumption</th>
+<th style="text-align: right;">Cost per ride</th>
+<th style="text-align: right;">Margin per ride</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base case (41 min fixed time)</td>
+<td style="text-align: right;">$111</td>
+<td style="text-align: right;">−$42</td>
+</tr>
+<tr>
+<td>Fixed time at V1&rsquo;s 33 minutes</td>
+<td style="text-align: right;">$107</td>
+<td style="text-align: right;">−$38</td>
+</tr>
+<tr>
+<td>Leave out paid hours the ride model does not explain</td>
+<td style="text-align: right;">$104</td>
+<td style="text-align: right;">−$34</td>
+</tr>
+<tr>
+<td>Fixed time halved for shared routes</td>
+<td style="text-align: right;">$100</td>
+<td style="text-align: right;">−$31</td>
+</tr>
+<tr>
+<td>Vehicle at two-thirds of the IRS rate</td>
+<td style="text-align: right;">$95</td>
+<td style="text-align: right;">−$26</td>
+</tr>
+<tr>
+<td>No drive back after drop-off</td>
+<td style="text-align: right;">$91</td>
+<td style="text-align: right;">−$22</td>
+</tr>
+<tr>
+<td>No fixed time per ride (all 41 minutes)</td>
+<td style="text-align: right;">$89</td>
+<td style="text-align: right;">−$20</td>
+</tr>
+<tr>
+<td>No fixed time and no drive back</td>
+<td style="text-align: right;">$69</td>
+<td style="text-align: right;">$0</td>
+</tr>
+</tbody>
+</table></div>
+<p>The rate breaks even only when fixed time per ride and the drive back are both zero. V1&rsquo;s timestamps show 33 minutes of fixed time per ride, so that case does not occur.</p>
 <h2>Billing on driver miles would only break even</h2>
 <p>Driver miles run from the start of the ride, including the drive to pickup, to drop-off. They leave out the drive back. If the 30 free miles and the $2.25 rate applied to driver miles, revenue would rise to $112 a ride and the average margin would be about $0. In 80% of simulated cases it falls between −$9 and +$4. Almost 6 in 10 rides would still lose money.</p>
 <h2>Breaking even needs a flat fee near $87 or a mileage rate near $6</h2>
@@ -225,16 +285,9 @@
 <li><strong>Raise the mileage rate</strong> to $6.13 a mile over 30, keeping the $45 flat fee.</li>
 <li><strong>Bill every mile</strong> at $2.53, keeping the $45 flat fee and dropping the 30 free miles.</li>
 </ul>
-<h2>The estimate applies fleet-wide costs to these rides and leaves some costs out</h2>
-<p>The cost model comes from the whole fleet, then applies to each Oceans and ODMHSAS ride by its own miles.</p>
-<ul>
-<li><strong>Driver time and vehicle miles</strong> come from Samsara for 104 vans from January to April 2026: 49.6k driver hours and 1.62 million miles across 21,568 completed rides.</li>
-<li><strong>Cost per ride</strong> comes from a fit over 4,585 van-days: 41 minutes per ride plus 1.15 minutes per mile driven.</li>
-<li><strong>Driver pay</strong> is $28 an hour. <strong>Vehicle cost</strong> is the 2026 IRS rate of 72.5 cents a mile, which stands in for fuel, maintenance, insurance and depreciation.</li>
-<li><strong>Rides</strong> are completed pre-scheduled rides billed to Oceans Healthcare or the ODMHSAS centers (COCMHC, Jim Taliaferro, Carl Albert, OCCIC and OCRU, Griffin, OFC and TCBH), taken from V1. Crisis rides from these facilities bill Medicaid and are left out.</li>
-</ul>
-<p>Payroll taxes and workers&rsquo; comp would add about $13 per ride at 20%. Paid time when the van is parked, such as standby, and overhead such as dispatch and billing are also left out. All of these would make the loss larger.</p>
-<p>One factor could make it smaller. 73% of these rides ran on shared multi-rider routes. If V1 counts shared miles once per rider, cost is overstated. This was not measured. Closing the gap would need the driven miles to be overstated by about 47%.</p>
+<h2>What the estimate includes and leaves out</h2>
+<p>Driver pay is $28 an hour. Vehicle cost is the 2026 IRS rate of 72.5 cents a mile, which stands in for fuel, maintenance, insurance and depreciation. Rides are completed pre-scheduled rides billed to Oceans Healthcare or the ODMHSAS centers (COCMHC, Jim Taliaferro, Carl Albert, OCCIC and OCRU, Griffin, OFC and TCBH), from V1. Crisis rides from these facilities bill Medicaid and are left out.</p>
+<p>Payroll taxes and workers&rsquo; comp would add about $13 per ride at 20%. Paid time when the van is parked, such as standby, and overhead such as dispatch and billing are also left out.</p>
 </article>
 
 <footer>
