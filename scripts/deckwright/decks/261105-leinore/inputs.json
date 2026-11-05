@@ -1,0 +1,3706 @@
+{
+ "cards": [
+  {
+   "count": 1,
+   "name": "Abzan Falconer"
+  },
+  {
+   "count": 1,
+   "name": "Ainok Bond-Kin"
+  },
+  {
+   "count": 1,
+   "name": "Angel of Glory's Rise"
+  },
+  {
+   "count": 1,
+   "name": "Arcane Signet"
+  },
+  {
+   "count": 1,
+   "name": "Avacyn's Pilgrim"
+  },
+  {
+   "count": 1,
+   "name": "Bastion Protector"
+  },
+  {
+   "count": 1,
+   "name": "Beast Within"
+  },
+  {
+   "count": 1,
+   "name": "Bestial Menace"
+  },
+  {
+   "count": 1,
+   "name": "Biogenic Upgrade"
+  },
+  {
+   "count": 1,
+   "name": "Blighted Woodland"
+  },
+  {
+   "count": 1,
+   "name": "Canopy Vista"
+  },
+  {
+   "count": 1,
+   "name": "Celebrate the Harvest"
+  },
+  {
+   "count": 1,
+   "name": "Celestial Judgment"
+  },
+  {
+   "count": 1,
+   "name": "Champion of Lambholt"
+  },
+  {
+   "count": 1,
+   "name": "Cleansing Nova"
+  },
+  {
+   "count": 1,
+   "name": "Command Tower"
+  },
+  {
+   "count": 1,
+   "name": "Curse of Clinging Webs"
+  },
+  {
+   "count": 1,
+   "name": "Curse of Conformity"
+  },
+  {
+   "count": 1,
+   "name": "Custodi Soulbinders"
+  },
+  {
+   "count": 1,
+   "name": "Dawnhart Wardens"
+  },
+  {
+   "count": 1,
+   "name": "Dearly Departed"
+  },
+  {
+   "count": 1,
+   "name": "Death's Presence"
+  },
+  {
+   "count": 1,
+   "name": "Elite Scaleguard"
+  },
+  {
+   "count": 1,
+   "name": "Enduring Scalelord"
+  },
+  {
+   "count": 1,
+   "name": "Eternal Witness"
+  },
+  {
+   "count": 1,
+   "name": "Exotic Orchard"
+  },
+  {
+   "count": 12,
+   "name": "Forest"
+  },
+  {
+   "count": 1,
+   "name": "Fortified Village"
+  },
+  {
+   "count": 1,
+   "name": "Gardenize"
+  },
+  {
+   "count": 1,
+   "name": "Growth Spasm"
+  },
+  {
+   "count": 1,
+   "name": "Gyre Sage"
+  },
+  {
+   "count": 1,
+   "name": "Herald of War"
+  },
+  {
+   "count": 1,
+   "name": "Heron's Grace Champion"
+  },
+  {
+   "count": 1,
+   "name": "Heronblade Elite"
+  },
+  {
+   "count": 1,
+   "name": "Inspiring Call"
+  },
+  {
+   "count": 1,
+   "name": "Juniper Order Ranger"
+  },
+  {
+   "count": 1,
+   "name": "Kessig Cagebreakers"
+  },
+  {
+   "count": 1,
+   "name": "Knight of the White Orchid"
+  },
+  {
+   "count": 1,
+   "name": "Krosan Verge"
+  },
+  {
+   "count": 1,
+   "name": "Kurbis, Harvest Celebrant"
+  },
+  {
+   "count": 1,
+   "name": "Kyler, Sigardian Emissary"
+  },
+  {
+   "count": 1,
+   "name": "Lifecrafter's Bestiary"
+  },
+  {
+   "count": 1,
+   "name": "Loot, the Nexus"
+  },
+  {
+   "count": 1,
+   "name": "Mikaeus, the Lunarch"
+  },
+  {
+   "count": 1,
+   "name": "Moonsilver Key"
+  },
+  {
+   "count": 1,
+   "name": "Myriad Landscape"
+  },
+  {
+   "count": 1,
+   "name": "Odric, Master Tactician"
+  },
+  {
+   "count": 1,
+   "name": "Omnipresence"
+  },
+  {
+   "count": 1,
+   "name": "Orzhov Advokist"
+  },
+  {
+   "count": 1,
+   "name": "Path of Ancestry"
+  },
+  {
+   "count": 12,
+   "name": "Plains"
+  },
+  {
+   "count": 1,
+   "name": "Return to Dust"
+  },
+  {
+   "count": 1,
+   "name": "Riders of Gavony"
+  },
+  {
+   "count": 1,
+   "name": "Rogue's Passage"
+  },
+  {
+   "count": 1,
+   "name": "Ruinous Intrusion"
+  },
+  {
+   "count": 1,
+   "name": "Selesnya Sanctuary"
+  },
+  {
+   "count": 1,
+   "name": "Shamanic Revelation"
+  },
+  {
+   "count": 1,
+   "name": "Sigarda's Vanguard"
+  },
+  {
+   "count": 1,
+   "name": "Sigarda, Heron's Grace"
+  },
+  {
+   "count": 1,
+   "name": "Sigardian Zealot"
+  },
+  {
+   "count": 1,
+   "name": "Sol Ring"
+  },
+  {
+   "count": 1,
+   "name": "Somberwald Sage"
+  },
+  {
+   "count": 1,
+   "name": "Stalwart Pathlighter"
+  },
+  {
+   "count": 1,
+   "name": "Sungrass Prairie"
+  },
+  {
+   "count": 1,
+   "name": "Swiftfoot Boots"
+  },
+  {
+   "count": 1,
+   "name": "Swords to Plowshares"
+  },
+  {
+   "count": 1,
+   "name": "Talisman of Unity"
+  },
+  {
+   "count": 1,
+   "name": "Temple of Plenty"
+  },
+  {
+   "count": 1,
+   "name": "Temple of the False God"
+  },
+  {
+   "count": 1,
+   "name": "Ugin's Conjurant"
+  },
+  {
+   "count": 1,
+   "name": "Unbreakable Formation"
+  },
+  {
+   "count": 1,
+   "name": "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+  },
+  {
+   "count": 1,
+   "name": "Verdurous Gearhulk"
+  },
+  {
+   "count": 1,
+   "name": "Victory's Envoy"
+  },
+  {
+   "count": 1,
+   "name": "Wall of Mourning"
+  },
+  {
+   "count": 1,
+   "name": "Wild Beastmaster"
+  },
+  {
+   "count": 1,
+   "name": "Yavimaya Elder"
+  }
+ ],
+ "commanders": [
+  "Leinore, Autumn Sovereign"
+ ],
+ "facts": {
+  "Abzan Falconer": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Soldier",
+   "usd": 0.25
+  },
+  "Ainok Bond-Kin": {
+   "game_changer": false,
+   "mana_cost": "{1}{W}",
+   "mv": 2.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Dog Soldier",
+   "usd": 0.1
+  },
+  "Angel of Glory's Rise": {
+   "game_changer": false,
+   "mana_cost": "{5}{W}{W}",
+   "mv": 7.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Angel",
+   "usd": 0.4
+  },
+  "Arcane Signet": {
+   "game_changer": false,
+   "mana_cost": "{2}",
+   "mv": 2.0,
+   "type": "Artifact",
+   "type_line": "Artifact",
+   "usd": 0.35
+  },
+  "Avacyn's Pilgrim": {
+   "game_changer": false,
+   "mana_cost": "{G}",
+   "mv": 1.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Monk",
+   "usd": 0.33
+  },
+  "Bastion Protector": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Soldier",
+   "usd": 0.31
+  },
+  "Beast Within": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Instant",
+   "type_line": "Instant",
+   "usd": 0.67
+  },
+  "Bestial Menace": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}{G}",
+   "mv": 5.0,
+   "type": "Sorcery",
+   "type_line": "Sorcery",
+   "usd": 0.1
+  },
+  "Biogenic Upgrade": {
+   "game_changer": false,
+   "mana_cost": "{4}{G}{G}",
+   "mv": 6.0,
+   "type": "Sorcery",
+   "type_line": "Sorcery",
+   "usd": 0.12
+  },
+  "Blighted Woodland": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.28
+  },
+  "Canopy Vista": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land \u2014 Forest Plains",
+   "usd": 0.25
+  },
+  "Celebrate the Harvest": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}",
+   "mv": 4.0,
+   "type": "Sorcery",
+   "type_line": "Sorcery",
+   "usd": 0.34
+  },
+  "Celestial Judgment": {
+   "game_changer": false,
+   "mana_cost": "{4}{W}{W}",
+   "mv": 6.0,
+   "type": "Sorcery",
+   "type_line": "Sorcery",
+   "usd": 0.19
+  },
+  "Champion of Lambholt": {
+   "game_changer": false,
+   "mana_cost": "{1}{G}{G}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Warrior",
+   "usd": 2.62
+  },
+  "Cleansing Nova": {
+   "game_changer": false,
+   "mana_cost": "{3}{W}{W}",
+   "mv": 5.0,
+   "type": "Sorcery",
+   "type_line": "Sorcery",
+   "usd": 0.22
+  },
+  "Command Tower": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.1
+  },
+  "Curse of Clinging Webs": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Enchantment",
+   "type_line": "Enchantment \u2014 Aura Curse",
+   "usd": 1.38
+  },
+  "Curse of Conformity": {
+   "game_changer": false,
+   "mana_cost": "{4}{W}",
+   "mv": 5.0,
+   "type": "Enchantment",
+   "type_line": "Enchantment \u2014 Aura Curse",
+   "usd": 0.37
+  },
+  "Custodi Soulbinders": {
+   "game_changer": false,
+   "mana_cost": "{3}{W}",
+   "mv": 4.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Cleric",
+   "usd": 0.15
+  },
+  "Dawnhart Wardens": {
+   "game_changer": false,
+   "mana_cost": "{1}{G}{W}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Warlock",
+   "usd": 0.05
+  },
+  "Dearly Departed": {
+   "game_changer": false,
+   "mana_cost": "{4}{W}{W}",
+   "mv": 6.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Spirit",
+   "usd": 0.17
+  },
+  "Death's Presence": {
+   "game_changer": false,
+   "mana_cost": "{5}{G}",
+   "mv": 6.0,
+   "type": "Enchantment",
+   "type_line": "Enchantment",
+   "usd": 0.36
+  },
+  "Elite Scaleguard": {
+   "game_changer": false,
+   "mana_cost": "{4}{W}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Soldier",
+   "usd": 0.1
+  },
+  "Enduring Scalelord": {
+   "game_changer": false,
+   "mana_cost": "{4}{G}{W}",
+   "mv": 6.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Dragon",
+   "usd": 0.13
+  },
+  "Eternal Witness": {
+   "game_changer": false,
+   "mana_cost": "{1}{G}{G}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Shaman",
+   "usd": 1.53
+  },
+  "Exotic Orchard": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.21
+  },
+  "Forest": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Basic Land \u2014 Forest",
+   "usd": 0.1
+  },
+  "Fortified Village": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.2
+  },
+  "Gardenize": {
+   "game_changer": false,
+   "mana_cost": "{1}{G}{G}",
+   "mv": 3.0,
+   "type": "Enchantment",
+   "type_line": "Enchantment",
+   "usd": 0.91
+  },
+  "Growth Spasm": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Sorcery",
+   "type_line": "Sorcery",
+   "usd": 0.27
+  },
+  "Gyre Sage": {
+   "game_changer": false,
+   "mana_cost": "{1}{G}",
+   "mv": 2.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Elf Druid",
+   "usd": 0.61
+  },
+  "Herald of War": {
+   "game_changer": false,
+   "mana_cost": "{3}{W}{W}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Angel",
+   "usd": 0.54
+  },
+  "Heron's Grace Champion": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}{W}",
+   "mv": 4.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Knight",
+   "usd": 0.16
+  },
+  "Heronblade Elite": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Warrior",
+   "usd": 2.18
+  },
+  "Inspiring Call": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Instant",
+   "type_line": "Instant",
+   "usd": 0.35
+  },
+  "Juniper Order Ranger": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}{W}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Knight Ranger",
+   "usd": 0.15
+  },
+  "Kessig Cagebreakers": {
+   "game_changer": false,
+   "mana_cost": "{4}{G}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Rogue",
+   "usd": 0.21
+  },
+  "Knight of the White Orchid": {
+   "game_changer": false,
+   "mana_cost": "{W}{W}",
+   "mv": 2.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Knight",
+   "usd": 1.47
+  },
+  "Krosan Verge": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.2
+  },
+  "Kurbis, Harvest Celebrant": {
+   "game_changer": false,
+   "mana_cost": "{X}{G}{G}",
+   "mv": 2.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Treefolk",
+   "usd": 0.38
+  },
+  "Kyler, Sigardian Emissary": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}{W}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Human Cleric",
+   "usd": 0.61
+  },
+  "Leinore, Autumn Sovereign": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}{W}",
+   "mv": 4.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Human Noble",
+   "usd": 0.5
+  },
+  "Lifecrafter's Bestiary": {
+   "game_changer": false,
+   "mana_cost": "{3}",
+   "mv": 3.0,
+   "type": "Artifact",
+   "type_line": "Artifact",
+   "usd": 0.37
+  },
+  "Loot, the Nexus": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Beast Noble",
+   "usd": 0.21
+  },
+  "Mikaeus, the Lunarch": {
+   "game_changer": false,
+   "mana_cost": "{X}{W}",
+   "mv": 1.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Human Cleric",
+   "usd": 0.44
+  },
+  "Moonsilver Key": {
+   "game_changer": false,
+   "mana_cost": "{2}",
+   "mv": 2.0,
+   "type": "Artifact",
+   "type_line": "Artifact",
+   "usd": 0.98
+  },
+  "Myriad Landscape": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.2
+  },
+  "Odric, Master Tactician": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}{W}",
+   "mv": 4.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Human Soldier",
+   "usd": 0.35
+  },
+  "Omnipresence": {
+   "game_changer": false,
+   "mana_cost": "{5}{G}{G}{G}",
+   "mv": 8.0,
+   "type": "Enchantment",
+   "type_line": "Enchantment",
+   "usd": 2.21
+  },
+  "Orzhov Advokist": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Advisor",
+   "usd": 0.15
+  },
+  "Path of Ancestry": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.17
+  },
+  "Plains": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Basic Land \u2014 Plains",
+   "usd": 0.08
+  },
+  "Return to Dust": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}{W}",
+   "mv": 4.0,
+   "type": "Instant",
+   "type_line": "Instant",
+   "usd": 0.12
+  },
+  "Riders of Gavony": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}{W}",
+   "mv": 4.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Knight",
+   "usd": 0.27
+  },
+  "Rogue's Passage": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.38
+  },
+  "Ruinous Intrusion": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}",
+   "mv": 4.0,
+   "type": "Instant",
+   "type_line": "Instant",
+   "usd": 0.36
+  },
+  "Selesnya Sanctuary": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.19
+  },
+  "Shamanic Revelation": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}{G}",
+   "mv": 5.0,
+   "type": "Sorcery",
+   "type_line": "Sorcery",
+   "usd": 0.4
+  },
+  "Sigarda's Vanguard": {
+   "game_changer": false,
+   "mana_cost": "{4}{W}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Angel",
+   "usd": 0.99
+  },
+  "Sigarda, Heron's Grace": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}{W}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Angel",
+   "usd": 0.48
+  },
+  "Sigardian Zealot": {
+   "game_changer": false,
+   "mana_cost": "{4}{G}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Cleric",
+   "usd": 0.28
+  },
+  "Sol Ring": {
+   "game_changer": false,
+   "mana_cost": "{1}",
+   "mv": 1.0,
+   "type": "Artifact",
+   "type_line": "Artifact",
+   "usd": 1.35
+  },
+  "Somberwald Sage": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Druid",
+   "usd": 0.46
+  },
+  "Stalwart Pathlighter": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Soldier",
+   "usd": 0.32
+  },
+  "Sungrass Prairie": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.2
+  },
+  "Swiftfoot Boots": {
+   "game_changer": false,
+   "mana_cost": "{2}",
+   "mv": 2.0,
+   "type": "Artifact",
+   "type_line": "Artifact \u2014 Equipment",
+   "usd": 1.81
+  },
+  "Swords to Plowshares": {
+   "game_changer": false,
+   "mana_cost": "{W}",
+   "mv": 1.0,
+   "type": "Instant",
+   "type_line": "Instant",
+   "usd": 1.23
+  },
+  "Talisman of Unity": {
+   "game_changer": false,
+   "mana_cost": "{2}",
+   "mv": 2.0,
+   "type": "Artifact",
+   "type_line": "Artifact",
+   "usd": 1.16
+  },
+  "Temple of Plenty": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.15
+  },
+  "Temple of the False God": {
+   "game_changer": false,
+   "mana_cost": "",
+   "mv": 0.0,
+   "type": "Land",
+   "type_line": "Land",
+   "usd": 0.19
+  },
+  "Ugin's Conjurant": {
+   "game_changer": false,
+   "mana_cost": "{X}",
+   "mv": 0.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Spirit Monk",
+   "usd": 0.18
+  },
+  "Unbreakable Formation": {
+   "game_changer": false,
+   "mana_cost": "{2}{W}",
+   "mv": 3.0,
+   "type": "Instant",
+   "type_line": "Instant",
+   "usd": 0.74
+  },
+  "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal": {
+   "game_changer": false,
+   "mana_cost": "{1}{W}{W}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Legendary Creature \u2014 Elder Wizard // Legendary Creature \u2014 God",
+   "usd": 1.21
+  },
+  "Verdurous Gearhulk": {
+   "game_changer": false,
+   "mana_cost": "{3}{G}{G}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Artifact Creature \u2014 Construct",
+   "usd": 0.4
+  },
+  "Victory's Envoy": {
+   "game_changer": false,
+   "mana_cost": "{3}{W}{W}",
+   "mv": 5.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Cleric",
+   "usd": 0.33
+  },
+  "Wall of Mourning": {
+   "game_changer": false,
+   "mana_cost": "{1}{W}",
+   "mv": 2.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Wall",
+   "usd": 0.24
+  },
+  "Wild Beastmaster": {
+   "game_changer": false,
+   "mana_cost": "{2}{G}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Shaman",
+   "usd": 0.25
+  },
+  "Yavimaya Elder": {
+   "game_changer": false,
+   "mana_cost": "{1}{G}{G}",
+   "mv": 3.0,
+   "type": "Creature",
+   "type_line": "Creature \u2014 Human Druid",
+   "usd": 0.13
+  }
+ },
+ "review": {
+  "architecture": {
+   "categories": [
+    {
+     "cards": [
+      "Arcane Signet",
+      "Avacyn's Pilgrim",
+      "Celebrate the Harvest",
+      "Gardenize",
+      "Growth Spasm",
+      "Gyre Sage",
+      "Herald of War",
+      "Heronblade Elite",
+      "Knight of the White Orchid",
+      "Loot, the Nexus",
+      "Moonsilver Key",
+      "Sol Ring",
+      "Somberwald Sage",
+      "Talisman of Unity",
+      "Yavimaya Elder"
+     ],
+     "count": 15,
+     "name": "Ramp"
+    },
+    {
+     "cards": [
+      "Celebrate the Harvest",
+      "Inspiring Call",
+      "Lifecrafter's Bestiary",
+      "Moonsilver Key",
+      "Path of Ancestry",
+      "Shamanic Revelation",
+      "Temple of Plenty",
+      "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+      "Yavimaya Elder"
+     ],
+     "count": 9,
+     "name": "Card advantage"
+    },
+    {
+     "cards": [
+      "Beast Within",
+      "Return to Dust",
+      "Ruinous Intrusion",
+      "Swords to Plowshares",
+      "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+      "Angel of Glory's Rise",
+      "Celestial Judgment",
+      "Cleansing Nova"
+     ],
+     "count": 8,
+     "name": "Interaction"
+    },
+    {
+     "cards": [
+      "Bastion Protector",
+      "Inspiring Call",
+      "Riders of Gavony",
+      "Sigarda, Heron's Grace",
+      "Stalwart Pathlighter",
+      "Swiftfoot Boots",
+      "Unbreakable Formation",
+      "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+     ],
+     "count": 8,
+     "name": "Protection"
+    },
+    {
+     "cards": [
+      "Bastion Protector",
+      "Bestial Menace",
+      "Curse of Clinging Webs",
+      "Custodi Soulbinders",
+      "Growth Spasm",
+      "Kessig Cagebreakers",
+      "Kyler, Sigardian Emissary",
+      "Sigarda, Heron's Grace"
+     ],
+     "count": 8,
+     "name": "Board"
+    },
+    {
+     "cards": [],
+     "count": 0,
+     "name": "Sacrifice and drain"
+    },
+    {
+     "cards": [
+      "Angel of Glory's Rise",
+      "Eternal Witness"
+     ],
+     "count": 2,
+     "name": "Graveyard"
+    },
+    {
+     "cards": [
+      "Blighted Woodland",
+      "Canopy Vista",
+      "Command Tower",
+      "Exotic Orchard",
+      "Forest",
+      "Fortified Village",
+      "Krosan Verge",
+      "Myriad Landscape",
+      "Path of Ancestry",
+      "Plains",
+      "Rogue's Passage",
+      "Selesnya Sanctuary",
+      "Sungrass Prairie",
+      "Temple of Plenty",
+      "Temple of the False God"
+     ],
+     "count": 37,
+     "name": "Lands"
+    }
+   ],
+   "multi": [
+    "Celebrate the Harvest",
+    "Growth Spasm",
+    "Moonsilver Key",
+    "Yavimaya Elder",
+    "Inspiring Call",
+    "Path of Ancestry",
+    "Temple of Plenty",
+    "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+    "Angel of Glory's Rise",
+    "Bastion Protector",
+    "Sigarda, Heron's Grace"
+   ],
+   "outside": [
+    {
+     "card": "Abzan Falconer",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Abzan Falconer: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Ainok Bond-Kin",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Ainok Bond-Kin: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Biogenic Upgrade",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Biogenic Upgrade: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Champion of Lambholt",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Champion of Lambholt: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Curse of Conformity",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Curse of Conformity: pool gap, no pool holds it"
+    },
+    {
+     "card": "Dawnhart Wardens",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Dawnhart Wardens: pool gap, no pool holds it"
+    },
+    {
+     "card": "Dearly Departed",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Dearly Departed: pool gap, no pool holds it"
+    },
+    {
+     "card": "Death's Presence",
+     "cause": "no-package",
+     "job": "death_payoff",
+     "line": "Death's Presence: no package for its job, death payoff"
+    },
+    {
+     "card": "Elite Scaleguard",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Elite Scaleguard: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Enduring Scalelord",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Enduring Scalelord: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Heron's Grace Champion",
+     "cause": "no-package",
+     "job": "lifegain",
+     "line": "Heron's Grace Champion: no package for its job, lifegain"
+    },
+    {
+     "card": "Juniper Order Ranger",
+     "cause": "no-package",
+     "job": "threat",
+     "line": "Juniper Order Ranger: no package for its job, threat"
+    },
+    {
+     "card": "Kurbis, Harvest Celebrant",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Kurbis, Harvest Celebrant: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Mikaeus, the Lunarch",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Mikaeus, the Lunarch: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Odric, Master Tactician",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Odric, Master Tactician: pool gap, no pool holds it"
+    },
+    {
+     "card": "Omnipresence",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Omnipresence: pool gap, no pool holds it"
+    },
+    {
+     "card": "Orzhov Advokist",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Orzhov Advokist: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Sigarda's Vanguard",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Sigarda's Vanguard: pool gap, no pool holds it"
+    },
+    {
+     "card": "Sigardian Zealot",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Sigardian Zealot: pool gap, no pool holds it"
+    },
+    {
+     "card": "Ugin's Conjurant",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Ugin's Conjurant: pool gap, no pool holds it"
+    },
+    {
+     "card": "Verdurous Gearhulk",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Verdurous Gearhulk: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Victory's Envoy",
+     "cause": "no-package",
+     "job": "counters",
+     "line": "Victory's Envoy: no package for its job, +1/+1 counters"
+    },
+    {
+     "card": "Wall of Mourning",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Wall of Mourning: pool gap, no pool holds it"
+    },
+    {
+     "card": "Wild Beastmaster",
+     "cause": "pool-gap",
+     "job": null,
+     "line": "Wild Beastmaster: pool gap, no pool holds it"
+    }
+   ],
+   "sum": 87,
+   "types": {
+    "Artifact": 7,
+    "Creature": 38,
+    "Enchantment": 5,
+    "Instant": 6,
+    "Land": 37,
+    "Sorcery": 7
+   }
+  },
+  "architecture_lines": [
+   "architecture (99 cards)",
+   "Ramp: 15 (Arcane Signet, Avacyn's Pilgrim, Celebrate the Harvest, Gardenize, Growth Spasm, Gyre Sage, Herald of War, Heronblade Elite and 7 more)",
+   "Card advantage: 9 (Celebrate the Harvest, Inspiring Call, Lifecrafter's Bestiary, Moonsilver Key, Path of Ancestry, Shamanic Revelation and 3 more)",
+   "Interaction: 8 (Beast Within, Return to Dust, Ruinous Intrusion, Swords to Plowshares, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal and 3 more)",
+   "Protection: 8 (Bastion Protector, Inspiring Call, Riders of Gavony, Sigarda, Heron's Grace, Stalwart Pathlighter, Swiftfoot Boots and 2 more)",
+   "Board: 8 (Bastion Protector, Bestial Menace, Curse of Clinging Webs, Custodi Soulbinders, Growth Spasm, Kessig Cagebreakers and 2 more)",
+   "Sacrifice and drain: 0",
+   "Graveyard: 2 (Angel of Glory's Rise, Eternal Witness)",
+   "sum: 87; in two or more: Celebrate the Harvest, Growth Spasm, Moonsilver Key, Yavimaya Elder, Inspiring Call, Path of Ancestry, Temple of Plenty and 4 more",
+   "targets: counters, bracket 2, 4 players",
+   "card types: creature 38 (20-30, above); instant 6 (6-12); sorcery 7 (5-10); artifact 7 (8-12, below); enchantment 5 (4-10); planeswalker 0 (0-2); battle 0 (0-1)",
+   "lands: 37 (36-38, OK): Karsten's count 37, the builder's land check",
+   "width: not checked (the check has no such line)",
+   "interaction (unmeasured at 4 players): cheap removal 4 of 6 (below); counterspells 0 of 0; edicts 0 of 3 (below); repeatable removal 1 of 2 (below)",
+   "interaction (unmeasured at 4 players): one-sided wipes 0 of 2 (below); wipes 3 of 0 (above)",
+   "interaction by scope: one for one 4 of 6; each opponent 1 of 5; table 3 of 2",
+   "effect mix: ramp 15 of 10-12; card advantage 9 of 12-14 (below); targeted interaction 5 of 7-9 (below); mass interaction 3 of 6-7 (below)",
+   "effect mix: protection 8 of 3-4 (above); plan 30 of 25-29 (above)",
+   "outside, no package for its job: Abzan Falconer (+1/+1 counters), Ainok Bond-Kin (+1/+1 counters), Biogenic Upgrade (+1/+1 counters) and 11 more",
+   "outside, pool gap: Curse of Conformity, Dawnhart Wardens, Dearly Departed, Odric, Master Tactician, Omnipresence, Sigarda's Vanguard and 4 more"
+  ],
+  "bracket": {
+   "combos": [],
+   "complete": true,
+   "extra_turns": [],
+   "facts": {
+    "chained_extra_turns": false,
+    "early_two_card_combos": 0,
+    "extra_turn_cards": 0,
+    "game_changers": 0,
+    "mass_land_denial": 0,
+    "two_card_combos": 0
+   },
+   "floor": 1,
+   "game_changers": [],
+   "mass_land_denial": [],
+   "notes": [
+    "Combos from Commander Spellbook data dated 2026-11-05T14:14:51.531660+00:00 (variants.json.gz)."
+   ],
+   "violations": []
+  },
+  "caution_line": "commander at risk: Angel of Glory's Rise: -X/-X can reach Leinore, Autumn Sovereign's toughness 4; Celestial Judgment: destroy also removes Leinore, Autumn Sovereign; Cleansing Nova: destroy also removes Leinore, Autumn Sovereign",
+  "cautions": [
+   {
+    "card": "Angel of Glory's Rise",
+    "job": "mass_removal",
+    "kind": "commander-loss",
+    "line": "Angel of Glory's Rise: -X/-X can reach Leinore, Autumn Sovereign's toughness 4"
+   },
+   {
+    "card": "Celestial Judgment",
+    "job": "mass_removal",
+    "kind": "commander-loss",
+    "line": "Celestial Judgment: destroy also removes Leinore, Autumn Sovereign"
+   },
+   {
+    "card": "Cleansing Nova",
+    "job": "mass_removal",
+    "kind": "commander-loss",
+    "line": "Cleansing Nova: destroy also removes Leinore, Autumn Sovereign"
+   }
+  ],
+  "colours": [
+   {
+    "binding_card": "Knight of the White Orchid",
+    "colour": "W",
+    "required": 30,
+    "short_by": 8,
+    "sources": 22
+   },
+   {
+    "binding_card": "Kurbis, Harvest Celebrant",
+    "colour": "G",
+    "required": 30,
+    "short_by": 7,
+    "sources": 23
+   }
+  ],
+  "curve": {
+   "avg_mv": 3.629,
+   "buckets": {
+    "0": 1,
+    "1": 4,
+    "2": 9,
+    "3": 20,
+    "4": 7,
+    "5": 14,
+    "6": 5,
+    "7": 2
+   },
+   "lands": 37,
+   "nonland": 62
+  },
+  "deck": {
+   "cards": [
+    {
+     "count": 1,
+     "name": "Abzan Falconer"
+    },
+    {
+     "count": 1,
+     "name": "Ainok Bond-Kin"
+    },
+    {
+     "count": 1,
+     "name": "Angel of Glory's Rise"
+    },
+    {
+     "count": 1,
+     "name": "Arcane Signet"
+    },
+    {
+     "count": 1,
+     "name": "Avacyn's Pilgrim"
+    },
+    {
+     "count": 1,
+     "name": "Bastion Protector"
+    },
+    {
+     "count": 1,
+     "name": "Beast Within"
+    },
+    {
+     "count": 1,
+     "name": "Bestial Menace"
+    },
+    {
+     "count": 1,
+     "name": "Biogenic Upgrade"
+    },
+    {
+     "count": 1,
+     "name": "Blighted Woodland"
+    },
+    {
+     "count": 1,
+     "name": "Canopy Vista"
+    },
+    {
+     "count": 1,
+     "name": "Celebrate the Harvest"
+    },
+    {
+     "count": 1,
+     "name": "Celestial Judgment"
+    },
+    {
+     "count": 1,
+     "name": "Champion of Lambholt"
+    },
+    {
+     "count": 1,
+     "name": "Cleansing Nova"
+    },
+    {
+     "count": 1,
+     "name": "Command Tower"
+    },
+    {
+     "count": 1,
+     "name": "Curse of Clinging Webs"
+    },
+    {
+     "count": 1,
+     "name": "Curse of Conformity"
+    },
+    {
+     "count": 1,
+     "name": "Custodi Soulbinders"
+    },
+    {
+     "count": 1,
+     "name": "Dawnhart Wardens"
+    },
+    {
+     "count": 1,
+     "name": "Dearly Departed"
+    },
+    {
+     "count": 1,
+     "name": "Death's Presence"
+    },
+    {
+     "count": 1,
+     "name": "Elite Scaleguard"
+    },
+    {
+     "count": 1,
+     "name": "Enduring Scalelord"
+    },
+    {
+     "count": 1,
+     "name": "Eternal Witness"
+    },
+    {
+     "count": 1,
+     "name": "Exotic Orchard"
+    },
+    {
+     "count": 12,
+     "name": "Forest"
+    },
+    {
+     "count": 1,
+     "name": "Fortified Village"
+    },
+    {
+     "count": 1,
+     "name": "Gardenize"
+    },
+    {
+     "count": 1,
+     "name": "Growth Spasm"
+    },
+    {
+     "count": 1,
+     "name": "Gyre Sage"
+    },
+    {
+     "count": 1,
+     "name": "Herald of War"
+    },
+    {
+     "count": 1,
+     "name": "Heron's Grace Champion"
+    },
+    {
+     "count": 1,
+     "name": "Heronblade Elite"
+    },
+    {
+     "count": 1,
+     "name": "Inspiring Call"
+    },
+    {
+     "count": 1,
+     "name": "Juniper Order Ranger"
+    },
+    {
+     "count": 1,
+     "name": "Kessig Cagebreakers"
+    },
+    {
+     "count": 1,
+     "name": "Knight of the White Orchid"
+    },
+    {
+     "count": 1,
+     "name": "Krosan Verge"
+    },
+    {
+     "count": 1,
+     "name": "Kurbis, Harvest Celebrant"
+    },
+    {
+     "count": 1,
+     "name": "Kyler, Sigardian Emissary"
+    },
+    {
+     "count": 1,
+     "name": "Lifecrafter's Bestiary"
+    },
+    {
+     "count": 1,
+     "name": "Loot, the Nexus"
+    },
+    {
+     "count": 1,
+     "name": "Mikaeus, the Lunarch"
+    },
+    {
+     "count": 1,
+     "name": "Moonsilver Key"
+    },
+    {
+     "count": 1,
+     "name": "Myriad Landscape"
+    },
+    {
+     "count": 1,
+     "name": "Odric, Master Tactician"
+    },
+    {
+     "count": 1,
+     "name": "Omnipresence"
+    },
+    {
+     "count": 1,
+     "name": "Orzhov Advokist"
+    },
+    {
+     "count": 1,
+     "name": "Path of Ancestry"
+    },
+    {
+     "count": 12,
+     "name": "Plains"
+    },
+    {
+     "count": 1,
+     "name": "Return to Dust"
+    },
+    {
+     "count": 1,
+     "name": "Riders of Gavony"
+    },
+    {
+     "count": 1,
+     "name": "Rogue's Passage"
+    },
+    {
+     "count": 1,
+     "name": "Ruinous Intrusion"
+    },
+    {
+     "count": 1,
+     "name": "Selesnya Sanctuary"
+    },
+    {
+     "count": 1,
+     "name": "Shamanic Revelation"
+    },
+    {
+     "count": 1,
+     "name": "Sigarda's Vanguard"
+    },
+    {
+     "count": 1,
+     "name": "Sigarda, Heron's Grace"
+    },
+    {
+     "count": 1,
+     "name": "Sigardian Zealot"
+    },
+    {
+     "count": 1,
+     "name": "Sol Ring"
+    },
+    {
+     "count": 1,
+     "name": "Somberwald Sage"
+    },
+    {
+     "count": 1,
+     "name": "Stalwart Pathlighter"
+    },
+    {
+     "count": 1,
+     "name": "Sungrass Prairie"
+    },
+    {
+     "count": 1,
+     "name": "Swiftfoot Boots"
+    },
+    {
+     "count": 1,
+     "name": "Swords to Plowshares"
+    },
+    {
+     "count": 1,
+     "name": "Talisman of Unity"
+    },
+    {
+     "count": 1,
+     "name": "Temple of Plenty"
+    },
+    {
+     "count": 1,
+     "name": "Temple of the False God"
+    },
+    {
+     "count": 1,
+     "name": "Ugin's Conjurant"
+    },
+    {
+     "count": 1,
+     "name": "Unbreakable Formation"
+    },
+    {
+     "count": 1,
+     "name": "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+    },
+    {
+     "count": 1,
+     "name": "Verdurous Gearhulk"
+    },
+    {
+     "count": 1,
+     "name": "Victory's Envoy"
+    },
+    {
+     "count": 1,
+     "name": "Wall of Mourning"
+    },
+    {
+     "count": 1,
+     "name": "Wild Beastmaster"
+    },
+    {
+     "count": 1,
+     "name": "Yavimaya Elder"
+    }
+   ],
+   "commanders": [
+    "Leinore, Autumn Sovereign"
+   ],
+   "errors": [],
+   "size": 100,
+   "unresolved": []
+  },
+  "goldfish": {
+   "games": 1000,
+   "lands_seen": {
+    "1": 3.302,
+    "2": 3.654,
+    "3": 4.039,
+    "4": 4.441,
+    "5": 4.805,
+    "6": 5.175,
+    "7": 5.551,
+    "8": 5.915
+   },
+   "mana": {
+    "1": 1.139,
+    "2": 2.256,
+    "3": 3.217,
+    "4": 4.188,
+    "5": 4.958,
+    "6": 5.709,
+    "7": 6.402,
+    "8": 7.073
+   },
+   "mulligan_rate": 0.211,
+   "p_commanders": {
+    "1": 0.0,
+    "2": 0.066,
+    "3": 0.256,
+    "4": 0.773,
+    "5": 0.904,
+    "6": 0.942,
+    "7": 0.972,
+    "8": 0.98
+   },
+   "seed": 0,
+   "spent": {
+    "1": 0.362,
+    "2": 1.414,
+    "3": 2.825,
+    "4": 3.886,
+    "5": 4.479,
+    "6": 4.915,
+    "7": 4.976,
+    "8": 4.861
+   },
+   "turns": 8
+  },
+  "legality": {
+   "identity": [
+    "G",
+    "W"
+   ],
+   "legal": true,
+   "problems": [],
+   "warnings": []
+  },
+  "mana_sinks": [
+   "Custodi Soulbinders",
+   "Kurbis, Harvest Celebrant",
+   "Mikaeus, the Lunarch",
+   "Rogue's Passage",
+   "Sigarda, Heron's Grace",
+   "Swiftfoot Boots",
+   "Ugin's Conjurant",
+   "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+  ],
+  "packages": [
+   {
+    "cards": [
+     "Arcane Signet",
+     "Avacyn's Pilgrim",
+     "Celebrate the Harvest",
+     "Gardenize",
+     "Growth Spasm",
+     "Gyre Sage",
+     "Herald of War",
+     "Heronblade Elite",
+     "Knight of the White Orchid",
+     "Loot, the Nexus",
+     "Moonsilver Key",
+     "Sol Ring",
+     "Somberwald Sage",
+     "Talisman of Unity",
+     "Yavimaya Elder"
+    ],
+    "count": 15,
+    "max": 12,
+    "meets": true,
+    "min": 10,
+    "name": "ramp",
+    "p": 0.7873309047753383,
+    "p_target": 0.6,
+    "sinks": 8,
+    "status": "within",
+    "turn": 2
+   },
+   {
+    "cards": [
+     "Celebrate the Harvest",
+     "Inspiring Call",
+     "Lifecrafter's Bestiary",
+     "Moonsilver Key",
+     "Path of Ancestry",
+     "Shamanic Revelation",
+     "Temple of Plenty",
+     "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+     "Yavimaya Elder"
+    ],
+    "count": 9,
+    "max": 14,
+    "meets": false,
+    "min": 12,
+    "name": "card_advantage",
+    "p": 0.669936368452709,
+    "p_target": 0.75,
+    "status": "below",
+    "turn": 4
+   },
+   {
+    "cards": [
+     "Beast Within",
+     "Return to Dust",
+     "Ruinous Intrusion",
+     "Swords to Plowshares",
+     "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+    ],
+    "count": 5,
+    "max": 9,
+    "meets": false,
+    "min": 7,
+    "name": "targeted_interaction",
+    "p": 0.4522646823243676,
+    "p_target": 0.7,
+    "status": "below",
+    "turn": 4
+   },
+   {
+    "cards": [
+     "Angel of Glory's Rise",
+     "Celestial Judgment",
+     "Cleansing Nova"
+    ],
+    "count": 3,
+    "max": 7,
+    "meets": false,
+    "min": 6,
+    "name": "mass_interaction",
+    "p": 0.3475253269067702,
+    "p_target": 0.5,
+    "status": "below",
+    "turn": 6
+   },
+   {
+    "cards": [
+     "Blighted Woodland",
+     "Canopy Vista",
+     "Command Tower",
+     "Exotic Orchard",
+     "Forest",
+     "Fortified Village",
+     "Krosan Verge",
+     "Myriad Landscape",
+     "Path of Ancestry",
+     "Plains",
+     "Rogue's Passage",
+     "Selesnya Sanctuary",
+     "Sungrass Prairie",
+     "Temple of Plenty",
+     "Temple of the False God"
+    ],
+    "count": 37,
+    "max": 38,
+    "meets": null,
+    "min": 36,
+    "name": "lands",
+    "p": null,
+    "p_target": null,
+    "status": "within",
+    "turn": null
+   },
+   {
+    "cards": [
+     "Bastion Protector",
+     "Inspiring Call",
+     "Riders of Gavony",
+     "Sigarda, Heron's Grace",
+     "Stalwart Pathlighter",
+     "Swiftfoot Boots",
+     "Unbreakable Formation",
+     "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+    ],
+    "count": 8,
+    "max": 4,
+    "meets": null,
+    "min": 3,
+    "name": "protection",
+    "p": null,
+    "p_target": null,
+    "status": "above",
+    "turn": null
+   },
+   {
+    "cards": [
+     "Abzan Falconer",
+     "Ainok Bond-Kin",
+     "Bestial Menace",
+     "Biogenic Upgrade",
+     "Champion of Lambholt",
+     "Curse of Clinging Webs",
+     "Curse of Conformity",
+     "Custodi Soulbinders",
+     "Dawnhart Wardens",
+     "Dearly Departed",
+     "Death's Presence",
+     "Elite Scaleguard",
+     "Enduring Scalelord",
+     "Eternal Witness",
+     "Heron's Grace Champion",
+     "Juniper Order Ranger",
+     "Kessig Cagebreakers",
+     "Kurbis, Harvest Celebrant",
+     "Kyler, Sigardian Emissary",
+     "Mikaeus, the Lunarch",
+     "Odric, Master Tactician",
+     "Omnipresence",
+     "Orzhov Advokist",
+     "Sigarda's Vanguard",
+     "Sigardian Zealot",
+     "Ugin's Conjurant",
+     "Verdurous Gearhulk",
+     "Victory's Envoy",
+     "Wall of Mourning",
+     "Wild Beastmaster"
+    ],
+    "count": 30,
+    "max": 29,
+    "meets": null,
+    "min": 25,
+    "name": "plan",
+    "p": null,
+    "p_target": null,
+    "status": "above",
+    "turn": null
+   }
+  ],
+  "play_source": null,
+  "recent": null,
+  "strategy": null,
+  "strategy_judged": false,
+  "strategy_source": null,
+  "suspect_line": "suspect picks: Curse of Conformity (no value); Dearly Departed (no value); Omnipresence (no value); Sigarda's Vanguard (no value); Ugin's Conjurant (no value); Wall of Mourning (no value)",
+  "suspects": [
+   {
+    "card": "Curse of Conformity",
+    "job": "",
+    "kind": "no-value",
+    "line": "Curse of Conformity: does no job the model values"
+   },
+   {
+    "card": "Dearly Departed",
+    "job": "",
+    "kind": "no-value",
+    "line": "Dearly Departed: does no job the model values"
+   },
+   {
+    "card": "Omnipresence",
+    "job": "",
+    "kind": "no-value",
+    "line": "Omnipresence: does no job the model values"
+   },
+   {
+    "card": "Sigarda's Vanguard",
+    "job": "",
+    "kind": "no-value",
+    "line": "Sigarda's Vanguard: does no job the model values"
+   },
+   {
+    "card": "Ugin's Conjurant",
+    "job": "",
+    "kind": "no-value",
+    "line": "Ugin's Conjurant: does no job the model values"
+   },
+   {
+    "card": "Wall of Mourning",
+    "job": "",
+    "kind": "no-value",
+    "line": "Wall of Mourning: does no job the model values"
+   }
+  ],
+  "targets": {
+   "archetype": "counters",
+   "bracket": 2,
+   "effects": [
+    {
+     "capped_from": null,
+     "cards": [
+      "Blighted Woodland",
+      "Canopy Vista",
+      "Command Tower",
+      "Exotic Orchard",
+      "Forest",
+      "Fortified Village",
+      "Krosan Verge",
+      "Myriad Landscape",
+      "Path of Ancestry",
+      "Plains",
+      "Rogue's Passage",
+      "Selesnya Sanctuary",
+      "Sungrass Prairie",
+      "Temple of Plenty",
+      "Temple of the False God"
+     ],
+     "count": 37,
+     "max": 38,
+     "min": 36,
+     "package": "lands",
+     "reason": "the land band of the archetype's card-type rules",
+     "status": "within",
+     "target": 36
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Arcane Signet",
+      "Avacyn's Pilgrim",
+      "Celebrate the Harvest",
+      "Gardenize",
+      "Growth Spasm",
+      "Gyre Sage",
+      "Herald of War",
+      "Heronblade Elite",
+      "Knight of the White Orchid",
+      "Loot, the Nexus",
+      "Moonsilver Key",
+      "Sol Ring",
+      "Somberwald Sage",
+      "Talisman of Unity",
+      "Yavimaya Elder"
+     ],
+     "count": 15,
+     "max": 12,
+     "min": 10,
+     "package": "ramp",
+     "reason": "creature group rule for a counters deck: 10 (owner's rule, unmeasured: the counts that meet the knowledge package odds (theory.package_targets))",
+     "status": "within",
+     "target": 10
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Celebrate the Harvest",
+      "Inspiring Call",
+      "Lifecrafter's Bestiary",
+      "Moonsilver Key",
+      "Path of Ancestry",
+      "Shamanic Revelation",
+      "Temple of Plenty",
+      "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+      "Yavimaya Elder"
+     ],
+     "count": 9,
+     "max": 14,
+     "min": 12,
+     "package": "card_advantage",
+     "reason": "creature group rule for a counters deck: 12 (owner's rule, unmeasured: the counts that meet the knowledge package odds (theory.package_targets))",
+     "status": "below",
+     "target": 12
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Beast Within",
+      "Return to Dust",
+      "Ruinous Intrusion",
+      "Swords to Plowshares",
+      "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+     ],
+     "count": 5,
+     "max": 9,
+     "min": 7,
+     "package": "targeted_interaction",
+     "reason": "cards that credit targeted: cheap one-for-ones, counterspells and 1 of 2 repeatable removal (D50)",
+     "status": "below",
+     "target": 7
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Angel of Glory's Rise",
+      "Celestial Judgment",
+      "Cleansing Nova"
+     ],
+     "count": 3,
+     "max": 7,
+     "min": 6,
+     "package": "mass_interaction",
+     "reason": "cards that credit mass: edicts, wipe kinds and 1 of 2 repeatable removal (D50)",
+     "status": "below",
+     "target": 6
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Bastion Protector",
+      "Inspiring Call",
+      "Riders of Gavony",
+      "Sigarda, Heron's Grace",
+      "Stalwart Pathlighter",
+      "Swiftfoot Boots",
+      "Unbreakable Formation",
+      "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+     ],
+     "count": 8,
+     "max": 4,
+     "min": 3,
+     "package": "protection",
+     "reason": "rule: the commander is the engine, so 3 pieces protect it",
+     "status": "above",
+     "target": 3
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Abzan Falconer",
+      "Ainok Bond-Kin",
+      "Bestial Menace",
+      "Biogenic Upgrade",
+      "Champion of Lambholt",
+      "Curse of Clinging Webs",
+      "Curse of Conformity",
+      "Custodi Soulbinders",
+      "Dawnhart Wardens",
+      "Dearly Departed",
+      "Death's Presence",
+      "Elite Scaleguard",
+      "Enduring Scalelord",
+      "Eternal Witness",
+      "Heron's Grace Champion",
+      "Juniper Order Ranger",
+      "Kessig Cagebreakers",
+      "Kurbis, Harvest Celebrant",
+      "Kyler, Sigardian Emissary",
+      "Mikaeus, the Lunarch",
+      "Odric, Master Tactician",
+      "Omnipresence",
+      "Orzhov Advokist",
+      "Sigarda's Vanguard",
+      "Sigardian Zealot",
+      "Ugin's Conjurant",
+      "Verdurous Gearhulk",
+      "Victory's Envoy",
+      "Wall of Mourning",
+      "Wild Beastmaster"
+     ],
+     "count": 30,
+     "max": 29,
+     "min": 25,
+     "package": "plan",
+     "reason": "the rest of the 99 cards after the other packages",
+     "status": "above",
+     "target": 25
+    }
+   ],
+   "interaction": [
+    {
+     "capped_from": null,
+     "cards": [
+      "Beast Within",
+      "Return to Dust",
+      "Ruinous Intrusion",
+      "Swords to Plowshares"
+     ],
+     "count": 4,
+     "kind": "cheap_one_for_one",
+     "measured": false,
+     "reason": "research-multiplayer-removal.md section 2.1 (four players); unmeasured here: bracket 2 uses bracket 3 numbers, unmeasured (D20); +3 from the counterspell slots, no blue in the identity (D21)",
+     "scope": "one_for_one",
+     "status": "below",
+     "target": 6
+    },
+    {
+     "capped_from": null,
+     "cards": [],
+     "count": 0,
+     "kind": "counterspell",
+     "measured": false,
+     "reason": "research-multiplayer-removal.md section 2.1 (four players); unmeasured here: bracket 2 uses bracket 3 numbers, unmeasured (D20); no blue in the identity, so no counterspells (D21)",
+     "scope": "one_for_one",
+     "status": "within",
+     "target": 0
+    },
+    {
+     "capped_from": null,
+     "cards": [],
+     "count": 0,
+     "kind": "edict",
+     "measured": false,
+     "reason": "research-multiplayer-removal.md section 2.1 (four players); unmeasured here: bracket 2 uses bracket 3 numbers, unmeasured (D20)",
+     "scope": "each_opponent",
+     "status": "below",
+     "target": 3
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+     ],
+     "count": 1,
+     "kind": "repeatable_removal",
+     "measured": false,
+     "reason": "research-multiplayer-removal.md section 2.1 (four players); unmeasured here: bracket 2 uses bracket 3 numbers, unmeasured (D20)",
+     "scope": "each_opponent",
+     "status": "below",
+     "target": 2
+    },
+    {
+     "capped_from": null,
+     "cards": [],
+     "count": 0,
+     "kind": "one_sided_wipe",
+     "measured": false,
+     "reason": "research-multiplayer-removal.md section 2.1 (four players); unmeasured here: bracket 2 uses bracket 3 numbers, unmeasured (D20)",
+     "scope": "table",
+     "status": "below",
+     "target": 2
+    },
+    {
+     "capped_from": null,
+     "cards": [
+      "Angel of Glory's Rise",
+      "Celestial Judgment",
+      "Cleansing Nova"
+     ],
+     "count": 3,
+     "kind": "wipe",
+     "measured": false,
+     "reason": "research-multiplayer-removal.md section 2.1 (four players); unmeasured here: bracket 2 uses bracket 3 numbers, unmeasured (D20); a wide counters deck asks for no symmetric wipe, only one-sided ones",
+     "scope": "table",
+     "status": "above",
+     "target": 0
+    }
+   ],
+   "lands": {
+    "count": 37,
+    "high": 38,
+    "karsten": 37,
+    "low": 36,
+    "reason": "Karsten's count 37 (deckwright_manabase, the builder's land check), band 36-38",
+    "verdict": "OK"
+   },
+   "not_checked": "the check has no such line",
+   "players": 4,
+   "reasons": [
+    "Leinore, Autumn Sovereign reads counters as enabler: \"put a +1/+1 counter on\""
+   ],
+   "scopes": {
+    "each_opponent": {
+     "count": 1,
+     "target": 5
+    },
+    "one_for_one": {
+     "count": 4,
+     "target": 6
+    },
+    "table": {
+     "count": 3,
+     "target": 2
+    }
+   },
+   "types": [
+    {
+     "count": 38,
+     "high": 30,
+     "low": 20,
+     "status": "above",
+     "type": "creature"
+    },
+    {
+     "count": 6,
+     "high": 12,
+     "low": 6,
+     "status": "within",
+     "type": "instant"
+    },
+    {
+     "count": 7,
+     "high": 10,
+     "low": 5,
+     "status": "within",
+     "type": "sorcery"
+    },
+    {
+     "count": 7,
+     "high": 12,
+     "low": 8,
+     "status": "below",
+     "type": "artifact"
+    },
+    {
+     "count": 5,
+     "high": 10,
+     "low": 4,
+     "status": "within",
+     "type": "enchantment"
+    },
+    {
+     "count": 0,
+     "high": 2,
+     "low": 0,
+     "status": "within",
+     "type": "planeswalker"
+    },
+    {
+     "count": 0,
+     "high": 1,
+     "low": 0,
+     "status": "within",
+     "type": "battle"
+    }
+   ],
+   "width": null
+  },
+  "unfun": [],
+  "unfun_line": null,
+  "unfun_source": "/home/user/deckwright/packages/effectpacks/src/deckwright_effectpacks/unfun.toml"
+ },
+ "sources": {
+  "combos": [
+   "Combos from Commander Spellbook data dated 2026-11-05T14:14:51.531660+00:00 (variants.json.gz)."
+  ],
+  "scryfall_updated": "2026-11-05T10:02:05.865+00:00",
+  "store_built": "2026-11-05T15:14:26Z"
+ },
+ "strength": {
+  "anti": [],
+  "axes": [
+   {
+    "evidence": [
+     "goldfish mean mana by turn 1-4: 1.1, 2.2, 3.2, 4.1",
+     "commanders all cast by turn 3 in 24% of games",
+     "no complete combo to win with"
+    ],
+    "facts": {
+     "fastest_win_turn": null,
+     "mana_by_turn": [
+      1.14,
+      2.228,
+      3.17,
+      4.142,
+      4.944,
+      5.658,
+      6.364,
+      7.048
+     ],
+     "p_commanders": [
+      0.0,
+      0.066,
+      0.244,
+      0.762,
+      0.904,
+      0.938,
+      0.97,
+      0.98
+     ]
+    },
+    "name": "speed",
+    "score": 0.19725
+   },
+   {
+    "evidence": [
+     "8 protection: Bastion Protector, Inspiring Call, Riders of Gavony, Sigarda, Heron's Grace, Stalwart Pathlighter, Swiftfoot Boots and 2 more",
+     "2 recursion: Angel of Glory's Rise, Eternal Witness",
+     "3 repeating card advantage engines: Lifecrafter's Bestiary, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Yavimaya Elder",
+     "47% of nonland mana sources are not creatures"
+    ],
+    "facts": {
+     "engines": 3,
+     "noncreature_mana_share": 0.4666666666666667,
+     "protection": 8,
+     "recursion": 2
+    },
+    "name": "resilience",
+    "score": 0.703898921080992
+   },
+   {
+    "evidence": [
+     "5 targeted removal, 3 mass removal, 0 stack interaction",
+     "50% at instant speed, 12% at mana value 2 or less",
+     "interaction: Angel of Glory's Rise, Beast Within, Celestial Judgment, Cleansing Nova, Return to Dust, Ruinous Intrusion and 2 more"
+    ],
+    "facts": {
+     "cheap_share": 0.125,
+     "instant_share": 0.5,
+     "mass": 3,
+     "stack": 0,
+     "targeted": 5
+    },
+    "name": "interaction",
+    "score": 0.5711735908496142
+   },
+   {
+    "evidence": [
+     "2 fast mana (mana value 1 or less): Avacyn's Pilgrim, Sol Ring",
+     "21 ramp or ritual cards; 37 lands; average mana value 3.63",
+     "goldfish mean mana on turn 3: 3.17",
+     "W: 22 sources, 30 needed for Knight of the White Orchid",
+     "G: 23 sources, 30 needed for Kurbis, Harvest Celebrant"
+    ],
+    "facts": {
+     "avg_mv": 3.629,
+     "colour_short": 15,
+     "fast_mana": 2,
+     "land_tiers": {
+      "1": 28,
+      "1b": 1,
+      "2": 2,
+      "3": 6
+     },
+     "lands": 37,
+     "mana_t3": 3.17,
+     "ramp": 21
+    },
+    "name": "mana",
+    "score": 0.49871559716184427
+   },
+   {
+    "evidence": [
+     "theme typal:human: 6 payoffs (Dearly Departed, Heron's Grace Champion, Heronblade Elite, Kyler, Sigardian Emissary, Riders of Gavony, Sigarda, Heron's Grace), 21 enablers (Abzan Falconer, Avacyn's Pilgrim, Bastion Protector, Champion of Lambholt, Custodi Soulbinders, Dawnhart Wardens and 15 more)",
+     "27 of 62 nonland cards on theme typal:human (44%)"
+    ],
+    "facts": {
+     "anti": [],
+     "enablers": [
+      "Abzan Falconer",
+      "Avacyn's Pilgrim",
+      "Bastion Protector",
+      "Champion of Lambholt",
+      "Custodi Soulbinders",
+      "Dawnhart Wardens",
+      "Elite Scaleguard",
+      "Eternal Witness",
+      "Herald of War",
+      "Juniper Order Ranger",
+      "Kessig Cagebreakers",
+      "Knight of the White Orchid",
+      "Mikaeus, the Lunarch",
+      "Odric, Master Tactician",
+      "Orzhov Advokist",
+      "Sigardian Zealot",
+      "Somberwald Sage",
+      "Stalwart Pathlighter",
+      "Victory's Envoy",
+      "Wild Beastmaster",
+      "Yavimaya Elder"
+     ],
+     "matching": 0,
+     "payoffs": [
+      "Dearly Departed",
+      "Heron's Grace Champion",
+      "Heronblade Elite",
+      "Kyler, Sigardian Emissary",
+      "Riders of Gavony",
+      "Sigarda, Heron's Grace"
+     ],
+     "rewards": [],
+     "share": 0.0,
+     "theme": "typal:human",
+     "theme_share": 0.43548387096774194
+    },
+    "name": "synergy",
+    "score": 0.7713387929919264
+   },
+   {
+    "evidence": [
+     "no complete combo",
+     "40 combos one card short",
+     "1 tutors: Moonsilver Key"
+    ],
+    "facts": {
+     "complete": 0,
+     "early": 0,
+     "fastest_mana_value": null,
+     "near": 40,
+     "tutors": 1,
+     "two_card": 0
+    },
+    "name": "combos",
+    "score": 0.0
+   }
+  ],
+  "bracket": 2,
+  "bracket_floor": 1,
+  "cards": [
+   {
+    "best": "Conduit of Worlds",
+    "card": "Angel of Glory's Rise",
+    "job": "recursion",
+    "of": 831,
+    "percentile": 0.8243080625752106,
+    "plan_credit": 0.0,
+    "rank": 146,
+    "value": 1.6116716734025154
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Arcane Signet",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.9748580697485807,
+    "plan_credit": 0.0,
+    "rank": 30,
+    "value": 0.8152222947404232
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Avacyn's Pilgrim",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.9545823195458232,
+    "plan_credit": 0.0,
+    "rank": 52,
+    "value": 0.6648636244531816
+   },
+   {
+    "best": "Aegis of the Gods",
+    "card": "Bastion Protector",
+    "job": "protection",
+    "of": 619,
+    "percentile": 0.9660743134087237,
+    "plan_credit": 0.0,
+    "rank": 21,
+    "value": 3.364334489160255
+   },
+   {
+    "best": "Excise the Imperfect",
+    "card": "Beast Within",
+    "job": "targeted_removal",
+    "of": 1445,
+    "percentile": 0.9840830449826989,
+    "plan_credit": 0.0,
+    "rank": 22,
+    "value": 0.7484319177236228
+   },
+   {
+    "best": "Search for Dagger",
+    "card": "Celebrate the Harvest",
+    "job": "card_selection",
+    "of": 919,
+    "percentile": 0.28944504896626766,
+    "plan_credit": 0.0,
+    "rank": 646,
+    "value": -0.04758590464013791
+   },
+   {
+    "best": "Kindred Judgment",
+    "card": "Celestial Judgment",
+    "job": "mass_removal",
+    "of": 278,
+    "percentile": 0.6618705035971223,
+    "plan_credit": 0.0,
+    "rank": 94,
+    "value": 0.6042765646839222
+   },
+   {
+    "best": "Kindred Judgment",
+    "card": "Cleansing Nova",
+    "job": "mass_removal",
+    "of": 278,
+    "percentile": 0.9316546762589928,
+    "plan_credit": 0.0,
+    "rank": 19,
+    "value": 2.3532861805443406
+   },
+   {
+    "best": "Conduit of Worlds",
+    "card": "Eternal Witness",
+    "job": "recursion",
+    "of": 831,
+    "percentile": 0.48375451263537905,
+    "plan_credit": 0.0,
+    "rank": 429,
+    "value": 0.6268334561273285
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Gardenize",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.32116788321167883,
+    "plan_credit": 0.0,
+    "rank": 837,
+    "value": -0.8029274183161467
+   },
+   {
+    "best": "Turn to Dust",
+    "card": "Growth Spasm",
+    "job": "ritual",
+    "of": 59,
+    "percentile": 0.8305084745762712,
+    "plan_credit": 0.0,
+    "rank": 10,
+    "value": -0.49331575681707424
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Gyre Sage",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.6982968369829684,
+    "plan_credit": 0.0,
+    "rank": 354,
+    "value": 0.06675348495017445
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Herald of War",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.16139497161394972,
+    "plan_credit": 0.0,
+    "rank": 1034,
+    "value": -1.2834931567481955
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Heronblade Elite",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.5360908353609084,
+    "plan_credit": 0.0,
+    "rank": 563,
+    "value": -0.281229430355363
+   },
+   {
+    "best": "Skullclamp",
+    "card": "Inspiring Call",
+    "job": "card_advantage",
+    "of": 1018,
+    "percentile": 0.9214145383104125,
+    "plan_credit": 0.0,
+    "rank": 80,
+    "value": 1.866451688613214
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Knight of the White Orchid",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.8978102189781022,
+    "plan_credit": 0.0,
+    "rank": 126,
+    "value": 0.37791643719494017
+   },
+   {
+    "best": "Search for Dagger",
+    "card": "Lifecrafter's Bestiary",
+    "job": "card_selection",
+    "of": 919,
+    "percentile": 0.9477693144722524,
+    "plan_credit": 0.0,
+    "rank": 48,
+    "value": 1.578703193308778
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Loot, the Nexus",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.5360908353609084,
+    "plan_credit": 0.0,
+    "rank": 566,
+    "value": -0.281229430355363
+   },
+   {
+    "best": "Chord of Calling",
+    "card": "Moonsilver Key",
+    "job": "tutor",
+    "of": 261,
+    "percentile": 0.9540229885057471,
+    "plan_credit": 0.0,
+    "rank": 12,
+    "value": 1.0523055974128632
+   },
+   {
+    "best": "Excise the Imperfect",
+    "card": "Return to Dust",
+    "job": "targeted_removal",
+    "of": 1445,
+    "percentile": 0.6221453287197232,
+    "plan_credit": 0.0,
+    "rank": 546,
+    "value": 0.1180497772137998
+   },
+   {
+    "best": "Aegis of the Gods",
+    "card": "Riders of Gavony",
+    "job": "protection",
+    "of": 619,
+    "percentile": 0.41033925686591277,
+    "plan_credit": 0.0,
+    "rank": 364,
+    "value": 0.25319640958572576
+   },
+   {
+    "best": "Excise the Imperfect",
+    "card": "Ruinous Intrusion",
+    "job": "targeted_removal",
+    "of": 1445,
+    "percentile": 0.77439446366782,
+    "plan_credit": 0.0,
+    "rank": 326,
+    "value": 0.3180497772137998
+   },
+   {
+    "best": "Skullclamp",
+    "card": "Shamanic Revelation",
+    "job": "card_advantage",
+    "of": 1018,
+    "percentile": 0.8143418467583498,
+    "plan_credit": 0.0,
+    "rank": 189,
+    "value": 1.199244754776054
+   },
+   {
+    "best": "Aegis of the Gods",
+    "card": "Sigarda, Heron's Grace",
+    "job": "protection",
+    "of": 619,
+    "percentile": 0.9822294022617124,
+    "plan_credit": 0.0,
+    "rank": 11,
+    "value": 4.051083904890819
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Sol Ring",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.9975669099756691,
+    "plan_credit": 0.0,
+    "rank": 3,
+    "value": 3.0842463037197474
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Somberwald Sage",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.5328467153284672,
+    "plan_credit": 0.0,
+    "rank": 576,
+    "value": -0.29186687240406534
+   },
+   {
+    "best": "Aegis of the Gods",
+    "card": "Stalwart Pathlighter",
+    "job": "protection",
+    "of": 619,
+    "percentile": 0.8303715670436187,
+    "plan_credit": 0.0,
+    "rank": 105,
+    "value": 1.4511095657596806
+   },
+   {
+    "best": "Aegis of the Gods",
+    "card": "Swiftfoot Boots",
+    "job": "protection",
+    "of": 619,
+    "percentile": 0.81421647819063,
+    "plan_credit": 0.0,
+    "rank": 115,
+    "value": 1.3962561429339915
+   },
+   {
+    "best": "Excise the Imperfect",
+    "card": "Swords to Plowshares",
+    "job": "targeted_removal",
+    "of": 1445,
+    "percentile": 0.9986159169550173,
+    "plan_credit": 0.0,
+    "rank": 2,
+    "value": 1.077321417322126
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Talisman of Unity",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.9740470397404704,
+    "plan_credit": 0.0,
+    "rank": 32,
+    "value": 0.8055887099806067
+   },
+   {
+    "best": "Aegis of the Gods",
+    "card": "Unbreakable Formation",
+    "job": "protection",
+    "of": 619,
+    "percentile": 0.8675282714054927,
+    "plan_credit": 0.0,
+    "rank": 82,
+    "value": 1.600384642359106
+   },
+   {
+    "best": "Skullclamp",
+    "card": "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+    "job": "card_advantage",
+    "of": 1018,
+    "percentile": 0.9803536345776032,
+    "plan_credit": 0.0,
+    "rank": 20,
+    "value": 3.580985229766531
+   },
+   {
+    "best": "Skullclamp",
+    "card": "Yavimaya Elder",
+    "job": "card_advantage",
+    "of": 1018,
+    "percentile": 0.8408644400785854,
+    "plan_credit": 0.0,
+    "rank": 162,
+    "value": 1.3512040703673753
+   }
+  ],
+  "combos": [],
+  "commanders": [
+   "Leinore, Autumn Sovereign"
+  ],
+  "games": 500,
+  "lands": [
+   {
+    "card": "Blighted Woodland",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "3"
+   },
+   {
+    "card": "Canopy Vista",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "2"
+   },
+   {
+    "card": "Command Tower",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "1"
+   },
+   {
+    "card": "Exotic Orchard",
+    "drawback": "none",
+    "table_dependent": true,
+    "tier": "1"
+   },
+   {
+    "card": "Forest",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "1"
+   },
+   {
+    "card": "Fortified Village",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "2"
+   },
+   {
+    "card": "Krosan Verge",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "3"
+   },
+   {
+    "card": "Myriad Landscape",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "3"
+   },
+   {
+    "card": "Path of Ancestry",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "3"
+   },
+   {
+    "card": "Plains",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "1"
+   },
+   {
+    "card": "Rogue's Passage",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "1"
+   },
+   {
+    "card": "Selesnya Sanctuary",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "3"
+   },
+   {
+    "card": "Sungrass Prairie",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "1b"
+   },
+   {
+    "card": "Temple of Plenty",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "3"
+   },
+   {
+    "card": "Temple of the False God",
+    "drawback": "none",
+    "table_dependent": false,
+    "tier": "1"
+   }
+  ],
+  "near": [
+   {
+    "cards": [
+     "Wildwood Scourge",
+     "Enduring Scalelord"
+    ],
+    "early": false,
+    "id": "1027-2808",
+    "missing": [
+     "Wildwood Scourge"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on certain creatures"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Crab Umbra",
+     "Heronblade Elite"
+    ],
+    "early": true,
+    "id": "1268-1336",
+    "missing": [
+     "Crab Umbra"
+    ],
+    "produces": [
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Crab Umbra",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "1268-8190",
+    "missing": [
+     "Crab Umbra"
+    ],
+    "produces": [
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Staff of Domination",
+     "Heronblade Elite"
+    ],
+    "early": true,
+    "id": "1336-2645",
+    "missing": [
+     "Staff of Domination"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite lifegain triggers",
+     "Infinite lifegain",
+     "Infinite card draw",
+     "Infinite untap of creatures you control",
+     "Infinite draw triggers",
+     "Infinite mana creatures you control can produce"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Umbral Mantle",
+     "Heronblade Elite"
+    ],
+    "early": true,
+    "id": "1336-2816",
+    "missing": [
+     "Umbral Mantle"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinitely large creature until end of turn",
+     "Infinite untap of creatures you control",
+     "Infinite mana creatures you control can produce"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Aggravated Assault",
+     "Heronblade Elite"
+    ],
+    "early": true,
+    "id": "1336-3750",
+    "missing": [
+     "Aggravated Assault"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite combat phases",
+     "Infinite untap of creatures you control",
+     "Infinite mana creatures you control can produce"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Heronblade Elite",
+     "Singing Bell Strike"
+    ],
+    "early": true,
+    "id": "1336-5090",
+    "missing": [
+     "Singing Bell Strike"
+    ],
+    "produces": [
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Sword of the Paruns",
+     "Heronblade Elite"
+    ],
+    "early": false,
+    "id": "1336-5200",
+    "missing": [
+     "Sword of the Paruns"
+    ],
+    "produces": [
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control",
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Heronblade Elite",
+     "Ringing Strike Mastery"
+    ],
+    "early": true,
+    "id": "1336-7500",
+    "missing": [
+     "Ringing Strike Mastery"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Staff of Domination",
+     "Gyre Sage"
+    ],
+    "early": true,
+    "id": "1597-2645",
+    "missing": [
+     "Staff of Domination"
+    ],
+    "produces": [
+     "Infinite card draw",
+     "Infinite draw triggers",
+     "Infinite lifegain",
+     "Infinite lifegain triggers",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control",
+     "Infinite green mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Umbral Mantle",
+     "Gyre Sage"
+    ],
+    "early": true,
+    "id": "1597-2816",
+    "missing": [
+     "Umbral Mantle"
+    ],
+    "produces": [
+     "Infinite green mana",
+     "Infinitely large creature until end of turn",
+     "Infinite untap of creatures you control",
+     "Infinite mana creatures you control can produce"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Sword of the Paruns",
+     "Gyre Sage"
+    ],
+    "early": true,
+    "id": "1597-5200",
+    "missing": [
+     "Sword of the Paruns"
+    ],
+    "produces": [
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control",
+     "Infinite green mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Gyre Sage",
+     "Ringing Strike Mastery"
+    ],
+    "early": true,
+    "id": "1597-7500",
+    "missing": [
+     "Ringing Strike Mastery"
+    ],
+    "produces": [
+     "Infinite green mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Murderous Redcap",
+     "Juniper Order Ranger"
+    ],
+    "early": false,
+    "id": "1657-1768",
+    "missing": [
+     "Murderous Redcap"
+    ],
+    "produces": [
+     "Infinite creature LTB",
+     "Infinite creature ETB",
+     "Infinite death triggers",
+     "Infinite +1/+1 counters on a creature"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Helm of the Host"
+    ],
+    "early": false,
+    "id": "1692-2808",
+    "missing": [
+     "Helm of the Host"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on a creature token with haste",
+     "Infinite +1/+1 counters on a creature"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Cackling Counterpart"
+    ],
+    "early": false,
+    "id": "1810-2808",
+    "missing": [
+     "Cackling Counterpart"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on a creature token",
+     "Infinite +1/+1 counters on a creature"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Gauntlets of Light",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "1995-8190",
+    "missing": [
+     "Gauntlets of Light"
+    ],
+    "produces": [
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Seedcradle Witch",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "2024-8190",
+    "missing": [
+     "Seedcradle Witch"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control",
+     "Infinitely large creatures you control until end of turn"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Staff of Domination",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "2645-8190",
+    "missing": [
+     "Staff of Domination"
+    ],
+    "produces": [
+     "Infinite card draw",
+     "Infinite colored mana",
+     "Infinite draw triggers",
+     "Infinite lifegain",
+     "Infinite lifegain triggers",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Lithoform Engine"
+    ],
+    "early": false,
+    "id": "2808-3094",
+    "missing": [
+     "Lithoform Engine"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on a creature",
+     "Infinite +1/+1 counters on a creature token"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Croaking Counterpart"
+    ],
+    "early": false,
+    "id": "2808-3280",
+    "missing": [
+     "Croaking Counterpart"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on a creature token",
+     "Infinite +1/+1 counters on a creature"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Moritte of the Frost"
+    ],
+    "early": false,
+    "id": "2808-3388",
+    "missing": [
+     "Moritte of the Frost"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on certain creatures"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Spark Double"
+    ],
+    "early": false,
+    "id": "2808-3908",
+    "missing": [
+     "Spark Double"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on certain creatures"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Altered Ego"
+    ],
+    "early": false,
+    "id": "2808-4264",
+    "missing": [
+     "Altered Ego"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on certain creatures"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Quasiduplicate"
+    ],
+    "early": false,
+    "id": "2808-4615",
+    "missing": [
+     "Quasiduplicate"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on a creature token",
+     "Infinite +1/+1 counters on a creature"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Splinter Twin"
+    ],
+    "early": false,
+    "id": "2808-4702",
+    "missing": [
+     "Splinter Twin"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on a creature token with haste",
+     "Infinite +1/+1 counters on a creature"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Umbral Mantle",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "2816-8190",
+    "missing": [
+     "Umbral Mantle"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control",
+     "Infinitely large creature until end of turn"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Pemmin's Aura",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "3525-8190",
+    "missing": [
+     "Pemmin's Aura"
+    ],
+    "produces": [
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Aggravated Assault",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "3750-8190",
+    "missing": [
+     "Aggravated Assault"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite combat phases",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Swords to Plowshares",
+     "Jumbo Cactuar"
+    ],
+    "early": false,
+    "id": "3779-6323",
+    "missing": [
+     "Jumbo Cactuar"
+    ],
+    "produces": [
+     "Near-infinite lifegain"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Freed from the Real",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "4222-8190",
+    "missing": [
+     "Freed from the Real"
+    ],
+    "produces": [
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "High Alert",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "4896-8190",
+    "missing": [
+     "High Alert"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Singing Bell Strike",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "5090-8190",
+    "missing": [
+     "Singing Bell Strike"
+    ],
+    "produces": [
+     "Infinite colored mana"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Sword of the Paruns",
+     "Loot, the Nexus"
+    ],
+    "early": false,
+    "id": "5200-8190",
+    "missing": [
+     "Sword of the Paruns"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Biorhythm",
+     "Cleansing Nova"
+    ],
+    "early": false,
+    "id": "5248-7299",
+    "missing": [
+     "Biorhythm"
+    ],
+    "produces": [
+     "Draw the game",
+     "Each opponent loses the game"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Tidespout Tyrant",
+     "Sol Ring"
+    ],
+    "early": false,
+    "id": "542-5034",
+    "missing": [
+     "Tidespout Tyrant"
+    ],
+    "produces": [
+     "Infinite colorless mana",
+     "Infinite storm count"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Enduring Scalelord",
+     "Kiki-Jiki, Mirror Breaker"
+    ],
+    "early": false,
+    "id": "618-2808",
+    "missing": [
+     "Kiki-Jiki, Mirror Breaker"
+    ],
+    "produces": [
+     "Infinite +1/+1 counters on a creature token with haste",
+     "Infinite +1/+1 counters on a creature"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Ugin's Conjurant",
+     "Enduring Renewal"
+    ],
+    "early": true,
+    "id": "656-678",
+    "missing": [
+     "Enduring Renewal"
+    ],
+    "produces": [
+     "Infinite death triggers",
+     "Infinite creature ETB",
+     "Infinite creature LTB",
+     "Infinite storm count"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Ringing Strike Mastery",
+     "Loot, the Nexus"
+    ],
+    "early": true,
+    "id": "7500-8190",
+    "missing": [
+     "Ringing Strike Mastery"
+    ],
+    "produces": [
+     "Infinite colored mana",
+     "Infinite mana creatures you control can produce",
+     "Infinite untap of creatures you control"
+    ],
+    "templates": [],
+    "two_card": true
+   },
+   {
+    "cards": [
+     "Doppelgang",
+     "Eternal Witness"
+    ],
+    "early": true,
+    "id": "864-5352",
+    "missing": [
+     "Doppelgang"
+    ],
+    "produces": [
+     "Infinite copies of all permanents",
+     "Infinite creature tokens",
+     "Infinite creature ETB",
+     "Infinite landfall triggers",
+     "Infinite magecraft triggers",
+     "Infinite mana permanents you control can produce",
+     "Infinite storm count",
+     "Return all cards from your graveyard to your hand",
+     "Infinite casts of instants and sorceries in your hand and graveyard"
+    ],
+    "templates": [],
+    "two_card": true
+   }
+  ],
+  "notes": [
+   "Combos from Commander Spellbook data dated 2026-11-05T14:14:51.531660+00:00 (variants.json.gz)."
+  ],
+  "players": 4,
+  "position": 0.5044396176347143,
+  "power": 5.539956558712429,
+  "quality": 0.7671229915351839,
+  "seed": 0,
+  "strategy": null,
+  "unjudged": [
+   "Abzan Falconer",
+   "Ainok Bond-Kin",
+   "Bestial Menace",
+   "Biogenic Upgrade",
+   "Champion of Lambholt",
+   "Curse of Clinging Webs",
+   "Curse of Conformity",
+   "Custodi Soulbinders",
+   "Dawnhart Wardens",
+   "Dearly Departed",
+   "Death's Presence",
+   "Elite Scaleguard",
+   "Enduring Scalelord",
+   "Heron's Grace Champion",
+   "Juniper Order Ranger",
+   "Kessig Cagebreakers",
+   "Kurbis, Harvest Celebrant",
+   "Kyler, Sigardian Emissary",
+   "Mikaeus, the Lunarch",
+   "Odric, Master Tactician",
+   "Omnipresence",
+   "Orzhov Advokist",
+   "Sigarda's Vanguard",
+   "Sigardian Zealot",
+   "Ugin's Conjurant",
+   "Verdurous Gearhulk",
+   "Victory's Envoy",
+   "Wall of Mourning",
+   "Wild Beastmaster"
+  ],
+  "weakest": [
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Herald of War",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.16139497161394972,
+    "plan_credit": 0.0,
+    "rank": 1034,
+    "value": -1.2834931567481955
+   },
+   {
+    "best": "Search for Dagger",
+    "card": "Celebrate the Harvest",
+    "job": "card_selection",
+    "of": 919,
+    "percentile": 0.28944504896626766,
+    "plan_credit": 0.0,
+    "rank": 646,
+    "value": -0.04758590464013791
+   },
+   {
+    "best": "Nyxbloom Ancient",
+    "card": "Gardenize",
+    "job": "ramp",
+    "of": 1233,
+    "percentile": 0.32116788321167883,
+    "plan_credit": 0.0,
+    "rank": 837,
+    "value": -0.8029274183161467
+   },
+   {
+    "best": "Aegis of the Gods",
+    "card": "Riders of Gavony",
+    "job": "protection",
+    "of": 619,
+    "percentile": 0.41033925686591277,
+    "plan_credit": 0.0,
+    "rank": 364,
+    "value": 0.25319640958572576
+   },
+   {
+    "best": "Conduit of Worlds",
+    "card": "Eternal Witness",
+    "job": "recursion",
+    "of": 831,
+    "percentile": 0.48375451263537905,
+    "plan_credit": 0.0,
+    "rank": 429,
+    "value": 0.6268334561273285
+   }
+  ],
+  "weaknesses": [
+   {
+    "cards": [
+     "Avacyn's Pilgrim",
+     "Gyre Sage",
+     "Herald of War",
+     "Heronblade Elite",
+     "Knight of the White Orchid",
+     "Loot, the Nexus",
+     "Somberwald Sage",
+     "Yavimaya Elder"
+    ],
+    "name": "Shared wipe: creature mana",
+    "reason": "8 mana sources are creatures (Avacyn's Pilgrim, Gyre Sage, Herald of War, Heronblade Elite, Knight of the White Orchid, Loot, the Nexus and 2 more) and so are 30 of the other 47 nonland cards: one creature wipe takes the mana and the threats together; resilience target: protection for the board (Heroic Intervention, Lightning Greaves) or noncreature mana (rocks) in place of some dorks"
+   },
+   {
+    "cards": [
+     "Blighted Woodland",
+     "Canopy Vista",
+     "Command Tower",
+     "Exotic Orchard",
+     "Fortified Village",
+     "Krosan Verge",
+     "Myriad Landscape",
+     "Path of Ancestry",
+     "Rogue's Passage",
+     "Selesnya Sanctuary",
+     "Sungrass Prairie",
+     "Temple of Plenty",
+     "Temple of the False God"
+    ],
+    "name": "Nonbasic land hate",
+    "reason": "13 of 37 lands are nonbasic, at least a third; Blood Moon effects and nonbasic land punishers hit this mana base"
+   },
+   {
+    "cards": [
+     "Exotic Orchard"
+    ],
+    "name": "Table-dependent lands",
+    "reason": "Exotic Orchard make colours only from what opponents' lands produce; at some tables they make the wrong colour or none"
+   }
+  ]
+ }
+}

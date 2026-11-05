@@ -1,0 +1,366 @@
+{
+ "out": "261105-leinore-coven-counters.html",
+ "title": "Leinore, Coven Counters",
+ "cmdr_short": "Leinore",
+ "eyebrow": "Commander deck · green-white · bracket 2 · Moxfield list by Muad · 2026-11-05",
+ "lede": "A Selesnya +1/+1 counters deck, modified from a Midnight Hunt Commander precon. At the start of each of your combats, Leinore puts a +1/+1 counter on a creature you control, then draws you a card if you control three or more creatures with different powers. Counters are how this deck makes powers different, so most of the 99 either place counters, grow themselves or pay off creatures that carry them. It runs 38 creatures, 24 of them Humans, and a second layer of Human payoffs. This page is the starting point for the evaluation: what the deck does today, by effect.",
+ "meta": "Card data: Scryfall, updated 2026-11-05 · combos: Commander Spellbook, 2026-11-05 · rules verified 2026-10-20 · power: Deckwright strength model · prices: Scryfall cheapest paper printing · card images: Scryfall",
+ "palette": {
+  "comment": "Selesnya palette: oat-paper surfaces, forest-green ink and accent, a wheat-gold second colour, and cream white-mana pips.",
+  "light": {
+   "bg": "#eef0e8",
+   "surface": "#fafbf6",
+   "ink": "#18200f",
+   "muted": "#5b6553",
+   "rule": "#d2d8c7",
+   "accent": "#356b2f",
+   "accent-soft": "#e0ebd8",
+   "violet": "#8a6516",
+   "violet-soft": "#f3e9d0",
+   "ok": "#2e7350",
+   "warn": "#946400",
+   "warn-soft": "#f5ead0",
+   "bad": "#a83b30",
+   "pip-w": "#efe6c4",
+   "pip-w-ink": "#3b3220",
+   "pip-u": "#2f6fae",
+   "pip-b": "#2b2530",
+   "pip-r": "#b8452f",
+   "pip-g": "#2f7a3a",
+   "pip-c": "#8a8f96",
+   "pip-ink": "#ffffff"
+  },
+  "dark": {
+   "bg": "#10140d",
+   "surface": "#171d13",
+   "ink": "#e5eadc",
+   "muted": "#9ba691",
+   "rule": "#2a3323",
+   "accent": "#8cc97e",
+   "accent-soft": "#1d2e19",
+   "violet": "#e0bd6a",
+   "violet-soft": "#33290f",
+   "ok": "#6dc196",
+   "warn": "#e0b25a",
+   "warn-soft": "#33290f",
+   "bad": "#ec8a7e",
+   "pip-w": "#d9cfa8",
+   "pip-w-ink": "#2a2416",
+   "pip-u": "#3f80c0",
+   "pip-b": "#4a4152",
+   "pip-r": "#c9573f",
+   "pip-g": "#3f8f4a",
+   "pip-c": "#6b7079",
+   "pip-ink": "#ffffff"
+  }
+ },
+ "basics": [
+  "Forest",
+  "Plains"
+ ],
+ "figures": [
+  {
+   "value": "{power}",
+   "label": "power level of 10",
+   "source": "Deckwright strength"
+  },
+  {
+   "value": "{bracket_floor}",
+   "label": "bracket floor",
+   "source": "{game_changers} Game Changers, {combos} combos"
+  },
+  {
+   "value": "{price}",
+   "label": "deck price",
+   "source": "cheapest printings"
+  },
+  {
+   "value": "{role:Card draw}",
+   "label": "card draw",
+   "source": "plus Leinore's coven draw"
+  },
+  {
+   "value": "{avg_mv}",
+   "label": "average mana value",
+   "source": "nonland cards"
+  },
+  {
+   "value": "{lands}",
+   "label": "lands",
+   "source": "Karsten's count 37"
+  },
+  {
+   "value": "{cmdr_by_t4}",
+   "label": "Leinore out by turn 4",
+   "source": "{games} goldfish games"
+  },
+  {
+   "value": "{mulligan}",
+   "label": "mulligan rate",
+   "source": "{games} goldfish games"
+  }
+ ],
+ "arch_heading": "The deck by effect",
+ "arch_intro": "Where this list stands against Deckwright's targets for a four-player bracket 2 counters deck, then its effect categories. A card that works in two categories counts in both; the higher the sum, the more flexible the deck.",
+ "constraints": [
+  [
+   "The list as published",
+   "the Moxfield deck tiC3FyGcd0Oq46qtAHN0AQ, fetched 2026-11-05: commander plus 99. Its maybeboard (371) and sideboard (28) are not counted."
+  ],
+  [
+   "Bracket 2",
+   "as the list is marked. Deckwright finds {game_changers} Game Changers and {combos} two-card combos, so the floor is bracket {bracket_floor}."
+  ],
+  [
+   "No collection data",
+   "ownership is not checked; prices are the cheapest paper printing on Scryfall."
+  ]
+ ],
+ "targets_note": "Read from Deckwright's review. Interaction targets are for four players and are not yet measured at bracket 2 (the review borrows bracket 3 numbers). The card-type bands are general guidance, not a rule for a creature deck.",
+ "outside_note": "The review has no package for +1/+1 counters, so most of the counters plan lands here; the roles below file every one of them.",
+ "goldfish_note": "{games} seeded solo games from Deckwright's goldfish. The cast row is the share of games with Leinore out by each turn. The goldfish does not play +1/+1 counters, so it measures mana and casting, not damage.",
+ "deck_intro": "38 creatures, 24 of them Humans. Roles are filed from each card's Oracle text; counters are split into cards that spread them, cards that grow themselves, and cards that reward creatures carrying them.",
+ "cmdr_note": "Coven: at the beginning of combat on your turn, put a +1/+1 counter on up to one target creature you control. Then if you control three or more creatures with different powers, draw a card. A 0/4, so she is not the threat; she is the engine.",
+ "roles": [
+  {
+   "name": "Ramp",
+   "note": "Rocks, dorks, land search, cost reducers and mana lands. Moonsilver Key and Yavimaya Elder put lands in hand.",
+   "cards": [
+    "Sol Ring",
+    "Arcane Signet",
+    "Talisman of Unity",
+    "Avacyn's Pilgrim",
+    "Gyre Sage",
+    "Heronblade Elite",
+    "Somberwald Sage",
+    "Loot, the Nexus",
+    "Knight of the White Orchid",
+    "Growth Spasm",
+    "Celebrate the Harvest",
+    "Gardenize",
+    "Herald of War",
+    "Moonsilver Key",
+    "Yavimaya Elder",
+    "Myriad Landscape",
+    "Krosan Verge",
+    "Temple of the False God"
+   ]
+  },
+  {
+   "name": "Spread counters",
+   "note": "Put +1/+1 counters on other creatures, which is what makes powers differ.",
+   "cards": [
+    "Biogenic Upgrade",
+    "Dearly Departed",
+    "Death's Presence",
+    "Elite Scaleguard",
+    "Juniper Order Ranger",
+    "Mikaeus, the Lunarch",
+    "Orzhov Advokist",
+    "Ruinous Intrusion",
+    "Unbreakable Formation",
+    "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+    "Verdurous Gearhulk",
+    "Victory's Envoy"
+   ]
+  },
+  {
+   "name": "Grow themselves",
+   "note": "Put counters only on themselves: each one is a different power on its own.",
+   "cards": [
+    "Abzan Falconer",
+    "Ainok Bond-Kin",
+    "Champion of Lambholt",
+    "Custodi Soulbinders",
+    "Enduring Scalelord",
+    "Gyre Sage",
+    "Herald of War",
+    "Heronblade Elite",
+    "Kurbis, Harvest Celebrant",
+    "Kyler, Sigardian Emissary",
+    "Mikaeus, the Lunarch",
+    "Ugin's Conjurant"
+   ]
+  },
+  {
+   "name": "Counter payoffs",
+   "note": "Reward creatures that carry counters: keywords, cards, mana or doubling.",
+   "cards": [
+    "Abzan Falconer",
+    "Ainok Bond-Kin",
+    "Elite Scaleguard",
+    "Enduring Scalelord",
+    "Inspiring Call",
+    "Kurbis, Harvest Celebrant",
+    "Custodi Soulbinders",
+    "Biogenic Upgrade",
+    "Gyre Sage",
+    "Herald of War"
+   ]
+  },
+  {
+   "name": "Different powers",
+   "note": "Coven and other cards that count different powers, as Leinore's draw does.",
+   "cards": [
+    "Dawnhart Wardens",
+    "Stalwart Pathlighter",
+    "Wall of Mourning",
+    "Celebrate the Harvest",
+    "Loot, the Nexus",
+    "Celestial Judgment",
+    "Sigarda's Vanguard",
+    "Sigardian Zealot"
+   ]
+  },
+  {
+   "name": "Team pump",
+   "note": "Grow the whole board, or the Humans, at once.",
+   "cards": [
+    "Dawnhart Wardens",
+    "Kyler, Sigardian Emissary",
+    "Sigardian Zealot",
+    "Wild Beastmaster",
+    "Heron's Grace Champion"
+   ]
+  },
+  {
+   "name": "Evasion and combat",
+   "note": "Get the board through blockers or win the fight.",
+   "cards": [
+    "Abzan Falconer",
+    "Ainok Bond-Kin",
+    "Champion of Lambholt",
+    "Elite Scaleguard",
+    "Odric, Master Tactician",
+    "Sigarda's Vanguard",
+    "Swiftfoot Boots",
+    "Rogue's Passage"
+   ]
+  },
+  {
+   "name": "Bodies and tokens",
+   "note": "Extra creatures; Bestial Menace alone adds powers 1, 2 and 3.",
+   "cards": [
+    "Bestial Menace",
+    "Curse of Clinging Webs",
+    "Custodi Soulbinders",
+    "Kessig Cagebreakers",
+    "Sigarda, Heron's Grace",
+    "Growth Spasm"
+   ]
+  },
+  {
+   "name": "Human payoffs",
+   "note": "Read Humans: 24 of the 38 creatures are Human.",
+   "cards": [
+    "Kyler, Sigardian Emissary",
+    "Heronblade Elite",
+    "Heron's Grace Champion",
+    "Dearly Departed",
+    "Angel of Glory's Rise",
+    "Herald of War",
+    "Riders of Gavony",
+    "Sigarda, Heron's Grace"
+   ]
+  },
+  {
+   "name": "Card draw",
+   "note": "Draws or puts a card into your hand.",
+   "cards": [
+    "Inspiring Call",
+    "Lifecrafter's Bestiary",
+    "Shamanic Revelation",
+    "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+    "Wall of Mourning",
+    "Yavimaya Elder",
+    "Eternal Witness"
+   ]
+  },
+  {
+   "name": "Protection",
+   "note": "Indestructible, hexproof or damage prevention for the board or the commander.",
+   "cards": [
+    "Bastion Protector",
+    "Inspiring Call",
+    "Kurbis, Harvest Celebrant",
+    "Riders of Gavony",
+    "Sigarda, Heron's Grace",
+    "Stalwart Pathlighter",
+    "Swiftfoot Boots",
+    "Unbreakable Formation",
+    "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+   ]
+  },
+  {
+   "name": "Removal",
+   "note": "One target at a time. Venat's exile is a 7-mana activation.",
+   "cards": [
+    "Swords to Plowshares",
+    "Beast Within",
+    "Return to Dust",
+    "Ruinous Intrusion",
+    "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"
+   ]
+  },
+  {
+   "name": "Board wipes",
+   "note": "Celestial Judgment keeps one creature per power, which this deck tends to have.",
+   "cards": [
+    "Cleansing Nova",
+    "Celestial Judgment"
+   ]
+  },
+  {
+   "name": "Recursion",
+   "cards": [
+    "Eternal Witness",
+    "Angel of Glory's Rise"
+   ]
+  },
+  {
+   "name": "Table control and big turns",
+   "note": "Curse of Conformity shrinks one opponent's creatures to 3/3; Advokist trades counters for peace; Omnipresence casts spells free.",
+   "redundancy": false,
+   "cards": [
+    "Curse of Conformity",
+    "Orzhov Advokist",
+    "Omnipresence"
+   ]
+  }
+ ],
+ "open_eyebrow": "Starting the evaluation",
+ "open_heading": "What the checks flagged",
+ "open": [
+  {
+   "title": "Colour sources are short for the double pips",
+   "warn": true,
+   "text": "22 white sources where Knight of the White Orchid's {W}{W} wants 30, and 23 green where Kurbis's {G}{G} wants 30. 12 Forests and 12 Plains split the basics evenly."
+  },
+  {
+   "title": "Card advantage is below target",
+   "warn": true,
+   "text": "9 cards against 12-14: a 67% chance to see one by turn 4, against a 75% target. Leinore's own draw comes on top, but only once three creatures have different powers."
+  },
+  {
+   "title": "Interaction is thin",
+   "warn": true,
+   "text": "5 targeted answers against 7-9, no edicts and no one-sided wipes. Most of the removal is artifact and enchantment removal (Return to Dust, Ruinous Intrusion)."
+  },
+  {
+   "title": "Wipes against your own board",
+   "text": "Cleansing Nova destroys every creature, Leinore included. Celestial Judgment lets you keep one creature per power, so you can keep her. Deckwright's review also flags Angel of Glory's Rise as a -X/-X sweeper; it only exiles Zombies, so that warning is a misread."
+  },
+  {
+   "title": "One wipe takes the mana too",
+   "text": "8 mana sources are creatures, so a creature wipe takes the ramp and the threats together. 13 of 37 lands are nonbasic, enough for Blood Moon effects to bite."
+  },
+  {
+   "title": "Cards the strength model cannot value yet",
+   "text": "Curse of Conformity, Dearly Departed, Omnipresence, Sigarda's Vanguard, Ugin's Conjurant and Wall of Mourning read as \"does no job the model values\". That is a gap in the model (open issues OI-29 to OI-45), not a verdict on the cards."
+  }
+ ],
+ "footer": [
+  "Sources: Deckwright review and strength of the Moxfield list (legal, bracket {bracket_floor} floor); Commander Spellbook combos; Scryfall card data, prices and images.",
+  "Not checked: which cards you own, and play patterns at a real table. The +1/+1 counter plan is not simulated."
+ ]
+}
