@@ -134,7 +134,7 @@
   footer .mono{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere;}
   @media (max-width:600px){ body{font-size:16px;} header{padding-top:28px;} article h2{font-size:23px;} }
   @media (prefers-reduced-motion:reduce){ #wave-bg{display:none;} }
-</style>
+/* align-columns */ .table-scroll table{table-layout:fixed;width:100%;}.table-scroll th:first-child,.table-scroll td:first-child{width:56%;white-space:normal;}.table-scroll.two-col{width:78%;}.table-scroll.two-col th:first-child,.table-scroll.two-col td:first-child{width:71.8%;}.table-scroll th:not(:first-child),.table-scroll td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;}</style>
 </head>
 <body>
 <canvas id="wave-bg" aria-hidden="true"></canvas>
@@ -271,7 +271,7 @@
 </table></div>
 <p>Echo1 billing began with rides on 11 August 2026. The truth-view refunds in this window all come from the under-30 rule: 103 journeys whose rides were 30 miles or less, where Humana paid mileage.</p>
 <h2>3. One large overpayment: PAIHIL140919, resolved</h2>
-<div class="table-scroll"><table>
+<div class="table-scroll two-col"><table>
 <thead>
 <tr>
 <th>Item</th>
