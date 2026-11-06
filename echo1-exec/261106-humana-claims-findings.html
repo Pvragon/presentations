@@ -134,7 +134,7 @@
   footer .mono{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere;}
   @media (max-width:600px){ body{font-size:16px;} header{padding-top:28px;} article h2{font-size:23px;} }
   @media (prefers-reduced-motion:reduce){ #wave-bg{display:none;} }
-/* align-columns */ .table-scroll table{table-layout:fixed;width:100%;}.table-scroll th:first-child,.table-scroll td:first-child{width:56%;white-space:normal;}.table-scroll.two-col{width:78%;}.table-scroll.two-col th:first-child,.table-scroll.two-col td:first-child{width:71.8%;}.table-scroll th:not(:first-child),.table-scroll td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;}/* visualize-tables */ :root{--z:34.45%;}.table-scroll{background:transparent;border:0;border-radius:0;}.table-scroll table{background:var(--near-black);}.table-scroll th:first-child,.table-scroll td:first-child{width:30%;}.table-scroll.two-col{width:65%;}.table-scroll.two-col th:first-child,.table-scroll.two-col td:first-child{width:46.15%;}.table-scroll thead th{background:transparent;color:var(--heading);font-size:13px;letter-spacing:.04em;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--line-strong);padding:8px 14px;}.table-scroll tr:nth-child(even) td{background:transparent;}.table-scroll td{padding:9px 14px;vertical-align:middle;}.table-scroll td:first-child{font-weight:400;color:var(--text-muted);}.table-scroll tr.total td{border-top:1px solid var(--line-strong);color:var(--text-main);font-weight:700;}.vb{display:flex;align-items:center;justify-content:flex-end;gap:12px;}.vb .v{flex:none;width:132px;text-align:right;white-space:nowrap;}.trk{position:relative;flex:1 1 auto;max-width:360px;height:12px;}.trk::before{content:'';position:absolute;left:var(--z);top:-3px;bottom:-3px;width:1px;background:var(--line-strong);}.trk .b{position:absolute;top:0;height:12px;border-radius:2px;background:var(--text-subtle);}.trk .b.pos{left:var(--z);}.trk .b.neg{right:calc(100% - var(--z));}.trk.nb::before{display:none;}.trk .b.tot{background:var(--accent-secondary);}.table-scroll tr.headline .v{font-size:1.2em;}@media (max-width:600px){.vb{flex-direction:column-reverse;align-items:flex-end;gap:4px;}.trk{width:100%;flex:none;}.table-scroll.two-col{width:100%;}.table-scroll table{min-width:0;font-size:13.5px;}.table-scroll td,.table-scroll thead th{padding:8px 6px;}.table-scroll thead th{font-size:11px;letter-spacing:.02em;}.vb .v{width:auto;}}</style>
+/* align-columns */ .table-scroll table{table-layout:fixed;width:100%;}.table-scroll th:first-child,.table-scroll td:first-child{width:56%;white-space:normal;}.table-scroll.two-col{width:78%;}.table-scroll.two-col th:first-child,.table-scroll.two-col td:first-child{width:71.8%;}.table-scroll th:not(:first-child),.table-scroll td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;}/* chart-tables */ .chart{margin:0 0 30px;background:var(--near-black);padding:8px 0 4px;}.chart figcaption{color:var(--heading);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin:0 0 6px;}.chart-key{display:flex;gap:22px;font-size:14px;color:var(--text-muted);margin:0 0 4px;}.chart-key i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:7px;vertical-align:-1px;}.colchart{display:block;width:100%;height:auto;overflow:visible;}.colchart .s-truth,.chart-key .s-truth{fill:var(--heading);background:var(--heading);}.colchart .s-payer,.chart-key .s-payer{fill:var(--text-subtle);background:var(--text-subtle);}.colchart .s-one{fill:var(--text-muted);fill-opacity:.55;}.colchart .zero{stroke:var(--line-strong);stroke-width:1;}.colchart .sep{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4;}.colchart text{font-family:var(--sans);text-anchor:middle;font-variant-numeric:tabular-nums;}.colchart .dl{fill:var(--text-main);font-size:14px;}.colchart .cat{fill:var(--text-muted);font-size:14px;}.colchart .tot{font-weight:700;fill:var(--text-main);}.chart-note{display:flex;flex-wrap:wrap;gap:6px 26px;font-size:14.5px;color:var(--text-muted);border-top:1px solid var(--line);padding:10px 0 0;margin-top:6px;}.chart-note .lbl{color:var(--text-main);}.chart-note b{color:var(--text-main);font-weight:600;}.chart-src{display:none;}@media (max-width:759px){.chart{display:none;}.chart-src{display:block;}}@media print{.chart{break-inside:avoid;}}</style>
 </head>
 <body>
 <canvas id="wave-bg" aria-hidden="true"></canvas>
@@ -153,7 +153,8 @@
 <article>
 <p>RideCare&rsquo;s Humana claims, netted from Humana&rsquo;s remittances through 5 Nov 2026. The truth view applies every ruling, with the negotiable areas decided against RideCare. The payer view decides under-30 mileage, cancellations and late filing for RideCare, and counts Humana&rsquo;s claims only. The truth view counts whole journeys, so 49 of them also include another payer&rsquo;s claims.</p>
 <h2>1. Full period, 6,475 journeys</h2>
-<div class="table-scroll"><table>
+<figure class="chart"><div class="chart-key"><span><i class="s-truth"></i>Truth view</span><span><i class="s-payer"></i>Payer view</span></div><svg class="colchart" viewBox="0 0 1072 324" role="img" aria-label="Measure: Owed to RideCare Truth view 178,045.45, Payer view 352,378.48; Refunds owed Humana Truth view -285,254.41, Payer view -25,410.25; Net to RideCare Truth view -107,208.96, Payer view 326,968.23" preserveAspectRatio="xMidYMin meet"><line class="zero" x1="0" x2="1072" y1="157.1" y2="157.1"/><rect class="s-truth" x="64.7" y="92.9" width="110.0" height="64.2" rx="2"/><text class="dl" x="119.7" y="84.9">$178,045.45</text><rect class="s-payer" x="182.7" y="30.0" width="110.0" height="127.1" rx="2"/><text class="dl" x="237.7" y="22.0">$352,378.48</text><text class="cat" x="178.7" y="310.0"><tspan x="178.7" dy="0">Owed to RideCare</tspan></text><rect class="s-truth" x="422.0" y="157.1" width="110.0" height="102.9" rx="2"/><text class="dl" x="477.0" y="278.0">-$285,254.41</text><rect class="s-payer" x="540.0" y="157.1" width="110.0" height="9.2" rx="2"/><text class="dl" x="595.0" y="184.3">-$25,410.25</text><text class="cat" x="536.0" y="310.0"><tspan x="536.0" dy="0">Refunds owed Humana</tspan></text><rect class="s-truth" x="779.3" y="157.1" width="110.0" height="38.7" rx="2"/><text class="dl tot" x="834.3" y="213.8">-$107,208.96</text><rect class="s-payer" x="897.3" y="39.2" width="110.0" height="117.9" rx="2"/><text class="dl tot" x="952.3" y="31.2">$326,968.23</text><text class="cat tot" x="893.3" y="310.0"><tspan x="893.3" dy="0">Net to RideCare</tspan></text><line class="sep" x1="714.7" x2="714.7" y1="20" y2="298.0"/></svg></figure>
+<div class="table-scroll chart-src"><table>
 <thead>
 <tr>
 <th>Measure</th>
@@ -164,22 +165,23 @@
 <tbody>
 <tr>
 <td>Owed to RideCare</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:17.78%"></span></span><span class="v">$178,045.45</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:35.19%"></span></span><span class="v">$352,378.48</span></span></td>
+<td>$178,045.45</td>
+<td>$352,378.48</td>
 </tr>
 <tr>
 <td>Refunds owed Humana</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg" style="width:28.49%"></span></span><span class="v">-$285,254.41</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg" style="width:2.54%"></span></span><span class="v">-$25,410.25</span></span></td>
+<td>-$285,254.41</td>
+<td>-$25,410.25</td>
 </tr>
-<tr class="total headline">
+<tr>
 <td>Net to RideCare</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg tot" style="width:10.71%"></span></span><span class="v">-$107,208.96</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos tot" style="width:32.65%"></span></span><span class="v">$326,968.23</span></span></td>
+<td>-$107,208.96</td>
+<td>$326,968.23</td>
 </tr>
 </tbody>
 </table></div>
-<div class="table-scroll"><table>
+<figure class="chart"><figcaption>Net by category</figcaption><div class="chart-key"><span><i class="s-truth"></i>Truth view</span><span><i class="s-payer"></i>Payer view</span></div><svg class="colchart" viewBox="0 0 1072 324" role="img" aria-label="Net by category: Rate dispute (CO-45 and CO-A1) Truth view 126,263.05, Payer view 193,923.01; Same-day unmerged Truth view 25,389.05, Payer view 119,585.34; Other Truth view -258,861.06, Payer view 13,459.88; Net to RideCare Truth view -107,208.96, Payer view 326,968.23" preserveAspectRatio="xMidYMin meet"><line class="zero" x1="0" x2="1072" y1="157.1" y2="157.1"/><rect class="s-truth" x="38.9" y="111.6" width="91.1" height="45.5" rx="2"/><text class="dl" x="84.4" y="103.6">$126,263.05</text><rect class="s-payer" x="138.0" y="87.2" width="91.1" height="69.9" rx="2"/><text class="dl" x="183.6" y="79.2">$193,923.01</text><text class="cat" x="134.0" y="310.0"><tspan x="134.0" dy="0">Rate dispute (CO-45 and CO-A1)</tspan></text><rect class="s-truth" x="306.9" y="147.9" width="91.1" height="9.2" rx="2"/><text class="dl" x="352.4" y="139.9">$25,389.05</text><rect class="s-payer" x="406.0" y="114.0" width="91.1" height="43.1" rx="2"/><text class="dl" x="451.6" y="106.0">$119,585.34</text><text class="cat" x="402.0" y="310.0"><tspan x="402.0" dy="0">Same-day unmerged</tspan></text><rect class="s-truth" x="574.9" y="157.1" width="91.1" height="93.4" rx="2"/><text class="dl" x="620.4" y="268.5">-$258,861.06</text><rect class="s-payer" x="674.0" y="152.3" width="91.1" height="4.9" rx="2"/><text class="dl" x="719.6" y="144.3">$13,459.88</text><text class="cat" x="670.0" y="310.0"><tspan x="670.0" dy="0">Other</tspan></text><rect class="s-truth" x="842.9" y="157.1" width="91.1" height="38.7" rx="2"/><text class="dl tot" x="888.4" y="213.8">-$107,208.96</text><rect class="s-payer" x="942.0" y="39.2" width="91.1" height="117.9" rx="2"/><text class="dl tot" x="987.6" y="31.2">$326,968.23</text><text class="cat tot" x="938.0" y="310.0"><tspan x="938.0" dy="0">Net to RideCare</tspan></text><line class="sep" x1="804.0" x2="804.0" y1="20" y2="298.0"/></svg></figure>
+<div class="table-scroll chart-src"><table>
 <thead>
 <tr>
 <th>Net by category</th>
@@ -190,29 +192,30 @@
 <tbody>
 <tr>
 <td>Rate dispute (CO-45 and CO-A1)</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:12.61%"></span></span><span class="v">$126,263.05</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:19.37%"></span></span><span class="v">$193,923.01</span></span></td>
+<td>$126,263.05</td>
+<td>$193,923.01</td>
 </tr>
 <tr>
 <td>Same-day unmerged</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:2.54%"></span></span><span class="v">$25,389.05</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:11.94%"></span></span><span class="v">$119,585.34</span></span></td>
+<td>$25,389.05</td>
+<td>$119,585.34</td>
 </tr>
 <tr>
 <td>Other</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg" style="width:25.85%"></span></span><span class="v">-$258,861.06</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:1.34%"></span></span><span class="v">$13,459.88</span></span></td>
+<td>-$258,861.06</td>
+<td>$13,459.88</td>
 </tr>
-<tr class="total">
+<tr>
 <td>Net to RideCare</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg tot" style="width:10.71%"></span></span><span class="v">-$107,208.96</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos tot" style="width:32.65%"></span></span><span class="v">$326,968.23</span></span></td>
+<td>-$107,208.96</td>
+<td>$326,968.23</td>
 </tr>
 </tbody>
 </table></div>
 <p>Other includes the refunds in section 4.</p>
 <h2>2. 1 July to 10 August 2026, 184 journeys</h2>
-<div class="table-scroll"><table>
+<figure class="chart"><div class="chart-key"><span><i class="s-truth"></i>Truth view</span><span><i class="s-payer"></i>Payer view</span></div><svg class="colchart" viewBox="0 0 1072 324" role="img" aria-label="Measure: Owed to RideCare Truth view 160.00, Payer view 160.00; Refunds owed Humana Truth view -6,446.40, Payer view 0.00; Net to RideCare Truth view -6,286.40, Payer view 160.00" preserveAspectRatio="xMidYMin meet"><line class="zero" x1="0" x2="1072" y1="35.6" y2="35.6"/><rect class="s-truth" x="64.7" y="30.0" width="110.0" height="5.6" rx="2"/><text class="dl" x="119.7" y="22.0">$160.00</text><rect class="s-payer" x="182.7" y="30.0" width="110.0" height="5.6" rx="2"/><text class="dl" x="237.7" y="22.0">$160.00</text><text class="cat" x="178.7" y="310.0"><tspan x="178.7" dy="0">Owed to RideCare</tspan></text><rect class="s-truth" x="422.0" y="35.6" width="110.0" height="224.4" rx="2"/><text class="dl" x="477.0" y="278.0">-$6,446.40</text><text class="dl" x="595.0" y="27.6">$0.00</text><text class="cat" x="536.0" y="310.0"><tspan x="536.0" dy="0">Refunds owed Humana</tspan></text><rect class="s-truth" x="779.3" y="35.6" width="110.0" height="218.9" rx="2"/><text class="dl tot" x="834.3" y="272.4">-$6,286.40</text><rect class="s-payer" x="897.3" y="30.0" width="110.0" height="5.6" rx="2"/><text class="dl tot" x="952.3" y="22.0">$160.00</text><text class="cat tot" x="893.3" y="310.0"><tspan x="893.3" dy="0">Net to RideCare</tspan></text><line class="sep" x1="714.7" x2="714.7" y1="20" y2="298.0"/></svg></figure>
+<div class="table-scroll chart-src"><table>
 <thead>
 <tr>
 <th>Measure</th>
@@ -223,22 +226,23 @@
 <tbody>
 <tr>
 <td>Owed to RideCare</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.02%"></span></span><span class="v">$160.00</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.02%"></span></span><span class="v">$160.00</span></span></td>
+<td>$160.00</td>
+<td>$160.00</td>
 </tr>
 <tr>
 <td>Refunds owed Humana</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg" style="width:0.64%"></span></span><span class="v">-$6,446.40</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.00%"></span></span><span class="v">$0.00</span></span></td>
+<td>-$6,446.40</td>
+<td>$0.00</td>
 </tr>
-<tr class="total">
+<tr>
 <td>Net to RideCare</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg tot" style="width:0.63%"></span></span><span class="v">-$6,286.40</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos tot" style="width:0.02%"></span></span><span class="v">$160.00</span></span></td>
+<td>-$6,286.40</td>
+<td>$160.00</td>
 </tr>
 </tbody>
 </table></div>
-<div class="table-scroll"><table>
+<figure class="chart"><figcaption>Net by category</figcaption><div class="chart-key"><span><i class="s-truth"></i>Truth view</span><span><i class="s-payer"></i>Payer view</span></div><svg class="colchart" viewBox="0 0 1072 324" role="img" aria-label="Net by category: Rate dispute (CO-45 and CO-A1) Truth view 0.00, Payer view 0.00; Same-day unmerged Truth view 160.00, Payer view 160.00; Other Truth view -6,446.40, Payer view 0.00; Net to RideCare Truth view -6,286.40, Payer view 160.00" preserveAspectRatio="xMidYMin meet"><line class="zero" x1="0" x2="1072" y1="35.6" y2="35.6"/><text class="dl" x="84.4" y="27.6">$0.00</text><text class="dl" x="183.6" y="27.6">$0.00</text><text class="cat" x="134.0" y="310.0"><tspan x="134.0" dy="0">Rate dispute (CO-45 and CO-A1)</tspan></text><rect class="s-truth" x="306.9" y="30.0" width="91.1" height="5.6" rx="2"/><text class="dl" x="352.4" y="22.0">$160.00</text><rect class="s-payer" x="406.0" y="30.0" width="91.1" height="5.6" rx="2"/><text class="dl" x="451.6" y="22.0">$160.00</text><text class="cat" x="402.0" y="310.0"><tspan x="402.0" dy="0">Same-day unmerged</tspan></text><rect class="s-truth" x="574.9" y="35.6" width="91.1" height="224.4" rx="2"/><text class="dl" x="620.4" y="278.0">-$6,446.40</text><text class="dl" x="719.6" y="27.6">$0.00</text><text class="cat" x="670.0" y="310.0"><tspan x="670.0" dy="0">Other</tspan></text><rect class="s-truth" x="842.9" y="35.6" width="91.1" height="218.9" rx="2"/><text class="dl tot" x="888.4" y="272.4">-$6,286.40</text><rect class="s-payer" x="942.0" y="30.0" width="91.1" height="5.6" rx="2"/><text class="dl tot" x="987.6" y="22.0">$160.00</text><text class="cat tot" x="938.0" y="310.0"><tspan x="938.0" dy="0">Net to RideCare</tspan></text><line class="sep" x1="804.0" x2="804.0" y1="20" y2="298.0"/></svg></figure>
+<div class="table-scroll chart-src"><table>
 <thead>
 <tr>
 <th>Net by category</th>
@@ -249,29 +253,30 @@
 <tbody>
 <tr>
 <td>Rate dispute (CO-45 and CO-A1)</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.00%"></span></span><span class="v">$0.00</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.00%"></span></span><span class="v">$0.00</span></span></td>
+<td>$0.00</td>
+<td>$0.00</td>
 </tr>
 <tr>
 <td>Same-day unmerged</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.02%"></span></span><span class="v">$160.00</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.02%"></span></span><span class="v">$160.00</span></span></td>
+<td>$160.00</td>
+<td>$160.00</td>
 </tr>
 <tr>
 <td>Other</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg" style="width:0.64%"></span></span><span class="v">-$6,446.40</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.00%"></span></span><span class="v">$0.00</span></span></td>
+<td>-$6,446.40</td>
+<td>$0.00</td>
 </tr>
-<tr class="total">
+<tr>
 <td>Net to RideCare</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg tot" style="width:0.63%"></span></span><span class="v">-$6,286.40</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos tot" style="width:0.02%"></span></span><span class="v">$160.00</span></span></td>
+<td>-$6,286.40</td>
+<td>$160.00</td>
 </tr>
 </tbody>
 </table></div>
 <p>Echo1 billing began with rides on 11 August 2026. The truth-view refunds in this window all come from the under-30 rule: 103 journeys whose rides were 30 miles or less, where Humana paid mileage.</p>
 <h2>3. One large overpayment: PAIHIL140919, resolved</h2>
-<div class="table-scroll two-col"><table>
+<figure class="chart"><svg class="colchart" viewBox="0 0 1072 358" role="img" aria-label="Item: Value of the rides Amount 1,132.25; Humana paid (23 Jul 2025 and 21 Jan 2026) Amount 656,352.95; Humana recouped, 25 write-offs, 29 Mar to 3 May 2026 Amount -310,218.70; Balance repaid by RideCare check, outside the claims system Amount -345,002.00; Net Amount 0.00" preserveAspectRatio="xMidYMin meet"><line class="zero" x1="0" x2="1072" y1="180.8" y2="180.8"/><rect class="s-one" x="52.2" y="180.5" width="110.0" height="0.3" rx="2"/><text class="dl" x="107.2" y="172.5">$1,132.25</text><text class="cat" x="107.2" y="310.0"><tspan x="107.2" dy="0">Value of the rides</tspan></text><rect class="s-one" x="266.6" y="30.0" width="110.0" height="150.8" rx="2"/><text class="dl" x="321.6" y="22.0">$656,352.95</text><text class="cat" x="321.6" y="310.0"><tspan x="321.6" dy="0">Humana paid (23 Jul 2025 and</tspan><tspan x="321.6" dy="17">21 Jan 2026)</tspan></text><rect class="s-one" x="481.0" y="180.8" width="110.0" height="71.3" rx="2"/><text class="dl" x="536.0" y="270.0">-$310,218.70</text><text class="cat" x="536.0" y="310.0"><tspan x="536.0" dy="0">Humana recouped, 25</tspan><tspan x="536.0" dy="17">write-offs, 29 Mar to 3 May</tspan><tspan x="536.0" dy="17">2026</tspan></text><rect class="s-one" x="695.4" y="180.8" width="110.0" height="79.2" rx="2"/><text class="dl" x="750.4" y="278.0">-$345,002.00</text><text class="cat" x="750.4" y="310.0"><tspan x="750.4" dy="0">Balance repaid by RideCare</tspan><tspan x="750.4" dy="17">check, outside the claims</tspan><tspan x="750.4" dy="17">system</tspan></text><text class="dl tot" x="964.8" y="172.8">$0.00</text><text class="cat tot" x="964.8" y="310.0"><tspan x="964.8" dy="0">Net</tspan></text><line class="sep" x1="857.6" x2="857.6" y1="20" y2="298.0"/></svg></figure>
+<div class="table-scroll two-col chart-src"><table>
 <thead>
 <tr>
 <th>Item</th>
@@ -281,29 +286,30 @@
 <tbody>
 <tr>
 <td>Value of the rides</td>
-<td class="num"><span class="vb"><span class="trk nb"></span><span class="v">$1,132.25</span></span></td>
+<td>$1,132.25</td>
 </tr>
 <tr>
 <td>Humana paid (23 Jul 2025 and 21 Jan 2026)</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:65.55%"></span></span><span class="v">$656,352.95</span></span></td>
+<td>$656,352.95</td>
 </tr>
 <tr>
 <td>Humana recouped, 25 write-offs, 29 Mar to 3 May 2026</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg" style="width:30.98%"></span></span><span class="v">-$310,218.70</span></span></td>
+<td>-$310,218.70</td>
 </tr>
 <tr>
 <td>Balance repaid by RideCare check, outside the claims system</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b neg" style="width:34.45%"></span></span><span class="v">-$345,002.00</span></span></td>
+<td>-$345,002.00</td>
 </tr>
-<tr class="total">
+<tr>
 <td>Net</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos tot" style="width:0.00%"></span></span><span class="v">$0.00</span></span></td>
+<td>$0.00</td>
 </tr>
 </tbody>
 </table></div>
 <p>The 27 June 2025 ride was billed as 230,078 miles instead of 176. The balance was repaid by check, per David Roberts on 6 Nov 2026; that check does not appear in Humana&rsquo;s remittances or in the DRC QuickBooks export.</p>
 <h2>4. Remaining refunds owed Humana</h2>
-<div class="table-scroll"><table>
+<figure class="chart"><figcaption>Cause</figcaption><div class="chart-key"><span><i class="s-truth"></i>Truth view</span><span><i class="s-payer"></i>Payer view</span></div><svg class="colchart" viewBox="0 0 1072 341" role="img" aria-label="Cause: Under-30 mileage: rides of 30 miles or less where Humana paid mileage Truth view 168,355.49, Payer view 0.00; Cancelled or voided rides that were billed Truth view 110,201.94, Payer view 16,432.02; Humana paid more than was due Truth view 6,696.98, Payer view 8,978.23; Total refunds Truth view 285,254.41, Payer view 25,410.25" preserveAspectRatio="xMidYMin meet"><line class="zero" x1="0" x2="1072" y1="260.0" y2="260.0"/><rect class="s-truth" x="38.9" y="124.3" width="91.1" height="135.7" rx="2"/><text class="dl" x="84.4" y="116.3">$168,355.49</text><text class="dl" x="183.6" y="252.0">$0.00</text><text class="cat" x="134.0" y="310.0"><tspan x="134.0" dy="0">Under-30 mileage: rides of 30 miles</tspan><tspan x="134.0" dy="17">or less where Humana paid mileage</tspan></text><rect class="s-truth" x="306.9" y="171.1" width="91.1" height="88.9" rx="2"/><text class="dl" x="352.4" y="163.1">$110,201.94</text><rect class="s-payer" x="406.0" y="246.8" width="91.1" height="13.2" rx="2"/><text class="dl" x="451.6" y="238.8">$16,432.02</text><text class="cat" x="402.0" y="310.0"><tspan x="402.0" dy="0">Cancelled or voided rides that were</tspan><tspan x="402.0" dy="17">billed</tspan></text><rect class="s-truth" x="574.9" y="254.6" width="91.1" height="5.4" rx="2"/><text class="dl" x="620.4" y="246.6">$6,696.98</text><rect class="s-payer" x="674.0" y="252.8" width="91.1" height="7.2" rx="2"/><text class="dl" x="719.6" y="244.8">$8,978.23</text><text class="cat" x="670.0" y="310.0"><tspan x="670.0" dy="0">Humana paid more than was due</tspan></text><rect class="s-truth" x="842.9" y="30.0" width="91.1" height="230.0" rx="2"/><text class="dl tot" x="888.4" y="22.0">$285,254.41</text><rect class="s-payer" x="942.0" y="239.5" width="91.1" height="20.5" rx="2"/><text class="dl tot" x="987.6" y="231.5">$25,410.25</text><text class="cat tot" x="938.0" y="310.0"><tspan x="938.0" dy="0">Total refunds</tspan></text><line class="sep" x1="804.0" x2="804.0" y1="20" y2="298.0"/></svg><div class="chart-note"><span class="lbl">Journeys with a refund</span><span>Truth view <b>2,484</b></span><span>Payer view <b>101</b></span></div></figure>
+<div class="table-scroll chart-src"><table>
 <thead>
 <tr>
 <th>Cause</th>
@@ -314,23 +320,23 @@
 <tbody>
 <tr>
 <td>Under-30 mileage: rides of 30 miles or less where Humana paid mileage</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:16.81%"></span></span><span class="v">$168,355.49</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.00%"></span></span><span class="v">$0.00</span></span></td>
+<td>$168,355.49</td>
+<td>$0.00</td>
 </tr>
 <tr>
 <td>Cancelled or voided rides that were billed</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:11.01%"></span></span><span class="v">$110,201.94</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:1.64%"></span></span><span class="v">$16,432.02</span></span></td>
+<td>$110,201.94</td>
+<td>$16,432.02</td>
 </tr>
 <tr>
 <td>Humana paid more than was due</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.67%"></span></span><span class="v">$6,696.98</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos" style="width:0.90%"></span></span><span class="v">$8,978.23</span></span></td>
+<td>$6,696.98</td>
+<td>$8,978.23</td>
 </tr>
-<tr class="total">
+<tr>
 <td>Total refunds</td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos tot" style="width:28.49%"></span></span><span class="v">$285,254.41</span></span></td>
-<td class="num"><span class="vb"><span class="trk"><span class="b pos tot" style="width:2.54%"></span></span><span class="v">$25,410.25</span></span></td>
+<td>$285,254.41</td>
+<td>$25,410.25</td>
 </tr>
 <tr>
 <td>Journeys with a refund</td>
