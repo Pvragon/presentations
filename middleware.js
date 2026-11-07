@@ -15,7 +15,7 @@ import { PROTECTED_PATHS } from './lib/protected-paths.js';
 // Vercel statically analyses this export — it MUST be a literal (an imported identifier fails the
 // build with `Unhandled type: "Identifier"`). Keep it in step with PROTECTED_PATHS in lib/protected-paths.js.
 export const config = {
-  matcher: ['/echo1', '/echo1/:path*', '/echo1-exec', '/echo1-exec/:path*', '/one-mahjong', '/one-mahjong/:path*'],
+  matcher: ['/echo1', '/echo1/:path*', '/echo1-exec', '/echo1-exec/:path*', '/one-mahjong', '/one-mahjong/:path*', '/drafts', '/drafts/:path*'],
 };
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
