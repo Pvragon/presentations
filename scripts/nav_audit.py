@@ -2,7 +2,7 @@
 # ---
 # name: nav_audit
 # summary: Lists prez pages that no navigation links to, so nothing published is unfindable. Exit 1 when any page is missing a card, or a category is missing from the home page. Pages that are deliberately unlisted go in scripts/nav-unlisted.txt.
-# version: 1.0.1
+# version: 1.1.0
 # created: 2026-11-09
 # last_updated: 2026-11-09
 # maintainer: pvragon
@@ -18,7 +18,9 @@ import sys
 import tempfile
 
 # Folders that hold code, data or work in progress, not published categories.
-SKIP = {"api", "lib", "public", "scripts", "supabase", "runtime", "node_modules", "backlog", "drafts"}
+SKIP = {"api", "lib", "public", "scripts", "supabase", "runtime", "node_modules", "backlog"}
+# Hidden categories: their own index must list every page, but nothing else links to them.
+HIDDEN = {"drafts"}
 ALLOW_FILE = os.path.join("scripts", "nav-unlisted.txt")
 
 
@@ -85,7 +87,7 @@ def audit(root):
                 if f == "index.html" and folder in linked:
                     continue
                 missing_pages.append(rel)
-        if has_pages and cat not in root_links and cat + "/" not in allowed and cat not in allowed:
+        if has_pages and cat not in HIDDEN and cat not in root_links and cat + "/" not in allowed and cat not in allowed:
             missing_cats.append(cat)
     return missing_pages, missing_cats
 
@@ -94,6 +96,10 @@ def self_check():
     with tempfile.TemporaryDirectory() as t:
         os.makedirs(os.path.join(t, "cat"))
         os.makedirs(os.path.join(t, "orphan"))
+        os.makedirs(os.path.join(t, "drafts"))
+        open(os.path.join(t, "drafts", "index.html"), "w").write('<a href="d1">d1</a>')
+        open(os.path.join(t, "drafts", "d1.html"), "w").write("x")
+        open(os.path.join(t, "drafts", "d2.html"), "w").write("x")
         open(os.path.join(t, "index.html"), "w").write('<a href="cat/">x</a>')
         open(os.path.join(t, "cat", "index.html"), "w").write('<a href="listed">a</a><a href="b.html">b</a>')
         for f in ("listed.html", "b.html", "missing.html", "private.html"):
@@ -103,7 +109,7 @@ def self_check():
         os.makedirs(os.path.join(t, "scripts"))
         open(os.path.join(t, ALLOW_FILE), "w").write("cat/private.html  # deliberate\n")
         pages, cats = audit(t)
-        assert pages == ["cat/missing.html", "orphan/page.html"], pages
+        assert pages == ["cat/missing.html", "drafts/d2.html", "orphan/page.html"], pages
         assert cats == ["orphan"], cats
     print("self-check ok")
 
