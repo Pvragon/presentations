@@ -147,7 +147,7 @@
   </div>
   <h1>Mana Base Builder: spec</h1>
   
-  <div class="meta"><span>Version 0.1.0</span><span>Updated 2026-11-09</span></div>
+  <div class="meta"><span>Version 0.2.0</span><span>Updated 2026-11-09</span></div>
 </header>
 
 <article>
@@ -159,7 +159,8 @@
 <li><strong>The catalog stays.</strong> The current Card Catalog (Lands and Rocks, each by colour identity, by cycle and by effect) is unchanged and sits below the builder, with a jump link at the top.</li>
 <li><strong>Prez now, stack.gg later.</strong> Nothing in the builder may depend on prez beyond the optional share header.</li>
 <li><strong>No Scryfall at run time.</strong> The page never calls Scryfall&rsquo;s API or image server. Card data, images and prices are hosted on prgn.ai.</li>
-<li><strong>Ultra cheap.</strong> This machine does the daily work for now, and moves to Jaime&rsquo;s other machine later.</li>
+<li><strong>Ultra cheap.</strong> This machine does the refresh work for now, and moves to Jaime&rsquo;s other machine later.</li>
+<li><strong>Refresh on demand, not daily.</strong> Jaime runs a Claude Code skill when he wants fresh prices and cards.</li>
 <li><strong>Our own compact card index</strong> for reading decklists.</li>
 <li><strong>Images from our own hosting</strong>, loaded when needed.</li>
 <li><strong>Colourless utility lands in v1:</strong> the builder fills in a few staples and leaves open slots for the player to choose. Deckwright cannot yet pick utility lands for a strategy (backlog B-15).</li>
@@ -251,8 +252,9 @@
 <h2>4. Hosting and refresh</h2>
 <ul>
 <li><strong>v1 hosting:</strong> static files in the presentations repo, served by prez on Vercel. No database and no server code. Cost: nothing beyond today.</li>
-<li><strong>Daily refresh on this machine:</strong> a cron job runs Deckwright&rsquo;s card store refresh, rebuilds <code>mana-data.json</code>, the card index and any new images, and, if anything changed, commits and pushes the presentations repo so Vercel redeploys. Prices are then at most a day old.</li>
-<li><strong>Later:</strong> the same job moves to the other machine. For stack.gg, the builder folder is copied as is. The play.prgn.ai Supabase project comes in only when something needs a server: saved or shared lists, a collection upload.</li>
+<li><strong>Refresh on demand:</strong> a Claude Code skill, <code>/refresh-mana-guide</code>, run on this machine. It runs Deckwright&rsquo;s card store refresh (Scryfall&rsquo;s daily bulk files), rebuilds <code>mana-data.json</code>, the card index, any new images and the catalog page, runs the schema and drift tests, and, if anything changed and the tests pass, commits and pushes the presentations repo so Vercel redeploys. Running the skill is the go-ahead for that push. The page shows the date of its data.</li>
+<li><strong>Why not a button on the page:</strong> prez serves static files, so a button would need a server that can reach this machine. That adds hosting and an exposed endpoint for something run a few times a month.</li>
+<li><strong>Later:</strong> the same skill runs on the other machine. For stack.gg, the builder folder is copied as is. The play.prgn.ai Supabase project comes in only when something needs a server: saved or shared lists, a collection upload.</li>
 </ul>
 <h2>5. Logic and drift</h2>
 <ul>
@@ -293,8 +295,8 @@
 </tr>
 <tr>
 <td>5</td>
-<td>Daily refresh job</td>
-<td>two unattended days run clean</td>
+<td><code>/refresh-mana-guide</code> skill</td>
+<td>a run with no changes pushes nothing; a run after new prices pushes</td>
 </tr>
 </tbody>
 </table></div>
@@ -306,7 +308,7 @@
 </ul>
 <h2>8. Open decisions for Jaime</h2>
 <ol>
-<li><strong>Daily auto-push.</strong> The refresh job would push data-only commits to the presentations repo every day. Pushes normally need your go-ahead, so this needs a standing yes for that one job and path.</li>
+<li><strong>Refresh:</strong> decided, on demand through a skill (2026-11-09).</li>
 <li><strong>Price basis.</strong> The cheapest paper non-foil USD printing (TCGplayer market via Scryfall), or a different basis.</li>
 <li><strong>Colourless utility staples.</strong> My proposal: Reliquary Tower, Rogue&rsquo;s Passage, and War Room in one or two colours. Swap or extend.</li>
 <li><strong>Budget presets.</strong> $0, $25, $100, $500 and no cap, as in the feature request, or your own.</li>
