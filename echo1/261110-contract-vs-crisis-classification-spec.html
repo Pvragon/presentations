@@ -150,7 +150,7 @@
   </div>
   <h1>Contract vs crisis classification for Echo1 rides</h1>
   <p class="lede">The exact procedure for choosing an Echo1 ride's payer: insurance as a crisis ride, or a contract customer, written so an agent can implement it with no judgment calls.</p>
-  <div class="meta"><span>Version 1.4.0</span><span>Updated 2026-11-10</span></div>
+  <div class="meta"><span>Version 1.4.1</span><span>Updated 2026-11-10</span></div>
 </header>
 
 <article>
@@ -284,7 +284,8 @@ left join client c on c.id = tr.client_id</code></p>
 <p>The state&rsquo;s 43A rules define a crisis ride by its documentation. Five documents qualify: a peace officer&rsquo;s written statement, an emergency order of detention (EOD), a licensed mental health professional (LMHP) statement, a court order, and a third-party statement.</p>
 <p>A crisis document is on file if at least one attachment&rsquo;s <code>file_name</code> matches this pattern, any case:</p>
 <p><code>lmhp|crisis\s*petition|petition|court|orders?\b|\beod\b|detention|emergency\s*order|peace|officer|third|affidavit|43\s*-?\s*a</code></p>
-<p>A court order <strong>document</strong> is a crisis document; only the court-ordered <strong>answer</strong> is excluded. This pattern is deliberately loose and is kept exactly as the 11/04 ladder used it. It also matches words such as &ldquo;courtesy&rdquo; or &ldquo;recorders&rdquo;, and <code>\beod\b</code> misses <code>EOD_scan.pdf</code> because <code>_</code> is a word character. Do not tighten or loosen it.</p>
+<p>Legal basis, as researched for the forward process (spec v0.15.0, 2026-10-04, in <code>docs/investigations/260716-billing-classification/archive/</code>): 43A O.S. § 5-207(C) (the peace officer&rsquo;s written statement), § 5-208 (the licensed professional&rsquo;s statement, and the emergency detention that follows the initial assessment), and OAC 317:30-5-348(a) (Medicaid transport of a member &ldquo;reasonably believed to be experiencing a behavioral health crisis&rdquo;, for &ldquo;examination, emergency detention, protective custody, or inpatient services&rdquo;). The court order that qualifies is a court order for inpatient treatment or evaluation for treatment. The state&rsquo;s transportation guidance: https://oklahoma.gov/odmhsas/treatment/comprehensive-crisis-response/transportation.html</p>
+<p>A court order <strong>document</strong> is a crisis document; only the court-ordered <strong>answer</strong> is excluded. That checkbox (<code>is_court_ordered</code>) is a flag, not a document, and it also marks court orders that are not behavioral health crises, such as custody exchanges and unaccompanied minors. This pattern is deliberately loose and is kept exactly as the 11/04 ladder used it. It also matches words such as &ldquo;courtesy&rdquo; or &ldquo;recorders&rdquo;, and <code>\beod\b</code> misses <code>EOD_scan.pdf</code> because <code>_</code> is a word character. Do not tighten or loosen it.</p>
 <h3>Signal C: a crisis keyword is in the notes</h3>
 <p>A crisis keyword is present if the Notes text matches any of these patterns.</p>
 <div class="table-scroll"><table>
