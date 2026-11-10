@@ -10,7 +10,9 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Noto Sans', system-ui, sans-serif; min-height: 100vh; }
   .wrap { max-width: 960px; margin: 0 auto; padding: 48px 16px; }
-  .crumb a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  .up { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .up:hover { border-color: var(--accent); color: var(--text); }
+  .foot { margin-top: 32px; }
   h1 { font-size: 34px; font-weight: 800; margin: 12px 0 28px; padding-bottom: 18px; border-bottom: 2px solid var(--accent); }
   ul { list-style: none; display: grid; gap: 16px; }
   a.card { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; color: var(--text); text-decoration: none; }
@@ -22,7 +24,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="crumb"><a href="/">&larr; Presentations</a></div>
+  <a class="up" href="/" title="Up to all presentations">&uarr; All presentations</a>
   <h1>Drafts</h1>
   <ul>
     <li>
@@ -40,6 +42,7 @@
       </a>
     </li>
   </ul>
+  <div class="foot"><a class="up" href="/" title="Up to all presentations">&uarr; All presentations</a></div>
 </div>
 <script src="/prez-header.js" defer></script>
 </body>
