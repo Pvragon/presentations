@@ -1,0 +1,7 @@
+# Pages deliberately left out of the navigation. One repo-relative path per line, then a reason.
+# scripts/nav_audit.py skips these. A whole category folder can be listed as "folder/".
+pvragon/james-hereford-resume.html          # shared by direct link only
+pvragon/260910-comment-threads-test.html    # comment-threads test page
+pvragon/261021-atraxa-counters-deck-report.html  # personal deck report, not Pvragon work
+travel/                                     # personal trip pages, kept off the home page
+travel/260915-san-diego-november-coast.html # personal trip page
