@@ -44,7 +44,8 @@ from the same pass. The audit then becomes a check that the generated output is 
   such as Echo1.
 - Echo1 has 20+ pages and grows fastest, so it is the first category to try this on.
 
-## Open questions for Jaime
+## Decided (Jaime, 2026-11-09)
 
-- Should `drafts/` get its own private listing, or stay unlisted?
-- Should `echo1` and `echo1-exec` merge into one category with an audience filter?
+- `drafts/` is a working area for Jaime and Rowan that is never published. The middleware answers
+  404 for it and `.vercelignore` keeps it out of the deploy. It needs no listing.
+- `echo1` and `echo1-exec` stay separate categories, at least for now.
