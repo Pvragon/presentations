@@ -10,7 +10,7 @@
  *   3. Redeploy — middleware picks it up automatically
  */
 
-import { PROTECTED_PATHS, isUnpublished } from './lib/protected-paths.js';
+import { PROTECTED_PATHS } from './lib/protected-paths.js';
 
 // Vercel statically analyses this export — it MUST be a literal (an imported identifier fails the
 // build with `Unhandled type: "Identifier"`). Keep it in step with PROTECTED_PATHS in lib/protected-paths.js.
@@ -23,9 +23,6 @@ const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 export default async function middleware(request) {
   const url = new URL(request.url);
   const path = url.pathname;
-
-  // Drafts are local-only: never served, whatever cookie or password is sent.
-  if (isUnpublished(path)) return new Response('Not found', { status: 404 });
 
   // Find matching protected path
   let matchedPrefix = null;

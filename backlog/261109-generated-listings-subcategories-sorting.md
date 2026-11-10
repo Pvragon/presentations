@@ -46,6 +46,7 @@ from the same pass. The audit then becomes a check that the generated output is 
 
 ## Decided (Jaime, 2026-11-09)
 
-- `drafts/` is a working area for Jaime and Rowan that is never published. The middleware answers
-  404 for it and `.vercelignore` keeps it out of the deploy. It needs no listing.
+- `drafts/` is a hidden working area for Jaime and Rowan: pushed and served behind a password so
+  Jaime can view drafts in the browser, but never linked from any listing. Open item: give it its own
+  password (`PREZ_PW_DRAFTS`) instead of the Echo1 one.
 - `echo1` and `echo1-exec` stay separate categories, at least for now.
