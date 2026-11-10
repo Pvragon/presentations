@@ -350,6 +350,7 @@ const RULES = {
   per_card_share: 0.25,      // per-card cap = a quarter of the budget (Leinore: $60 budget, about $15 a card)
   cond_share: 0.5,           // a conditional any-colour land is taken when at least half the nonland spells meet its condition
   dual_ceiling: 2.3,         // lands that make two colours: down to check lands (2.3); slow (2.4) and battle (2.5) lands are left out
+  triome_min_colours: 4,     // Triomes (always tapped) in four- and five-colour crafts only
   basics_per_colour: 2,      // never fewer basics than this per colour: check, battle and any-basic lands count them
   default_rocks: 5,          // rocks with no decklist: about half of the ~10 ramp target
   min_rocks: 3,
@@ -384,7 +385,8 @@ function craft(D, o) {
     else if (c.cond && c.cond !== 'tribe' && c.cond !== 'other' && o.share && (o.share[c.cond] || 0) >= RULES.cond_share) land(n, `any colour for ${c.cond.replace('_', ' or ')} spells (${Math.round(o.share[c.cond] * 100)}% of yours)`);
     else if (c.cond) skipped.push([n, o.share ? 'too few of your spells meet its condition' : 'needs a decklist to judge its condition']);
   }
-  const duals = g('duals').filter(n => dualRank(C[n].tier) <= RULES.dual_ceiling * 10 + 0.5);   // never tapped lands: Deckwright's max_tapped 0 and Jaime's rule 3; Triomes stay a hand pick in Step 3
+  // untapped or cheaply conditional lands only (Jaime's rule 3), except Triomes in four or five colours (Jaime, 2026-11-09: they fix enough to earn the tap)
+  const duals = g('duals').filter(n => dualRank(C[n].tier) <= RULES.dual_ceiling * 10 + 0.5 || (/^3\.\d+ Triome/.test(C[n].tier) && cols.length >= RULES.triome_min_colours));
   if (cols.length < (D.rules.fetch_min_colours || 3)) for (const n of duals) land(n, 'makes two or more of your colours');
   else {
     // three or more colours: deckwright_manabase.tune._choose, cover the largest shortfall first (ties: list order)
@@ -421,9 +423,24 @@ function craft(D, o) {
   cols.forEach((c, i) => { if (base[i] > 0) { list[BASIC[c]] = base[i]; why[BASIC[c]] = 'basic'; } });   // basics are not charged to the budget: every player has them
   const src = {}; cols.forEach(c => src[c] = 0);
   for (const [n, q] of Object.entries(list)) for (const c of cols) src[c] += ((C[n].src || {})[c] || 0) * q;
-  // 4. research staples into open utility slots (research note section 8): rank order, prefill only, in their colour range,
-  //    and only while every colour already meets its requirement (a colourless land makes no colour); stop at the first that fails
-  let open = o.open_slots; const covered = cols.every(c => src[c] + 1e-9 >= ((o.requirements || {})[c] || RULES.default_need));
+  // 4. utility slots, like every other card under the budget and per-card cap (Jaime, 2026-11-09). First the utility lands that
+  //    make your colours (Step 4's first list, most reliably untapped first): each is also a colour source.
+  let open = o.open_slots;
+  //    Each pick goes to the colour furthest below its need, the list's order breaking ties (tune._choose's weighting, as with the duals).
+  const need = {}; cols.forEach(c => need[c] = (o.requirements || {})[c] || RULES.default_need);
+  let upool = g('ucol').filter(n => !list[n] && C[n].tier !== 'Tapped');
+  while (open > 0 && upool.length) {
+    const fits = upool.filter(n => (C[n].price || 0) <= Math.min(cap, left));
+    upool.filter(n => !fits.includes(n)).forEach(n => skipped.push([n, (C[n].price || 0) > cap ? `over the ${fmt(cap)} per-card cap` : 'over the budget left']));
+    upool = fits; if (!upool.length) break;
+    let best = 0, bv = -Infinity;
+    upool.forEach((n, i) => { const v = cols.reduce((a, c) => a + ((C[n].src || {})[c] || 0) * (Math.max(0, need[c] - src[c]) + 1e-3), 0); if (v > bv + 1e-12) { bv = v; best = i; } });
+    const n = upool.splice(best, 1)[0];
+    if (take(n, 'utility land that makes your colours')) { open--; for (const c of cols) src[c] += (C[n].src || {})[c] || 0; }
+  }
+  // 5. then research staples (research note section 8): rank order, prefill only, in their colour range, and only while every
+  //    colour already meets its requirement (a colourless land makes no colour); stop at the first that fails
+  const covered = cols.every(c => src[c] + 1e-9 >= ((o.requirements || {})[c] || RULES.default_need));
   for (const x of (D.staples || []).filter(x => x.prefill && x.min_colours <= cols.length && cols.length <= x.max_colours).sort((a, b) => a.rank - b.rank)) {
     if (open <= 0 || !covered || !C[x.card] || list[x.card]) break;
     if (take(x.card, 'research staple, colours still covered')) open--;
@@ -469,11 +486,11 @@ let budget = jget('mb-budget'); if (budget === null) budget = 100; let slots = +
 function craftBox() {
   const id = ident(), P = [25, 100, 500, null], custom = !P.includes(budget);
   const btn = v => `<button type="button" data-budget="${v === null ? 'none' : v}" aria-pressed="${budget === v}">${v === null ? 'No cap' : money(v).replace('.00', '')}</button>`;
-  const sum = crafted && crafted.identity === id ? `<p class="mb-res">Crafted: ${crafted.lands} lands, ${crafted.open} open utility slot${crafted.open === 1 ? '' : 's'} for you to fill in Step 4, ${crafted.rocks} rocks, ${money(crafted.spent)} before basics.` +
+  const sum = crafted && crafted.identity === id ? `<p class="mb-res">Crafted: ${crafted.lands} lands, ${crafted.open} utility slot${crafted.open === 1 ? '' : 's'} left open for you in Step 4, ${crafted.rocks} rocks, ${money(crafted.spent)} before basics.` +
     (crafted.skipped.length ? ` Left out: ${crafted.skipped.slice(0, 6).map(x => `${e(x[0])} (${e(x[1])})`).join('; ')}${crafted.skipped.length > 6 ? '; and ' + (crafted.skipped.length - 6) + ' more' : ''}.` : '') + `</p>` : '';
-  return `<h4 class="mb-or">Craft it for me</h4><p>Builds the whole list from these steps under your budget: rocks, every free any-colour land, the conditional ones your deck qualifies for, untapped and cheaply conditional duals best first, then basics by your pips. No card may take more than a quarter of the budget. Colourless utility lands stay open for you.</p>` +
+  return `<h4 class="mb-or">Craft it for me</h4><p>Builds the whole list from these steps under your budget: rocks, every free any-colour land, the conditional ones your deck qualifies for, untapped and cheaply conditional duals best first (Triomes too in four or five colours), utility lands, then basics by your pips. No card may take more than a quarter of the budget. Utility slots take the utility lands that make your colours first, then the research staples while your colours are covered; any left stay open for you.</p>` +
     `<div class="mb-pick" role="group" aria-label="Budget">${P.map(btn).join('')}<label class="note">or $<input id="mb-bud" type="number" min="0" step="5" value="${custom ? budget : ''}" style="width:6rem"></label></div>` +
-    `<div class="mb-pick"><label class="note">Open utility slots <input id="mb-slots" type="number" min="0" max="10" value="${slots}" style="width:4.5rem"></label>` +
+    `<div class="mb-pick"><label class="note">Utility slots <input id="mb-slots" type="number" min="0" max="10" value="${slots}" style="width:4.5rem"></label>` +
     `<button type="button" class="vbtn mb-craft"${id ? '' : ' disabled'}>${Object.keys(LIST).length ? 'Craft (replaces your list)' : 'Craft my mana base'}</button></div>` +
     (id ? '' : '<p class="note">Paste a deck or pick your colours first.</p>') + sum;
 }
