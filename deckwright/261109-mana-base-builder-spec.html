@@ -147,7 +147,7 @@
   </div>
   <h1>Mana Base Builder: spec</h1>
   
-  <div class="meta"><span>Version 0.2.0</span><span>Updated 2026-11-09</span></div>
+  <div class="meta"><span>Version 0.3.0</span><span>Updated 2026-11-09</span></div>
 </header>
 
 <article>
@@ -163,7 +163,7 @@
 <li><strong>Refresh on demand, not daily.</strong> Jaime runs a Claude Code skill when he wants fresh prices and cards.</li>
 <li><strong>Our own compact card index</strong> for reading decklists.</li>
 <li><strong>Images from our own hosting</strong>, loaded when needed.</li>
-<li><strong>Colourless utility lands in v1:</strong> the builder fills in a few staples and leaves open slots for the player to choose. Deckwright cannot yet pick utility lands for a strategy (backlog B-15).</li>
+<li><strong>Colourless utility lands in v1:</strong> open slots for the player to choose. Any staples the builder pre-fills must come from research, and none exists yet: a research task (below) produces them, tied to Deckwright backlog B-15. Deckwright excludes inclusion-rate data by design, so popularity is not the method.</li>
 <li><strong>The guided path should be fun:</strong> a walk through the steps that presents cards, shows prices and lets the player choose.</li>
 <li><strong>The buy list lives nowhere.</strong> It is copied to the clipboard or downloaded as a file.</li>
 </ul>
@@ -198,7 +198,7 @@
 <li>Copy to clipboard and download as a <code>.txt</code> file.</li>
 </ul>
 <h3>2.5 Craft it for me</h3>
-<p>Inputs: Step 1&rsquo;s deck (or a commander, identity and target average mana value) and a budget preset ($0 basics only, $25, $100, $500, no cap) or a number. It walks Steps 2 to 6 with the same data the guided path uses: the fill order cut at the budget, Deckwright&rsquo;s colour-source checks, the free coloured utility lands, the staple colourless ones, open slots for the rest. The result lands in the list, where the player can change anything.</p>
+<p>Inputs: Step 1&rsquo;s deck (or a commander, identity and target average mana value) and a budget preset ($25, $100, $500, no cap) or a number. An Owned only preset arrives with collection upload, since $0 means choosing from a collection. It walks Steps 2 to 6 with the same data the guided path uses: the fill order cut at the budget, Deckwright&rsquo;s colour-source checks, the free coloured utility lands, then open slots for colourless ones until the research task lands. The result lands in the list, where the player can change anything.</p>
 <h3>2.6 The guided feel</h3>
 <p>One step is open at a time, with a progress bar across the six, the recommended picks highlighted, a running price and meters that react to each pick. Finishing a step moves to the next. The player can always jump around. No account, no sign-in.</p>
 <h2>3. Data</h2>
@@ -238,7 +238,7 @@
 </tr>
 <tr>
 <td><code>staples</code></td>
-<td>colourless utility staples for Craft it for me</td>
+<td>colourless utility staples, empty until the research task fills it</td>
 </tr>
 </tbody>
 </table></div>
@@ -252,7 +252,7 @@
 <h2>4. Hosting and refresh</h2>
 <ul>
 <li><strong>v1 hosting:</strong> static files in the presentations repo, served by prez on Vercel. No database and no server code. Cost: nothing beyond today.</li>
-<li><strong>Refresh on demand:</strong> a Claude Code skill, <code>/refresh-mana-guide</code>, run on this machine. It runs Deckwright&rsquo;s card store refresh (Scryfall&rsquo;s daily bulk files), rebuilds <code>mana-data.json</code>, the card index, any new images and the catalog page, runs the schema and drift tests, and, if anything changed and the tests pass, commits and pushes the presentations repo so Vercel redeploys. Running the skill is the go-ahead for that push. The page shows the date of its data.</li>
+<li><strong>Refresh on demand:</strong> a Claude Code skill, <code>/refresh-mana-guide</code>, run on this machine. It runs Deckwright&rsquo;s card store refresh (Scryfall&rsquo;s daily bulk files), rebuilds <code>mana-data.json</code>, the card index, any new images and the catalog page, runs the schema and drift tests, and, if anything changed and the tests pass, commits and pushes the presentations repo so Vercel redeploys. Running the skill is the go-ahead for that push.</li>
 <li><strong>Why not a button on the page:</strong> prez serves static files, so a button would need a server that can reach this machine. That adds hosting and an exposed endpoint for something run a few times a month.</li>
 <li><strong>Later:</strong> the same skill runs on the other machine. For stack.gg, the builder folder is copied as is. The play.prgn.ai Supabase project comes in only when something needs a server: saved or shared lists, a collection upload.</li>
 </ul>
@@ -298,25 +298,31 @@
 <td><code>/refresh-mana-guide</code> skill</td>
 <td>a run with no changes pushes nothing; a run after new prices pushes</td>
 </tr>
+<tr>
+<td>R</td>
+<td>Research: colourless utility staples</td>
+<td>a research note with a ranked list and its method</td>
+</tr>
 </tbody>
 </table></div>
 <h2>7. Not in v1</h2>
 <ul>
 <li>Accounts, saved or shared lists, collection upload and owned-card marking.</li>
 <li>Picking colourless utility lands by strategy (needs Deckwright B-15).</li>
+<li>An Owned only budget preset (needs collection upload).</li>
 <li>Edits to Deckwright&rsquo;s code.</li>
 </ul>
-<h2>8. Open decisions for Jaime</h2>
+<h2>8. Decisions</h2>
 <ol>
-<li><strong>Refresh:</strong> decided, on demand through a skill (2026-11-09).</li>
-<li><strong>Price basis.</strong> The cheapest paper non-foil USD printing (TCGplayer market via Scryfall), or a different basis.</li>
-<li><strong>Colourless utility staples.</strong> My proposal: Reliquary Tower, Rogue&rsquo;s Passage, and War Room in one or two colours. Swap or extend.</li>
-<li><strong>Budget presets.</strong> $0, $25, $100, $500 and no cap, as in the feature request, or your own.</li>
+<li><strong>Refresh:</strong> on demand through a skill (Jaime, 2026-11-09).</li>
+<li><strong>Price basis:</strong> cheapest tournament-legal paper non-foil printing (Jaime, 2026-11-09).</li>
+<li><strong>Colourless utility staples:</strong> from research only; none until the research task delivers (Jaime, 2026-11-09).</li>
+<li><strong>Budget presets:</strong> $25, $100, $500 and no cap; $0 becomes Owned only with collection upload (Jaime, 2026-11-09).</li>
 </ol>
 </article>
 
 <footer>
-  <p>Draft for Jaime's review, 2026-11-09. Source: my-lib/runtime/deliverables/261109-mana-base-guide/SPEC.md</p>
+  <p>Approved by Jaime, 2026-11-09. Source: my-lib/runtime/deliverables/261109-mana-base-guide/SPEC.md</p>
   <p class="mono">Internal &middot; Pvragon &middot; built 2026-11-09</p>
 </footer>
 
