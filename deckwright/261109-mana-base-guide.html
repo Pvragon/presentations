@@ -426,7 +426,8 @@ function craft(D, o) {
   // an upgrade keeps every land you own that this craft would pick anyway, so it only ever replaces weaker lands (review round 2)
   if (o.bracket4 && C['Ancient Tomb']) land('Ancient Tomb', 'bracket 4: two mana on turn 1');
   const anyOk = n => { const c = C[n]; return cols.length >= 2 && (/^1\.1 /.test(c.tier) || (c.cond && c.cond !== 'tribe' && c.cond !== 'other' && o.share && (o.share[c.cond] || 0) >= RULES.cond_share) || (cols.length >= 3 && /^1b\.5 /.test(c.tier))); };
-  const allowed = n => dualRank(C[n].tier) <= RULES.dual_ceiling * 10 + 0.5 || (/^3\.\d+ /.test(C[n].tier) && cols.length >= RULES.tapped_min_colours);
+  const basicsOk = n => C[n].cycle !== 'Gathering Place cycle' || !o.owned_counts || ownedBasics >= 8;   // makes colour only with a basic: needs a deck that runs basics (review round 4)
+  const allowed = n => basicsOk(n) && dualRank(C[n].tier) <= RULES.dual_ceiling * 10 + 0.5 || (/^3\.\d+ /.test(C[n].tier) && cols.length >= RULES.tapped_min_colours);
   for (const n of [...g('any').filter(anyOk), ...g('duals').filter(allowed)]) if (owned.has(n)) land(n, 'already in your deck, and the guide picks it');
   for (const n of g('any')) {
     const c = C[n];
@@ -436,7 +437,7 @@ function craft(D, o) {
     else if (c.cond) skipped.push([n, o.share ? 'too few of your spells meet its condition' : 'needs a decklist to judge its condition']);
   }
   // untapped or cheaply conditional lands only (Jaime's rule 3), except Triomes in four or five colours (Jaime, 2026-11-09: they fix enough to earn the tap)
-  const duals = g('duals').filter(n => dualRank(C[n].tier) <= RULES.dual_ceiling * 10 + 0.5 || (/^3\.\d+ /.test(C[n].tier) && cols.length >= RULES.tapped_min_colours));
+  const duals = g('duals').filter(n => basicsOk(n)).filter(n => dualRank(C[n].tier) <= RULES.dual_ceiling * 10 + 0.5 || (/^3\.\d+ /.test(C[n].tier) && cols.length >= RULES.tapped_min_colours));
   if (cols.length < (D.rules.fetch_min_colours || 3)) for (const n of duals) land(n, 'makes two or more of your colours');
   else {
     // three or more colours: deckwright_manabase.tune._choose, cover the largest shortfall first (ties: list order)
@@ -599,7 +600,8 @@ function craftBox() {
     (() => { const nb = U.buy.filter(([n]) => D.cards[n].land).reduce((a, [, q]) => a + q, 0), nc = U.cut.reduce((a, [, q]) => a + q, 0);
       const before = res.lands_in_list, after = before - nc + nb;
       return `<div class="mb-copy"><button type="button" class="vbtn" data-copy="buy">Copy buy list</button><button type="button" class="vbtn" data-copy="cut">Copy cut list</button><button type="button" class="vbtn" data-copy="both">Copy both</button></div>` +
-        `<p class="note">Cut ${nc} land${nc === 1 ? '' : 's'}, add ${nb}: your ${before} lands become ${after}.` +
+        `<p class="note">Cut ${nc} land${nc === 1 ? '' : 's'}, add ${nb}: your ${before} lands become ${after}.` + (() => { const rb = U.buy.filter(([n]) => !D.cards[n].land).reduce((a, [, q]) => a + q, 0), net = after - before + rb;
+          return net > 0 ? ` To stay at 100 cards, cut ${net} nonland card${net === 1 ? '' : 's'} (${rb ? rb + ' rock' + (rb === 1 ? '' : 's') + ' added' : 'the extra lands'}).` : net < 0 ? ` That frees ${-net} slot${net === -1 ? '' : 's'} for spells.` : ''; })() +
         (crafted.filled ? ` ${crafted.filled} basic${crafted.filled === 1 ? ' stands' : 's stand'} in for utility lands the budget couldn't cover; swap them for utility lands from Step 4 when you can.` : '') +
         `</p></div>`; })() : '';
   const sum = U ? upHtml : crafted && crafted.identity === id ? `<div class="mb-res"><p><b>Your list is ready:</b> ${crafted.lands} lands and ${crafted.rocks} rocks for ${money(crafted.spent)}` +
@@ -626,14 +628,16 @@ function shortNote() {   // say plainly when a craft misses a colour target (rev
   const lc = Object.values(LIST).reduce((a, q) => a + q, 0);
   const over = Object.entries(res.requirements).filter(([, n]) => n > lc).map(([c]) => `${(res.req_by && res.req_by[c] ? res.req_by[c].card : 'one spell')} asks for ${res.requirements[c]} ${({W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green'})[c]} sources, more than ${lc} lands and rocks can give: treat it as a later play`);
   if (over.length) return `<p class="mb-warn">${over.join('; ')}.</p>`;
-  return miss.length ? `<p class="mb-warn">Still short of the source target: ${miss.join(', ')}. ${unspent ? 'The budget is not the limit: the lands you keep are already good ones, so closing the gap means cutting basics (keep 2 of each for check and fetch lands) for more lands that make two or three colours, a Triome or a tri-land.' : 'A bigger budget, or swapping a utility land for a land of that colour, closes it.'}</p>` : `<p class="mb-done">Every colour meets its source target.</p>`;
+  const basicsLeft = Object.entries(LIST).filter(([n]) => (D.cards[n] || {}).tier === 'Basic').reduce((a, [, q]) => a + q, 0), floor = 2 * Object.keys(res.requirements).length;
+  const why = budget == null || unspent ? (basicsLeft > floor ? 'The budget is not the limit: cutting more basics for lands that make two or three of your colours (a Triome or a tri-land if you accept tapped lands) closes it.' : `Not reachable with ${lc} lands and rocks without tapped lands: your basics are already at the minimum the check and fetch lands need.`) : 'A bigger budget closes it.';
+  return miss.length ? `<p class="mb-warn">Still short of the source target: ${miss.join(', ')}. ${why}</p>` : `<p class="mb-done">Every colour meets its source target.</p>`;
 }
 function cutWhy(n) {   // one plain reason per cut
   const c = D.cards[n];
   if (!c) return 'not judged by this guide';
   if (c.tier === 'Basic') return 'one of the lands you buy takes its slot';
-  if (c.tier === 'Tapped' || /^3\./.test(c.tier)) return 'it always enters tapped, which costs you a turn';
-  if (/^2\.[456]/.test(c.tier)) return 'it often enters tapped on the early turns';
+  if (c.tier === 'Tapped' || /^3\./.test(c.tier)) return c.job ? 'it always enters tapped; keep it if you rely on its effect' : 'it always enters tapped, which costs you a turn';
+  if (/^2\.[456]/.test(c.tier)) return 'it often enters tapped on turns 1 and 2';
   if (c.job) return 'a utility land your deck can do without; keep it if your plan relies on it';
   return 'a land that makes more of your colours, more often, takes its slot';
 }
@@ -697,7 +701,7 @@ function resultHtml() {
   const ramp = res.mode === 'estimate' ? `About ${R.ramp_target} is typical.` : `Your list has ${rs} ramp spells and rocks` + (rl > 0 ? ` (plus ${rl} land${rl === 1 ? '' : 's'} that ramp${R.cheap_excludes_lands ? ', which the land formula leaves out' : ' and count in the formula'})` : '') + `; about ${R.ramp_target} is typical.`;
   const head = res.mode === 'deck' && res.land_count ? `<p class="mb-head">Your deck has ${res.lands_in_list} lands; we suggest ${res.land_count}` +
     (res.lands_in_list > res.land_count ? `, so you could cut ${res.lands_in_list - res.land_count}.` : res.lands_in_list < res.land_count ? `, so add ${res.land_count - res.lands_in_list}.` : '.') +
-    ` To see what to buy and cut, use “Craft an upgrade for my deck” below.</p>` : '';
+    ` To see what to buy and cut, use “Craft an upgrade for my deck” below.</p>` + (res.lands_in_list > 1.5 * res.land_count ? `<p class="mb-warn">That is far more lands than a Commander deck runs: check the list was pasted in full.</p>` : '') : '';
   return `<div class="mb-res">${head}<dl>` +
     `<dt>Commander</dt><dd>${(res.commanders || []).map(e).join(' and ')} ${syms(res.identity === 'C' ? '' : res.identity)}</dd>` +
     `<dt>Lands</dt><dd><b>${res.land_count}</b>${res.mode === 'estimate' ? '' : ` (your list has ${res.lands_in_list} now)`}. <span class="note">${how}</span></dd>` +
