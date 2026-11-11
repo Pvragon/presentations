@@ -122,7 +122,7 @@ main{padding-bottom:72px}
 table.mbt{min-width:600px;table-layout:fixed} table.mbt td{vertical-align:top} table.mbt td.mana{white-space:nowrap} table.mbt td.sm{font-size:12.5px;color:var(--muted)}
 @media(max-width:700px){.mb-prog{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){table.mbt{min-width:0;table-layout:auto} table.mbt col{width:auto!important} table.mbt td.sm{font-size:11.5px}}
-h2.cat-h{margin:28px 0 0;scroll-margin-top:48px}</style></head><body><header class="top pad"><h1>Mana base guide</h1><p>Build a Commander mana base step by step, then look up any land or rock &middot; hover or tap any card name for its image and text</p></header><nav class="pad"></nav><main class="pad"><section id="builder"><h2>Build a mana base in six steps</h2><div id="mb" class="mb" data-src="mana-base-data/mana-data.json?v=40e3841a2c6e" data-index="mana-base-data/card-index.json?v=0b25d51328d5">
+h2.cat-h{margin:28px 0 0;scroll-margin-top:48px}</style></head><body><header class="top pad"><h1>Mana base guide</h1><p>Build a Commander mana base step by step, then look up any land or rock &middot; hover or tap any card name for its image and text</p></header><nav class="pad"></nav><main class="pad"><section id="builder"><h2>Build a mana base in six steps</h2><div id="mb" class="mb" data-src="mana-base-data/mana-data.json?v=fe4b2103e544" data-index="mana-base-data/card-index.json?v=0b25d51328d5">
 <p class="mb-lead">Paste your deck or pick your colours, then walk six steps. Each step shows only the cards for your colours, best first, with prices.
 <a href="#catalog">Jump to the card catalog</a>.</p>
 <ol class="mb-prog" role="list"></ol>
@@ -303,13 +303,21 @@ function setters(rules, cmds, spells) {   // the card behind each colour's requi
     if (seen.has(card)) continue; seen.add(card);
     const p = pips(card), gold = Object.keys(p).length > 1;
     for (const [c, n] of Object.entries(p)) if (c in req && !out[c]) {
-      const reactive = !cmds.includes(card) && card.cast_mv != null, mv = cmds.includes(card) ? card.mv : (reactive ? card.cast_mv : card.mv);
+      const reactive = !cmds.includes(card) && card.cast_mv != null, mv = readMv(rules, card, cmds);
       if (need(rules, mv, n, gold) === req[c]) out[c] = {card: card.name, cost: card.cost, reactive};
     }
   }
   return out;
 }
 function identityOf(cmds) { const s = new Set(cmds.flatMap(c => [...c.identity])); return [...COLOURS].filter(c => s.has(c)).join('') || 'C'; }
+// The turn a cost is read at: Deckwright's (commander at its mana value, a reactive instant later); with the switch on, an X spell
+// is read as if X were at least rules.x_spell_min_x (both expert reviews, 2026-11-10; Deckwright reads X as 0, B-17).
+function readMv(rules, card, cmds) {
+  let mv = cmds.includes(card) ? card.mv : (card.cast_mv == null ? card.mv : card.cast_mv);
+  const xs = ((card.cost || '').match(/\{X\}/g) || []).length;
+  if (xs && rules.x_spell_min_x) mv += xs * rules.x_spell_min_x;
+  return mv;
+}
 function requirements(rules, cmds, spells) {
   const ident = identityOf(cmds), out = {};
   for (const c of ident) if (c !== 'C') out[c] = 0;
@@ -318,7 +326,7 @@ function requirements(rules, cmds, spells) {
     if (seen.has(card)) continue; seen.add(card);
     const p = pips(card), gold = Object.keys(p).length > 1;
     for (const [c, n] of Object.entries(p)) if (c in out) {
-      const mv = cmds.includes(card) ? card.mv : (card.cast_mv == null ? card.mv : card.cast_mv);
+      const mv = readMv(rules, card, cmds);
       out[c] = Math.max(out[c], need(rules, mv, n, gold));
     }
   }
@@ -406,11 +414,17 @@ function craft(D, o) {
     if (C[n].land) keptUtil++; else rocks++; }
   for (const n of rockList) { if (rocks >= o.rock_target) break; if (take(n, 'rock')) rocks++; }
   // 2. land slots: the land count less the open utility slots and the basics floor
-  const floor = RULES.basics_per_colour * cols.length, U = o.open_slots;
+  // three or more colours: utility slots go to fixing while a colour is short (research: no spare sources there); leftovers become utility below
+  const floor = RULES.basics_per_colour * cols.length, U = cols.length >= 3 ? 0 : o.open_slots;
   let slots = o.land_count - Math.max(U, keptUtil) - floor;
   const land = (n, reason) => { if (slots <= 0 || list[n]) return; if (take(n, reason)) slots--; };
+  // an upgrade keeps every land you own that this craft would pick anyway, so it only ever replaces weaker lands (review round 2)
+  const anyOk = n => { const c = C[n]; return cols.length >= 2 && (/^1\.1 /.test(c.tier) || (c.cond && c.cond !== 'tribe' && c.cond !== 'other' && o.share && (o.share[c.cond] || 0) >= RULES.cond_share) || (cols.length >= 3 && /^1b\.5 /.test(c.tier))); };
+  const allowed = n => dualRank(C[n].tier) <= RULES.dual_ceiling * 10 + 0.5 || (/^3\.\d+ /.test(C[n].tier) && cols.length >= RULES.tapped_min_colours);
+  for (const n of [...g('any').filter(anyOk), ...g('duals').filter(allowed)]) if (owned.has(n)) land(n, 'already in your deck, and the guide picks it');
   for (const n of g('any')) {
     const c = C[n];
+    if (cols.length < 2) { skipped.push([n, 'single-colour decks: a basic does the same job']); continue; }
     if (/^1\.1 /.test(c.tier)) land(n, 'any colour, free');
     else if (c.cond && c.cond !== 'tribe' && c.cond !== 'other' && o.share && (o.share[c.cond] || 0) >= RULES.cond_share) land(n, `any colour for ${c.cond.replace('_', ' or ')} spells (${Math.round(o.share[c.cond] * 100)}% of yours)`);
     else if (c.cond) skipped.push([n, o.share ? 'too few of your spells meet its condition' : 'needs a decklist to judge its condition']);
@@ -427,7 +441,12 @@ function craft(D, o) {
     while (slots > 0 && pool.length) {
       const short = {}; cols.forEach(c => short[c] = Math.max(0, req[c] - have[c]));
       const tappedOk = n => !/^3\./.test(C[n].tier) || cols.some(c => ((C[n].src || {})[c] || 0) > 0 && short[c] > 1e-9);   // a tapped land only while it fixes a shortfall
-      const elig = pool.filter(tappedOk), ok = elig.filter(n => cost(n) <= Math.min(cap, left));
+      const fetchOk = n => { const f = C[n].fetches; if (!f || f.includes('basic')) return true;   // a fetch needs something left to fetch (tune._find_targets)
+        const share = m => (C[m].types || []).some(t => f.includes(t)) || (C[m].fetches && !C[m].fetches.includes('basic') && C[m].fetches.some(t => f.includes(t)));
+        const fetches = Object.keys(list).filter(m => C[m].fetches && !C[m].fetches.includes('basic') && share(m)).length;
+        const targets = Object.keys(list).filter(m => C[m].types && share(m)).length + RULES.basics_per_colour * f.filter(t => cols.includes(T2C[t])).length;
+        return fetches < targets; };
+      const elig = pool.filter(n => tappedOk(n) && fetchOk(n)), ok = elig.filter(n => cost(n) <= Math.min(cap, left));
       elig.filter(n => !ok.includes(n)).forEach(n => skipped.push([n, cost(n) > cap ? `over the ${fmt(cap)} per-card cap` : 'over the budget left']));
       pool = pool.filter(n => !elig.includes(n) || ok.includes(n));
       if (!ok.length) break;
@@ -568,7 +587,7 @@ function craftBox() {
 function cutWhy(n) {   // one plain reason per cut
   const c = D.cards[n];
   if (!c) return 'not in this guide: it enters tapped, makes only colourless, or another land does its job better';
-  if (c.tier === 'Basic') return 'a land that makes more of your colours takes its slot';
+  if (c.tier === 'Basic') return 'one of the lands you buy takes its slot';
   const w = (WHY[c.cycle] || '').replace(/^Tier \w+: /, '');
   return (/^3\./.test(c.tier) ? 'always enters tapped' : /^2\.[456]/.test(c.tier) ? 'often enters tapped early' : 'a better land in this guide takes its slot') + (w ? ` (${w.split('.')[0].toLowerCase()})` : '');
 }
@@ -631,7 +650,7 @@ function resultHtml() {
   return `<div class="mb-res">${head}<dl>` +
     `<dt>Commander</dt><dd>${(res.commanders || []).map(e).join(' and ')} ${syms(res.identity === 'C' ? '' : res.identity)}</dd>` +
     `<dt>Lands</dt><dd><b>${res.land_count}</b>${res.mode === 'estimate' ? '' : ` (your list has ${res.lands_in_list} now)`}. <span class="note">${how}</span></dd>` +
-    `<dt>Sources needed</dt><dd>${reqs || '–'} <span class="note">Lands and rocks that make each colour, set by your most demanding cost in it` +
+    `<dt>Sources needed</dt><dd>${reqs || '–'} <span class="note">${Object.keys(res.requirements || {}).length ? 'You want about ' + Object.entries(res.requirements).map(([c, n]) => `${n} lands and rocks that make ${({W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green'})[c]}`).join(', and ') + '. ' : ''}The highest need comes from your hardest-to-cast spell in each colour` +
     (res.req_by && Object.keys(res.req_by).length ? `: ${Object.entries(res.req_by).map(([c, x]) => `${syms(c)} ${e(x.card)} ${e(x.cost)}${x.reactive ? ' (an instant you hold up, so read at a later turn)' : ''}`).join('; ')}` : '') + `.</span></dd>` +
     `<dt>Utility lands</dt><dd>${R.utility_lands[0]} to ${R.utility_lands[1]}, inside the ${res.land_count}, not on top.</dd>` +
     `<dt>Ramp</dt><dd>${ramp}</dd>` + deckMana() + `</dl>` + w.map(x => `<p class="mb-warn">${x}</p>`).join('') +
@@ -725,7 +744,7 @@ function draw() {
   prog.innerHTML = S.map((s, i) => `<li><button type="button" data-s="${i}" class="${i < step ? 'done' : ''}"${i === step ? ' aria-current="step"' : ''}>` +
                                    `<b>Step ${i + 1}</b>${e(s.title)}</button></li>`).join('');
   const s = S[step];
-  let h = `<h3>Step ${step + 1} · ${e(s.title)}</h3>` + (s.explain || []).map(p => `<p>${e(p)}</p>`).join('') + (s.done ? `<p class="mb-done">${e(s.done)}</p>` : '') + (step > 0 && budget != null ? budgetFilter() : '');
+  let h = `<h3>Step ${step + 1} · ${e(s.title)}</h3>` + (s.explain || []).map(p => `<p>${e(p)}</p>`).join('') + (s.done ? `<p class="mb-done">${e(s.done)}</p>` : '') + (s.id === 'rocks' && res && res.mode === 'deck' && res.ramp_spells != null ? `<p class="note">Your deck already has ${res.ramp_spells} ramp spells and rocks${res.ramp_spells >= D.rules.ramp_target ? `, at or above the ${D.rules.ramp_target} target: rocks here are swaps, not additions.` : `; about ${D.rules.ramp_target - res.ramp_spells} more would reach ${D.rules.ramp_target}.`}</p>` : '') + (step > 0 && budget != null ? budgetFilter() : '');
   if (s.id === 'deck') h += deckTool() + craftBox() + `<h4 class="mb-or">Or pick your colours</h4>` + picker();
   else if (!I) h += `<p class="mb-err">Pick your colours in Step 1 first.</p>`;
   else {
@@ -767,8 +786,10 @@ function meters() {
     price += (c.price || 0) * q;
     if (c.land || c.other) { lands += q; if (c.ltier === '3') tapped += q; if (c.ltier === '2') cond += q; if (c.job) util += q; } else rocks += q;   // utility = the builder's Step 4 lands
     const es = window.ManaCraft.effSrc(D, n, LIST); for (const k of cols) src[k] += (es[k] || 0) * q; }
+  const TIPS = {Lands: 'Lands in your list against the land count from Step 1.', 'Utility lands': 'Lands with an extra effect; plan 6 to 10 of them inside the land count.',
+    Rocks: 'Mana rocks in your list.', 'Tapped lands': 'Lands that always enter tapped: each costs you a turn.', Conditional: 'Lands that enter untapped only once a condition is met.'};
   const row = (label, have, want, fmt, note) => { const r = want ? Math.min(1, have / want) : 0, cls = !want ? '' : have > want ? 'over' : have >= want ? 'ok' : '';
-    return `<span>${label}</span><span class="bar ${cls}"><i style="width:${(r * 100).toFixed(0)}%"></i></span><span>${fmt(have)}${want ? ' / ' + want : ''}${note ? ' ' + note : ''}</span>`; };
+    return `<span title="${e(TIPS[label] || 'Lands and rocks that make this colour. A rock or Exotic Orchard counts as part of a source (0.75 or 0.5), hence the fractions.')}">${label}</span><span class="bar ${cls}"><i style="width:${(r * 100).toFixed(0)}%"></i></span><span>${fmt(have)}${want ? ' / ' + want : ''}${note ? ' ' + note : ''}</span>`; };
   const int = x => String(x), dec = x => (Math.round(x * 100) / 100).toString();
   let h = row('Lands', lands, tgt ? tgt.land_count : 0, int, tgt ? '' : '<span class="note">(Step 1 sets it)</span>');
   for (const c of cols) h += row(`<i class="ms ms-${c.toLowerCase()}"></i> sources`, src[c], tgt && tgt.requirements[c] ? tgt.requirements[c] : 0, dec);
