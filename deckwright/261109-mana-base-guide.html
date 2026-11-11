@@ -458,7 +458,8 @@ function craft(D, o) {
       if (!ok.length) break;
       // untapped or conditional lands first while any of them covers a short colour; a tapped land only when none can (Jaime's rule 3)
       const es = n => effSrc(D, n, list);
-      const val = n => cols.reduce((a, c) => a + (es(n)[c] || 0) * (short[c] + 1e-3), 0);
+      const offFetch = n => C[n].fetches && !C[n].fetches.includes('basic') && C[n].fetches.some(t => !cols.includes(T2C[t]));   // finds a basic type outside your colours
+      const val = n => cols.reduce((a, c) => a + (es(n)[c] || 0) * (short[c] + 1e-3), 0) * (offFetch(n) ? 0.9 : 1);
       const covers = n => cols.some(c => (es(n)[c] || 0) > 0 && short[c] > 1e-9);
       // fair share: on a budget, an untapped land counts as affordable only within the money left per slot left, so cheap tapped
       // fixing (tri-lands, Thriving, gain lands) comes in before basics instead of two pricey duals and a pile of basics (review 2026-11-10)
@@ -487,6 +488,12 @@ function craft(D, o) {
   const raw = cols.map((c, i) => (tot ? (dem[i] || (o.demand ? 0 : 1)) / tot : 1 / cols.length) * nBasics);
   const base = raw.map(Math.floor); let rest = nBasics - base.reduce((a, b) => a + b, 0);
   raw.map((x, i) => [x - Math.floor(x), i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]).forEach(([, i]) => { if (rest > 0) { base[i]++; rest--; } });
+  if (o.owned) {   // an upgrade: each basic goes to the colour furthest below its need (tune._basics), so no colour is starved (review round 4)
+    const need0 = {}, have0 = {}; cols.forEach(c => { need0[c] = (o.requirements || {})[c] || RULES.default_need; have0[c] = 0; });
+    for (const [m, q] of Object.entries(list)) { const s2 = effSrc(D, m, list); for (const c of cols) have0[c] += (s2[c] || 0) * q; }
+    cols.forEach((c, i) => base[i] = 0);
+    for (let k = 0; k < nBasics; k++) { const i = cols.map((c, j) => [need0[c] - have0[c], j]).sort((a, b) => b[0] - a[0] || a[1] - b[1])[0][1]; base[i]++; have0[cols[i]] += 1; }
+  }
   cols.forEach((c, i) => { if (base[i] > 0) { list[BASIC[c]] = base[i]; why[BASIC[c]] = 'basic'; } });   // basics are not charged to the budget: every player has them
   const src = {}; cols.forEach(c => src[c] = 0);
   for (const [n, q] of Object.entries(list)) for (const c of cols) src[c] += ((C[n].src || {})[c] || 0) * q;
@@ -518,6 +525,20 @@ function craft(D, o) {
     list[BASIC[c]] = (list[BASIC[c]] || 0) + 1; why[BASIC[c]] = 'basic'; src[c] += 1; open--; filledOpen++; }
   for (const c of cols) src[c] = 0;
   for (const [m, q] of Object.entries(list)) { const s2 = effSrc(D, m, list); for (const c of cols) src[c] += (s2[c] || 0) * q; }   // final sources, fetches in list context
+  // 7. an upgrade never lowers a colour: while one sits below where the deck started, a bought utility land of another colour becomes its basic
+  if (o.before) for (let guard = 0; guard < 20; guard++) {
+    const s3 = {}; cols.forEach(c => s3[c] = 0);
+    for (const [m, q] of Object.entries(list)) { const e2 = effSrc(D, m, list); for (const c of cols) s3[c] += (e2[c] || 0) * q; }
+    const low = cols.find(c => s3[c] + 1e-9 < (o.before[c] || 0)); if (!low) break;
+    // first move a basic from the colour with the most to spare over where it started; failing that, give back a bought land without this colour
+    const spare = cols.filter(h => h !== low && (list[BASIC[h]] || 0) > 0 && s3[h] - 1 + 1e-9 >= (o.before[h] || 0)).sort((x, y) => (s3[y] - o.before[y]) - (s3[x] - o.before[x]))[0];
+    if (spare) { if (--list[BASIC[spare]] === 0) delete list[BASIC[spare]]; list[BASIC[low]] = (list[BASIC[low]] || 0) + 1; why[BASIC[low]] = 'basic'; continue; }
+    const swap = Object.keys(list).filter(m => C[m].land && C[m].tier !== 'Basic' && !owned.has(m) && !(effSrc(D, m, list))[low]).sort((x, y) => (C[x].job ? 0 : 1) - (C[y].job ? 0 : 1) || (C[y].price || 0) - (C[x].price || 0))[0];
+    if (!swap) break;
+    left += C[swap].price || 0; delete list[swap]; list[BASIC[low]] = (list[BASIC[low]] || 0) + 1; why[BASIC[low]] = 'basic';
+  }
+  for (const c of cols) src[c] = 0;
+  for (const [m, q] of Object.entries(list)) { const s2 = effSrc(D, m, list); for (const c of cols) src[c] += (s2[c] || 0) * q; }
   const spent = Object.entries(list).filter(([n]) => C[n].tier !== 'Basic').reduce((a, [n, q]) => a + cost(n) * q, 0);   // what you would buy
   return {list, why, skipped, open_slots: open, filled_open: filledOpen, sources: src, spent, lands: Object.entries(list).filter(([n]) => C[n].land).reduce((a, [, q]) => a + q, 0), rocks};
 }
@@ -626,7 +647,8 @@ function doCraft() {
   const up = useRes && res.mode === 'deck' && res.counts;   // an upgrade: the deck's own cards are free, its rocks and utility lands stay
   const unl = up ? Object.entries(res.counts).filter(([n]) => !D.cards[n] && IDX && IDX.find(n) && IDX.find(n).spell === false) : [];
   if (unl.length) o.land_count -= unl.reduce((a, [, q]) => a + q, 0);   // lands the guide doesn't list keep their slots: not judged, the player's call
-  if (up) { o.owned = Object.keys(res.counts); o.owned_counts = res.counts; o.keep = o.owned.filter(n => D.cards[n] && (!D.cards[n].land || D.cards[n].job) && D.cards[n].tier !== 'Basic' && D.cards[n].tier !== 'Tapped'); }   // tapped utility lands are not kept by default
+  if (up) { o.owned = Object.keys(res.counts); o.owned_counts = res.counts;
+    o.before = {}; for (const c of id) o.before[c] = 0; for (const [n, q] of Object.entries(res.counts)) { if (!D.cards[n]) continue; const s0 = window.ManaCraft.effSrc(D, n, res.counts); for (const c of id) o.before[c] += (s0[c] || 0) * q; } o.keep = o.owned.filter(n => D.cards[n] && (!D.cards[n].land || D.cards[n].job) && D.cards[n].tier !== 'Basic' && D.cards[n].tier !== 'Tapped'); }   // tapped utility lands are not kept by default
   const r = window.ManaCraft.craft(D, o);
   LIST = {...r.list}; for (const [n, q] of unl) LIST[n] = q; store.set('mb-list', JSON.stringify(LIST));
   const basics = Object.entries(r.list).filter(([n]) => D.cards[n].tier === 'Basic');
