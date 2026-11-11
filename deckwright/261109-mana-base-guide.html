@@ -548,7 +548,7 @@ function craftBox() {
   const U = crafted && crafted.identity === id && crafted.upgrade;
   const li = xs => xs.map(([n, q]) => `<li>${q > 1 ? q + '× ' : ''}${e(n)}${D.cards[n] && D.cards[n].tier !== 'Basic' ? ' · ' + money(D.cards[n].price) : ''}</li>`).join('');
   const upHtml = U ? `<div class="mb-res mb-up"><p><b>Your upgrade:</b> buy ${U.buy.filter(([n]) => D.cards[n].tier !== 'Basic').length} cards for ${money(U.buyCost)}, cut ${U.cut.reduce((a, [, q]) => a + q, 0)} from your deck, keep ${U.keep}.</p>` +
-    `<div class="mb-cols"><div><h5>Buy</h5><ul>${li(U.buy) || '<li>Nothing</li>'}</ul></div><div><h5>Cut from your deck</h5><ul>${li(U.cut) || '<li>Nothing</li>'}</ul></div></div>` +
+    `<div class="mb-cols"><div><h5>Buy</h5><ul>${li(U.buy) || '<li>Nothing</li>'}</ul></div><div><h5>Cut from your deck</h5><ul>${U.cut.map(([n, q, w]) => `<li>${q > 1 ? q + '× ' : ''}${e(n)}${w ? `<br><span class="note">${e(w)}</span>` : ''}</li>`).join('') || '<li>Nothing</li>'}</ul></div></div>` +
     (() => { const nb = U.buy.filter(([n]) => D.cards[n].land).reduce((a, [, q]) => a + q, 0), nc = U.cut.reduce((a, [, q]) => a + q, 0);
       return `<p class="note">${nc === nb ? 'Swap them one for one.' : nc > nb ? `You cut ${nc} lands and add ${nb}.` : `You add ${nb} lands and cut ${nc}.`}` +
         (crafted.filled ? ` ${crafted.filled} basic${crafted.filled === 1 ? ' stands' : 's stand'} in for utility lands the budget couldn't cover; swap them for utility lands from Step 4 when you can.` : '') +
@@ -558,11 +558,19 @@ function craftBox() {
     (crafted.filled ? `<p>${crafted.filled} basic${crafted.filled === 1 ? ' stands' : 's stand'} in for utility lands your budget couldn't cover: swap them for Step 4 picks when you can.</p>` : '') +
     (crafted.skipped.length ? `<details><summary>Left out because of your budget (${crafted.skipped.length})</summary><p class="note">No single card may cost more than a quarter of your budget, so one card can't eat it all.</p><ul>` +
       crafted.skipped.map(x => `<li>${e(x[0])} · ${money((D.cards[x[0]] || {}).price)} · ${e(/cap/.test(x[1]) ? 'more than a quarter of your budget' : 'the budget ran out')}</li>`).join('') + `</ul></details>` : '') + `</div>` : '';
-  return `<h4 class="mb-or">Craft it for me</h4><p>Builds the whole list from these steps under your budget: rocks, every free any-colour land, the conditional ones your deck qualifies for, untapped and cheaply conditional duals best first (in three or more colours, tapped duals too, Triomes first, only while a colour is short), utility lands, then basics by your pips. No card may take more than a quarter of the budget. Utility slots take the utility lands that make your colours first, then the research staples while your colours are covered; any left stay open for you.</p>` +
-    `<div class="mb-pick" role="group" aria-label="Budget">${P.map(btn).join('')}<label class="note">or $<input id="mb-bud" type="number" min="0" step="5" value="${custom ? budget : ''}" style="width:6rem"></label></div>` +
+  return `<h4 class="mb-or">${res && res.mode === 'deck' && res.counts ? 'Craft an upgrade for my deck' : 'Craft it for me'}</h4>` +
+    (res && res.mode === 'deck' && res.counts ? `<p class="mb-done">Fastest path: pick a budget, press the button, then copy the buy list from “Your list”.</p>` : '') + `<p class="note">Builds the whole list from these steps under your budget: rocks, every free any-colour land, the conditional ones your deck qualifies for, untapped and cheaply conditional duals best first (in three or more colours, tapped duals too, Triomes first, only while a colour is short), utility lands, then basics by your pips. No card may take more than a quarter of the budget. Utility slots take the utility lands that make your colours first, then the research staples while your colours are covered; any left stay open for you.</p>` +
+    `<div class="mb-pick" role="group" aria-label="Budget">${P.map(btn).join('')}<label class="note">or your budget: $<input id="mb-bud" type="number" min="0" step="5" value="${custom ? budget : ''}" style="width:6rem"></label></div>` +
     `<div class="mb-pick"><label class="note"><input type="checkbox" id="mb-b4"${bracket4 ? ' checked' : ''}> Include Game Changers (bracket 4: Mana Vault, Chrome Mox, Mox Diamond)</label> <label class="note">Utility slots <input id="mb-slots" type="number" min="0" max="10" value="${slots}" style="width:4.5rem"></label>` +
     `<button type="button" class="vbtn mb-craft"${id ? '' : ' disabled'}>${res && res.mode === 'deck' && res.counts && res.identity === id ? 'Craft an upgrade for my deck' : Object.keys(LIST).length ? 'Craft (replaces your list)' : 'Craft my mana base'}</button></div>` +
     (id ? '' : '<p class="note">Paste a deck or pick your colours first.</p>') + sum;
+}
+function cutWhy(n) {   // one plain reason per cut
+  const c = D.cards[n];
+  if (!c) return 'not in this guide: it enters tapped, makes only colourless, or another land does its job better';
+  if (c.tier === 'Basic') return 'a land that makes more of your colours takes its slot';
+  const w = (WHY[c.cycle] || '').replace(/^Tier \w+: /, '');
+  return (/^3\./.test(c.tier) ? 'always enters tapped' : /^2\.[456]/.test(c.tier) ? 'often enters tapped early' : 'a better land in this guide takes its slot') + (w ? ` (${w.split('.')[0].toLowerCase()})` : '');
 }
 function doCraft() {
   const id = ident(); if (!id || !D.identities[id]) return;
@@ -582,7 +590,7 @@ function doCraft() {
     const isLand = n => (D.cards[n] && D.cards[n].land) || (IDX && IDX.find(n) && IDX.find(n).spell === false);
     const have = res.counts, buy = [], cut = [], keep = [];
     for (const [n, q] of Object.entries(r.list)) { const h = have[n] || 0; if (q > h) buy.push([n, q - h]); if (h) keep.push([n, Math.min(q, h)]); }
-    for (const [n, h] of Object.entries(have)) { if (!isLand(n) && !D.cards[n]) continue; const q = r.list[n] || 0; if (h > q) cut.push([n, h - q]); }
+    for (const [n, h] of Object.entries(have)) { if (!isLand(n) && !D.cards[n]) continue; const q = r.list[n] || 0; if (h > q) cut.push([n, h - q, cutWhy(n)]); }
     crafted.upgrade = {buy, cut, keep: keep.reduce((a, [, q]) => a + q, 0),
                        buyCost: buy.filter(([n]) => D.cards[n].tier !== 'Basic').reduce((a, [n, q]) => a + (D.cards[n].price || 0) * q, 0)};
   }   // the summary names what the money left out; rule exclusions are in the steps
@@ -661,7 +669,10 @@ async function readDeck(names) {
   busy = 'Loading the card index…'; draw();
   try { await loadIndex(); } catch (err) { busy = ''; setRes({error: `Could not load the card index (${err.message}).`}); draw(); return; }
   busy = '';
-  try { const r = S1.analyse(deckText, IDX, D.rules, names); r.mode = 'deck'; setRes(r); }
+  try { const r = S1.analyse(deckText, IDX, D.rules, names); r.mode = 'deck';
+    if (r.commanders.length && !r.cards) { const X = D.rules.estimate_defaults || {avg_mv: 2.9, cheap: 19}, c = IDX.find(r.commanders[0]);   // only a commander: estimate
+      setRes({mode: 'estimate', commanders: r.commanders, avg_mv: X.avg_mv, cheap: X.cheap, ...S1.estimate(D.rules, c, X.avg_mv, X.cheap)}); }
+    else setRes(r); }
   catch (err) { setRes({error: err.message}); }
   draw();
 }
@@ -673,7 +684,7 @@ function estimate(name) {
   const rr = root.querySelector('.mb-res'); if (rr) rr.scrollIntoView({block: 'nearest', behavior: 'smooth'});
 }
 
-let hideOver = store.get('mb-hide') === '1';
+let hideOver = store.get('mb-hide') !== '0';   // on by default: a budget is always set (review round 2)
 function budgetFilter() {
   const cap = budget * 0.25;
   return `<label class="mb-filter"><input type="checkbox" id="mb-hide"${hideOver ? ' checked' : ''}> Hide cards over ${money(cap)} (a quarter of your ${money(budget)} budget)</label>`;
@@ -715,7 +726,7 @@ function draw() {
                                    `<b>Step ${i + 1}</b>${e(s.title)}</button></li>`).join('');
   const s = S[step];
   let h = `<h3>Step ${step + 1} · ${e(s.title)}</h3>` + (s.explain || []).map(p => `<p>${e(p)}</p>`).join('') + (s.done ? `<p class="mb-done">${e(s.done)}</p>` : '') + (step > 0 && budget != null ? budgetFilter() : '');
-  if (s.id === 'deck') h += deckTool() + `<h4 class="mb-or">Or pick your colours</h4>` + picker() + craftBox();
+  if (s.id === 'deck') h += deckTool() + craftBox() + `<h4 class="mb-or">Or pick your colours</h4>` + picker();
   else if (!I) h += `<p class="mb-err">Pick your colours in Step 1 first.</p>`;
   else {
     const gs = (s.groups || []).filter(g => I.groups[g.id] && I.groups[g.id].cards.length);
@@ -778,12 +789,13 @@ function exportText(fmt) {
 }
 function drawList() {
   if (!D) return; const m = meters(), open = lbar.getAttribute('aria-expanded') === 'true';
-  lbar.innerHTML = `<b>Your list</b> · ${m.n} card${m.n === 1 ? '' : 's'} · ${money(m.price)} · lands ${m.lands}${res && res.land_count ? ' / ' + res.land_count : ''} <span style="float:right">${open ? '▾' : '▴'}</span>`;
+  const UP = crafted && crafted.upgrade && crafted.identity === ident() ? crafted.upgrade : null;
+  lbar.innerHTML = (UP ? `<b>To buy: ${UP.buy.filter(([n]) => D.cards[n] && D.cards[n].tier !== 'Basic').length} cards, ${money(UP.buyCost)}</b> · whole list ${m.n} cards` : `<b>Your list</b> · ${m.n} card${m.n === 1 ? '' : 's'} · ${money(m.price)}`) + ` · lands ${m.lands}${res && res.land_count ? ' / ' + res.land_count : ''} <span style="float:right">${open ? '▾' : '▴'}</span>`;
   if (!open) return;
   const groups = new Map();
   for (const [n, q] of Object.entries(LIST)) { const s = stepOf(n), k = s ? `Step ${D.steps.indexOf(s) + 1} · ${s.title}` : 'Other'; if (!groups.has(k)) groups.set(k, []); groups.get(k).push([n, q]); }
   const items = [...groups.entries()].sort().map(([k, xs]) => `<h4>${e(k)}</h4><ul>` + xs.map(([n, q]) =>
-    `<li><span>${q}×</span><span>${e(n)}</span><span class="note">${money(((D.cards[n] || {}).price || 0) * q)}</span><button type="button" data-rm="${e(n)}" aria-label="Remove ${e(n)}">×</button></li>`).join('') + `</ul>`).join('');
+    `<li><span>${q}×</span><span>${e(n)}${res && res.counts && res.counts[n] ? ' <span class="btag">you own</span>' : D.cards[n] && D.cards[n].tier !== 'Basic' && res && res.counts ? ' <span class="bbuy">buy</span>' : ''}</span><span class="note">${money(((D.cards[n] || {}).price || 0) * q)}</span><button type="button" data-rm="${e(n)}" aria-label="Remove ${e(n)}">×</button></li>`).join('') + `</ul>`).join('');
   lbody.innerHTML = m.html + (items || '<p class="note">Nothing yet. Use Add in any step, or the + next to a card in the catalog.</p>') +
     `<div class="mbl-x"><select aria-label="Export format"><option value="tcg">TCGplayer Mass Entry</option><option value="mox">Moxfield</option><option value="buy">Buy list only (TCGplayer)</option><option value="text">Plain text by step</option></select>` +
     `<button type="button" class="vbtn" data-x="copy">Copy</button><button type="button" class="vbtn" data-x="dl">Download .txt</button>` +
@@ -833,11 +845,15 @@ root.addEventListener('input', ev => {
 });
 // card hover and tap for rows drawn after load (the page's own handlers bind only to rows present at load)
 const card = ev => ev.target.closest && ev.target.closest('.mb-panel a.card');
-root.addEventListener('mouseover', ev => { const a = card(ev); if (a && typeof show === 'function') show(a); });
-root.addEventListener('mouseout', ev => { const a = card(ev); if (a && typeof hide === 'function' && !a.contains(ev.relatedTarget)) hide(); });
-root.addEventListener('focusin', ev => { const a = card(ev); if (a && typeof show === 'function') show(a); });
-root.addEventListener('focusout', ev => { if (card(ev) && typeof hide === 'function') hide(); });
-root.addEventListener('click', ev => { const a = card(ev); if (a && matchMedia('(hover: none)').matches && typeof show === 'function') { ev.preventDefault(); show(a); } });
+const touch = () => matchMedia('(hover: none)').matches;   // phones send compatibility mouse events after a tap: ignore them there
+let tipFor = null;
+root.addEventListener('mouseover', ev => { const a = card(ev); if (a && !touch() && typeof show === 'function') show(a); });
+root.addEventListener('mouseout', ev => { const a = card(ev); if (a && !touch() && typeof hide === 'function' && !a.contains(ev.relatedTarget)) hide(); });
+root.addEventListener('focusin', ev => { const a = card(ev); if (a && !touch() && typeof show === 'function') show(a); });
+root.addEventListener('focusout', ev => { if (card(ev) && !touch() && typeof hide === 'function') hide(); });
+root.addEventListener('click', ev => { const a = card(ev); if (!a || !touch() || typeof show !== 'function') return;
+  ev.preventDefault(); if (tipFor === a) { hide(); tipFor = null; } else { show(a); tipFor = a; } });
+document.addEventListener('click', ev => { if (touch() && tipFor && !ev.target.closest('a.card') && !ev.target.closest('#tip')) { hide(); tipFor = null; } }, true);
 fetch(root.dataset.src).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(d => {
   if (!d.meta || Math.floor(d.meta.schema_version) !== SUPPORTED) throw new Error('data version ' + (d.meta && d.meta.schema_version));
   D = d; WHY = Object.fromEntries((d.cycles || []).map(x => [x.name, `${x.tier}: ${x.why}`])); root.querySelector('.mb-stamp').textContent = `Prices as of ${d.meta.prices_as_of}: ${d.meta.price_basis} Data built ${d.meta.built}.`;
