@@ -69,7 +69,11 @@ section#builder{position:relative;left:50%;width:min(1380px,calc(100vw - 32px));
 .mb-tabs{display:flex;gap:4px;align-items:flex-end;border-bottom:2px solid var(--line);margin:0 0 12px}
 .mb-tabs button{font:inherit;font-weight:700;padding:8px 16px;border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;background:var(--paper);color:var(--muted);cursor:pointer;margin-bottom:-2px}
 .mb-tabs button[aria-selected=true]{color:var(--ink);background:var(--wash);border-color:var(--line);border-bottom:2px solid var(--wash)}
-.mb-tablink{margin-left:auto;font-size:14px;padding:8px 4px}
+.mb-tablink{font-size:14px;padding:8px 4px}
+.mb-reset2{font:inherit;font-size:14px;padding:6px 12px;margin-bottom:4px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);cursor:pointer}
+.mb-save{margin-left:auto}
+.mb-reset{font:inherit;font-size:14px;padding:6px 12px;margin-bottom:4px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);cursor:pointer}
+.mb-reset.sure{border-color:var(--orange);background:var(--orange);color:#fff;font-weight:700}
 .mb-howv h4{color:var(--teal);margin:14px 0 4px} .mb-howv p{margin:6px 0}
 .mb-prog{list-style:none;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:0 0 12px;padding:0}
 .mb-prog button{width:100%;font:inherit;font-size:13px;line-height:1.25;text-align:left;padding:6px 8px;border:1px solid var(--line);border-top:4px solid var(--line);background:var(--paper);color:var(--muted);border-radius:6px;cursor:pointer;min-height:100%}
@@ -177,6 +181,7 @@ main{padding-bottom:84px}
  .mb-prog{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px} .mb-prog button{padding:3px 2px;font-size:11px;text-align:center;border-top-width:3px}
  .mb-prog button .lt,.mb-prog .lg{display:none} .mb-prog button b{font-size:13px} .mb-prog button .ct{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
  .mbl-bar .bt{display:none}
+ .mb-tabs{flex-wrap:wrap} .mb-reset2,.mb-reset{font-size:12px;padding:4px 8px}
  .mb-seg{grid-template-columns:1fr}
  .mb-two{grid-template-columns:1fr}
  .mb-cols{grid-template-columns:1fr}
@@ -198,7 +203,7 @@ main{padding-bottom:84px}
 }
 h2.cat-h{margin:28px 0 0;scroll-margin-top:48px}</style></head><body><header class="top pad"><h1>Mana base guide</h1><p>Build a Commander mana base step by step, then look up any land or rock &middot; hover or tap any card name for its image and text</p></header><nav class="pad"></nav><main class="pad"><section id="builder"><h2>Build your mana base</h2><div class="mb-app"><div id="mb" class="mb" data-src="mana-base-data/mana-data.json?v=d66ad9e6fd2b" data-index="mana-base-data/card-index.json?v=0b25d51328d5">
 <div class="mb-tabs" role="tablist"><button type="button" role="tab" data-tab="build" aria-selected="true">Build</button><button type="button" role="tab" data-tab="how" aria-selected="false">How it works</button>
-<a class="mb-tablink" href="#catalog">Card catalog ↓</a></div>
+<button type="button" class="mb-save mb-reset2" title="Download your deck, budget and picks as a file you can open later">Save build</button><label class="mb-reset2 mb-openf" title="Open a build you saved before">Open saved<input type="file" accept=".json,application/json" hidden></label><button type="button" class="mb-reset" title="Clear your deck, picks and settings and start again">Start over</button><a class="mb-tablink" href="#catalog">Card catalog ↓</a></div>
 <div class="mb-buildv">
 <ol class="mb-prog" role="list"></ol>
 <p class="mb-sr" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p><div class="mb-panel"><p class="note">Loading the card data…</p></div>
@@ -1299,6 +1304,25 @@ function setQty(n, q) {
   if (q > before && budget != null && chosenCost().buy > budget + 0.005) toast += ` · Now ${money(chosenCost().buy - budget)} over your budget.`;
   drawAll();
 }
+// Save build / Open saved: every builder setting in one small JSON file (Jaime, 2026-11-11)
+root.addEventListener('click', ev => {
+  if (!ev.target.closest('.mb-save')) return;
+  const keep = {}; try { Object.keys(localStorage).filter(k => k.startsWith('mb-')).forEach(k => { keep[k] = localStorage.getItem(k); }); } catch (x) {}
+  const blob = new Blob([JSON.stringify({app: 'mana-base-builder', v: 1, saved: new Date().toISOString(), store: keep}, null, 1)], {type: 'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `mana-base-${ident() || 'build'}-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove();
+});
+root.addEventListener('change', ev => {
+  const f = ev.target.closest('.mb-openf input'); if (!f || !f.files[0]) return;
+  f.files[0].text().then(t => { const d = JSON.parse(t); if (d.app !== 'mana-base-builder' || !d.store) throw new Error('not a saved build');
+    try { Object.keys(localStorage).filter(k => k.startsWith('mb-')).forEach(k => localStorage.removeItem(k)); Object.entries(d.store).forEach(([k, v]) => { if (k.startsWith('mb-')) localStorage.setItem(k, v); }); } catch (x) {}
+    location.reload(); }).catch(err => { toast = `That file isn't a saved build (${err.message}).`; draw(); });
+});
+root.addEventListener('click', ev => {   // Start over: a second click clears every builder setting saved in this browser (Jaime, 2026-11-11)
+  const r = ev.target.closest('.mb-reset'); if (!r) return;
+  if (!r.classList.contains('sure')) { r.classList.add('sure'); r.textContent = 'Click again to clear everything'; setTimeout(() => { r.classList.remove('sure'); r.textContent = 'Start over'; }, 4000); return; }
+  try { Object.keys(localStorage).filter(k => k.startsWith('mb-')).forEach(k => localStorage.removeItem(k)); } catch (x) {}
+  location.hash = ''; location.reload();
+});
 root.addEventListener('click', ev => {
   const t = ev.target.closest('[data-tab]'); if (t) { const how = t.dataset.tab === 'how';
     root.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', x === t)); root.querySelector('.mb-buildv').hidden = how; const hv = root.querySelector('.mb-howv'); hv.hidden = !how; if (how && D) hv.innerHTML = howHtml(); return; }
