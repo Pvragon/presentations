@@ -2,9 +2,9 @@
 # ---
 # name: nav_audit
 # summary: Lists prez pages that no navigation links to, so nothing published is unfindable. Exit 1 when any page is missing a card, or a category is missing from the home page. Pages that are deliberately unlisted go in scripts/nav-unlisted.txt.
-# version: 1.1.0
+# version: 1.1.1
 # created: 2026-11-09
-# last_updated: 2026-11-09
+# last_updated: 2026-11-15
 # maintainer: pvragon
 # ---
 """Usage: python3 scripts/nav_audit.py [repo_root] [--self-check]
