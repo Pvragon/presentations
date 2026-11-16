@@ -88,6 +88,8 @@ section#builder{position:relative;left:50%;width:min(1380px,calc(100vw - 32px));
 @keyframes mbp{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
 .mb-toast{flex-basis:100%;font-size:13px;color:var(--pass);font-weight:700;min-height:1.2em;margin:0}
 .mb-lead{font-size:16px;margin:10px 0 6px}
+.mb-ltf{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0} .mb-f1 tr[data-lt]:not([data-lt="1"]){display:none} .mb-f1b tr[data-lt]:not([data-lt="1b"]){display:none} .mb-f2 tr[data-lt]:not([data-lt="2"]){display:none} .mb-f3 tr[data-lt]:not([data-lt="3"]){display:none}
+.mb-aim{display:flex;gap:16px;align-items:center;margin:14px 0 8px} .mb-aimn{font-size:52px;line-height:1;color:var(--teal);font-weight:700} .mb-aimt{font-size:20px;font-weight:700;margin:0} .mb-aim .mb-lead{font-size:14px;margin:4px 0 0}
 .mb-how{margin:4px 0 10px} .mb-how summary{cursor:pointer;color:var(--teal);font-weight:700;font-size:14px} .mb-how ul{margin:4px 0;padding-left:20px;font-size:14px}
 .mb-tools{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0}
 .mb-rec{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:2px solid var(--pass);background:var(--pass);color:#fff;cursor:pointer}
@@ -201,7 +203,7 @@ main{padding-bottom:84px}
  .mb-chip{white-space:normal;max-width:100%;font-size:13px}
  .mb-checks li{grid-template-columns:1.4em 1fr} .mb-checks li .act{grid-column:1/-1;justify-content:flex-start}
 }
-h2.cat-h{margin:28px 0 0;scroll-margin-top:48px}</style></head><body><header class="top pad"><h1>Mana base guide</h1><p>Build a Commander mana base step by step, then look up any land or rock &middot; hover or tap any card name for its image and text</p></header><nav class="pad"></nav><main class="pad"><section id="builder"><h2>Build your mana base</h2><div class="mb-app"><div id="mb" class="mb" data-src="mana-base-data/mana-data.json?v=8f738ebdf8fe" data-index="mana-base-data/card-index.json?v=0b25d51328d5">
+h2.cat-h{margin:28px 0 0;scroll-margin-top:48px}</style></head><body><header class="top pad"><h1>Mana base guide</h1><p>Build a Commander mana base step by step, then look up any land or rock &middot; hover or tap any card name for its image and text</p></header><nav class="pad"></nav><main class="pad"><section id="builder"><h2>Build your mana base</h2><div class="mb-app"><div id="mb" class="mb" data-src="mana-base-data/mana-data.json?v=5c6e9ab1a0bc" data-index="mana-base-data/card-index.json?v=0b25d51328d5">
 <div class="mb-tabs" role="tablist"><button type="button" role="tab" data-tab="build" aria-selected="true">Build</button><button type="button" role="tab" data-tab="how" aria-selected="false">How it works</button>
 <button type="button" class="mb-save mb-reset2" title="Download your deck, budget and picks as a file you can open later">Save build</button><label class="mb-reset2 mb-openf" title="Open a build you saved before">Open saved<input type="file" accept=".json,application/json" hidden></label><button type="button" class="mb-reset" title="Clear your deck, picks and settings and start again">Start over</button><a class="mb-tablink" href="#catalog">Card catalog ↓</a></div>
 <div class="mb-buildv">
@@ -231,25 +233,37 @@ function place(el) {
   x = Math.min(Math.max(m, x), W - t.width - m); y = Math.max(m, y);
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
 }
-function show(el) {
+let face = 0;
+function show(el, f) {
+  // With window.TIP_FLIP, a two-image card shows one side at a time: click the name (desktop) or tap again (touch) to flip.
+  if (cur !== el) face = 0; if (f !== undefined) face = f;
   cur = el;
   const c = CARDS[el.dataset.card]; if (!c) return;
-  const imgs = (c.img || []).map(u => `<img src="${u}" alt="">`).join('');
-  const faces = (c.faces || []).map(f =>
+  const flip = flippable(el);   // faces beyond the image count are page notes (fit reviews); they always show
+  const imgList = flip ? [c.img[face]] : (c.img || []), faceList = flip ? [c.faces[face], ...c.faces.slice(c.img.length)] : (c.faces || []);
+  const imgs = imgList.map(u => `<img src="${u}" alt="">`).join('');
+  const faces = faceList.map(f =>
     `<div class="face"><div><span class="cost">${esc(f.cost)}</span><span class="nm">${esc(f.name)}</span></div>` +
     `<div class="ty">${esc(f.type)}</div><div class="tx">${esc(f.text)}</div>` +
     (f.pt ? `<div class="pt">${esc(f.pt)}</div>` : '') + `</div>`).join('');
-  tip.innerHTML = `<div class="tw">` + (imgs ? `<div class="imgs${(c.img || []).length > 1 ? ' two' : ''}">${imgs}</div>` : '') + `<div class="txc">${faces}</div></div>`;
+  const hint = flip ? `<div class="flip">Side ${face + 1} of ${c.img.length} · ${matchMedia('(hover: none)').matches ? 'tap again' : 'click or press F'} to flip</div>` : '';
+  tip.innerHTML = `<div class="tw">` + (imgs ? `<div class="imgs${imgList.length > 1 ? ' two' : ''}">${imgs}</div>` : '') + `<div class="txc">${hint}${faces}</div></div>`;
   tip.style.display = 'block'; place(el);
   tip.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { if (cur === el) place(el); }, {once: true}); });
 }
+function flippable(el) { const c = CARDS[el.dataset.card]; return !!(window.TIP_FLIP && c && (c.img || []).length > 1 && (c.faces || []).length >= c.img.length); }
 const hide = () => { tip.style.display = 'none'; cur = null; };
 document.querySelectorAll('a.card').forEach(a => {
   a.addEventListener('mouseenter', () => show(a)); a.addEventListener('mouseleave', hide);
   a.addEventListener('focus', () => show(a)); a.addEventListener('blur', hide);
-  a.addEventListener('click', e => { if (matchMedia('(hover: none)').matches) { e.preventDefault(); cur === a ? hide() : show(a); } });
+  a.addEventListener('click', e => {
+    const touch = matchMedia('(hover: none)').matches;
+    if (flippable(a) && cur === a && (!touch || face === 0)) { e.preventDefault(); show(a, (face + 1) % CARDS[a.dataset.card].img.length); return; }
+    if (touch) { e.preventDefault(); cur === a ? hide() : show(a); }
+  });
 });
 document.addEventListener('scroll', () => { if (cur) place(cur); }, {passive: true});
+document.addEventListener('keydown', e => { if ((e.key === 'f' || e.key === 'F') && cur && flippable(cur)) show(cur, (face + 1) % CARDS[cur.dataset.card].img.length); });
 
 
 const vsel = [0, 0], subsel = {};   // top view, its sub-view; each top view remembers its own sub-view
@@ -875,8 +889,8 @@ function chosenCost() {   // what the player buys: cards beyond what their deck 
 // ---------- Start screen ----------
 function tierTip() {
   const T = D.tiers || []; if (!T.length) return '';
-  return `<span class="mb-tipw"><button type="button" class="mb-tipb" aria-label="What the tiers mean">?</button><span class="mb-tipc" role="tooltip"><b>What the tiers mean</b><ul>` +
-    T.map(t => `<li>${e(t.label)}: ${e(t.explain)}</li>`).join('') + `</ul><p>The small number under a land's name is its tier and rank (1.3 is the third-best kind of tier 1 land). Rocks are ranked R.1, R.2 and so on.</p></span></span>`;
+  return `<span class="mb-tipw"><button type="button" class="mb-tipb" aria-label="How soon each kind comes in untapped">?</button><span class="mb-tipc" role="tooltip"><b>How soon each kind comes in untapped</b><ul>` +
+    T.map(t => `<li>${e(t.explain)}</li>`).join('') + `</ul><p>The list is best first: the # column is the rank.</p></span></span>`;
 }
 function cheapTip() {
   const H = D.rules.cheap_help; if (!H) return '';
@@ -975,17 +989,25 @@ function startScreen() {
 }
 // ---------- step screens ----------
 let hideOver = store.get('mb-hide') === '1';   // off by default since 2026-11-11: the ★ marks show what fits the budget
+let ltf = 'all';
+const LT = {'1': 'always untapped', '1b': 'untapped with a cost', '2': 'untapped once a condition is met', '3': 'never untapped'}, LTO = ['1', '1b', '2', '3'];
+function ltBar(P) {
+  const stars = P ? Object.keys(P.list).filter(n => stepIdOf(n) === 'duals') : [], by = {};
+  for (const n of stars) { const t = (D.cards[n] || {}).ltier; if (LT[t]) by[t] = (by[t] || 0) + P.list[n]; }
+  const k = Object.values(by).reduce((a, b) => a + b, 0);
+  const I = D.identities[ident()], have = new Set((((I && I.groups.duals) || {}).cards || []).map(n => (D.cards[n] || {}).ltier));
+  const line = k ? `<p class="note">Your ${k} ★: ${LTO.filter(t => by[t]).map(t => `${by[t]} ${LT[t]}`).join(', ')}.</p>` : '';
+  const btn = (v, lab) => `<button type="button" class="vbtn${ltf === v ? ' pri' : ''}" data-ltf="${v}" aria-pressed="${ltf === v}">${e(lab)}</button>`;
+  return line + `<div class="mb-ltf" role="group" aria-label="Show">${btn('all', 'All')}${LTO.filter(t => have.has(t)).map(t => btn(t, LT[t].charAt(0).toUpperCase() + LT[t].slice(1))).join('')}</div>`;
+}
 function whyStar(n) {   // one short reason a card carries its star (expert test 2026-11-11: no per-card reason)
   const c = D.cards[n] || {}, st = stepIdOf(n);
-  if (owned(n)) return c.land && window.ManaCraft.isColourless(D, n) ? 'you own it, and it ranks: kept, though like every colourless land it takes a colour source\'s place' : 'you own it, and it ranks: kept';
+  if (owned(n)) return c.land && window.ManaCraft.isColourless(D, n) ? 'like every colourless land, it takes a colour source\'s place' : '';
   { const P = plan(), w = P && P.r && P.r.why[n]; if (w && /^in place of your /.test(w)) return w; }   // an upgrade's untapped trade (Jaime, 2026-11-14)
   if (c.cycle === 'Fetch lands') return 'finds the typed lands in your list, so it counts for several colours';
-  if (c.cycle === 'Triomes') return 'three of your colours in one land';
-  if (st === 'any') return 'makes every colour';
-  if (st === 'utility') return /\{[WUBRG]\}/.test(c.taps || '') ? 'replaces a basic of its colour, so the effect is free' : c.tier === 'Staple' ? 'research staple: worth a slot in almost any deck' : 'top pick for its job that fits your budget';
-  if (st === 'rocks') return /Core/.test(c.cycle || '') ? 'core rock for every deck' : 'best rock for your colours that fits your aim';
-  if (st === 'duals') return c.ltier === '1' ? 'untapped from turn 1, the best kind your budget allows' : 'the best of what is left for your colours at this budget';
-  return 'part of the recommended build';
+  if (c.cycle === 'Triomes' || st === 'any') return '';
+  if (st === 'utility') return /\{[WUBRG]\}/.test(c.taps || '') ? 'replaces a basic of its colour, so the effect is free' : c.tier === 'Staple' ? 'research staple: worth a slot in almost any deck' : '';
+  return '';
 }
 function table(names, P) {
   const capv = hideOver && budget != null ? budget * 0.25 : Infinity, all = names.length, rank = new Map(names.map((n, i) => [n, i]));
@@ -998,23 +1020,32 @@ function table(names, P) {
   let last = 0, shown = 0;
   const maxRec = Math.max(-1, ...names.filter(x => P && P.list[x]).map(x => rank.get(x)));
   const whyNot = n => { const c = D.cards[n] || {}, st = stepIdOf(n);   // why a card that ranks above a star has none (user test 2026-11-11)
-    if (over(n)) return `over your ${money(budget * 0.25)} per-card limit`;
+    if (over(n)) return '';
     if (st === 'rocks') return `not in your aim of ${countIn(P.list, 'rocks')} rocks: the ★ ones give more for the money${ident().length === 1 && /Medallion/.test(Object.keys(P.list).join(' ')) ? ' (in one colour a Medallion, which makes your spells cheaper, comes before a 4-mana rock)' : ''}`;
     if (st === 'utility') { const m = /\{([WUBRG])\}/.exec(c.taps || '');
-      if (m && ident().length >= 3) return `it would replace one of your few ${LOW[m[1]]} basics: the build keeps about two basics of each colour for fetch and check lands. Swap it in yourself if you have a spare`;
-      return 'the ★ picks fit your colours and budget better'; }
-    return 'the ★ picks cover your colours better at this budget'; };
-  const rows = names.map(n => { const i = shown++, g = grp(n), div = P && g !== last && g > 0 ? `<tr class="mb-div"><td colspan="6">${e(DIV[g])}</td></tr>` : ''; last = g; const c = D.cards[n] || {}, rec = P && P.list[n];
-    const cl = P && !rec && LIST[n] && !owned(n) && c.land && stepIdOf(n) === 'utility' && window.ManaCraft.isColourless(D, n) ? addedLine(n) : P && !rec && !LIST[n] && !over(n) && c.land && stepIdOf(n) === 'utility' && !((D.identities[ident()].groups.ucol || {cards: []}).cards.includes(n)) && window.ManaCraft.isColourless(D, n) ? costLine(n) : null;   // not under Make your colours (tester 2026-11-14)   // every colourless land shows its cost (request 9.2)
+      if (m && ident().length >= 3) return `would replace one of your few ${LOW[m[1]]} basics, kept for fetch and check lands`;
+      return ''; }
+    return ''; };
+  const sid = names.length ? stepIdOf(names[0]) : '', kindCol = ['duals', 'utility', 'rocks'].includes(sid), cols = kindCol ? 7 : 6;
+  const rows = names.map(n => { const i = shown++, g = grp(n), div = P && g !== last && g > 0 ? `<tr class="mb-div"><td colspan="${cols}">${e(DIV[g])}</td></tr>` : ''; last = g; const c = D.cards[n] || {}, rec = P && P.list[n];
+    const cl = P && !rec && LIST[n] && !owned(n) && c.land && stepIdOf(n) === 'utility' && window.ManaCraft.isColourless(D, n) ? addedLine(n) : P && !rec && !LIST[n] && !over(n) && c.land && stepIdOf(n) === 'utility' && !((D.identities[ident()].groups.ucol || {cards: []}).cards.includes(n)) && window.ManaCraft.isColourless(D, n) ? costLine(n) : null;
     const tags = (owned(n) ? `<span class="btag" title="Your pasted deck runs this">you own${owned(n) > 1 ? ' ×' + owned(n) : ''}</span>` : '');
-    const tierLine = c.tier && c.tier !== 'Basic' ? `<span class="mb-tier" title="${e(WHY[c.cycle] || '')}">${e(/^R\.\d+ /.test(c.tier) ? c.tier.replace(/^R\.\d+ /, '') : c.tier)}${c.cond ? ` · ${e(COND[c.cond] || '')}${res && res.share && res.share[c.cond] != null ? ` · ${Math.round(res.share[c.cond] * 100)}% of your deck` : ''}` : ''}</span>` : '';
+    const kind = c.job && c.job !== 'Research staple' ? c.job : c.tier && c.tier !== 'Basic' ? c.tier.replace(/^(R\.|Utility\.)?\d+b?(\.\d+)? /, '') : '';
+    const cond = c.cond ? `${COND[c.cond] || ''}${res && res.share && res.share[c.cond] != null ? `: ${Math.round(res.share[c.cond] * 100)}% of your deck` : ''}` : '';
+    const reason = rec ? whyStar(n) : cl ? '' : P && !LIST[n] && (rank.get(n) < maxRec || (stepIdOf(n) === 'rocks' && /Core/.test(c.cycle || '') && countIn(P.list, 'rocks'))) ? whyNot(n) : '';
+    const note = fit20([cl, cond, c.when, reason]);
     const q = LIST[n] || 0, isBasic = c.tier === 'Basic';
     const ctl = isBasic ? `<span class="mb-qty"><button type="button" data-minus="${e(n)}" aria-label="One fewer ${e(n)}">−</button><b>${q}</b><button type="button" data-plus="${e(n)}" aria-label="One more ${e(n)}">+</button></span>`
                         : `<button type="button" class="mb-add" data-add="${e(n)}" aria-pressed="${q > 0}">${q ? '✓ Added' : 'Add'}</button>`;
-    return div + `<tr class="${rec ? 'rec' : ''}"><td class="n">${i + 1}</td><td>${rec ? '<span class="mb-star" title="Recommended for your deck and budget">★</span>' : ''}${cardLink(n)}${tags}${tierLine}${rec ? `<span class="mb-tier">★ ${e(whyStar(n))}</span>` : cl ? `<span class="mb-tier">${LIST[n] ? '' : 'No ★: '}${e(cl)}</span>` : P && !LIST[n] && (rank.get(n) < maxRec || (stepIdOf(n) === 'rocks' && /Core/.test(c.cycle || '') && countIn(P.list, 'rocks'))) ? `<span class="mb-tier">No ★: ${e(whyNot(n))}</span>` : ''}</td><td class="mana">${c.taps ? sym(c.taps) : /Medallion/.test(c.cycle || '') ? '<span class="note">cost −1</span>' : '<span class="note">varies</span>'}</td><td class="sm">${e(c.when || '')}</td><td class="n"${budget != null && (c.price || 0) > budget * 0.25 && !isBasic && !owned(n) ? ` title="Over a quarter of your budget, so never recommended"><span class="note">${money(c.price)}</span>` : `>${owned(n) && !isBasic ? '<span class="note">owned</span>' : money(c.price)}`}</td><td>${ctl}</td></tr>`; }).join('');
+    return div + `<tr class="${rec ? 'rec' : ''}" data-lt="${e(c.ltier || '')}"><td class="n">${i + 1}</td><td>${rec ? '<span class="mb-star" title="Recommended for your deck and budget">★</span>' : ''}${cardLink(n)}${tags}</td>${kindCol ? `<td class="sm"><span class="mb-kind">${e(kind)}</span></td>` : ''}<td class="mana">${c.taps ? sym(c.taps) : /Medallion/.test(c.cycle || '') ? '<span class="note">cost −1</span>' : '<span class="note">varies</span>'}</td><td class="sm mb-note">${e(note)}</td><td class="n"${budget != null && (c.price || 0) > budget * 0.25 && !isBasic && !owned(n) ? ` title="Over a quarter of your budget, so never recommended"><span class="note">${money(c.price)}</span>` : `>${owned(n) && !isBasic ? '<span class="note">owned</span>' : money(c.price)}`}</td><td>${ctl}</td></tr>`; }).join('');
   return (hid ? `<p class="note">${hid} card${hid === 1 ? '' : 's'} over a quarter of your budget hidden.</p>` : '') +
-    `<div class="scroll"><table class="mbt"><colgroup><col class="c-n" style="width:2.2rem"><col style="width:30%"><col class="c-m" style="width:4.6rem"><col><col style="width:4.8rem"><col style="width:6.6rem"></colgroup>` +
-    `<thead><tr><th class="n">#</th><th>Card ${tierTip()}</th><th class="th-m">Makes</th><th>Choose when</th><th class="n">Price</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    `<div class="scroll"><table class="mbt"><colgroup><col class="c-n" style="width:2.2rem"><col style="width:${kindCol ? 24 : 30}%">${kindCol ? '<col style="width:6.5rem">' : ''}<col class="c-m" style="width:4.6rem"><col><col style="width:4.8rem"><col style="width:6.6rem"></colgroup>` +
+    `<thead><tr><th class="n">#</th><th>Card</th>${kindCol ? `<th>Kind ${sid === 'duals' ? tierTip() : ''}</th>` : ''}<th class="th-m">Makes</th><th>Notes</th><th class="n">Price</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function fit20(parts) {
+  const out = []; let w = 0;
+  for (const x of parts.filter(Boolean).map(y => String(y).trim())) { const k = x.split(/\s+/).length; if (w + k > 20 && out.length) continue; out.push(x); w += k; }
+  return out.map(x => x.charAt(0).toUpperCase() + x.slice(1)).map(x => /[.!?)]$/.test(x) ? x : x + '.').join(' ');
 }
 function group(g, entry, P) {
   if (g.id === 'ucls') { const I0 = D.identities[ident()], st = new Set(((I0.groups.staples || {}).cards) || []); if (st.size) entry = {...entry, cards: entry.cards.filter(n => !st.has(n))}; if (!entry.cards.length) return ''; }   // each card in one list only (user test 2026-11-11: War Room twice)
@@ -1150,9 +1181,13 @@ function fillBasics() {   // each basic goes to the colour furthest below its so
     else { const pool = bs.filter(x => LIST[x] > 2).length ? bs.filter(x => LIST[x] > 2) : bs.filter(x => LIST[x] > 0), b = pool.sort((x, y) => gap(x) - gap(y))[0]; if (!b) break; LIST[b]--; if (!LIST[b]) delete LIST[b]; } }
   save(); toast = `Basics set: ${landsIn(LIST)} of ${landTarget()} lands.`; drawAll();
 }
+function aimBlock(s, lead) {
+  const a = aim(s.id);
+  return `<div class="mb-aim"><b class="mb-aimn">${e(a.label)}</b><div><p class="mb-aimt">Your deck needs ${e(a.label)} ${e(s.need)}</p><p class="mb-lead note">${e(lead || '')}</p></div></div>`;
+}
 function stepHeader(s, i, S) {
   const a = aim(s.id);
-  const chip = s.id === 'basics' ? `${landsIn(LIST)} of ${landTarget()} lands` : `chosen ${a.n} · aim ${a.label}`;
+  const chip = s.id === 'basics' ? `${landsIn(LIST)} of ${landTarget()} lands` : `${a.n} of ${a.label}`;
   return `<div class="mb-sh"><h3>Step ${i} of ${S.length - 1} · ${e(s.title)}</h3><span class="mb-chip${a.met ? ' met' : ''}${lastAddStep === s.id ? ' pulse' : ''}" title="How many you have chosen in this step, against what it asks for">${chip}</span>${budget != null ? (() => { const P = plan(), S2 = STEPS(), later = S2.slice(S2.findIndex(x => x.id === s.id)).map(x => x.id);   // this step and the ones after it
       const ahead = P ? later.reduce((a2, sid) => a2 + recMissing(sid, P).reduce((t, [n, q]) => t + ((D.cards[n] || {}).tier === 'Basic' ? 0 : Math.max(0, q - Math.max(LIST[n] || 0, owned(n))) * ((D.cards[n] || {}).price || 0)), 0), 0) : 0;
       return `<span class="mb-chip${chosenCost().buy > budget + 0.005 ? '' : ' met'}" title="What you have spent on cards to buy, against your budget. Basics are not counted.">${money(chosenCost().buy)} of ${money(budget).replace('.00', '')}${ahead > 0.005 && chosenCost().buy + ahead <= budget + 0.005 ? ` · ★ still to come: ${money(ahead)} (fits)` : ahead > 0.005 ? ` · ★ still to come: ${money(ahead)} (over)` : ''}</span>`; })() : ''}<p class="mb-toast" aria-live="polite">${e(toast)}</p></div>`;
@@ -1161,10 +1196,8 @@ function stepScreen(s, i, S) {
   const id = ident(), I = D.identities[id], P = plan();
   const ua0 = s.id === 'utility' && P ? aim('utility') : null, lead = ua0 && ua0.lo < D.rules.utility_lands[0] ? `Lands with an extra effect. For your colours and budget, aim for ${ua0.lo || 'none'}${ua0.lo ? ` (up to ${D.rules.utility_lands[1]})` : ''}: the other slots go to lands that make your colours.` : s.lead;
   const empty0 = P && s.id !== 'basics' && s.id !== 'utility' && countIn(P.list, s.id) === 0 && !countIn(LIST, s.id);
-  let h = stepHeader(s, i, S) + `<p class="mb-lead">${e(empty0 ? `${s.title}: nothing to add for your deck.` : lead || '')}</p>` +
+  let h = stepHeader(s, i, S) + (empty0 || !s.need ? `<p class="mb-lead">${e(empty0 ? `${s.title}: nothing to add for your deck.` : lead || '')}</p>` : aimBlock(s, lead)) +
     (s.how && s.how.length ? `<details class="mb-how"><summary>How to choose</summary><ul>${s.how.map(x => `<li>${e(x)}</li>`).join('')}</ul><p class="note">More in the How it works tab.</p></details>` : '');
-  if (s.id === 'rocks') { const rp = P ? countIn(P.list, 'rocks') : 0;
-    h += `<p class="note">Your aim: ${plural(rp, 'rock')}${isDeck() && res.ramp_spells != null ? `. Your deck's other ramp brings the total to about ${D.rules.ramp_target}, the usual number` : `, which with a typical deck's ramp creatures and spells makes about ${D.rules.ramp_target} ramp pieces`}.</p>`; }
   const miss = recMissing(s.id, P), k = miss.reduce((a, [n, q]) => a + q - (LIST[n] || 0), 0);
   const tools = [];
   if (s.id === 'basics' && Math.max(basicCount(LIST), basicSlots()) < basicsMin()) h += `<p class="mb-warn">Your ${searchersOf().slice(0, 3).join(', ')}${searchersOf().length > 3 ? ' and more' : ''} can only find basic lands: keep about ${basicsMin()} basics, but your other lands leave room for ${Math.max(0, basicSlots())}. ${roomBtn()}</p>`;
@@ -1174,17 +1207,17 @@ function stepScreen(s, i, S) {
       return `<span class="mb-done">${countIn(P.list, s.id) ? (out.length ? `All recommended picks are in, except ${out.join(', ')}, which you took out ✓` : 'All recommended picks are in ✓') : 'Nothing recommended here for your deck and budget.'}</span>`; })());
   if (budget != null && s.id !== 'basics' && (s.groups || []).some(g => I.groups[g.id] && I.groups[g.id].cards.length) && !(P && !countIn(P.list, s.id) && !countIn(LIST, s.id))) tools.push(`<label class="mb-filter note"><input type="checkbox" id="mb-hide"${hideOver ? ' checked' : ''}> Hide cards over ${money(budget * 0.25)}</label>`);
   h += `<div class="mb-tools">${tools.join('')}</div>`;
+  if (s.id === 'duals') h += ltBar(P);
   if (s.id === 'any' || s.id === 'duals' || s.id === 'utility') h += colourLine();
   if (s.id === 'duals' && ident().length >= 3) h += `<p class="note">Fetch lands can get ★ over duals ranked above them: each fetch finds any typed land in your list (shocks, Triomes, original duals), so it counts as a source of every colour those lands make.</p>`;
   if (s.id === 'duals' && ident().length >= 4) h += `<p class="note">In four or more colours, three-colour lands (Triomes, tri-lands) rank above two-colour lands, even cheap untapped ones like pain lands: one land covers three of your colours. ${isDeck() ? 'Lands you own are kept when they rank. ' : ''}So ★ goes to fewer, broader lands.</p>`;
   if (s.id === 'duals' && P && countIn(LIST, 'duals') > countIn(P.list, 'duals')) h += `<p class="note">You have ${countIn(LIST, 'duals') - countIn(P.list, 'duals')} more than the recommended ${countIn(P.list, 'duals')}: fine, but each extra takes a basic's place in Basics.</p>`;
   if (s.id === 'utility' && P && aim('utility').lo < D.rules.utility_lands[0]) h += `<p class="mb-warn">At your colours and budget the recommended picks use ${plural(aim('utility').lo, 'utility land')}: the other slots go to lands that make your colours. A coloured utility land (like Otawara) only replaces a basic of its colour, and your build has few basics left. A colourless one costs a colour source: each shows what it would cost.</p>`;
-  if (P && s.id !== 'basics') h += `<p class="mb-legend"><span class="mb-star">★</span> recommended for your deck and budget, best first${isDeck() ? ', including cards you own that are worth keeping' : ''}.${budget != null ? ` Cards over ${money(budget * 0.25)} (a quarter of your budget) are never ★: their prices are greyed.` : ''}</p>`;
   const none = P && s.id !== 'basics' && s.id !== 'utility' && countIn(P.list, s.id) === 0 && !countIn(LIST, s.id);
   if (none && (s.groups || []).some(g => I.groups[g.id] && I.groups[g.id].cards.length)) h += `<p class="mb-done">Nothing needed here for your deck and budget: go on to the next step.${ident().length === 1 ? ' In one colour every basic already makes your colour, so these lands add nothing.' : ''}</p>`;
   const gs = starFirst(s, P);
-  h += !gs.length ? `<p class="note">${e(s.empty || `Nothing in this step for ${I.label}.`)}</p>` :
-       none ? `<details class="fold mb-grp"><summary>Show these cards anyway <span class="fsub">${gs.reduce((a, g) => a + I.groups[g.id].cards.length, 0)} cards</span></summary>${gs.map(g => group(g, I.groups[g.id], P)).join('')}</details>` : gs.map(g => group(g, I.groups[g.id], P)).join('');
+  h += (s.id === 'duals' ? `<div class="mb-ltwrap mb-f${ltf}">` : '') + (!gs.length ? `<p class="note">${e(s.empty || `Nothing in this step for ${I.label}.`)}</p>` :
+       none ? `<details class="fold mb-grp"><summary>Show these cards anyway <span class="fsub">${gs.reduce((a, g) => a + I.groups[g.id].cards.length, 0)} cards</span></summary>${gs.map(g => group(g, I.groups[g.id], P)).join('')}</details>` : gs.map(g => group(g, I.groups[g.id], P)).join('')) + (s.id === 'duals' ? '</div>' : '');
   h += `<p class="mb-legend">Makes: <i class="ms ms-c"></i> colourless · <i class="ms ms-any"></i> any colour. Hover or tap a card name to see the card.</p>`;
   return h;
 }
@@ -1329,8 +1362,8 @@ function costLine(n) {   // the row line for a colourless land not yet in the li
   const k = clCost(n), r = x => Math.round(x * 10) / 10, on = k.star ? 'on the ★ build' : 'on your list';
   const names = cs => cs.map(c => LOW[c]).join(', ').replace(/, ([a-z]+)$/, ' and $1');
   if (!k.c) return `no basic left to replace ${on}: it would take the place of a land that makes colour`;
-  const head = `−1 ${LOW[k.c]} source ${on} (${r(k.have)} to ${r(k.after)} of ${k.need}${k.last ? `, one of your last ${LOW[k.c]} basics` : ''})`;
-  if (k.short.length) return `${head}; ${names(k.short)} ${k.short.length > 1 ? 'are' : 'is'} already below target there`;
+  const head = `−1 ${LOW[k.c]} source ${on} (${r(k.have)} to ${r(k.after)} of ${k.need}${k.last && !k.short.length ? `, one of your last ${LOW[k.c]} basics` : ''})`;
+  if (k.short.length) return `${head}; ${names(k.short)} already short`;
   return head + (k.ok ? ', colours stay at target' : '');
 }
 function addedLine(n) {   // the same cost once the player has added it: the panel bars move only when the basics are in (tester 2026-11-14)
@@ -1495,7 +1528,7 @@ function draw() {
   store.set('mb-step', step); store.set('mb-ident', id); store.set('mb-path', path);
   const fa = document.activeElement, keep = fa && root.contains(fa) && (fa.dataset.c ? `[data-c="${fa.dataset.c}"]` : fa.dataset.s ? `[data-s="${fa.dataset.s}"]` : fa.dataset.budget ? `[data-budget="${fa.dataset.budget}"]` : fa.dataset.add ? `[data-add="${CSS.escape(fa.dataset.add)}"]` : fa.dataset.plus ? `[data-plus="${CSS.escape(fa.dataset.plus)}"]` : fa.dataset.minus ? `[data-minus="${CSS.escape(fa.dataset.minus)}"]` : fa.dataset.path ? `[data-path="${fa.dataset.path}"]` : null);
   prog.innerHTML = S.map((s, i) => { const a = i && ok && s.id !== 'review' ? aim(s.id) : null;
-    const ct = !i ? (ok ? 'set' : '') : s.id === 'review' ? '' : !ok ? '' : s.id === 'basics' ? `${landsIn(LIST)}/${landTarget()} lands` : `${a.n}/${a.label}`;
+    const ct = !i ? (ok ? 'set' : '') : s.id === 'review' ? '' : !ok ? '' : s.id === 'basics' ? `${landsIn(LIST)} of ${landTarget()} lands` : `${a.n} of ${a.label}`;
     return `<li><button type="button" data-s="${i}" class="${(i === 0 && ok) || (a && a.met) ? 'met' : ''}"${i === step ? ' aria-current="step"' : ''}${!ok && i ? ' disabled' : ''}><b>${i ? `<span class="lg">Step </span>${i}` : 'Start'}</b><span class="lt">${e(i ? s.short || s.title : 'Your deck')}</span>${ct ? `<span class="ct">${ct}</span>` : ''}</button></li>`; }).join('');
   const s = S[step];
   panel.innerHTML = step === 0 ? `<div class="mb-sh"><h3>Start · your deck and budget</h3><p class="mb-toast" aria-live="polite">${e(toast)}</p></div><p class="mb-lead">${e(D.steps[0].lead)}</p>` + startScreen()
@@ -1515,7 +1548,7 @@ function meters() {
   const id = ident(), cols = id ? [...id] : [], tgt = res && res.land_count && !res.error && res.identity === id ? res : null;
   const lands = landsIn(LIST), src = sources(LIST), lt = landTarget();
   const row = (label, have, want, fmtf, tip) => { const r = want ? Math.min(1, have / want) : 0, cls = !want ? '' : have > want && /Lands/.test(label) ? 'over' : have + 1e-9 >= want ? 'ok' : '';
-    return `<span title="${e(tip)}">${label}</span><span class="bar ${cls}"><i style="width:${(r * 100).toFixed(0)}%"></i></span><span>${fmtf(have)}${want ? ' / ' + want : ''}</span>`; };
+    return `<span title="${e(tip)}">${label}</span><span class="bar ${cls}"><i style="width:${(r * 100).toFixed(0)}%"></i></span><span>${fmtf(have)}${want ? ' of ' + want : ''}</span>`; };
   const dec = x => (Math.round(x * 10) / 10).toString();
   let h = row('Lands', lands, lt, String, 'Lands in your mana base against your land count.');
   const tapped = Object.entries(LIST).reduce((a, [n, q]) => a + (D.cards[n] && D.cards[n].ltier === '3' ? q : 0), 0);
@@ -1525,9 +1558,9 @@ function meters() {
 function drawList() {
   if (!D) return; const id = ident(), ok = id && D.identities[id], S = STEPS(), cost = chosenCost(), n = Object.values(LIST).reduce((a, b) => a + b, 0);
   const cur = S[step], a = ok && step > 0 && cur.id !== 'review' ? aim(cur.id) : null;
-  lbar.innerHTML = `<b>Your mana base</b><span class="bt"> ·</span> ${a ? (cur.id === 'basics' ? '' : `${e(cur.short || cur.title)} ${a.n}/${a.label} · `) : ''}lands ${landsIn(LIST)}/${landTarget()} · ${money(cost.buy)} <span style="float:right">${panel2.classList.contains('open') ? '▾' : '▴'}</span>`;
+  lbar.innerHTML = `<b>Your mana base</b><span class="bt"> ·</span> ${a ? (cur.id === 'basics' ? '' : `${e(cur.short || cur.title)} ${a.n} of ${a.label} · `) : ''}lands ${landsIn(LIST)} of ${landTarget()} · ${money(cost.buy)} <span style="float:right">${panel2.classList.contains('open') ? '▾' : '▴'}</span>`;
   if (!ok) { lbody.innerHTML = `<h4 class="mbl-t">Your mana base</h4><p class="note">Start with your deck, commander or colours. Your picks, targets and buy list collect here.</p>`; return; }
-  const stepsRows = S.slice(1, -1).map((s, j) => { const x = aim(s.id); const lab = s.id === 'basics' ? `${x.n}` : `${x.n} / ${x.label}`;
+  const stepsRows = S.slice(1, -1).map((s, j) => { const x = aim(s.id); const lab = s.id === 'basics' ? `${x.n}` : `${x.n} of ${x.label}`;
     return `<button type="button" data-s="${j + 1}" class="${j + 1 === step ? 'cur' : ''}">${j + 1}. ${e(s.short || s.title)}</button><span class="${x.met ? 'met' : ''}">${x.met ? '✓ ' : ''}${lab}</span>`; }).join('');
   const groups = new Map();
   for (const [nm, q] of Object.entries(LIST)) { const k = stepTitle(stepIdOf(nm)); if (!groups.has(k)) groups.set(k, []); groups.get(k).push([nm, q]); }
@@ -1613,6 +1646,7 @@ root.addEventListener('click', ev => {
   if (b.classList.contains('mb-craft')) { doCraft(); return; }
   if (b.classList.contains('mb-walk')) { startWalk(); return; }
   if (b.classList.contains('mb-fill')) { fillBasics(); return; }
+  if (b.dataset.ltf != null) { ltf = b.dataset.ltf; drawAll(); return; }
   if (b.dataset.recall) { const P = plan(), skip = [];   // stays inside the budget: hand picks may already have spent part of it (user test 2026-11-11)
     const hi = b.dataset.recall === 'utility' ? D.rules.utility_lands[1] : Infinity;
     for (const [n, q] of recMissing(b.dataset.recall, P)) { if (countIn(LIST, b.dataset.recall) >= hi) { skip.push(n); continue; } const c = D.cards[n] || {}, extra = Math.max(0, q - Math.max(LIST[n] || 0, owned(n))) * (c.tier === 'Basic' ? 0 : (c.price || 0));
