@@ -901,11 +901,24 @@ function pathForm() {
     `<button type="button" data-c="${c}" aria-pressed="${pick.has(c)}"><i class="ms ms-${c.toLowerCase()}"></i>${NAMES[c]}</button>`).join('') + `</div>` +
     (ident() && !D.identities[ident()] ? `<p class="mb-warn">No list for that combination yet.</p>` : '');
 }
+// a budget change with a list in place: the new spend against the new budget, at once (expert test 2026-11-14)
+function spendNow() {
+  if (budget == null || !Object.keys(LIST).length) return '';
+  const c = chosenCost().buy, over = c - budget;
+  return over > 0.005 ? `Your current picks cost ${money(c)}: ${money(over)} over this budget. Review's Remove buttons take out the cards to drop first, or press ${isDeck() ? 'Upgrade my deck for me' : 'Build it for me'} to rebuild at this budget.`
+                      : `Your current picks cost ${money(c)} of this budget.`;
+}
+function budgetNews() {   // the short form for the toast; the Start line under the budget buttons gives the full one
+  if (budget == null || !Object.keys(LIST).length) return '';
+  const c = chosenCost().buy, over = c - budget;
+  return `Budget now ${money(budget).replace('.00', '')}: your picks cost ${money(c)}${over > 0.005 ? `, ${money(over)} over` : ', within it'}.`;
+}
 function budgetRow() {
   const P = [25, 100, 500, null], custom = !P.includes(budget);
   const btn = v => `<button type="button" data-budget="${v === null ? 'none' : v}" aria-pressed="${budget === v}">${v === null ? 'No cap' : money(v).replace('.00', '')}</button>`;
   return `<h4 class="mb-h4">Your budget</h4><div class="mb-pick" role="group" aria-label="Budget">${P.map(btn).join('')}<label class="note">or $<input id="mb-bud" type="number" min="0" step="5" value="${custom ? budget : ''}" style="width:6rem;font:inherit;padding:4px"></label></div>` +
-    `<p class="note">${isDeck() ? 'For the cards you buy: cards your deck already has are free.' : 'Basics are not counted: most players own them.'} No single card may take more than a quarter of the budget.</p>`;
+    `<p class="note">${isDeck() ? 'For the cards you buy: cards your deck already has are free.' : 'Basics are not counted: most players own them.'} No single card may take more than a quarter of the budget.</p>` +
+    (spendNow() ? `<p class="${chosenCost().buy > (budget || 0) + 0.005 ? 'mb-warn' : 'note'}">${e(spendNow())}${chosenCost().buy > (budget || 0) + 0.005 ? ' <button type="button" class="vbtn" data-goto="review">Go to Review</button>' : ''}</p>` : '');
 }
 function resultHtml() {
   if (busy) return `<p class="note">${e(busy)}</p>`;
@@ -921,6 +934,10 @@ function resultHtml() {
   const nums = [`<div class="mb-num"><b>${landTarget()}</b><span>lands${useRes && res.mode === 'deck' ? ` (your deck: ${res.lands_in_list})` : useRes ? '' : ' (typical)'}</span></div>`]
     .concat(Object.entries(req).map(([c, n]) => `<div class="mb-num"><b>${syms(c)} ${n}</b><span>${LOW[c]} sources</span></div>`))
     .concat([(() => { const ua = plan() ? aim('utility') : null; return `<div class="mb-num"><b>${ua ? ua.label : `${R.utility_lands[0]}–${R.utility_lands[1]}`}</b><span>utility lands${ua && ua.lo < R.utility_lands[0] ? ' (your colours need the rest)' : ''}</span></div>`; })()]);
+  // the step aims, from the same aim() the steps and the step strip read (testers 2026-11-14: Start showed 6 and 22, the steps 7 and 21)
+  const P0 = plan(), aims = P0 ? D.steps.filter(x => ['any', 'duals', 'rocks'].includes(x.id)).map(x => [x, aim(x.id)]).filter(([, a]) => a.rec > 0) : [];
+  const aimTiles = aims.map(([x, a]) => `<div class="mb-num"><b>${a.label}</b><span>${e(x.short || x.title)} aim</span></div>`).join('');
+  const aimNote = P0 ? `<p class="note">Step aims for ${budget == null ? 'no budget cap' : `a ${money(budget).replace('.00', '')} budget`} and ${landTarget()} lands: they change when you change either.</p>` : '';
   const who = useRes ? `${(res.commanders || []).map(e).join(' and ')} ${syms(res.identity)}` : `${syms(id)} ${e(D.identities[id].label)}`;
   const ask = isDeck() && res.lands_in_list !== res.land_count;
   const warn = []; if (useRes && res.unresolved && res.unresolved.length) warn.push(`Not found, so left out: ${res.unresolved.map(e).join(', ')}.`);
@@ -930,9 +947,9 @@ function resultHtml() {
   if (hi.length) warn.push(`${hi.map(([c, n]) => `${n} ${LOW[c]}`).join(' and ')} sources is near or above what ${landTarget()} lands can give: that only means those spells may come a turn or two late. The final step explains.`);
   const why = useRes ? `<details class="mb-how"><summary>Where these numbers come from</summary>${detailHtml()}</details>` : `<p class="note">Standard numbers. Paste your deck or name your commander for numbers fitted to it.</p>`;
   const blocked = ask && !landChoice;
-  return `<div class="mb-res"><p class="mb-done" style="margin:0">Ready: ${who}</p><div class="mb-nums">${nums.join('')}</div>${why}` + warn.map(x => `<p class="mb-warn">${x}</p>`).join('') +
+  return `<div class="mb-res"><p class="mb-done" style="margin:0">Ready: ${who}</p><div class="mb-nums">${nums.join('')}${aimTiles}</div>${aimNote}${why}` + warn.map(x => `<p class="mb-warn">${x}</p>`).join('') +
     (ask ? `<div class="mb-pick" role="radiogroup" aria-label="Land count"><b>Your deck runs ${res.lands_in_list} lands; the formula suggests ${res.land_count}${res.land_count < res.lands_in_list ? ', because your deck has a lot of ramp and cheap card draw' : res.land_count > res.lands_in_list ? ', because your spells cost more on average' : ''}. Build with:</b>` +
-      `<span class="mb-warn" style="display:${landChoice ? 'none' : 'inline'};margin:0 6px">Choose one to continue:</span><label><input type="radio" name="mb-lc" value="formula"${landChoice === 'formula' ? ' checked' : ''}> the suggested ${res.land_count} (most decks)</label><label><input type="radio" name="mb-lc" value="mine"${landChoice === 'mine' ? ' checked' : ''}> my ${res.lands_in_list} (if your deck ramps with lands or you want the extra)</label></div>` : '') +
+      `<span class="mb-warn" style="display:${landChoice ? 'none' : 'inline'};margin:0 6px">Choose one to continue:</span><label><input type="radio" name="mb-lc" value="formula"${landChoice === 'formula' ? ' checked' : ''}> the suggested ${res.land_count} (most decks)</label><label><input type="radio" name="mb-lc" value="mine"${landChoice === 'mine' ? ' checked' : ''}> my ${res.lands_in_list} ${res.lands_in_list > res.land_count ? '(if your deck ramps with lands or you want the extra land drops)' : '(if you trust your ramp and want the spell slots)'}</label></div>` : '') +
     `</div>` + budgetRow() +
     `<div class="mb-go"><button type="button" class="pri mb-craft"${blocked ? ' disabled' : ''}>${isDeck() ? 'Upgrade my deck for me' : 'Build it for me'}</button><button type="button" class="sec mb-walk"${blocked ? ' disabled' : ''}>Walk the steps myself →</button></div>` +
     `<p class="note">${blocked ? '<b class="mb-warn" style="display:inline">Choose a land count above first.</b> ' : ''}${isDeck() ? 'Upgrade builds the best mana base your budget allows from your deck, then shows what to buy and what to cut.' : 'Build it for me fills every step and takes you to your buy list.'} Walking the steps shows the same picks, marked ★, for you to choose from.</p>` +
@@ -949,7 +966,8 @@ function detailHtml() {
   const rs = res.ramp_spells == null ? res.ramp : res.ramp_spells;
   return `<dl><dt>Lands</dt><dd>${how}</dd><dt>Sources</dt><dd>The number of lands and rocks that make each colour, set by your hardest spell to cast in it` +
     (res.req_by && Object.keys(res.req_by).length ? `: ${Object.entries(res.req_by).sort((a, b) => 'WUBRG'.indexOf(a[0]) - 'WUBRG'.indexOf(b[0])).map(([c, x]) => `${syms(c)} ${e(x.card)} ${e(x.cost)}${x.reactive ? ' (held up, so read at a later turn)' : ''}`).join('; ')}` : '') + `.</dd>` +
-    `<dt>Utility</dt><dd>${R.utility_lands[0]} to ${R.utility_lands[1]} lands with an extra effect, inside the land count.</dd>` +
+    `<dt>Utility</dt><dd>${(() => { const ua = plan() ? aim('utility') : null;
+      return ua && ua.lo < R.utility_lands[0] ? `${ua.lo} to ${R.utility_lands[1]} lands with an extra effect, inside the land count. The usual aim is ${R.utility_lands[0]} to ${R.utility_lands[1]}; at your colours and budget the ★ build gives the other slots to lands that make your colours.` : `${R.utility_lands[0]} to ${R.utility_lands[1]} lands with an extra effect, inside the land count.`; })()}</dd>` +
     `<dt>Ramp</dt><dd>${res.mode === 'estimate' ? `About ${R.ramp_target} is typical.` : `Your deck has ${rs} ramp spells and rocks; about ${R.ramp_target} is typical.`}</dd></dl>`;
 }
 function startScreen() {
@@ -987,7 +1005,7 @@ function table(names, P) {
       return 'the ★ picks fit your colours and budget better'; }
     return 'the ★ picks cover your colours better at this budget'; };
   const rows = names.map(n => { const i = shown++, g = grp(n), div = P && g !== last && g > 0 ? `<tr class="mb-div"><td colspan="6">${e(DIV[g])}</td></tr>` : ''; last = g; const c = D.cards[n] || {}, rec = P && P.list[n];
-    const cl = P && !rec && LIST[n] && !owned(n) && c.land && stepIdOf(n) === 'utility' && window.ManaCraft.isColourless(D, n) ? 'added: it takes the place of a land that makes colour; Review shows what that costs you' : P && !rec && !LIST[n] && !over(n) && c.land && stepIdOf(n) === 'utility' && !((D.identities[ident()].groups.ucol || {cards: []}).cards.includes(n)) && window.ManaCraft.isColourless(D, n) ? costLine(n) : null;   // not under Make your colours (tester 2026-11-14)   // every colourless land shows its cost (request 9.2)
+    const cl = P && !rec && LIST[n] && !owned(n) && c.land && stepIdOf(n) === 'utility' && window.ManaCraft.isColourless(D, n) ? addedLine(n) : P && !rec && !LIST[n] && !over(n) && c.land && stepIdOf(n) === 'utility' && !((D.identities[ident()].groups.ucol || {cards: []}).cards.includes(n)) && window.ManaCraft.isColourless(D, n) ? costLine(n) : null;   // not under Make your colours (tester 2026-11-14)   // every colourless land shows its cost (request 9.2)
     const tags = (owned(n) ? `<span class="btag" title="Your pasted deck runs this">you own${owned(n) > 1 ? ' ×' + owned(n) : ''}</span>` : '');
     const tierLine = c.tier && c.tier !== 'Basic' ? `<span class="mb-tier" title="${e(WHY[c.cycle] || '')}">${e(/^R\.\d+ /.test(c.tier) ? c.tier.replace(/^R\.\d+ /, '') : c.tier)}${c.cond ? ` · ${e(COND[c.cond] || '')}${res && res.share && res.share[c.cond] != null ? ` · ${Math.round(res.share[c.cond] * 100)}% of your deck` : ''}` : ''}</span>` : '';
     const q = LIST[n] || 0, isBasic = c.tier === 'Basic';
@@ -1007,9 +1025,10 @@ function group(g, entry, P) {
                      : `<div class="mb-grp"><h4>${e(g.title)} <span class="fsub note">${e(sub)}</span></h4>${body}</div>`;
 }
 // the player's own decisions: cards added one by one (mine) and recommended cards they took out (dropped). Automatic fixes never undo either (user test 2026-11-11).
-let mine = new Set(jget('mb-mine') || []), dropped = new Set(jget('mb-drop') || []);
-function saveIntent() { store.set('mb-mine', JSON.stringify([...mine])); store.set('mb-drop', JSON.stringify([...dropped])); }
-function resetIntent() { mine = new Set(); dropped = new Set(); saveIntent(); }
+// swapped: star lands the player traded for a basic with the Swap button in Basics, and the basic, so the cut list says so (tester 2026-11-14)
+let mine = new Set(jget('mb-mine') || []), dropped = new Set(jget('mb-drop') || []), swapped = jget('mb-swap') || {};
+function saveIntent() { store.set('mb-mine', JSON.stringify([...mine])); store.set('mb-drop', JSON.stringify([...dropped])); store.set('mb-swap', JSON.stringify(swapped)); }
+function resetIntent() { mine = new Set(); dropped = new Set(); swapped = {}; saveIntent(); }
 function recMissing(sid, P) {   // recommended cards of a step not yet in the list, leaving out any the player took out
   if (!P) return [];
   return Object.entries(P.list).filter(([n, q]) => stepIdOf(n) === sid && (LIST[n] || 0) < q && !dropped.has(n));
@@ -1047,6 +1066,7 @@ function roomBtn() { const r = roomPlan(); if (!r || !r.outs.length) return '';
 function makeRoom() {
   const r = roomPlan(); if (!r) return; const out = r.outs.map(([a]) => a), need = r.outs.length + r.short;
   LIST = r.list; save();
+  { const P0 = plan(); for (const [a, b] of r.outs) if (!LIST[a]) { swapped[a] = b; if (P0 && P0.list[a]) dropped.add(a); } saveIntent(); }
   const own = [...mine].filter(n => LIST[n] && D.cards[n] && D.cards[n].land);
   toast = (out.length ? `Made room: ${out.join(', ')} out, basics in.` : '') + (out.length < need ? ` ${need - out.length} more would mean removing your own picks (${own.join(', ')}): remove one yourself if you want, or accept the line.` : ''); drawAll();
 }
@@ -1096,6 +1116,28 @@ function pickTrim(L, keep) {   // the basic to take out: the colour with the mos
   const col = x => D.cards[x].taps[1], spare = x => (s0[col(x)] || 0) - (req[col(x)] || 0);
   return (bs.filter(x => L[x] > 1).length ? bs.filter(x => L[x] > 1) : bs).sort((x, y) => spare(y) - spare(x) || L[y] - L[x])[0] || null;
 }
+// What comes back when the player removes land n with a Remove button (testers 2026-11-14: removals left a colour short, or did not say
+// which basic came in). Only while the land count has room. Candidates: owned ★ lands the list left out (not ones the player took out)
+// that make a colour n made, and each basic; the one that keeps the most colour wins (sources up to each target, then all sources),
+// an owned land on a tie. Returns {list, back, basic} or null when nothing comes back.
+function cutRepl(n, avoid) {
+  const c = D.cards[n]; if (!c || !c.land) return null;
+  const L = {...LIST}; if (--L[n] <= 0) delete L[n];
+  if (landsIn(L) >= landTarget()) return null;
+  const P = plan(), req = (res && res.requirements && res.identity === ident()) ? res.requirements : {}, id = [...ident()];
+  const lost = Object.keys(window.ManaCraft.effSrc(D, n, LIST)).filter(k => id.includes(k));
+  const score = N => { const sN = sources(N); return [id.reduce((a, k) => a + Math.min(sN[k] || 0, req[k] == null ? Infinity : req[k]), 0), id.reduce((a, k) => a + (sN[k] || 0), 0)].map(x => Math.round(x * 1e6) / 1e6); };
+  const cands = [];
+  if (P) for (const m of Object.keys(P.list)) { const d = D.cards[m];
+    if (m === n || !owned(m) || LIST[m] || dropped.has(m) || (avoid && avoid.has(m)) || !d || !d.land || d.tier === 'Basic') continue;
+    const N = {...L, [m]: 1}; if (!lost.some(k => (window.ManaCraft.effSrc(D, m, N)[k] || 0) > 0)) continue;
+    cands.push({list: N, back: m, sc: score(N), own: 1}); }
+  const s0 = sources(L), gap = k => (req[k] == null ? window.ManaCraft.RULES.default_need : req[k]) - (s0[k] || 0);
+  for (const k of id) { const b = basicOf(k); if (!b) continue; const N = {...L, [b]: (L[b] || 0) + 1}; cands.push({list: N, basic: b, sc: score(N), own: 0, gap: gap(k)}); }
+  cands.sort((a, b) => (b.sc[0] - a.sc[0]) || (b.sc[1] - a.sc[1]) || (b.own - a.own) || ((b.gap || 0) - (a.gap || 0)));
+  return cands[0] || null;
+}
+function cutLabel(n, r) { return r ? (r.back ? ` for your ${e(r.back)}` : ` for ${anA(r.basic)} ${e(r.basic)}`) : ''; }
 function trimBasic(keep) { const b = pickTrim(LIST, keep); if (b) { LIST[b]--; if (!LIST[b]) delete LIST[b]; save(); } }
 function fillBasics() {   // each basic goes to the colour furthest below its source target (as the craft does); without targets, by the plan's split
   const {need, w} = basicsFill(); if (!need) return;
@@ -1128,7 +1170,7 @@ function stepScreen(s, i, S) {
   if (s.id === 'basics' && Math.max(basicCount(LIST), basicSlots()) < basicsMin()) h += `<p class="mb-warn">Your ${searchersOf().slice(0, 3).join(', ')}${searchersOf().length > 3 ? ' and more' : ''} can only find basic lands: keep about ${basicsMin()} basics, but your other lands leave room for ${Math.max(0, basicSlots())}. ${roomBtn()}</p>`;
   if (s.id === 'basics') { const {need} = basicsFill(); tools.push(`<button type="button" class="mb-rec mb-fill"${need ? '' : ' disabled'}>${need > 0 ? `Fill ${plural(need, 'basic')} by my colours` : need < 0 ? `Remove ${plural(-need, 'basic')} to reach ${landTarget()} lands` : 'Land count reached ✓'}</button>`); }
   else if (P && s.id === 'utility' && k && countIn(LIST, 'utility') >= D.rules.utility_lands[1]) tools.push(`<span class="mb-done">Utility limit reached (${D.rules.utility_lands[1]}). Your own picks took the slot${miss.length === 1 ? '' : 's'} of ${miss.map(([n]) => n).join(', ')} (★): swap one of yours for it if you prefer.</span>`);
-  else if (P) tools.push(k ? `<button type="button" class="mb-rec" data-recall="${s.id}">Add the ${k} recommended ★</button>` : (() => { const out = Object.keys(P.list).filter(n => stepIdOf(n) === s.id && dropped.has(n) && !LIST[n]);
+  else if (P) tools.push(k ? `<button type="button" class="mb-rec" data-recall="${s.id}">Add the ${k} recommended ★</button>${starWhere(s, miss)}` : (() => { const out = Object.keys(P.list).filter(n => stepIdOf(n) === s.id && dropped.has(n) && !LIST[n]);
       return `<span class="mb-done">${countIn(P.list, s.id) ? (out.length ? `All recommended picks are in, except ${out.join(', ')}, which you took out ✓` : 'All recommended picks are in ✓') : 'Nothing recommended here for your deck and budget.'}</span>`; })());
   if (budget != null && s.id !== 'basics' && (s.groups || []).some(g => I.groups[g.id] && I.groups[g.id].cards.length) && !(P && !countIn(P.list, s.id) && !countIn(LIST, s.id))) tools.push(`<label class="mb-filter note"><input type="checkbox" id="mb-hide"${hideOver ? ' checked' : ''}> Hide cards over ${money(budget * 0.25)}</label>`);
   h += `<div class="mb-tools">${tools.join('')}</div>`;
@@ -1140,11 +1182,25 @@ function stepScreen(s, i, S) {
   if (P && s.id !== 'basics') h += `<p class="mb-legend"><span class="mb-star">★</span> recommended for your deck and budget, best first${isDeck() ? ', including cards you own that are worth keeping' : ''}.${budget != null ? ` Cards over ${money(budget * 0.25)} (a quarter of your budget) are never ★: their prices are greyed.` : ''}</p>`;
   const none = P && s.id !== 'basics' && s.id !== 'utility' && countIn(P.list, s.id) === 0 && !countIn(LIST, s.id);
   if (none && (s.groups || []).some(g => I.groups[g.id] && I.groups[g.id].cards.length)) h += `<p class="mb-done">Nothing needed here for your deck and budget: go on to the next step.${ident().length === 1 ? ' In one colour every basic already makes your colour, so these lands add nothing.' : ''}</p>`;
-  const gs = (s.groups || []).filter(g => I.groups[g.id] && I.groups[g.id].cards.length);
+  const gs = starFirst(s, P);
   h += !gs.length ? `<p class="note">${e(s.empty || `Nothing in this step for ${I.label}.`)}</p>` :
        none ? `<details class="fold mb-grp"><summary>Show these cards anyway <span class="fsub">${gs.reduce((a, g) => a + I.groups[g.id].cards.length, 0)} cards</span></summary>${gs.map(g => group(g, I.groups[g.id], P)).join('')}</details>` : gs.map(g => group(g, I.groups[g.id], P)).join('');
   h += `<p class="mb-legend">Makes: <i class="ms ms-c"></i> colourless · <i class="ms ms-any"></i> any colour. Hover or tap a card name to see the card.</p>`;
   return h;
+}
+// Rocks: a group holding a star comes before the groups without one, so every star the button counts is in view (testers 2026-11-14:
+// the eighth, Chromatic Lantern, sat below the utility-rock groups)
+function starFirst(s, P) {
+  const I = D.identities[ident()], gs = (s.groups || []).filter(g => I.groups[g.id] && I.groups[g.id].cards.length);
+  if (s.id !== 'rocks' || !P) return gs;
+  const has = g => I.groups[g.id].cards.some(x => P.list[x] || LIST[x]) ? 0 : 1;
+  return gs.map((g, i) => [g, i]).sort((a, b) => has(a[0]) - has(b[0]) || a[1] - b[1]).map(([g]) => g);
+}
+function starWhere(s, miss) {   // where the stars the button adds sit, when they span more than one table
+  const I = D.identities[ident()], by = {};
+  for (const [n, q] of miss) { const g = starFirst(s, plan()).find(x => I.groups[x.id].cards.includes(n)); if (g) by[g.title] = (by[g.title] || 0) + q - (LIST[n] || 0); }
+  const ks = Object.keys(by); if (ks.length < 2) return '';
+  return `<span class="note">${ks.map(t => `${by[t]} in ${e(t)}`).join(', ')}</span>`;
 }
 function colourLine() {
   if (!res || !res.requirements || !Object.keys(res.requirements).length) return '';
@@ -1196,11 +1252,30 @@ function checks() {
   if (isDeck()) { const {buy: bb, basics: bs, cut: cc} = buyRows(), net = bb.reduce((a, [, q]) => a + q, 0) + bs.reduce((a, [, q]) => a + q, 0) - cc.reduce((a, [, q]) => a + q, 0);
     const size = Object.values(res.counts).reduce((a, q) => a + q, 0) + (res.unresolved || []).length + (res.banned || []).filter(n => !res.counts[n]).length + (res.commanders || []).length + net;   // every pasted card, found or not
     if (net) out.push({id: 'size', ok: true, todo: true, text: `To do: deck size after these changes is ${size}`, note: net < 0 ? `Your new mana base uses ${-net} fewer card${net === -1 ? '' : 's'} than before. Add ${-net} spell${net === -1 ? '' : 's'} of your choice to stay at 100: more draw or ramp is a good use.` : `Your new mana base uses ${net} more card${net === 1 ? '' : 's'}. Cut ${net} spell${net === 1 ? '' : 's'} you like least to stay at 100.`, act: ''}); }
-  const cost = chosenCost().buy;
+  // tapped lands (expert test 2026-11-14: 8 at $100, no warning). The craft takes at most RULES.max_cheap_tapped (8) tapped lands even
+  // on its cheapest builds, so up to 8 is advice and more is open; the step text asks for as close to zero as the budget allows.
+  { const T = tappedIn(LIST), P1 = plan(), Tp = P1 ? tappedIn(P1.list) : 0, mx = window.ManaCraft.RULES.max_cheap_tapped;
+    const room = budget == null ? Infinity : Math.max(0, budget - chosenCost().buy), sw = T ? untapSwaps(LIST, room).slice(0, 2) : [];
+    if (T) out.push({id: 'tapped', ok: T <= mx, adv: T <= mx && sw.length > 0, text: `Lands that enter tapped: ${T}`,
+      note: `Each one costs you its mana the turn you play it: with ${T} in 99 cards, ${(() => { let q = 1; for (let i = 0; i < 7; i++) q *= (99 - T - i) / (99 - i); return Math.round((1 - q) * 10); })()} opening hands in 10 hold at least one. ${Tp < T ? `The ★ build at your budget has ${Tp}. ` : ''}${sw.length ? 'The buttons swap one for an untapped land your budget allows, with no colour lost.' : 'Fine at your budget: no untapped land your money left allows keeps your colours.'}`,
+      why: `More than ${mx} tapped lands: the guide's own builds stop at ${mx}, even on the cheapest budgets. Each one slows a turn. ${sw.length ? 'The buttons swap one for an untapped land with no colour lost; or accept.' : 'Swap some for untapped lands in Duals, or accept.'}`,
+      act: sw.map(u => `<button type="button" data-untap="${e(u.t)}" data-in="${e(u.m)}">Swap ${e(u.t)} for ${e(u.m)} (${money(u.price)})${deltaText(u.N) ? `: ${deltaText(u.N)}` : ''}</button>`).join('')}); }
+  const cost = chosenCost().buy, I2 = budget != null && cost < budget - 0.005 ? spendIdeas() : [];
   if (budget != null) out.push({id: 'budget', ok: cost <= budget + 0.005, text: `Cost to buy: ${money(cost)} of ${money(budget)} (basics not counted)`, why: cost > budget ? `${money(cost - budget)} over budget${overCards().some(n => (D.cards[n].price || 0) > budget * 0.25) ? `, and some cards are over your ${money(budget * 0.25)} per-card limit` : ''}: remove one, or accept.` : '',
-    note: cost < budget * 0.8 ? `${money(budget - cost)} left over. ` + (out.some(x => x.limit) ? `The ★ build can't reach your colour targets at ${landTarget()} lands at any budget (see the ◐ lines); with no budget limit, expensive original duals add a little more. You could spend it on untapped lands if you prefer speed to colour.` : `${out.some(x => /^src-/.test(x.id) && !x.ok && !accepted[x.id + ':' + x.text]) ? 'The open colour lines above say what would help.' : 'Nothing more is needed.'}${spendRest().length ? ' Optional upgrades for it are under Spend the rest, below.' : ''}`) : '',
-    act: cost > budget + 0.005 ? overCards().slice(0, 3).map(n => `<button type="button" data-utilcut="${e(n)}">Remove ${e(n)} (${money(D.cards[n].price || 0)})</button>`).join('') : ''});
-  for (const x of out) { x.key = x.id + ':' + x.text; x.acc = !x.ok && accepted[x.key]; }
+    note: cost < budget - 0.005 ? (() => { const SR = spendRest();
+      if (I2.length) return `${money(budget - cost)} left over. The best buys for it are the buttons beside this line: each says what it does for your colours.${SR.length ? ' More optional utility lands are under Spend the rest, below.' : ''}`;
+      if (cost < budget * 0.8) return `${money(budget - cost)} left over. Nothing on this guide's lists that fits it would add a colour source or replace a tapped land${out.some(x => x.limit) ? ` (the ◐ lines are past what any ★ build reaches at ${landTarget()} lands)` : ''}${SR.length ? '. Optional utility lands for it are under Spend the rest, below.' : ': keep the money.'}`;
+      return ''; })() : '',
+    adv: I2.length > 0,
+    act: cost < budget - 0.005 ? I2.map(x => x.html).join('') : cost > budget + 0.005 ? (() => { const used = new Set(); return overCards().slice(0, 3).map(n => { const r = cutRepl(n, used); if (r && r.back) used.add(r.back);
+      return `<button type="button" data-utilcut="${e(n)}"${r && r.back ? ` data-back="${e(r.back)}"` : ''}>Remove ${e(n)} (${money(D.cards[n].price || 0)})${cutLabel(n, r)}</button>`; }).join(''); })() : ''});
+  // an acceptance holds only for the line as it was: its id, the budget, the land count and every number in its text and reason
+  // (expert test 2026-11-14: a trade-off accepted at $500 stayed accepted at $100). A stale one re-opens the line and says why.
+  const bk = budget == null ? 'none' : String(budget);
+  for (const x of out) { const nums = `${x.text} ${x.why || ''}`.replace(/<[^>]*>/g, '').match(/\d+(\.\d+)?/g) || [];
+    x.key = [x.id, bk, landTarget(), nums.join(',')].join('|'); x.acc = !x.ok && !!accepted[x.key];
+    if (!x.ok && !x.acc) { const old = Object.keys(accepted).filter(k => k.split('|')[0] === x.id); if (old.length) { const ob = old[old.length - 1].split('|')[1];
+      x.reopen = ob !== bk ? `you accepted this at ${ob === 'none' ? 'no budget cap' : money(+ob).replace('.00', '')}, and the budget is now ${budget == null ? 'no cap' : money(budget).replace('.00', '')}.` : 'you accepted it before, and its numbers have changed since.'; } } }
   return out;
 }
 function keptOther() {   // the deck's own mana cards this guide does not list: they stay, so say so (user test 2026-11-11)
@@ -1231,20 +1306,83 @@ function overBtns(k) {   // too many lands: spare basics first; else name the lo
 function utilCutBtn() {   // name the lowest-ranked utility land in the list (not recommended first); the player presses it, so it is their choice
   const P = plan(), I = D.identities[ident()], pos = n => { for (const k of ['ucol', 'staples', 'ucls']) { const g = I.groups[k]; const x = g ? g.cards.indexOf(n) : -1; if (x >= 0) return x + (k === 'ucls' ? 100 : 0); } return 999; };
   const w = Object.keys(LIST).filter(n => stepIdOf(n) === 'utility').sort((a, b) => ((P && P.list[a]) ? 1 : 0) - ((P && P.list[b]) ? 1 : 0) || pos(b) - pos(a))[0];
-  return w ? `<button type="button" data-utilcut="${e(w)}">Remove ${e(w)} (a basic takes its place)</button><button type="button" data-goto="utility">Go to utility</button>` : '';
+  return w ? `<button type="button" data-utilcut="${e(w)}">Remove ${e(w)}${cutLabel(w, cutRepl(w))}</button><button type="button" data-goto="utility">Go to utility</button>` : '';
 }
 function costOf(L) { let k = 0; for (const [n, q] of Object.entries(L)) { const c = D.cards[n]; if (c && c.tier !== 'Basic') k += Math.max(0, q - owned(n)) * (c.price || 0); } return k; }
 function swapOpts() { const {o} = craftOpts(); return {identity: o.identity, requirements: o.requirements, budget, owned_counts: isDeck() ? res.counts : null, before: o.before}; }
 function trySwap(L, n) { return window.ManaCraft.swapFor(D, L, n, swapOpts()); }   // L with utility land n in and one basic out, or null
 function extrasFor(L) { return window.ManaCraft.extrasFor(D, L, swapOpts()); }   // top-grade utility lands that fit the money left
-function costLine(n) {   // what a colourless land would cost (request 9.2): on the player's list once complete, else on the star build
-  const P = plan(), L = landsIn(LIST) >= landTarget() || !P ? LIST : P.list, k = window.ManaCraft.colourlessCost(D, L, swapOpts()), r = x => Math.round(x * 10) / 10;
+function basicOf(c) { return D.identities[ident()].groups.basics.cards.find(x => D.cards[x].taps === `{${c}}`); }
+function anA(w) { return /^[AEIOU]/.test(w) ? 'an' : 'a'; }
+// What colourless land n costs (request 9.2), with n left out of the list it is judged on: the player's list once complete, else the
+// star build. The basic it displaces is the spare one colourlessCost names; with no spare basic, the basic of the colour most over its
+// need (testers 2026-11-14: the line must name the colour and the number after, and say which list it counts on).
+function clCost(n) {
+  const P = plan(), base = {...LIST}; delete base[n];
+  const star = !!P && landsIn(base) < landTarget(), L = star ? {...P.list} : base; delete L[n];
+  const o = swapOpts(), k = window.ManaCraft.colourlessCost(D, L, o), need = c => window.ManaCraft.needOf(o.requirements, c);
+  let c = k.colour, last = false;
+  if (!c) { c = [...ident()].filter(x => (L[basicOf(x)] || 0) > 0).sort((a, b) => (k.have[b] - need(b)) - (k.have[a] - need(a)))[0] || null; last = !!c; }
+  return {star, c, last, short: k.short, ok: k.ok, have: c ? k.have[c] : null, after: c ? k.have[c] - 1 : null, need: c ? need(c) : null};
+}
+function costLine(n) {   // the row line for a colourless land not yet in the list
+  const k = clCost(n), r = x => Math.round(x * 10) / 10, on = k.star ? 'on the ★ build' : 'on your list';
   const names = cs => cs.map(c => LOW[c]).join(', ').replace(/, ([a-z]+)$/, ' and $1');
-  if (k.short.length) return k.colour ? `−1 ${LOW[k.colour]} source (${r(k.after)} of ${k.need} after), while ${names(k.short)} ${k.short.length > 1 ? 'are' : 'is'} already below target` : `−1 colour source while ${names(k.short)} ${k.short.length > 1 ? 'are' : 'is'} below target`;
-  if (!k.colour) return 'no spare basic: it would take the place of a land that makes colour';
-  return `−1 ${LOW[k.colour]} source (${r(k.after)} of ${k.need} after)${k.ok ? ', colours stay at target' : ''}`;
+  if (!k.c) return `no basic left to replace ${on}: it would take the place of a land that makes colour`;
+  const head = `−1 ${LOW[k.c]} source ${on} (${r(k.have)} to ${r(k.after)} of ${k.need}${k.last ? `, one of your last ${LOW[k.c]} basics` : ''})`;
+  if (k.short.length) return `${head}; ${names(k.short)} ${k.short.length > 1 ? 'are' : 'is'} already below target there`;
+  return head + (k.ok ? ', colours stay at target' : '');
+}
+function addedLine(n) {   // the same cost once the player has added it: the panel bars move only when the basics are in (tester 2026-11-14)
+  const k = clCost(n), r = x => Math.round(x * 10) / 10;
+  if (!k.c) return 'added: it takes the place of a land that makes colour';
+  return `added: −1 ${LOW[k.c]} source ${k.star ? 'once your basics are in' : 'in your list'} (${r(k.after)} of ${k.need}${k.star ? ', counted on the ★ build' : ''})`;
 }
 function spendRest() { return chosenCost().buy > (budget || 0) * 0.8 ? [] : extrasFor(LIST).slice(0, 5); }
+const isTapped = n => !!(D.cards[n] && D.cards[n].land && D.cards[n].ltier === '3');
+function tappedIn(L) { return Object.entries(L).reduce((a, [n, q]) => a + (isTapped(n) ? q : 0), 0); }
+// Untapped trades the money left allows (as the craft's step 9 does for an upgrade): a tapped land with no effect, not the player's own
+// pick, out; an untapped land from Any-colour or Duals in, only when no colour loses a source. Best gain first, one per tapped land.
+function untapSwaps(L, room) {
+  const I = D.identities[ident()], id = [...ident()], s0 = sources(L), cap = budget == null ? Infinity : budget * 0.25;
+  // reliably untapped only, as the craft judges it: no tier past check lands (slow, battle, reveal lands need their condition) and no conditional any-colour land
+  const steady = m => { const t = /^2\.(\d+)/.exec(D.cards[m].tier || ''); return !(t && +t[1] > 3) && !D.cards[m].cond; };
+  const pool = [...((I.groups.any || {}).cards || []), ...((I.groups.duals || {}).cards || [])].filter(m => D.cards[m] && !L[m] && !dropped.has(m) && !isTapped(m) && steady(m)
+    && !window.ManaCraft.RULES.hand_picks.includes(m) && (owned(m) ? 0 : D.cards[m].price || 0) <= Math.min(cap, room));
+  const out = [], used = new Set();
+  for (const t of Object.keys(L).filter(n => isTapped(n) && !mine.has(n) && !D.cards[n].job)) { let best = null;
+    for (const m of pool) { if (used.has(m)) continue; const N = {...L}; delete N[t]; N[m] = 1; const sN = sources(N);
+      if (id.some(c => (sN[c] || 0) + 1e-9 < (s0[c] || 0))) continue;
+      const gain = id.reduce((a, c) => a + (sN[c] || 0) - (s0[c] || 0), 0), price = owned(m) ? 0 : D.cards[m].price || 0;
+      if (!best || gain > best.gain + 1e-9 || (Math.abs(gain - best.gain) <= 1e-9 && price < best.price)) best = {t, m, gain, price, N}; }
+    if (best) { out.push(best); used.add(best.m); } }
+  return out.sort((a, b) => b.gain - a.gain || a.price - b.price);
+}
+function deltaText(N) {   // what a change does to each colour, e.g. "+1 blue, +0.8 green"; '' when nothing moves
+  const s0 = sources(LIST), s1 = sources(N), r = x => Math.round(x * 10) / 10;
+  return [...ident()].filter(c => Math.abs((s1[c] || 0) - (s0[c] || 0)) >= 0.05).map(c => `${s1[c] > s0[c] ? '+' : '−'}${r(Math.abs(s1[c] - s0[c]))} ${LOW[c]}`).join(', ');
+}
+// Concrete buys for money left over (expert tests 2026-11-14: "$249 left over" with nothing to spend it on): a star pick left out that
+// makes a short colour, a Talisman or Signet of a short colour, then untapped trades. Each {html, price, why}; at most three.
+function spendIdeas() {
+  if (budget == null || !ident()) return [];
+  const left = budget - chosenCost().buy; if (left <= 0.005) return [];
+  const P = plan(), I = D.identities[ident()], id = [...ident()], s0 = sources(LIST), req = (res && res.requirements && res.identity === ident()) ? res.requirements : {};
+  const short = id.filter(c => req[c] != null && (s0[c] || 0) + 1e-9 < req[c]), cap = budget * 0.25, price = m => owned(m) ? 0 : (D.cards[m].price || 0);
+  const ideas = [], seen = new Set(), gainShort = N => { const s1 = sources(N); return short.reduce((a, c) => a + Math.max(0, Math.min(req[c], s1[c] || 0) - (s0[c] || 0)), 0); };
+  if (P) for (const m of Object.keys(P.list)) { const d = D.cards[m];
+    if (!d || LIST[m] || dropped.has(m) || d.tier === 'Basic' || price(m) > Math.min(cap, left)) continue;
+    const c = short.find(k => (window.ManaCraft.effSrc(D, m, P.list)[k] || 0) > 0); if (!c) continue;
+    const tb = d.land && landsIn(LIST) + 1 > landTarget() ? pickTrim({...LIST, [m]: 1}, c) : null, N = {...LIST, [m]: 1}; if (tb) { if (--N[tb] <= 0) delete N[tb]; }
+    const g = gainShort(N); if (g <= 1e-9) continue; seen.add(m);
+    ideas.push({g, html: `<button type="button" data-readd="${e(m)}" data-col="${c}">Add ${e(m)} (★, ${money(price(m))})${tb ? ` for ${anA(tb)} ${e(tb)}` : ''}: ${deltaText(N)}</button>`}); }
+  if (short.length) { const rk = ((I.groups.rocks_id || {}).cards || []).filter(m => D.cards[m] && !LIST[m] && !seen.has(m) && ['Talismans', 'Signets'].includes(D.cards[m].cycle) && price(m) <= Math.min(cap, left))
+      .map(m => ({m, N: {...LIST, [m]: 1}})).map(x => ({...x, g: gainShort(x.N)})).filter(x => x.g > 1e-9).sort((a, b) => b.g - a.g || price(a.m) - price(b.m))[0];
+    if (rk) ideas.push({g: rk.g, html: `<button type="button" data-readd="${e(rk.m)}" data-col="${short[0]}">Add ${e(rk.m)} (${money(price(rk.m))}, one more rock): ${deltaText(rk.N)}</button>`}); }
+  ideas.sort((a, b) => b.g - a.g);
+  for (const u of untapSwaps(LIST, left)) ideas.push({g: 0, html: `<button type="button" data-untap="${e(u.t)}" data-in="${e(u.m)}">Swap ${e(u.t)} (enters tapped) for ${e(u.m)} (${money(u.price)}), untapped${deltaText(u.N) ? `: ${deltaText(u.N)}` : ', no colour lost'}</button>`});
+  return ideas.slice(0, 3);
+}
 function swapIn(n) {
   const t = trySwap(LIST, n); if (!t) return;
   LIST = t.list; save(); toast = `${n} in, one ${t.out} out.`; drawAll();
@@ -1287,6 +1425,7 @@ function cutWhy0(n) {   // the land's own weakness, for lands the player didn't 
 function cutWhy(n) {   // one plain reason per cut
   const c = D.cards[n], P = plan();
   if (res && res.banned && res.banned.includes(n)) return 'banned in Commander';
+  if (swapped[n] && !LIST[n]) return `you swapped it for ${anA(swapped[n])} ${swapped[n]} in Basics, for your land-searching cards`;
   if (dropped.has(n)) return `you took it out in ${stepShort(stepIdOf(n))}`;
   { const m = P && P.r ? Object.keys(P.r.why).find(k => P.r.why[k].startsWith(`in place of your ${n},`) && LIST[k]) : null; if (m) return `enters tapped: the ★ build trades it for ${m}, untapped, and no colour loses a source`; }
   if (P && P.list[n]) return `not picked in ${stepShort(stepIdOf(n))}, though the guide would keep it (★): add it there to keep it`;
@@ -1319,8 +1458,8 @@ function reviewScreen(i, S) {
   let h = `<div class="mb-sh"><h3>Step ${i} of ${S.length - 1} · Review and buy</h3><span class="mb-chip${open.length ? '' : ' met'}">${open.length ? `${plural(open.length, 'check')} open` : 'Ready to buy'}</span><p class="mb-toast" aria-live="polite">${e(toast)}</p></div>`;
   if (MISSING()) return h + `<p class="mb-lead">Your mana base is empty. Go back to Start and press Build it for me, or walk the steps.</p>`;
   h += `<p class="mb-lead">${open.length ? 'Each line is fine (✓), past what the ★ build reaches, with its reason (◐), or open (!). Settle each open line with its button, or press Accept to keep the trade-off. Then copy your buy list.' : `Everything is settled: ✓ lines are fine${C.some(x => x.limit) ? ', ◐ lines are past what the ★ build reaches, with their reason' : ''}${C.some(x => x.todo) ? ', → is a to-do in your deck' : ''}. Copy your buy list below.`}</p>`;
-  h += `<ul class="mb-checks">${C.map(x => `<li class="${x.limit || x.todo ? 'acc' : x.ok ? 'ok' : x.acc ? 'acc' : 'open'}"><span class="st" title="${x.limit ? 'Past what the ★ build reaches: explained' : x.ok ? 'Fine' : x.acc ? 'Accepted' : 'Open'}">${x.todo ? '→' : x.limit ? '◐' : x.ok ? '✓' : x.acc ? '✓' : '!'}</span><span><b>${e(x.text)}</b>${x.ok ? (x.note ? `<br><span class="note">${e(x.note)}</span>` : '') : x.acc ? ' <span class="note">accepted</span>' : x.why ? `<br><span class="note">${x.why}</span>` : ''}</span>` +
-    `<span class="act">${x.ok ? (x.limit ? (x.act || '') : '') : x.acc ? `<button type="button" data-unacc="${e(x.key)}">Undo</button>` : x.act + `<button type="button" data-acc="${e(x.key)}">Accept</button>`}</span></li>`).join('')}</ul>`;
+  h += `<ul class="mb-checks">${C.map(x => `<li class="${x.limit || x.todo ? 'acc' : x.ok ? 'ok' : x.acc ? 'acc' : 'open'}"><span class="st" title="${x.limit ? 'Past what the ★ build reaches: explained' : x.ok ? 'Fine' : x.acc ? 'Accepted' : 'Open'}">${x.todo ? '→' : x.limit ? '◐' : x.ok ? '✓' : x.acc ? '✓' : '!'}</span><span><b>${e(x.text)}</b>${x.ok ? (x.note ? `<br><span class="note">${e(x.note)}</span>` : '') : x.acc ? ' <span class="note">accepted</span>' : (x.why ? `<br><span class="note">${x.why}</span>` : '') + (x.reopen ? `<br><span class="note"><b>Re-opened:</b> ${e(x.reopen)}</span>` : '')}</span>` +
+    `<span class="act">${x.ok ? (x.limit || x.adv ? (x.act || '') : '') : x.acc ? `<button type="button" data-unacc="${e(x.key)}">Undo</button>` : x.act + `<button type="button" data-acc="${e(x.key)}">Accept</button>`}</span></li>`).join('')}</ul>`;
   h += `<p class="mb-final ${open.length ? 'open' : 'ok'}">${open.length ? `${plural(open.length, 'check')} still open. Your buy list below is ready anyway.` : `Your mana base is final${C.some(x => x.acc) ? `, ${plural(C.filter(x => x.acc).length, 'trade-off')} accepted` : ''}${C.some(x => x.limit) ? `, ${plural(C.filter(x => x.limit).length, 'line')} (◐)` : ''}. Copy your buy list.${C.some(x => x.todo) ? ' One thing to do in your deck (→): see above.' : ''}`}</p>`;
   h += `<h4 class="mb-h4">Your buy list</h4><p><b>Buy ${plural(nb, 'card')} for ${money(cost.buy)}</b>${nbas ? `, plus ${plural(nbas, 'basic land')} (${money(cost.basics)}; most players own these, so they are not in the TCGplayer list)` : ''}${isDeck() ? '. Cards your deck already has are left out.' : '.'}</p>` +
     whyBuys(buy) + `<div class="mb-copy"><button type="button" class="vbtn pri" data-copy="tcg">Copy buy list</button><button type="button" class="vbtn" data-dl="tcg">Download</button><a href="https://www.tcgplayer.com/massentry" target="_blank" rel="noopener">Open TCGplayer Mass Entry</a></div>` +
@@ -1359,7 +1498,7 @@ function draw() {
     const ct = !i ? (ok ? 'set' : '') : s.id === 'review' ? '' : !ok ? '' : s.id === 'basics' ? `${landsIn(LIST)}/${landTarget()} lands` : `${a.n}/${a.label}`;
     return `<li><button type="button" data-s="${i}" class="${(i === 0 && ok) || (a && a.met) ? 'met' : ''}"${i === step ? ' aria-current="step"' : ''}${!ok && i ? ' disabled' : ''}><b>${i ? `<span class="lg">Step </span>${i}` : 'Start'}</b><span class="lt">${e(i ? s.short || s.title : 'Your deck')}</span>${ct ? `<span class="ct">${ct}</span>` : ''}</button></li>`; }).join('');
   const s = S[step];
-  panel.innerHTML = step === 0 ? `<div class="mb-sh"><h3>Start · your deck and budget</h3></div><p class="mb-lead">${e(D.steps[0].lead)}</p>` + startScreen()
+  panel.innerHTML = step === 0 ? `<div class="mb-sh"><h3>Start · your deck and budget</h3><p class="mb-toast" aria-live="polite">${e(toast)}</p></div><p class="mb-lead">${e(D.steps[0].lead)}</p>` + startScreen()
                   : s.id === 'review' ? reviewScreen(step, S) : stepScreen(s, step, S);
   if (keep) { const el = root.querySelector(keep); if (el) el.focus({preventScroll: true}); }
   root.querySelector('.mb-sr').textContent = `Step ${step} of ${S.length - 1}: ${s.title}`;
@@ -1436,10 +1575,11 @@ function startWalk() {
 }
 function setQty(n, q) {
   const before = LIST[n] || 0, P = plan();
-  if ((D.cards[n] || {}).tier !== 'Basic') { if (q > before) { mine.add(n); dropped.delete(n); } else if (q === 0) { mine.delete(n); if (P && P.list[n]) dropped.add(n); } saveIntent(); } if (q > 0) LIST[n] = q; else delete LIST[n]; save();
+  if ((D.cards[n] || {}).tier !== 'Basic') { if (q > before) { mine.add(n); dropped.delete(n); delete swapped[n]; } else if (q === 0) { mine.delete(n); if (P && P.list[n]) dropped.add(n); } saveIntent(); } if (q > 0) LIST[n] = q; else delete LIST[n]; save();
   const sid = stepIdOf(n), cur = STEPS()[step];
   if (cur && cur.id === sid && sid !== 'basics') { const a = aim(sid); toast = `${q > before ? 'Added' : 'Removed'} ${n} · ${a.n} of ${a.label} in this step${a.met ? ' ✓' : ''}`; lastAddStep = sid; }
   else if (q > before) toast = `Added ${n} to your mana base.`;
+  if (q > before && !before && !owned(n) && !(P && P.list[n]) && (D.cards[n] || {}).land && window.ManaCraft.isColourless(D, n)) toast += ` · ${addedLine(n).replace(/^added: /, '')}`;
   if (q > before && budget != null && chosenCost().buy > budget + 0.005) toast += ` · Now ${money(chosenCost().buy - budget)} over your budget.`;
   drawAll();
 }
@@ -1469,7 +1609,7 @@ root.addEventListener('click', ev => {
   if (b.dataset.path) { path = b.dataset.path; draw(); return; }
   if (b.dataset.c) { pick.has(b.dataset.c) ? pick.delete(b.dataset.c) : pick.add(b.dataset.c); if (res && res.identity !== ident()) { res = null; store.set('mb-res', 'null'); } drawAll(); toAction(); return; }
   if (b.classList.contains('mb-read')) { readDeck(); return; }
-  if (b.dataset.budget) { budget = b.dataset.budget === 'none' ? null : +b.dataset.budget; store.set('mb-budget', JSON.stringify(budget)); drawAll(); return; }
+  if (b.dataset.budget) { budget = b.dataset.budget === 'none' ? null : +b.dataset.budget; store.set('mb-budget', JSON.stringify(budget)); toast = budgetNews(); drawAll(); return; }
   if (b.classList.contains('mb-craft')) { doCraft(); return; }
   if (b.classList.contains('mb-walk')) { startWalk(); return; }
   if (b.classList.contains('mb-fill')) { fillBasics(); return; }
@@ -1488,15 +1628,15 @@ root.addEventListener('click', ev => {
   if (b.dataset.readd) { const n = b.dataset.readd, P0 = plan(); setQty(n, 1); if (D.cards[n].land && landsIn(LIST) > landTarget()) trimBasic(b.dataset.col); toast = `${n} ${P0 && P0.list[n] ? 'back ' : ''}in.`; drawAll(); return; }
   if (b.dataset.cutfor) { const n = b.dataset.cutfor, bas = D.identities[ident()].groups.basics.cards.find(x => D.cards[x].taps === `{${b.dataset.col}}`);
     setQty(n, 0); LIST[bas] = (LIST[bas] || 0) + 1; save(); toast = `${n} out, a ${bas} in.`; drawAll(); return; }
-  if (b.dataset.utilcut) { const n = b.dataset.utilcut, wasLand = !!(D.cards[n] && D.cards[n].land); setQty(n, 0);
-    // an owned star land the list left out comes back before a basic: it is free and makes more colour (expert test 2026-11-14)
-    const lost = Object.keys(window.ManaCraft.effSrc(D, n, {...LIST, [n]: 1}));
-    const P = plan(), back = wasLand && P ? Object.keys(P.list).find(m => owned(m) && !LIST[m] && !dropped.has(m) && D.cards[m] && D.cards[m].land && D.cards[m].tier !== 'Basic' && lost.every(k => (window.ManaCraft.effSrc(D, m, LIST)[k] || 0) > 0)) : null;
-    if (back) LIST[back] = 1; else if (wasLand) fillBasics(); save(); toast = back ? `${n} out, your ${back} back in.` : wasLand ? `${n} out, a basic in.` : `${n} out.`; drawAll(); return; }
+  if (b.dataset.utilcut) { const n = b.dataset.utilcut, nb = b.dataset.back, r = nb && owned(nb) && !LIST[nb] && !dropped.has(nb) ? {back: nb} : cutRepl(n); setQty(n, 0);
+    // the replacement the button named, computed before the removal: an owned star land or the basic that keeps the most colour
+    if (r) { const m = r.back || r.basic; LIST[m] = (LIST[m] || 0) + 1; save(); }
+    toast = r ? (r.back ? `${n} out, your ${r.back} back in.` : `${n} out, ${anA(r.basic)} ${r.basic} in.`) : `${n} out.`; drawAll(); return; }
+  if (b.dataset.untap) { const t = b.dataset.untap, m = b.dataset.in; setQty(t, 0); setQty(m, 1); toast = `${t} out, ${m} in: untapped, and no colour loses a source.`; drawAll(); return; }
   if (b.dataset.cfix) { const f = colourFix(b.dataset.cfix); if (f && f.swaps.length) { LIST = f.list; save(); toast = `Swapped: ${f.swaps.map(([x, y]) => `${x} in, ${y} out`).join('; ')}.`; } drawAll(); return; }
   if (b.dataset.room) { makeRoom(); return; }
   if (b.dataset.rebuild) { budget = b.dataset.rebuild === 'none' ? null : +b.dataset.rebuild; store.set('mb-budget', JSON.stringify(budget)); doCraft(); return; }
-  if (b.dataset.acc) { accepted[b.dataset.acc] = 1; store.set('mb-acc', JSON.stringify(accepted)); draw(); return; }
+  if (b.dataset.acc) { const id0 = b.dataset.acc.split('|')[0]; for (const k of Object.keys(accepted)) if (k.split('|')[0] === id0) delete accepted[k]; accepted[b.dataset.acc] = 1; store.set('mb-acc', JSON.stringify(accepted)); draw(); return; }
   if (b.dataset.unacc) { delete accepted[b.dataset.unacc]; store.set('mb-acc', JSON.stringify(accepted)); draw(); return; }
   if (b.dataset.s) step = +b.dataset.s; else if (b === back) step--; else if (b === next) step++; else return;
   drawAll(); prog.scrollIntoView({block: 'start'});
@@ -1552,7 +1692,7 @@ root.addEventListener('input', ev => {
     IDX ? redraw() : loadIndex().then(redraw).catch(() => {});
   }
 });
-root.addEventListener('change', ev => { if (ev.target.id === 'mb-bud') drawAll(); });
+root.addEventListener('change', ev => { if (ev.target.id === 'mb-bud') { toast = budgetNews(); drawAll(); } });
 // card hover and tap for rows drawn after load (the page's own handlers bind only to rows present at load)
 const card = ev => ev.target.closest && ev.target.closest('.mb-panel a.card, #mbl a.card');
 const touch = () => matchMedia('(hover: none)').matches;   // phones send compatibility mouse events after a tap: ignore them there
