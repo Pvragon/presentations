@@ -20,7 +20,7 @@ import tempfile
 # Folders that hold code, data or work in progress, not published categories.
 SKIP = {"api", "lib", "public", "scripts", "supabase", "runtime", "node_modules", "backlog"}
 # Hidden categories: their own index must list every page, but nothing else links to them.
-HIDDEN = {"drafts"}
+HIDDEN = {"drafts", "temp-reviews"}
 ALLOW_FILE = os.path.join("scripts", "nav-unlisted.txt")
 
 
