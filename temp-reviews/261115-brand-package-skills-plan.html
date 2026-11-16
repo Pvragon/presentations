@@ -137,7 +137,7 @@
 </style>
 <meta name="prez-date" content="2026-11-15">
 <meta name="prez-topic" content="Design pipeline">
-<meta name="prez-summary" content="Plan outline for a skill suite that builds studio-grade brand packages and token sets.">
+<meta name="prez-summary" content="Plan outline for an autonomous skill suite that builds studio-grade brand packages and token sets.">
 </head>
 <body>
 <canvas id="wave-bg" aria-hidden="true"></canvas>
@@ -150,95 +150,112 @@
   </div>
   <h1>Brand package skills: strategic <span class="accent">plan (outline)</span></h1>
   
-  <div class="meta"><span>Version 0.1.0</span><span>Updated 2026-11-15</span></div>
+  <div class="meta"><span>Version 0.3.0</span><span>Updated 2026-11-15</span></div>
 </header>
 
 <article>
-<p>Evidence base: <code>my-lib/runtime/.tmp/261115-brand-skills-research/</code> (A brand practice, B third-party skills, C tokens and agent formats, D our assets audit).</p>
-<h2>The plan rests on four premises</h2>
+<p>Evidence base: <code>my-lib/runtime/.tmp/261115-brand-skills-research/</code> (A brand practice, B third-party skills, C tokens and agent formats, D our assets audit, E Ponytail architecture review, F Leon Lin harvest).</p>
+<h2>Rulings this plan is built on</h2>
 <ul>
-<li><strong>Decision this feeds:</strong> what skills to build, in what order, and where Jaime&rsquo;s eye sits in them. Unit: a skill with its gate.</li>
-<li><strong>Independent proof:</strong> the only independent judge of taste is a human eye. AI judges and scripts catch defects but cannot certify taste (memory <code>feedback_ai-rubric-loop-cannot-certify-taste</code>).</li>
-<li><strong>Population:</strong> every future Pvragon brand (new brands first; existing brands captured through the import path).</li>
-<li><strong>Fixes the reader will propose:</strong> &ldquo;just install Taste Skill / fatihaydost&rdquo;, &ldquo;just add more reviewers&rdquo;, &ldquo;tighten the rubric&rdquo;. No installable skill has a human taste gate, and more AI reviewers or a tighter rubric repeat the 12/12 failure.</li>
+<li><strong>Autonomous, no human gates</strong> (Jaime, 2026-11-15). The suite checks its own gates and makes its own taste decisions.</li>
+<li><strong>Borrow liberally</strong>, Leon Lin&rsquo;s Taste Skill and cook first (Jaime, 2026-11-15). All MIT licensed, copied with attribution.</li>
+<li><strong>Real photographs and scans are allowed</strong> for materials and textures, licensed or CC0, with a licence register.</li>
+<li><strong>External human labels calibrate the judge</strong> once, as data. Nobody reviews a brand in the loop.</li>
+<li><strong>Token changes are additive.</strong> The existing <code>brand-tokens.json</code> stays as it is for its seven readers.</li>
 </ul>
 <hr />
-<h2>1. We build a suite that develops brands; today we only capture them</h2>
+<h2>1. Today we capture brands; the suite will develop them</h2>
 <ul>
-<li>create-brand-guidelines extracts an existing brand into a template. Nothing does discovery, strategy, divergent directions or a human pick.</li>
-<li>The edh.* run had most of a studio process, but an agent chose among the three palette directions, and AI judges certified the result.</li>
+<li>create-brand-guidelines extracts an existing brand into a template. Nothing does discovery, strategy, divergent directions or a choice between them.</li>
+<li>The edh.* run had most of a studio process, but an agent picked its own palette direction, and AI judges certified work that failed on sight.</li>
 </ul>
-<h2>2. Studios win on process: gates, directions, and the owner&rsquo;s eye</h2>
+<h2>2. The edh failure came from the medium and the labels</h2>
 <ul>
-<li>Wheeler, Airey and the studio cases agree on the deliverables; the difference is phase gates with owner sign-off, and strategy agreed before any visual is shown.</li>
-<li>Two to four genuinely different directions, shown applied (stylescapes), picked by the owner looking. Channel 4: criteria first, then four months of eye.</li>
-<li>Materials and textures are sourced from the real thing at real scale. Our walnut stripes failed both.</li>
+<li>The walnut was <code>repeating-linear-gradient(to bottom, ...)</code>: zero variation across the width. No judge could have fixed it; the medium could not make wood.</li>
+<li>The rendered page printed &ldquo;legal pad on a walnut table&rdquo;, so even a renders-only judge read the label.</li>
+<li>The round-6 reviewer saw &ldquo;horizontal pinstripes&rdquo; at a downscaled glance and passed it anyway, because the label said walnut.</li>
 </ul>
-<h2>3. The suite is eight stage skills under one orchestrator</h2>
+<h2>3. Studios win on process: directions, real references, stress tests</h2>
 <ul>
-<li><code>build-brand-package</code> (orchestrator) dispatches, in order:<ol>
-<li><code>brand-discovery</code>: equity and competitor audit with a real visual lineup, audience research as jobs, contexts and anxieties.</li>
-<li><code>brand-strategy</code>: purpose, onliness statement (competitor-swap test), positioning, personality as bounded pairs, architecture.</li>
-<li><code>brand-voice</code>: voice traits, tone matrix per channel, word list, real sample copy; copy lint.</li>
-<li><code>brand-territories</code>: real-world references, then three territories (safe, adventurous, scary) rendered on one fixed set of applications.</li>
-<li><code>brand-system</code>: mark, colour, type, imagery, iconography, motion, texture, developed in a crit loop with measurements.</li>
-<li><code>brand-tokens</code>: DTCG 2025.10 tokens (primitives, semantics, light and dark), emitted to Untitled UI theme.css, shadcn and DESIGN.md.</li>
-<li><code>brand-package</code>: one human brand book plus small agent files, generated from the same source so they cannot disagree.</li>
-<li><code>brand-judge</code>: the taste gate (section 4), callable at every stage.</li>
+<li>The deliverables are common knowledge; the difference is strategy before visuals, two to four genuinely different directions shown applied, and decisions tested on real applications until they break.</li>
+<li>Materials come from the real thing at real scale. Pentagram&rsquo;s Channel 4 colour work set criteria first, then judged by eye for months.</li>
+</ul>
+<h2>4. Five skills, each built mostly from borrowed parts</h2>
+<ol>
+<li><code>build-brand-package</code>: orchestrator. Decision log, kill record of every rejected route, assembly. Borrows cook&rsquo;s brief, ledger and rounds, and Taste Skill&rsquo;s round cap.</li>
+<li><code>brand-strategy</code>: discovery, competitor lineup as images, personas as jobs, contexts and anxieties, positioning with the competitor-swap test, voice. Borrows fatihaydost&rsquo;s discovery brief and Taste Skill&rsquo;s copy references.</li>
+<li><code>brand-identity</code>: real-world references, three territories on one fixed application set, then mark, colour, type, imagery, iconography, motion and texture. Borrows cook&rsquo;s references-as-minimum-bar and Taste Skill&rsquo;s system references.</li>
+<li><code>brand-judge</code>: the autonomous taste check (section 5) plus the measured floor. Borrows cook&rsquo;s critics, Hallmark&rsquo;s tiers and Impeccable&rsquo;s rubric.</li>
+<li><code>brand-tokens</code>: the 2025.10 token standard, a validator, and emitters for Untitled UI <code>theme.css</code>, DESIGN.md and the existing <code>brand-tokens.json</code>.
+- The human brand book comes from the existing <code>generate-brand-guide-site</code>. create-brand-guidelines stays as the import path for existing brands.</li>
 </ol>
-</li>
-<li>Personas run through every stage: each stage has a persona test (would this persona pick us from the shelf, trust this voice, read this at this size).</li>
-</ul>
-<h2>4. Taste gets four human gates and judges who look first</h2>
+<h2>5. Leon&rsquo;s taste comes from removing the model&rsquo;s free choice</h2>
 <ul>
-<li>Jaime&rsquo;s four gates: strategy sign-off, territory pick, colour and type crit, release. Each gate is a page of renders, rationale hidden until he has looked.</li>
-<li>AI judges see renders only and must say what they see (material, mood, what they remember) before reading intent. A mismatch is a finding.</li>
-<li>One judge is a different model (Codex or Gemini CLI). Work is judged beside real references and the competitor lineup, plus a break-it pass (16 px, dark, print, extreme copy).</li>
-<li>A slop lint flags default looks (Inter, indigo, purple gradients, cream plus terracotta) as &ldquo;justify or change&rdquo;, replacing the distance-from-Tailwind gate.</li>
-<li>A taste record keeps every rejected route and Jaime&rsquo;s reason, so judges inherit his calls over time.</li>
+<li>He takes away free choice where model defaults are worst (palette, type, layout) and deals from hand-vetted libraries instead: 64 palettes and 39 type pairings in Taste Skill, with a history file so outputs differ.</li>
+<li>Colour comes from a real object (the product, a shopfront&rsquo;s paint, the tiles), never a story. The interface is 90 to 95% neutral with one accent, in OKLCH ranges a script can check. This replaces the distance-from-Tailwind gate.</li>
+<li>Every ban sits beside a positive move, and devices have budgets instead of bans. Effects are retired by naming what they read as: &ldquo;marble-warp (zebra stripes)&rdquo;, &ldquo;terrazzo-speckle (a kitchen floor)&rdquo;. After two honest tries that still look cheap, the effect is dropped.</li>
+<li>Texture must be &ldquo;calm and specific as a studio photograph&rdquo;; a pattern never stands in for a real photograph. Either rule alone forbids the edh walnut.</li>
+<li>His copy layer is a complete voice method: a fact sheet, a voice card, 13 registers, a budget per copy device, tell lists, and the rival&rsquo;s-name test.</li>
+<li>Brand truth beats his house rules: his violet ban becomes &ldquo;needs a real source&rdquo;, and Inter is allowed as Untitled UI&rsquo;s product face, never the brand display face.</li>
 </ul>
-<h2>5. We borrow from five third-party skills and install none yet</h2>
+<h2>6. The judge looks blind, compares to real work, then picks</h2>
 <ul>
-<li>fatihaydost/brand-identity-skill (MIT): measured vs judgement labels, identity cards, logo, type and palette as one system, script gates.</li>
-<li>Nutlope/hallmark (MIT): Floor, Reflex and Finish rule tiers with recorded waivers; brand-truth attestation.</li>
-<li>pbakaus/impeccable (Apache-2.0): craft floor and critique rubric. kaankiziltug/logo-design-skill (MIT): the logo test checklist.</li>
-<li>google-labs-code/design.md (Apache-2.0): the agent-readable format we emit. designlang&rsquo;s calibrated slop score is a candidate tool.</li>
-<li>No skill fills the human taste gate, strategy-to-token traceability, or persona-to-brand tests. Those are ours to write.</li>
+<li><strong>Blind set:</strong> the orchestrator, never the author, renders a fixed application set with brand copy replaced, plus text-free texture crops, each at full size and at a glance.</li>
+<li><strong>Describe first:</strong> two model families say what material, mood and memory they see before any intent. Jev checks whether the description names the intended material.</li>
+<li><strong>Side by side (cook&rsquo;s blind pair test):</strong> our work beside a photograph of the real material, asking &ldquo;which one was made in code, and why?&rdquo; A confident, correct answer names the fix. The same test runs against a lesser-known master-studio identity.</li>
+<li><strong>Critics see renders only:</strong> never the brief, the builder or anyone&rsquo;s opinion. Two critics or more, one from a different model family, the median per dimension, a bar per dimension so the weakest cannot hide.</li>
+<li><strong>Inflation check:</strong> a reference is scored blind in the same batch. If our work beats it, the critics are inflated and the round does not count.</li>
+<li><strong>Tournament:</strong> the three territories meet head to head, both orders, both model families. The author&rsquo;s favourite is never shown.</li>
+<li><strong>Floor:</strong> contrast in every theme, colour ramps, the 16 px mark, slop lint, competitor distinctness, licences, a two-axis texture check. A flagged default look must beat a non-default alternative blind; the author cannot explain it away.</li>
+<li><strong>Stopping rule (Taste Skill&rsquo;s <code>gate.mjs</code>):</strong> criteria frozen before round 1; files fingerprinted so a rerun on unchanged work is not a round; a round cap; at most five waivers, one finding each, with a reason; &ldquo;not checked&rdquo; is never a pass. Every finding is sorted into defect, decision or question, and questions never re-enter the loop.</li>
 </ul>
-<h2>6. Tokens move to the 2025.10 standard and feed Untitled UI</h2>
+<h2>7. The judge is proven on known failures before anything else is built</h2>
 <ul>
-<li>None of our six token files is valid DTCG 2025.10; four have only colour, font and logo. Conversion is mostly mechanical.</li>
-<li>Contract: primitives, semantics, a light/dark resolver; categories colour, type, space, radius, border, shadow, motion, opacity, z, breakpoints, icon size.</li>
-<li>Output target is Echo1&rsquo;s stack: Untitled UI on Tailwind v4 (<code>app/src/styles/theme.css</code>), with JP&rsquo;s pairing rules carried as agent rules.</li>
+<li><strong>Must fail:</strong> the edh dark theme states, the 16 px marks read as &ldquo;phone with coin&rdquo; and &ldquo;four-pane window&rdquo;, and fakes built for the test (stripes sold as wood, an Inter and indigo hero, cream plus terracotta). The walnut runs once blind and once with its label, to show the blinding is what works.</li>
+<li><strong>Must pass:</strong> real master-studio applications and real material photographs, so the judge cannot pass by failing everything.</li>
+<li><strong>Calibration:</strong> 50 to 100 externally human-labelled pairs, thresholds set before the run. Below about 70% agreement, the judge is reported as a floor check only.</li>
+<li><strong>unlazy&rsquo;s rule:</strong> a check must fail a known-bad case before it is trusted, and a passing check proves nothing about its title.</li>
+<li><strong>Kept forever:</strong> the controls become <code>brand-judge --self-check</code> and rerun on every change.</li>
 </ul>
-<h2>7. The package is one book for people and small files for agents</h2>
+<h2>8. Tokens add the 2025.10 standard beside today&rsquo;s file</h2>
 <ul>
-<li><code>brand.md</code> (human), <code>index.md</code> (agent entry), <code>tokens/</code>, <code>voice.md</code>, <code>rules.md</code>, <code>assets/manifest.json</code>, generated <code>DESIGN.md</code> and <code>checks/</code>.</li>
-<li>Values live only in tokens; prose cites token names, and a lint catches drift.</li>
+<li>New files: primitives, light and dark semantics, and a resolver; categories colour, type, space, radius, border, shadow, motion, opacity, z, breakpoints, icon size.</li>
+<li>Motion tokens start from Leon&rsquo;s three curves with no overshoot, plus his durations and distances.</li>
+<li><code>brand-tokens.json</code> is still produced, field for field, so its seven readers never change.</li>
+<li>Output target is Echo1&rsquo;s stack: Untitled UI on Tailwind v4, through the existing <code>build-brand-theme.mjs</code>, with JP&rsquo;s colour-pairing rules carried as agent rules.</li>
 </ul>
-<h2>8. Ponytail and three brand experts review the suite before build</h2>
+<h2>9. Two authored sources; every other file is generated</h2>
 <ul>
-<li>Review panel: Ponytail (what to cut), an Opus brand strategist, an Opus identity designer, an Opus design-systems engineer, plus one Codex reviewer.</li>
-<li>Owner decisions are locked in the reviewer brief, so reviewers find flaws without manufacturing requirements.</li>
+<li><code>brand.md</code> and the token files are the only authored sources. <code>index.md</code>, <code>voice.md</code>, <code>rules.md</code>, DESIGN.md and the brand book are generated from them.</li>
+<li>A lint checks that every token name cited in prose exists, so the views cannot drift.</li>
 </ul>
-<h2>9. Build order and how we know the skills work</h2>
+<h2>10. Build order follows the risk</h2>
+<ol>
+<li>Check the tools: one 2025.10 validator on one converted file; one image round trip each through Codex CLI and Gemini CLI.</li>
+<li><code>brand-judge</code> and its controls and calibration, proven first.</li>
+<li><code>brand-tokens</code>, then <code>brand-strategy</code>, <code>brand-identity</code> and the orchestrator.</li>
+<li>Each skill ships with tests that fail against a stub, and a dry run on a fictional fixture brand that never ships.</li>
+</ol>
 <ul>
-<li>Order: tokens and package format first (everything consumes them), then judge, then strategy stages, then territories and system.</li>
-<li>Each skill ships with tests that fail against a stub, and a dry run on a fixture brand.</li>
+<li>Review: one brand strategist and one design-systems reviewer on the full plan; the rest of the effort goes to proving the judge.</li>
 </ul>
-<h2>10. Reference: sources, licences, what was not verified</h2>
+<h2>11. Jev answers closed text questions only</h2>
 <ul>
-<li>Research files A to D; licence limits (Commons Clause on borghei, no licence on shaom, trademarked logo libraries); unread pages.</li>
+<li>Use: does a blind description name the intended material; does the positioning survive a competitor swap; does a sample sentence fit the voice; first sort of review findings.</li>
+<li>Never: any visual verdict, the territory pick, anything a formula settles (contrast, colour distance), writing, or calibration labels.</li>
+</ul>
+<h2>12. Reference: sources, licences, what was not verified</h2>
+<ul>
+<li>Research files A to F. Licence limits: Commons Clause on borghei, no licence on shaom, trademarked logo libraries in kaankiziltug and fatihaydost.</li>
+<li>Leon&rsquo;s repos pinned for attribution: taste-skill f6b7657, cook b23cac6, taste-skill-classics 5e08c93, unlazy 1667149, imagegen-skills beb16b0. All MIT; copied text gets a header and a THIRD-PARTY-NOTICES.md.</li>
+<li>Leon&rsquo;s <code>brandkit</code> skill (imagegen-skills) generates studio-style brand boards with an image model. It is a candidate renderer for territory boards, untested.</li>
+<li>Not yet verified: image input on Codex and Gemini CLIs, any 2025.10 validator, the size and licence of the calibration sources.</li>
 </ul>
 <hr />
 <h2>Open choices for Jaime</h2>
 <ol>
-<li><strong>Suite size.</strong> Eight stage skills plus an orchestrator (my vote), or fewer by merging voice into strategy and territories into system. Eight keeps each gate in one place.</li>
-<li><strong>Your gates.</strong> Four (strategy, territory, colour and type, release) is my vote. More gates means better taste and more of your time.</li>
-<li><strong>Proving the skills without a pilot.</strong> My vote: a fictional fixture brand used only as a test case, never shipped. Alternative: review only, no dry run.</li>
-<li><strong>Third-party installs.</strong> My vote: borrow ideas now, and trial-install fatihaydost&rsquo;s scripts read-only later with your ok. Alternative: install it as a component today.</li>
-<li><strong>Migrating the four existing brands&rsquo; tokens</strong> (Pvragon, RideCare, Refio, Echo1) to the new contract: in scope now, or after the suite works. My vote: after.</li>
-<li><strong>Home.</strong> Born in <code>my-lib/skills/</code>, graduate to team-lib once proven (AGENTS.md Op #15).</li>
+<li><strong>Calibration source and cost.</strong> My vote: start from free sources (Brand New reader polls on identity redesigns, Awwwards winners against nominees, designlang&rsquo;s human-versus-AI set). Buy a paid panel only if those fall short of 50 pairs. I will price it before spending anything.</li>
+<li><strong>Proving the skills without a pilot.</strong> My vote: a fictional fixture brand used only as a test case, never shipped.</li>
 </ol>
 </article>
 
