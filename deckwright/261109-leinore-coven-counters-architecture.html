@@ -279,17 +279,27 @@ const save = () => { put(D.key, [...checked]); put(D.key + ':picks', picks); put
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const link = (n, lab) => `<a class="card" href="#" data-card="${esc(D.hover[n] || n)}">${esc(lab || n)}</a>`;
 const CH = Object.fromEntries(D.changes.map(c => [c.id, c]));
+const live = id => !!(CH[id] && (CH[id].status === 'open' || CH[id].status === 'declined'));
 // A card added from Considering that has since become a planned change is the same change: keep the planned row only.
 padds = padds.filter(p => !D.changes.some(c => c.add === p.add && c.status !== 'done' && c.status !== 'already'));
 const SAVED = D.versions.filter(v => !v.working);
+{ const base = SAVED[SAVED.length - 1].list, BAS = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest', 'Wastes'];
+  const n0 = checked.size + padds.length + strikes.length;
+  checked = new Set([...checked].filter(live));
+  padds = padds.filter(p => BAS.includes(p.add) || !base[p.add]);   // a Considering add already in the saved list is stale
+  strikes = strikes.filter(n => base[n]);                          // a strike of a card no longer in the list is stale
+  if (checked.size + padds.length + strikes.length !== n0) save(); }
 const RANK = Object.fromEntries(D.cut_rank.map((c, i) => [c.card, i]));
 const WHY = Object.fromEntries(D.cut_rank.map(c => [c.card, c.why]));
 const lockedIn = id => { const l = locks.find(l => l.ids.includes(id)); return l ? l.v : null; };
+// Only changes still open (or passed over) on the working tab can be in it. A tick kept in this browser for a change a
+// saved version already made (done / already) would apply it a second time: an extra copy of the add, a cut of a card
+// that is gone. Such ticks are dropped on load, with stale Considering adds and strikes (see prune below).
 const effCut = id => (id in picks) ? (picks[id] || null) : ((CH[id] && CH[id].cut) || null);
 // Active (unlocked) entries in the working version, as {id, add, cut}.
 function entries(skip) {
   const out = [];
-  [...checked].filter(id => CH[id] && !lockedIn(id)).forEach(id => out.push({id, add: CH[id].add, cut: effCut(id)}));
+  [...checked].filter(id => live(id) && !lockedIn(id)).forEach(id => out.push({id, add: CH[id].add, cut: effCut(id)}));
   padds.forEach(p => out.push({id: p.id, add: p.add, cut: effCut(p.id)}));
   strikes.forEach(n => out.push({id: 'st:' + n, add: null, cut: n}));
   return out.filter(e => e.id !== skip);
