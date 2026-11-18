@@ -495,7 +495,7 @@ left join client c on c.id = tr.client_id</code></p>
 <h3>B2. Decide the class</h3>
 <p>Apply these rules in order. The first one that applies decides the ride.</p>
 <ol>
-<li><strong>Out-of-state contract.</strong> As Step 5 rule 1: if the contract candidate is one of the out-of-state contracts listed there, <strong>CONTRACT</strong>, that contract, step id <code>A</code>.</li>
+<li><strong>Out-of-state contract.</strong> As Step 5 rule 1: if the contract candidate is one of the out-of-state contracts listed there, <strong>CONTRACT</strong>, that contract, step id <code>A</code>. This comes before the facility rules, so a ride to an out-of-state contract&rsquo;s facility is a contract ride even when that facility is a health facility. Texas Recovery Center is the usual case: rides to it stay contract rides (Jaime, 2026-11-17).</li>
 <li><strong>Both ends out of state.</strong> As Step 5 rule 2, with the same contract choice: <strong>CONTRACT</strong>, step id <code>B</code>.</li>
 <li><strong>Health facility to health facility:</strong> <strong>CRISIS</strong>, step id <code>M1 facility to facility</code>.</li>
 <li><strong>Other place to a health facility</strong> (presumed evaluation): <strong>CRISIS</strong>, step id <code>M2 to a health facility</code>.</li>
@@ -1218,6 +1218,11 @@ left join client c on c.id = tr.client_id</code></p>
 <td>B8</td>
 <td>form ODMHDIS; pickup <code>healthcare_medical</code>; dropoff <code>private_residence</code>; ride date 2026-09-14</td>
 <td>CONTRACT, billed ODMHSAS Central - non-crisis (PO 4529070498), <code>M3 S2-1</code></td>
+</tr>
+<tr>
+<td>B9</td>
+<td>pickup <code>healthcare_medical</code> in Oklahoma; dropoff facility &ldquo;Texas Recovery Center&rdquo;, <code>treatment_recovery</code>, <code>state_code</code> TX</td>
+<td>CONTRACT, Texas Recovery Center (Regard Healthcare), <code>A</code></td>
 </tr>
 </tbody>
 </table></div>
