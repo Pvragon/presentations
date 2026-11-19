@@ -1,0 +1,17 @@
+{
+  "input": "/home/jkhereford/ai-workspace/my-lib/runtime/deliverables/261117-augur-collection-teardown/prez/261117-collection-data-models.md",
+  "output": "/home/jkhereford/ai-workspace/projects/presentations/drafts/261117-collection-data-models.html",
+  "model": "sonnet",
+  "seconds": 7.5,
+  "sentences_checked": 82,
+  "acknowledged": false,
+  "checked": "2026-11-17T17:45:06",
+  "findings": [
+    {
+      "quote": "For discussion.",
+      "rule": "stance:shape 1",
+      "why": "Describes the document's own status instead of the subject; the opening line already says this is a draft for the data-model discussion.",
+      "rewrite": ""
+    }
+  ]
+}

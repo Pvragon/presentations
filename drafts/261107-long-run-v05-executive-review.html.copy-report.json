@@ -1,0 +1,89 @@
+{
+  "input": "/home/jkhereford/ai-workspace/my-lib/skills/long-run/references/research/261107-recursive-node-design/EXECUTIVE-REVIEW.md",
+  "output": "/home/jkhereford/ai-workspace/projects/presentations/drafts/261107-long-run-v05-executive-review.html",
+  "model": "sonnet",
+  "seconds": 9.7,
+  "sentences_checked": 282,
+  "acknowledged": false,
+  "checked": "2026-11-16T01:29:22",
+  "findings": [
+    {
+      "quote": "The kill rule. If the flat run wins on tokens and wall time at an equal quality score, level 1b waits.",
+      "rule": "stance:shape 3",
+      "why": "Dramatic label for a plain condition; the sentence already states the rule.",
+      "rewrite": "If the flat run wins on tokens and wall time at an equal quality score, level 1b waits."
+    },
+    {
+      "quote": "Replays show one working rule and a cheap layer",
+      "rule": "stance:shape 3",
+      "why": "Heading written for effect where a plain label was the job.",
+      "rewrite": "Replay results"
+    },
+    {
+      "quote": "General rules and a written lesson missed a data-meaning error",
+      "rule": "humanizer:sayings that sound deep",
+      "why": "Heading is a flourish; the finding is already in the table and text.",
+      "rewrite": "Data error replays"
+    },
+    {
+      "quote": "The git rule fixed a lost-file commit in 6 of 6 runs",
+      "rule": "stance:shape 3",
+      "why": "Heading restates the sentence that follows it.",
+      "rewrite": "Git error replays"
+    },
+    {
+      "quote": "Every dimension scores 3 or 4 before v0.5 runs",
+      "rule": "stance:shape 3",
+      "why": "Heading is a conclusion flourish where a label was needed.",
+      "rewrite": "Scores on the six dimensions"
+    },
+    {
+      "quote": "These are the independent review's scores on the owner's six dimensions.",
+      "rule": "stance:shape 1",
+      "why": "Describes what the table is rather than the subject.",
+      "rewrite": "Scores are from the independent review."
+    },
+    {
+      "quote": "Most open questions need a running 1a to answer",
+      "rule": "stance:shape 3",
+      "why": "Heading written as a takeaway where a label was the job.",
+      "rewrite": "Open questions"
+    },
+    {
+      "quote": "All but the first two can be settled only by building and running.",
+      "rule": "stance:shape 1",
+      "why": "Narrates the table above it; the reader can see the Settled by column.",
+      "rewrite": ""
+    },
+    {
+      "quote": "Calls still open with the owner, none blocking 1a. These are the six design questions Q-1 to Q-6, three review findings, two gaps from held-out cases, how to read the no-regression result, and whether to rename the builder role.",
+      "rule": "humanizer:forced triads",
+      "why": "Long list-sentence that dresses a plain label as a catalogue of open items; the heading-like fragment is staged.",
+      "rewrite": "Open with the owner, none blocking 1a: design questions Q-1 to Q-6, three review findings, two gaps from held-out cases, how to read the no-regression result, and whether to rename the builder role."
+    },
+    {
+      "quote": "Of the review's suggested cuts, it moves some to level 1b.",
+      "rule": "humanizer:vague connection or association",
+      "why": "Vague 'some' hides which cuts moved.",
+      "rewrite": "Draft 11 moves some of the review's suggested cuts to level 1b."
+    },
+    {
+      "quote": "The workspace, auditor, order check and two clocks come from the owner's five rulings for draft 11.",
+      "rule": "stance:shape 2",
+      "why": "Narrates the document's provenance rather than the subject.",
+      "rewrite": ""
+    },
+    {
+      "quote": "The review found four must-fix and nine should-fix problems, and draft 11 fixes all thirteen.",
+      "rule": "stance:shape 2",
+      "why": "Narrates the document's revision history; reader needs the changes, not the count.",
+      "rewrite": ""
+    },
+    {
+      "quote": "The tests replayed real v0.4 decisions with and without the workspace layer.",
+      "rule": "stance:shape 2",
+      "why": "Narrates method before the results.",
+      "rewrite": ""
+    }
+  ]
+}

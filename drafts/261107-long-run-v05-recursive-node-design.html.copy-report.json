@@ -1,0 +1,83 @@
+{
+  "input": "/home/jkhereford/ai-workspace/my-lib/skills/long-run/references/research/261107-recursive-node-design/DESIGN.md",
+  "output": "/home/jkhereford/ai-workspace/projects/presentations/drafts/261107-long-run-v05-recursive-node-design.html",
+  "model": "sonnet",
+  "seconds": 11.0,
+  "sentences_checked": 2291,
+  "acknowledged": true,
+  "checked": "2026-11-10T18:33:50",
+  "findings": [
+    {
+      "quote": "Governed by FRAME.md (D1 to D9); s15 and s17 trace which review each part answers.",
+      "rule": "stance:shape 1",
+      "why": "Describes the document's own structure and navigation rather than the subject.",
+      "rewrite": ""
+    },
+    {
+      "quote": "Drawn by hand from harness-process.yaml; only the layperson charts are generated (s16).",
+      "rule": "stance:shape 2",
+      "why": "Narrates how the diagram was produced, which the reader does not need.",
+      "rewrite": ""
+    },
+    {
+      "quote": "Colors as in diagram 1; drawn by hand from harness-process.yaml.",
+      "rule": "stance:shape 2",
+      "why": "Build narration about how the diagram was made.",
+      "rewrite": "Colors as in diagram 1."
+    },
+    {
+      "quote": "Colors as in diagram 1.",
+      "rule": "stance:shape 1",
+      "why": "Explains the page's own legend. The reader can see the colors. The sentence is redundant with the diagram legend already given.",
+      "rewrite": ""
+    },
+    {
+      "quote": "This table is kept by hand in step with that block.",
+      "rule": "stance:shape 2",
+      "why": "Narrates how the table is maintained, a statement about process.",
+      "rewrite": ""
+    },
+    {
+      "quote": "Draft 10 is written with each\nrecommendation as the proposed default, marked \"(proposed, pending the owner: Q-n)\" in the text and by a pending-question\nfield (Q-n) on the matching steps and transitions of harness-process.yaml.",
+      "rule": "stance:shape 1",
+      "why": "Explains the document's own marking convention and how it was written.",
+      "rewrite": "Each recommendation is the proposed default. None is decided."
+    },
+    {
+      "quote": "Read literally, draft 9 ran every capability's leaves in series: 117 h against 21 h in\nsimulation (FX-11; T4, F4-04).",
+      "rule": "humanizer:writing about the previous version",
+      "why": "Describes the prior draft's behavior instead of the current design.",
+      "rewrite": "Running every capability's leaves in series would take 117 h against 21 h in simulation (FX-11; T4, F4-04)."
+    },
+    {
+      "quote": "Draft 9's expansion path skipped\nit, so finish's re-cut of strength's C21, C22 and C24 (F-14, 96M tokens) would pass again (FX-34; T2 F2-13).",
+      "rule": "humanizer:writing about the previous version",
+      "why": "Describes what the previous draft did instead of current behavior.",
+      "rewrite": "Without the frame diff, finish's re-cut of strength's C21, C22 and C24 (F-14, 96M tokens) would pass again (FX-34; T2 F2-13)."
+    },
+    {
+      "quote": "Draft 9 refused such changes for lack of a decider\nclassification, or held them behind a signal and reported back (FX-30, FX-31; T2 F2-17, F2-18).",
+      "rule": "humanizer:writing about the previous version",
+      "why": "Narrates the prior draft in a design section rather than current behavior.",
+      "rewrite": ""
+    },
+    {
+      "quote": "Draft 9's band came from T1's healthy-clean set, a different mix, where waystar's 3.0 h\nwas the rotation bound and discovery's 6.3 h was G3 again (T1 s4).",
+      "rule": "humanizer:writing about the previous version",
+      "why": "Describes what the previous draft's figures came from rather than the current design.",
+      "rewrite": ""
+    },
+    {
+      "quote": "The program confirmed the core: the node, the frozen matrix as done, one uncapped walk, the independent decider and code\nthat owns transitions (report s3).",
+      "rule": "stance:shape 2",
+      "why": "Narrates the method's verdict on itself; a forced list restating validation.",
+      "rewrite": ""
+    },
+    {
+      "quote": "Reading the whole is the key",
+      "rule": "humanizer:inflated significance",
+      "why": "Not in copy; placeholder removed.",
+      "rewrite": ""
+    }
+  ]
+}
