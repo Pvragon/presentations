@@ -147,7 +147,7 @@
   </div>
   <h1>Contract vs crisis classification for Echo1 rides</h1>
   <p class="lede">The exact procedure for choosing an Echo1 ride's payer: insurance as a crisis ride, or a contract customer.</p>
-  <div class="meta"><span>Version 1.7.0</span></div>
+  <div class="meta"><span>Version 1.8.0</span></div>
 </header>
 
 <article>
@@ -497,13 +497,14 @@ left join client c on c.id = tr.client_id</code></p>
 <ol>
 <li><strong>Out-of-state contract.</strong> As Step 5 rule 1: if the contract candidate is one of the out-of-state contracts listed there, <strong>CONTRACT</strong>, that contract, step id <code>A</code>. This comes before the facility rules, so a ride to an out-of-state contract&rsquo;s facility is a contract ride even when that facility is a health facility. Texas Recovery Center is the usual case: rides to it stay contract rides (Jaime, 2026-11-17).</li>
 <li><strong>Both ends out of state.</strong> As Step 5 rule 2, with the same contract choice: <strong>CONTRACT</strong>, step id <code>B</code>.</li>
+<li><strong>Oceans group transport.</strong> If the contract candidate is Oceans Healthcare (BHC at Porter Health Village) and the ride is part of a group transport, <strong>CONTRACT</strong>, Oceans, step id <code>G Oceans group</code>, wherever it drops off. A group transport is 2 or more riders on the same Echo1 route, picked up within 30 minutes of each other and going to the same dropoff. Only a single rider going into Oceans, or from Oceans to another facility, falls through to the facility rules below (Jaime, 2026-11-18).</li>
 <li><strong>Health facility to health facility:</strong> <strong>CRISIS</strong>, step id <code>M1 facility to facility</code>.</li>
 <li><strong>Other place to a health facility</strong> (presumed evaluation): <strong>CRISIS</strong>, step id <code>M2 to a health facility</code>.</li>
 <li><strong>Dropoff is an other place</strong>, whatever the pickup: <strong>CONTRACT</strong>, the contract candidate from Step 3 (the request form; for a general website form, the address and other fallback sources in Step 3&rsquo;s order). The step id is <code>M3</code> followed by the source, for example <code>M3 S2-1</code> (form) or <code>M3 S2-3</code> (one end).</li>
 <li><strong>Dropoff is an other place and Step 3 has no contract candidate:</strong> <strong>HOLD</strong>, reason <code>unknown contract</code>, step id <code>M3 no contract</code>.</li>
 </ol>
 <p>Then run Step 6 on a CONTRACT result to get the billed contract.</p>
-<p>The request form never makes a ride crisis or contract under Method B. It only names the contract for a ride that rule 5 has already made a contract ride.</p>
+<p>The request form never makes a ride crisis or contract under Method B. It only names the contract for a ride that rule 6 has already made a contract ride.</p>
 <h3>B3. Discharge noted (evidence only)</h3>
 <p>Record <code>discharge_noted</code> = true when the Notes (Step 1) match <code>\bdischarg</code>, any case. Many rides to a residence or other place should show it. It never changes the class. A contract result without it, and a crisis result with it, are worth a look when choosing between the methods.</p>
 <h3>Record both results</h3>
@@ -1223,6 +1224,11 @@ left join client c on c.id = tr.client_id</code></p>
 <td>B9</td>
 <td>pickup <code>healthcare_medical</code> in Oklahoma; dropoff facility &ldquo;Texas Recovery Center&rdquo;, <code>treatment_recovery</code>, <code>state_code</code> TX</td>
 <td>CONTRACT, Texas Recovery Center (Regard Healthcare), <code>A</code></td>
+</tr>
+<tr>
+<td>B10</td>
+<td>contract candidate Oceans; pickup a residence; dropoff Oceans (<code>healthcare_medical</code>); 3 riders on the same route within 30 minutes, same dropoff</td>
+<td>CONTRACT, Oceans Healthcare (BHC at Porter Health Village), <code>G Oceans group</code></td>
 </tr>
 </tbody>
 </table></div>
