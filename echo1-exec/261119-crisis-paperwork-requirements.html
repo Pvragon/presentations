@@ -44,6 +44,7 @@
   /* heading rhythm: space ABOVE a heading is 3x the space BELOW it at every level */
   article h2{font-size:27px;font-weight:800;margin:66px 0 22px;color:var(--heading);}
   article h2:first-child{margin-top:44px;}
+  article h2::before{content:"";display:block;width:56px;height:3px;border-radius:2px;background:var(--accent-secondary);margin-bottom:16px;}article h2:first-of-type::before{display:none;}
   article h3{font-size:21px;font-weight:750;margin:48px 0 16px;color:var(--heading);}
   article h3 .num{display:inline-flex;align-items:center;justify-content:center;
     width:32px;height:32px;border-radius:9px;
