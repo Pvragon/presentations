@@ -10,6 +10,9 @@
  *   - reply / resolve / reopen; resolved threads stay readable behind a filter
  * Identity: the shared .prgn.ai cookie `prgn_identity` {playerId, name, color} — same picker as play.prgn.ai.
  * Access: you can comment on any page you can open (the API re-checks the page password cookie).
+ * @rowan (2026-11-20): the page's verified author (server-signed prez_writer cookie, set by a claim link from Rowan) can
+ * send a thread to Rowan by mentioning @rowan or with "Send to Rowan". The API decides; this client only shows the
+ * button to the author and a "Sent to Rowan" badge until Rowan replies. From anyone else @rowan is plain text.
  */
 (function () {
   if (window.__prezComments) return;
@@ -122,6 +125,7 @@
   root.innerHTML = `
     <style>
       :host{ all:initial; }
+      [hidden]{ display:none!important; }
       *{ box-sizing:border-box; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
       .fab{ pointer-events:auto; position:fixed; display:none; align-items:center; gap:6px; padding:7px 11px; border-radius:10px;
             background:#12201f; color:#eafaf3; font:600 12px/1 system-ui,sans-serif; border:1px solid rgba(255,255,255,.14);
@@ -152,6 +156,11 @@
       .m{ display:flex; gap:8px; margin:6px 0; font-size:13px; line-height:1.45; }
       .m .dot{ margin-top:5px; flex:none; } .m b{ font-weight:700; } .m .when{ opacity:.55; font-size:11px; margin-left:6px; }
       .m.agent{ background:rgba(10,143,160,.09); border-radius:8px; padding:6px 8px; margin-left:-4px; }
+      .sent{ display:inline-flex; align-items:center; gap:5px; font:600 11px/1 system-ui; color:#0a8fa0; background:rgba(10,143,160,.12); border-radius:999px; padding:4px 8px; margin:0 0 6px; }
+      .row button.torowan{ background:rgba(10,143,160,.16); color:#0a8fa0; }
+      @media (prefers-color-scheme:dark){ .sent,.row button.torowan{ color:#5fd3e0; } }
+      .authtag{ font:600 11px/1 system-ui; color:#0a8fa0; background:rgba(10,143,160,.12); border-radius:999px; padding:4px 8px; }
+      @media (prefers-color-scheme:dark){ .authtag{ color:#5fd3e0; } }
       .m p{ margin:2px 0 0; white-space:pre-wrap; word-wrap:break-word; }
       .row{ display:flex; gap:6px; align-items:center; margin-top:8px; flex-wrap:wrap; }
       .row button,.row .tog{ all:unset; cursor:pointer; font:600 11px/1 system-ui; padding:5px 8px; border-radius:7px; background:rgba(127,127,127,.12); color:inherit; }
@@ -183,10 +192,10 @@
     <div class="compose" role="dialog" aria-label="New comment">
       <div class="q cq"></div>
       <textarea class="ctext" placeholder="Write a comment…"></textarea>
-      <div class="row"><button class="csend" type="button">Post</button><button class="ccancel" type="button">Cancel</button></div>
+      <div class="row"><button class="csend" type="button">Post</button><button class="csendr torowan" type="button" hidden title="Post and send this thread to Rowan">Send to Rowan</button><button class="ccancel" type="button">Cancel</button></div>
     </div>
     <aside class="rail" aria-label="Comments">
-      <div class="hd"><h2>Comments</h2><button class="chip who" type="button" title="Change your name or color"><span class="dot"></span><span class="nm">Set your name</span></button><button class="x close" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
+      <div class="hd"><h2>Comments</h2><span class="authtag" hidden title="You are this page's verified author: @rowan in your comments reaches Rowan">Author</span><button class="chip who" type="button" title="Change your name or color"><span class="dot"></span><span class="nm">Set your name</span></button><button class="x close" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
       <div class="tools"><button class="pagec" type="button">+ Comment on page</button><label><input type="checkbox" class="showres"> show resolved</label></div>
       <div class="list"></div>
     </aside>
@@ -198,6 +207,7 @@
   const $ = (s) => root.querySelector(s);
   const fab = $('.fab'), rail = $('.rail'), list = $('.list'), markers = $('.markers'), compose = $('.compose'), modal = $('.modal'), toastEl = $('.toast');
 
+  let isAuthor = false;
   let idx = buildIndex(), identity = readIdentity(), threads = [], located = new Map(), activeId = null, pendingAnchor = null, pendingRange = null, afterIdentity = null, timer = null;
   const toast = (m) => { toastEl.textContent = m; toastEl.classList.add('show'); clearTimeout(timer); timer = setTimeout(() => toastEl.classList.remove('show'), 2000); };
   const fmtWhen = (iso) => { const d = new Date(iso), diff = (Date.now() - d) / 6e4; return diff < 1 ? 'now' : diff < 60 ? Math.round(diff) + 'm' : diff < 1440 ? Math.round(diff / 60) + 'h' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); };
@@ -222,7 +232,7 @@
     return j;
   }
   async function load() {
-    try { const j = await api('GET', null, { page: PAGE }); threads = j.threads || []; if (j.identity && !identity) identity = j.identity; }
+    try { const j = await api('GET', null, { page: PAGE }); threads = j.threads || []; if (j.identity && !identity) identity = j.identity; isAuthor = !!j.isAuthor; }
     catch (e) { if (e.status !== 503) console.warn('[prez-comments]', e.message); threads = []; }
     render();
   }
@@ -239,6 +249,7 @@
         m.addEventListener('click', () => { openRail(); focusThread(t.id); }); markers.appendChild(m);
       }
     }
+    $('.authtag').hidden = !isAuthor; $('.csendr').hidden = !isAuthor;
     const who = $('.who'); who.querySelector('.dot').style.background = identity ? identity.color : 'transparent'; who.querySelector('.nm').textContent = identity ? identity.name : 'Set your name';
     const showRes = $('.showres').checked; const vis = threads.filter(t => showRes || t.status === 'open');
     list.innerHTML = vis.length ? '' : `<div class="empty">${threads.length ? 'No open threads. Tick “show resolved” to see closed ones.' : 'No comments yet. Select some text and click <b>Comment</b>, or use <b>+ Comment on page</b>.'}</div>`;
@@ -249,15 +260,17 @@
   function threadEl(t) {
     const el = document.createElement('div'); el.className = 't' + (t.status === 'resolved' ? ' resolved' : '') + (t.id === activeId ? ' active' : ''); el.dataset.id = t.id;
     const r = located.get(t.id);
-    let html = t.quote ? `<div class="q ${r ? '' : 'orphan'}" title="Jump to passage">${esc(t.quote)}</div>` : '<div class="q" style="border-color:#9ca3af">Whole page</div>';
+    let html = t.to_agent && t.status === 'open' ? '<div class="sent" title="Rowan will reply here">Sent to Rowan</div>' : '';
+    html += t.quote ? `<div class="q ${r ? '' : 'orphan'}" title="Jump to passage">${esc(t.quote)}</div>` : '<div class="q" style="border-color:#9ca3af">Whole page</div>';
     for (const m of t.messages) html += `<div class="m ${m.is_agent ? 'agent' : ''}"><span class="dot" style="background:${esc(m.author_color || '#999')}"></span><div><b>${esc(m.author_name)}</b><span class="when">${fmtWhen(m.created_at)}</span><p>${esc(m.body)}</p></div></div>`;
     if (t.status === 'resolved') html += `<div class="m" style="opacity:.6;font-size:12px"><span></span><div>Resolved${t.resolved_by ? ' by ' + esc(t.resolved_by) : ''}${t.resolved_at ? ' · ' + fmtWhen(t.resolved_at) : ''}</div></div>`;
-    html += `<textarea class="rtext" placeholder="Reply…"></textarea><div class="row"><button class="reply">Reply</button>${t.status === 'open' ? '<button class="resolve">Resolve</button>' : '<button class="reopen">Reopen</button>'}</div>`;
+    html += `<textarea class="rtext" placeholder="Reply…"></textarea><div class="row"><button class="reply">Reply</button>${isAuthor && !t.to_agent ? '<button class="torowan" title="Send this thread to Rowan (with your reply, if you wrote one)">Send to Rowan</button>' : ''}${t.status === 'open' ? '<button class="resolve">Resolve</button>' : '<button class="reopen">Reopen</button>'}</div>`;
     el.innerHTML = html;
     const q = el.querySelector('.q'); if (q && r) q.addEventListener('click', () => focusThread(t.id, true));
     const ta = el.querySelector('.rtext');
-    const act = async (action, extra) => { try { await ensureIdentity(); await api('POST', { action, thread_id: t.id, ...extra }); await load(); } catch (e) { if (e.need !== 'identity') toast(e.message); } };
+    const act = async (action, extra) => { try { await ensureIdentity(); const j = await api('POST', { action, thread_id: t.id, ...extra }); await load(); sentToast(j); } catch (e) { if (e.need !== 'identity') toast(e.message); } };
     el.querySelector('.reply').addEventListener('click', () => { const v = ta.value.trim(); if (!v) return ta.focus(); act('reply', { body: v }); });
+    const tr = el.querySelector('.torowan'); if (tr) tr.addEventListener('click', () => { const v = ta.value.trim(); v ? act('reply', { body: v, send_to_agent: true }) : act('send', {}); });
     ta.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') el.querySelector('.reply').click(); });
     const res = el.querySelector('.resolve'); if (res) res.addEventListener('click', () => act('resolve', { body: ta.value.trim() }));
     const reo = el.querySelector('.reopen'); if (reo) reo.addEventListener('click', () => act('reopen', {}));
@@ -305,18 +318,22 @@
     else { compose.style.left = Math.max(8, innerWidth - Math.min(360, innerWidth) - 340) + 'px'; compose.style.top = '72px'; }
     compose.classList.add('show'); $('.ctext').focus();
   }
+  function sentToast(j) { if (j && j.sent) toast('Sent to Rowan'); else if (j && j.mention_ignored) toast('Posted. @rowan reaches Rowan only from the page author'); }
   $('.ccancel').addEventListener('click', () => compose.classList.remove('show'));
   $('.ctext').addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') $('.csend').click(); if (e.key === 'Escape') compose.classList.remove('show'); });
-  $('.csend').addEventListener('click', async () => {
+  $('.csendr').addEventListener('click', () => post(true));
+  $('.csend').addEventListener('click', () => post(false));
+  async function post(toRowan) {
     const text = $('.ctext').value.trim(); if (!text) return $('.ctext').focus();
     try {
       await ensureIdentity();
-      const j = await api('POST', { action: 'create', page: PAGE, anchor: pendingAnchor, body: text });
+      const j = await api('POST', { action: 'create', page: PAGE, anchor: pendingAnchor, body: text, ...(toRowan ? { send_to_agent: true } : {}) });
       // Posting leaves the rail as it was (Jaime, 2026-11-20): the highlight, marker and header count update in place;
       // the Comments button opens the rail when he wants it.
-      compose.classList.remove('show'); document.getSelection().removeAllRanges(); await load(); focusThread(j.thread.id, false); toast('Comment posted');
+      compose.classList.remove('show'); document.getSelection().removeAllRanges(); await load(); focusThread(j.thread.id, false);
+      j.sent || j.mention_ignored ? sentToast(j) : toast('Comment posted');
     } catch (e) { if (e.need !== 'identity') toast(e.status === 401 ? 'This page is locked — unlock it first' : e.message); }
-  });
+  }
 
   // ── identity modal ───────────────────────────────────────────────────────────────────────
   const grid = $('.grid'); let pickedColor = identity ? identity.color : COLORS[15];
