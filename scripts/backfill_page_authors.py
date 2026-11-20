@@ -13,7 +13,7 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 GIT_TO_WRITER = {  # git author name → (writer id, display name)
     "jkhereford": ("jaime", "Jaime"),
     "Roman Naidenko": ("roman", "Roman"),
-    "Verridiumc": ("verridiumc", "Verridiumc"),
+    "Verridiumc": ("victor", "Victor"),   # Victor Cheung, GitHub Verridium (Jaime, 2026-11-20)
     "blondiegeek": ("blondiegeek", "blondiegeek"),
 }
 
