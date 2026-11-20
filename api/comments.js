@@ -25,6 +25,7 @@
  */
 import { pageAccessGranted, parseCookies } from '../lib/protected-paths.js';
 import { writerFromCookies, mentionsAgent } from '../lib/writer-auth.js';
+import { sendAuthorLink } from '../lib/author-mail.js';
 
 const AGENT = { playerId: 'rowan', name: 'Rowan 🤖', color: '#0a8fa0' };
 // Pages published before the author registry (and any page nobody registered) belong to Jaime: every prez page so far
@@ -35,6 +36,10 @@ const MAX_BODY = 4000;
 export default async function handler(req, res) {
   return handle(req, res, makeDb);
 }
+
+let sendMail = sendAuthorLink;
+/** Tests swap the mailer. */
+export function setMailer(fn) { sendMail = fn; }
 
 /** Exported for scripts/test_rowan_mentions.mjs, which passes an in-memory db. */
 export async function handle(req, res, dbFactory) {
@@ -102,9 +107,18 @@ export async function handle(req, res, dbFactory) {
       const author = await pageAuthor(page);
       if (writer && writer.id === author.author_id) return send(res, 200, { already: true, author: author.author_name });
       const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-      const recent = await db.get(`prez_link_requests?writer_id=eq.${encodeURIComponent(author.author_id)}&handled_at=is.null&created_at=gt.${encodeURIComponent(since)}&select=id`);
-      if (!recent.length) await db.post('prez_link_requests', { page, writer_id: author.author_id });
-      return send(res, 200, { requested: true, author: author.author_name });
+      const recent = await db.get(`prez_link_requests?writer_id=eq.${encodeURIComponent(author.author_id)}&created_at=gt.${encodeURIComponent(since)}&select=id`);
+      if (recent.length) return send(res, 200, { requested: true, author: author.author_name });   // already on its way
+      const [row] = await db.post('prez_link_requests', { page, writer_id: author.author_id });
+      // Send now from the server; if that is not possible the row stays pending for the agent's Gmail fallback.
+      // Link host is fixed, never taken from the request, so a forged Host header cannot point the email elsewhere.
+      const base = req.headers.host === 'prez.pvragon.com' ? 'https://prez.pvragon.com' : 'https://prez.prgn.ai';
+      const mail = await sendMail(process.env, { base, writerId: author.author_id, writerName: author.author_name, page })
+        .catch((e) => ({ sent: false, reason: String(e.message || e).slice(0, 100) }));
+      if (mail.sent || mail.reason === 'no-email') {
+        await db.patch(`prez_link_requests?id=eq.${row.id}`, { handled_at: new Date().toISOString(), result: mail.sent ? 'sent (server)' : 'no-email' });
+      }
+      return send(res, 200, { requested: true, author: author.author_name, emailed: !!mail.sent, no_email: mail.reason === 'no-email' });
     }
     if (body.action === 'link_handled') {
       if (!isAgent) return send(res, 403, { error: 'agent only' });

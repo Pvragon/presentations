@@ -296,7 +296,7 @@
   $('.pagec').addEventListener('click', () => startCompose(null, null));
   // "Author? Get link": the link is emailed to the page's author, never shown here, so pressing it is safe for anyone.
   $('.getlink').addEventListener('click', async () => {
-    try { const j = await api('POST', { action: 'request_link', page: PAGE }); toast(j.already ? 'You are already signed in as the author' : `Sign-in link emailed to ${j.author}. Check your inbox in a minute.`); }
+    try { const j = await api('POST', { action: 'request_link', page: PAGE }); toast(j.already ? 'You are already signed in as the author' : j.no_email ? `No email on file for ${j.author}. Ask Jaime for a link.` : `Sign-in link emailed to ${j.author}. Check your inbox.`); }
     catch (e) { toast(e.status === 401 ? 'This page is locked — unlock it first' : e.message); }
   });
 

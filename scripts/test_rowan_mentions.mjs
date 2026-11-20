@@ -7,7 +7,8 @@
  * non-author mention, a spoofed name cookie, a forged / expired / wrong-type writer token, no mention.
  */
 import { randomBytes } from 'node:crypto';
-import { handle as comments } from '../api/comments.js';
+import { handle as comments, setMailer } from '../api/comments.js';
+import { sendAuthorLink, writerEmail } from '../lib/author-mail.js';
 import { handle as writerApi } from '../api/writer.js';
 import { sign, writerKey, verify, mentionsAgent, writerFromCookies } from '../lib/writer-auth.js';
 
@@ -196,6 +197,34 @@ check('NEGATIVE: link_handled is agent-only', r.status === 403);
 r = await call('POST', { agent: true, body: { action: 'link_handled', id: T.prez_link_requests[0].id, result: 'sent' } });
 r = await call('GET', { query: 'scope=link_requests', agent: true });
 check('handled request leaves the queue', r.json.requests.length === 1);
+
+// ── 3c. server-side email of the link ────────────────────────────────────────────────────
+console.log('server-side link email');
+const sentMail = [];
+setMailer(async (env, a) => { sentMail.push(a); return a.writerId === 'jaime' ? { sent: true } : { sent: false, reason: a.writerId === 'roman' ? 'no-email' : 'resend 500' }; });
+T.prez_link_requests.length = 0;
+r = await call('POST', { cookies: SPOOF, body: { action: 'request_link', page: '/drafts/test-page' } });
+check('emailed from the server: request marked handled at once', r.json.emailed === true && T.prez_link_requests[0].handled_at && /server/.test(T.prez_link_requests[0].result));
+check('mail is addressed by writer id to the page author, link host fixed', sentMail[0].writerId === 'jaime' && sentMail[0].base === 'https://prez.prgn.ai' && sentMail[0].page === '/drafts/test-page');
+r = await call('POST', { cookies: SPOOF, body: { action: 'request_link', page: '/drafts/test-page' } });
+check('second press within 10 min sends nothing', sentMail.length === 1 && T.prez_link_requests.length === 1);
+r = await call('POST', { cookies: SPOOF, body: { action: 'request_link', page: '/echo1/roman-page' } });
+check('author with no address: no_email, request closed', r.json.no_email === true && T.prez_link_requests.at(-1).result === 'no-email');
+await call('POST', { agent: true, body: { action: 'set_author', page: '/echo1/v-page', author_id: 'victor', author_name: 'Victor' } });
+r = await call('POST', { cookies: SPOOF, body: { action: 'request_link', page: '/echo1/v-page' } });
+check('send failure leaves the request pending for the Gmail fallback', r.json.emailed === false && !T.prez_link_requests.at(-1).handled_at);
+setMailer(sendAuthorLink);
+
+const env = { PREZ_RESEND_API_KEY: 're_test', PREZ_AGENT_TOKEN: TOKEN, PREZ_WRITER_EMAILS: JSON.stringify({ jaime: 'jaime@example.com' }) };
+let captured = null;
+const fakeFetch = async (url, init) => { captured = { url, body: JSON.parse(init.body), auth: init.headers.Authorization }; return { ok: true, status: 200 }; };
+const m = await sendAuthorLink(env, { base: 'https://prez.prgn.ai', writerId: 'jaime', writerName: 'Jaime', page: '/drafts/x' }, fakeFetch);
+const linkInMail = (captured.body.html.match(/href="(https:\/\/prez\.prgn\.ai\/api\/writer\?[^"]+)"/) || [])[1];
+const tk = linkInMail && new URL(linkInMail.replace(/&amp;/g, '&')).searchParams.get('ticket');
+check('Resend call: only the author as recipient, from prez@pvragon.com', m.sent && captured.url === 'https://api.resend.com/emails' && JSON.stringify(captured.body.to) === '["jaime@example.com"]' && /prez@pvragon\.com/.test(captured.body.from));
+check('the emailed link is a valid claim for that writer', verify(tk, KEY, 'claim')?.w === 'jaime');
+check('no address on file → no Resend call', (await sendAuthorLink(env, { base: 'x', writerId: 'roman', writerName: 'Roman', page: '/' }, async () => { throw new Error('called'); })).reason === 'no-email');
+check('malformed PREZ_WRITER_EMAILS is treated as empty', writerEmail({ PREZ_WRITER_EMAILS: '{bad' }, 'jaime') === null);
 
 // ── 4. claim link → cookie (api/writer.js) ────────────────────────────────────────────────
 console.log('claim link (api/writer.js)');
