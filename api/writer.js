@@ -38,11 +38,11 @@ export async function handle(req, res, claimStore) {
     }
     const ticket = url.searchParams.get('ticket') || '';
     const claim = verify(ticket, key, 'claim');
-    if (!claim) return page(res, 400, 'Link not valid', 'This sign-in link is invalid or has expired. Ask Rowan for a new one.');
+    if (!claim) return page(res, 400, 'Link not valid', 'This sign-in link is invalid or has expired. Ask for a new one.');
     const next = safeNext(url.searchParams.get('next'));
     return page(res, 200, `Sign in as ${esc(claim.n || claim.w)}`,
       `This browser will be recognised as <b>${esc(claim.n || claim.w)}</b>, the author of the prez pages published in that name. ` +
-      'On those pages, a comment that mentions <b>@rowan</b> (or uses <b>Send to Rowan</b>) goes to Rowan. The link works once.',
+      'On those pages, a comment that mentions <b>@claude</b> (or uses <b>Send to Claude</b>) goes to your agent. The link works once.',
       `<form method="POST" action="/api/writer"><input type="hidden" name="ticket" value="${esc(ticket)}">` +
       `<input type="hidden" name="next" value="${esc(next)}"><button type="submit">Sign in on this browser</button></form>`);
   }
@@ -50,13 +50,13 @@ export async function handle(req, res, claimStore) {
   if (req.method !== 'POST') { res.statusCode = 405; return res.end(); }
   const form = await readForm(req);
   const claim = verify(form.ticket || '', key, 'claim');
-  if (!claim) return page(res, 400, 'Link not valid', 'This sign-in link is invalid or has expired. Ask Rowan for a new one.');
+  if (!claim) return page(res, 400, 'Link not valid', 'This sign-in link is invalid or has expired. Ask for a new one.');
   if (typeof claim.nonce !== 'string' || claim.nonce.length < 16) return page(res, 400, 'Link not valid', 'Malformed link.');
   let first;
   try { first = await claimStore(claim.nonce, claim.w); } catch (e) {
     return page(res, 500, 'Sign-in failed', 'The claim could not be recorded. Try again in a minute.');
   }
-  if (!first) return page(res, 409, 'Link already used', 'This sign-in link has already been used. Ask Rowan for a new one.');
+  if (!first) return page(res, 409, 'Link already used', 'This sign-in link has already been used. Ask for a new one.');
   const now = Math.floor(Date.now() / 1000);
   const cookie = sign({ t: 'writer', w: claim.w, n: claim.n || claim.w, iat: now, exp: now + WRITER_TTL_S }, key);
   res.setHeader('Set-Cookie', `${WRITER_COOKIE}=${encodeURIComponent(cookie)}; Path=/; Max-Age=${WRITER_TTL_S}; HttpOnly; Secure; SameSite=Lax`);

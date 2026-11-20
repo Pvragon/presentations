@@ -7,21 +7,21 @@
  * Gates (mirrors the page itself):
  *   - page access: same per-path password cookie the middleware sets → you can comment on what you can read
  *   - identity:    the shared .prgn.ai `prgn_identity` cookie {playerId, name, color} — device-level, same as play.prgn.ai
- *   - agent:       `Authorization: Bearer $PREZ_AGENT_TOKEN` → Rowan's terminal tooling; may list across pages (?scope=all)
+ *   - agent:       `Authorization: Bearer $PREZ_AGENT_TOKEN` → the agent's terminal tooling (prez_comments.py); may list across pages (?scope=all)
  *   - writer:      the server-signed `prez_writer` cookie (lib/writer-auth.js) → a verified page author
  *
- * @rowan (2026-11-20, Jaime: "it needs to only respond to the document's author"): a create/reply whose text mentions
- * @rowan, or that sets send_to_agent, marks the thread to_agent ONLY when the poster is the verified writer who
+ * @claude (2026-11-20, Jaime: "it needs to only respond to the document's author"): a create/reply whose text mentions
+ * @claude (or Jaime's alias @rowan), or that sets send_to_agent, marks the thread to_agent ONLY when the poster is the verified writer who
  * authored the page (prez_pages, default DEFAULT_AUTHOR). From anyone else a mention is an ordinary comment. Any
  * agent message clears to_agent; resolving clears it too.
  *
  * GET  /api/comments?page=/cat/slug            → { page, canComment, identity, threads:[{..., messages:[...]}] }
- * GET  /api/comments?scope=all&status=open[&sent=1]   (agent only; sent=1 → only threads sent to Rowan)
+ * GET  /api/comments?scope=all&status=open[&sent=1]   (agent only; sent=1 → only threads sent to the agent)
  * POST /api/comments  { action: create|reply|resolve|reopen|send, ..., send_to_agent? }
  * POST /api/comments  { action: set_author, page, author_id, author_name }   (agent only)
  */
 import { pageAccessGranted, parseCookies } from '../lib/protected-paths.js';
-import { writerFromCookies, mentionsRowan } from '../lib/writer-auth.js';
+import { writerFromCookies, mentionsAgent } from '../lib/writer-auth.js';
 
 const AGENT = { playerId: 'rowan', name: 'Rowan 🤖', color: '#0a8fa0' };
 // Pages published before the author registry (and any page nobody registered) belong to Jaime: every prez page so far
@@ -81,7 +81,7 @@ export async function handle(req, res, dbFactory) {
       return send(res, 200, {
         page, canComment: !!identity, identity, threads,
         author: { name: author.author_name },
-        isAuthor: !!writer && writer.id === author.author_id,   // shows "Send to Rowan" to the verified author only
+        isAuthor: !!writer && writer.id === author.author_id,   // shows "Send to Claude" to the verified author only
         writer: writer ? { name: writer.name } : null,
       });
     }
@@ -101,8 +101,8 @@ export async function handle(req, res, dbFactory) {
     const who = { author_id: identity.playerId, author_name: identity.name, author_color: identity.color };
     const text = (body.body || '').toString().trim();
     const msg = (thread_id) => ({ thread_id, body: text, is_agent: isAgent, writer_id: writer ? writer.id : null, ...who });
-    // Does this post send the thread to Rowan? Only from the verified page author; a mention from anyone else is a comment.
-    const wantsSend = !isAgent && (body.send_to_agent === true || mentionsRowan(text));
+    // Does this post send the thread to the agent? Only from the verified page author; a mention from anyone else is a comment.
+    const wantsSend = !isAgent && (body.send_to_agent === true || mentionsAgent(text));
     const sendCheck = async (page) => {
       if (!wantsSend) return { sent: false };
       if (await isPageAuthor(page)) return { sent: true };
@@ -118,7 +118,7 @@ export async function handle(req, res, dbFactory) {
       if (!text || text.length > MAX_BODY) return send(res, 400, { error: 'body 1..4000 chars' });
       const anchor = cleanAnchor(body.anchor);
       const chk = await sendCheck(page);
-      if (chk.refuse) return send(res, 403, { error: 'only the page author can send to Rowan' });
+      if (chk.refuse) return send(res, 403, { error: 'only the page author can send to Claude' });
       const [thread] = await db.post('prez_threads', {
         page, quote: anchor ? anchor.exact : null, anchor, ...who, ...(chk.sent ? sentFields() : {}),
       });
@@ -132,15 +132,15 @@ export async function handle(req, res, dbFactory) {
     if (!thread) return send(res, 404, { error: 'no such thread' });
     if (!canRead(thread.page)) return send(res, 401, { error: 'page locked' });
 
-    if (body.action === 'send') {   // "Send to Rowan" on a thread with nothing new to say
-      if (isAgent || !(await isPageAuthor(thread.page))) return send(res, 403, { error: 'only the page author can send to Rowan' });
+    if (body.action === 'send') {   // "Send to Claude" on a thread with nothing new to say
+      if (isAgent || !(await isPageAuthor(thread.page))) return send(res, 403, { error: 'only the page author can send to Claude' });
       const [updated] = await db.patch(`prez_threads?id=eq.${threadId}`, { ...sentFields(), status: 'open', resolved_at: null, resolved_by: null });
       return send(res, 200, { thread: updated, sent: true });
     }
     if (body.action === 'reply') {
       if (!text || text.length > MAX_BODY) return send(res, 400, { error: 'body 1..4000 chars' });
       const chk = await sendCheck(thread.page);
-      if (chk.refuse) return send(res, 403, { error: 'only the page author can send to Rowan' });
+      if (chk.refuse) return send(res, 403, { error: 'only the page author can send to Claude' });
       const [message] = await db.post('prez_messages', msg(threadId));
       if (chk.sent) await db.patch(`prez_threads?id=eq.${threadId}`, { ...sentFields(), status: 'open', resolved_at: null, resolved_by: null });
       else if (isAgent && thread.to_agent) await db.patch(`prez_threads?id=eq.${threadId}`, { to_agent: false });
@@ -149,7 +149,7 @@ export async function handle(req, res, dbFactory) {
     if (body.action === 'resolve' || body.action === 'reopen') {
       const resolving = body.action === 'resolve';
       if (text) await db.post('prez_messages', msg(threadId));
-      // Resolving takes a thread off Rowan's queue; so does any agent message (the agent answered).
+      // Resolving takes a thread off the agent's queue; so does any agent message (the agent answered).
       const clear = resolving || (isAgent && text) ? { to_agent: false } : {};
       const [updated] = await db.patch(`prez_threads?id=eq.${threadId}`, resolving
         ? { status: 'resolved', resolved_at: new Date().toISOString(), resolved_by: identity.name, updated_at: new Date().toISOString(), ...clear }

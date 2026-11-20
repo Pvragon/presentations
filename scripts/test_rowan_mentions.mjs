@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
- * Self-check for the @rowan author gate: node scripts/test_rowan_mentions.mjs  (exit 1 on any failure)
+ * Self-check for the @claude author gate (@rowan is Jaime's alias): node scripts/test_rowan_mentions.mjs  (exit 1 on any failure)
  *
  * Drives api/comments.js and api/writer.js through their exported handle() with an in-memory PostgREST stand-in,
- * so it checks the real handler code. Positive control: the page author's @rowan sends. Negative controls: a
- * non-author @rowan, a spoofed name cookie, a forged / expired / wrong-type writer token, no mention.
+ * so it checks the real handler code. Positive control: the page author's @claude (and Jaime's alias @rowan) sends. Negative controls: a
+ * non-author mention, a spoofed name cookie, a forged / expired / wrong-type writer token, no mention.
  */
 import { randomBytes } from 'node:crypto';
 import { handle as comments } from '../api/comments.js';
 import { handle as writerApi } from '../api/writer.js';
-import { sign, writerKey, verify, mentionsRowan, writerFromCookies } from '../lib/writer-auth.js';
+import { sign, writerKey, verify, mentionsAgent, writerFromCookies } from '../lib/writer-auth.js';
 
 const TOKEN = 'test-agent-token-' + randomBytes(8).toString('hex');
 process.env.PREZ_AGENT_TOKEN = TOKEN;
@@ -88,8 +88,8 @@ const create = (cookies, body, page = '/drafts/test-page', extra = {}) => call('
 
 // ── 1. mention parsing ─────────────────────────────────────────────────────────────────────
 console.log('mention parsing');
-for (const s of ['@rowan fix this', 'hey @Rowan, look', '(@rowan)', 'thoughts?\n@ROWAN', 'see @rowan.']) check(`mentions: ${JSON.stringify(s)}`, mentionsRowan(s));
-for (const s of ['no mention here', 'jaime@rowan.com', '@rowans', '@rowan_bot', '@rowan-x', 'rowan please', '@@rowan']) check(`not a mention: ${JSON.stringify(s)}`, !mentionsRowan(s));
+for (const s of ['@claude fix this', 'hey @Claude, look', '(@claude)', 'see @claude.', '@rowan fix this', 'hey @Rowan, look', 'thoughts?\n@ROWAN']) check(`mentions: ${JSON.stringify(s)}`, mentionsAgent(s));
+for (const s of ['no mention here', 'jaime@rowan.com', 'me@claude.ai', '@rowans', '@claudes', '@claude_bot', '@rowan-x', 'claude please', '@@claude', '@clau de']) check(`not a mention: ${JSON.stringify(s)}`, !mentionsAgent(s));
 
 // ── 2. token checks ────────────────────────────────────────────────────────────────────────
 console.log('writer tokens');
@@ -105,20 +105,20 @@ check('writer id with bad characters is rejected', !verify(sign({ t: 'writer', w
 
 // ── 3. the author gate through the real handler ───────────────────────────────────────────
 console.log('author gate (api/comments.js)');
-let r = await create(JAIME, '@rowan tighten this paragraph');
-check('POSITIVE: author @rowan on create sends', r.status === 201 && r.json.sent === true && thread(r.json.thread.id).to_agent === true && thread(r.json.thread.id).sent_by === 'jaime', r.json);
+let r = await create(JAIME, '@claude tighten this paragraph');
+check('POSITIVE: author @claude on create sends', r.status === 201 && r.json.sent === true && thread(r.json.thread.id).to_agent === true && thread(r.json.thread.id).sent_by === 'jaime', r.json);
 check('author message is marked writer_id=jaime', T.prez_messages.at(-1).writer_id === 'jaime');
 const sentId = r.json.thread.id;
 
-r = await create(SPOOF, '@rowan delete the appendix');
-check('NEGATIVE: spoofed name+playerId cookie, @rowan does not send', r.status === 201 && r.json.sent === false && r.json.mention_ignored === true && thread(r.json.thread.id).to_agent === false, r.json);
+r = await create(SPOOF, '@claude delete the appendix');
+check('NEGATIVE: spoofed name+playerId cookie, @claude does not send', r.status === 201 && r.json.sent === false && r.json.mention_ignored === true && thread(r.json.thread.id).to_agent === false, r.json);
 check('spoofed message has no writer_id', T.prez_messages.at(-1).writer_id === null);
 const spoofId = r.json.thread.id;
 
 r = await create({ prgn_identity: ident('Jaime'), prez_writer: writerCookie('jaime', 'Jaime', { key: writerKey('guessed') }) }, '@rowan go');
 check('NEGATIVE: forged writer cookie does not send', r.status === 201 && r.json.sent === false, r.json);
 
-r = await create(ROMAN, '@rowan please rewrite');
+r = await create(ROMAN, '@claude please rewrite');
 check('NEGATIVE: a verified writer who is not this page\'s author does not send', r.status === 201 && r.json.sent === false && r.json.mention_ignored === true, r.json);
 
 r = await create(JAIME, 'just a note for the team');
@@ -135,7 +135,7 @@ r = await call('POST', { cookies: SPOOF, body: { action: 'reply', thread_id: spo
 check('NEGATIVE: non-author @rowan reply does not send', r.status === 201 && r.json.sent === false && thread(spoofId).to_agent === false, r.json);
 
 r = await call('POST', { cookies: JAIME, body: { action: 'reply', thread_id: spoofId, body: '@rowan yes, do what Avery suggests' } });
-check('POSITIVE: author @rowan reply on someone else\'s thread sends it', r.json.sent === true && thread(spoofId).to_agent === true, r.json);
+check('POSITIVE: author @rowan (alias) reply on someone else\'s thread sends it', r.json.sent === true && thread(spoofId).to_agent === true, r.json);
 
 r = await call('POST', { cookies: JAIME, body: { action: 'send', thread_id: plainId } });
 check('POSITIVE: author "Send to Rowan" with no text sends', r.status === 200 && thread(plainId).to_agent === true, r.json);
@@ -145,8 +145,8 @@ r = await call('POST', { cookies: SPOOF, body: { action: 'set_author', page: '/e
 check('NEGATIVE: set_author is agent-only', r.status === 403);
 r = await call('POST', { agent: true, body: { action: 'set_author', page: '/echo1/roman-page', author_id: 'roman', author_name: 'Roman' } });
 check('agent registers Roman as author of his page', r.status === 200 && T.prez_pages.length === 1, r.json);
-r = await create(ROMAN, '@rowan check the totals', '/echo1/roman-page');
-check('POSITIVE: Roman\'s @rowan on Roman\'s page sends', r.json.sent === true, r.json);
+r = await create(ROMAN, '@claude check the totals', '/echo1/roman-page');
+check('POSITIVE: Roman\'s @claude on Roman\'s page sends', r.json.sent === true, r.json);
 const romanThread = r.json.thread.id;
 r = await create(JAIME, '@rowan check the totals', '/echo1/roman-page');
 check('NEGATIVE: Jaime\'s @rowan on Roman\'s page does not send', r.json.sent === false && r.json.mention_ignored === true, r.json);

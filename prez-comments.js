@@ -10,9 +10,10 @@
  *   - reply / resolve / reopen; resolved threads stay readable behind a filter
  * Identity: the shared .prgn.ai cookie `prgn_identity` {playerId, name, color} — same picker as play.prgn.ai.
  * Access: you can comment on any page you can open (the API re-checks the page password cookie).
- * @rowan (2026-11-20): the page's verified author (server-signed prez_writer cookie, set by a claim link from Rowan) can
- * send a thread to Rowan by mentioning @rowan or with "Send to Rowan". The API decides; this client only shows the
- * button to the author and a "Sent to Rowan" badge until Rowan replies. From anyone else @rowan is plain text.
+ * @claude (2026-11-20): the page's verified author (server-signed prez_writer cookie, set by a one-time claim link) can
+ * send a thread to the agent by mentioning @claude (Jaime's alias: @rowan) or with "Send to Claude". The API decides;
+ * this client only shows the button to the author and a "Sent to Claude" badge until an agent replies. From anyone
+ * else a mention is plain text.
  */
 (function () {
   if (window.__prezComments) return;
@@ -192,10 +193,10 @@
     <div class="compose" role="dialog" aria-label="New comment">
       <div class="q cq"></div>
       <textarea class="ctext" placeholder="Write a comment…"></textarea>
-      <div class="row"><button class="csend" type="button">Post</button><button class="csendr torowan" type="button" hidden title="Post and send this thread to Rowan">Send to Rowan</button><button class="ccancel" type="button">Cancel</button></div>
+      <div class="row"><button class="csend" type="button">Post</button><button class="csendr torowan" type="button" hidden title="Post and send this thread to Claude">Send to Claude</button><button class="ccancel" type="button">Cancel</button></div>
     </div>
     <aside class="rail" aria-label="Comments">
-      <div class="hd"><h2>Comments</h2><span class="authtag" hidden title="You are this page's verified author: @rowan in your comments reaches Rowan">Author</span><button class="chip who" type="button" title="Change your name or color"><span class="dot"></span><span class="nm">Set your name</span></button><button class="x close" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
+      <div class="hd"><h2>Comments</h2><span class="authtag" hidden title="You are this page's verified author: @claude in your comments reaches Claude">Author</span><button class="chip who" type="button" title="Change your name or color"><span class="dot"></span><span class="nm">Set your name</span></button><button class="x close" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
       <div class="tools"><button class="pagec" type="button">+ Comment on page</button><label><input type="checkbox" class="showres"> show resolved</label></div>
       <div class="list"></div>
     </aside>
@@ -260,11 +261,11 @@
   function threadEl(t) {
     const el = document.createElement('div'); el.className = 't' + (t.status === 'resolved' ? ' resolved' : '') + (t.id === activeId ? ' active' : ''); el.dataset.id = t.id;
     const r = located.get(t.id);
-    let html = t.to_agent && t.status === 'open' ? '<div class="sent" title="Rowan will reply here">Sent to Rowan</div>' : '';
+    let html = t.to_agent && t.status === 'open' ? '<div class="sent" title="Claude will reply here">Sent to Claude</div>' : '';
     html += t.quote ? `<div class="q ${r ? '' : 'orphan'}" title="Jump to passage">${esc(t.quote)}</div>` : '<div class="q" style="border-color:#9ca3af">Whole page</div>';
     for (const m of t.messages) html += `<div class="m ${m.is_agent ? 'agent' : ''}"><span class="dot" style="background:${esc(m.author_color || '#999')}"></span><div><b>${esc(m.author_name)}</b><span class="when">${fmtWhen(m.created_at)}</span><p>${esc(m.body)}</p></div></div>`;
     if (t.status === 'resolved') html += `<div class="m" style="opacity:.6;font-size:12px"><span></span><div>Resolved${t.resolved_by ? ' by ' + esc(t.resolved_by) : ''}${t.resolved_at ? ' · ' + fmtWhen(t.resolved_at) : ''}</div></div>`;
-    html += `<textarea class="rtext" placeholder="Reply…"></textarea><div class="row"><button class="reply">Reply</button>${isAuthor && !t.to_agent ? '<button class="torowan" title="Send this thread to Rowan (with your reply, if you wrote one)">Send to Rowan</button>' : ''}${t.status === 'open' ? '<button class="resolve">Resolve</button>' : '<button class="reopen">Reopen</button>'}</div>`;
+    html += `<textarea class="rtext" placeholder="Reply…"></textarea><div class="row"><button class="reply">Reply</button>${isAuthor && !t.to_agent ? '<button class="torowan" title="Send this thread to Claude (with your reply, if you wrote one)">Send to Claude</button>' : ''}${t.status === 'open' ? '<button class="resolve">Resolve</button>' : '<button class="reopen">Reopen</button>'}</div>`;
     el.innerHTML = html;
     const q = el.querySelector('.q'); if (q && r) q.addEventListener('click', () => focusThread(t.id, true));
     const ta = el.querySelector('.rtext');
@@ -318,16 +319,16 @@
     else { compose.style.left = Math.max(8, innerWidth - Math.min(360, innerWidth) - 340) + 'px'; compose.style.top = '72px'; }
     compose.classList.add('show'); $('.ctext').focus();
   }
-  function sentToast(j) { if (j && j.sent) toast('Sent to Rowan'); else if (j && j.mention_ignored) toast('Posted. @rowan reaches Rowan only from the page author'); }
+  function sentToast(j) { if (j && j.sent) toast('Sent to Claude'); else if (j && j.mention_ignored) toast('Posted. @claude reaches Claude only from the page author'); }
   $('.ccancel').addEventListener('click', () => compose.classList.remove('show'));
   $('.ctext').addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') $('.csend').click(); if (e.key === 'Escape') compose.classList.remove('show'); });
   $('.csendr').addEventListener('click', () => post(true));
   $('.csend').addEventListener('click', () => post(false));
-  async function post(toRowan) {
+  async function post(toAgent) {
     const text = $('.ctext').value.trim(); if (!text) return $('.ctext').focus();
     try {
       await ensureIdentity();
-      const j = await api('POST', { action: 'create', page: PAGE, anchor: pendingAnchor, body: text, ...(toRowan ? { send_to_agent: true } : {}) });
+      const j = await api('POST', { action: 'create', page: PAGE, anchor: pendingAnchor, body: text, ...(toAgent ? { send_to_agent: true } : {}) });
       // Posting leaves the rail as it was (Jaime, 2026-11-20): the highlight, marker and header count update in place;
       // the Comments button opens the rail when he wants it.
       compose.classList.remove('show'); document.getSelection().removeAllRanges(); await load(); focusThread(j.thread.id, false);
