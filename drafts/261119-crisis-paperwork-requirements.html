@@ -150,7 +150,7 @@
   </div>
   <h1>FY27 contract: crisis <span class="accent">ride paperwork</span></h1>
   <p class="lede">Each crisis ride needs an LMHP statement or court order.</p>
-  <div class="meta"><span>Version 3.21.0</span><span>Updated 2026-11-19</span></div>
+  <div class="meta"><span>Version 3.22.0</span><span>Updated 2026-11-19</span></div>
 </header>
 
 <article>
@@ -391,6 +391,9 @@ other coverage first, and payment suspension.</p>
   Emergency Detention status or under a Court Order for evaluation or treatment&rdquo; (SOW p. 3).</li>
 <li><strong>If a rider runs, the driver tells police the &ldquo;status of individual (emergency detention, court committed to
   inpatient treatment, etc)&rdquo;</strong> (SOW p. 2), which assumes we know the status during the ride.</li>
+<li><strong>ODMHSAS&rsquo;s own decision tree calls us only after an emergency-detention finding.</strong> On every path that ends in a
+  request to us, a facility or evaluator has first found that the person meets emergency detention criteria (see
+  the appendix). The LMHP statement records that finding.</li>
 <li><strong>No clause ties the document to billing.</strong> The billing terms cover MMIS claims, code 53AC and one-way rides with the
   rider in the vehicle; none asks for the document with a claim. Managed-care plans asking for it with claims is payer
   practice (David Roberts, 11/17), not a contract term.</li>
@@ -522,6 +525,9 @@ reading, pending counsel:</p>
 </tbody>
 </table></div>
 <ul>
+<li><strong>ODMHSAS does not route these rides to us.</strong> Its decision tree has law enforcement take the person to an
+  evaluation location, or brings the evaluation to them by telehealth or a mobile crisis team. It requests our
+  transport only after the evaluation.</li>
 <li><strong>Why we run them:</strong> 43A § 1-110(B) assigns some, including people placed in protective custody at an ER, to
   contracted transport.</li>
 <li><strong>The paperwork is the officer or third-party statement</strong> (§ 5-207(C)), if one was written. The SOW does not name
@@ -746,6 +752,88 @@ of its own, and Section 6.5 bars applying any the law does not authorize.</p>
   decide who pays and whether we are paid.</li>
 <li><strong>Customer Data Core (CDC) records:</strong> the contract ties ODMHSAS and Medicaid payment to them (Att. A §21, §26.2).
   RideCare has never filed one for transport, and we assume they do not apply.</li>
+</ul>
+<h3>ODMHSAS&rsquo;s transportation decision tree</h3>
+<p>ODMHSAS posts a &ldquo;Comprehensive Crisis Response Transportation Decision Tree&rdquo; on its transportation page
+(<a href="https://oklahoma.gov/content/dam/ok/en/odmhsas/images/treatment/comprehensive-crisis-response/transportation/ccr--tree-landscape.png">decision tree image</a>,
+dated 2026-09-25). It names no documents. Every path, as drawn:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Start</th>
+<th>Steps</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td>Facility</td>
+<td>Already assessed as meeting emergency detention criteria; closest suitable facility confirmed in the request</td>
+<td>Facility requests our transport</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>Facility</td>
+<td>Not yet assessed; evaluation (telehealth through a CCBHC) finds criteria met</td>
+<td>Same as F1</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>Facility</td>
+<td>Evaluation finds criteria not met</td>
+<td>No secure transport; voluntary admission rides are the receiving facility&rsquo;s or the person&rsquo;s</td>
+</tr>
+<tr>
+<td>L1</td>
+<td>Law enforcement</td>
+<td>Telehealth evaluation on an ODMHSAS iPad; de-escalated, or criteria not met and no protective custody</td>
+<td>No transport</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>Law enforcement</td>
+<td>Telehealth evaluation finds criteria met</td>
+<td>Distance step</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>Law enforcement</td>
+<td>Officer takes the person to an evaluation location, such as an urgent recovery center; criteria met</td>
+<td>Distance step</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>Law enforcement</td>
+<td>Officer calls 988 or the local CCBHC; mobile team evaluates and cannot transport</td>
+<td>Distance step</td>
+</tr>
+<tr>
+<td>D1</td>
+<td>Distance step</td>
+<td>Nearest suitable facility over 30 miles</td>
+<td>Evaluator requests our transport, or the officer may transport</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>Distance step</td>
+<td>Nearest suitable facility under 30 miles</td>
+<td>Officer transports to the nearest facility</td>
+</tr>
+</tbody>
+</table></div>
+<p>CCBHC means a certified community behavioral health clinic. What the tree means, in our reading:</p>
+<ul>
+<li><strong>Every request to us follows an emergency-detention finding</strong> (F1, F2, D1). The evaluator who makes the finding
+  is also the one who requests the ride, so the LMHP statement should already exist and sits with the requester.</li>
+<li><strong>The ride to a first evaluation is the officer&rsquo;s</strong> (L3), or the evaluation comes to the person (L1, L2, L4). The
+  tree has no path that sends a first-evaluation ride to us.</li>
+<li><strong>Voluntary patients are out</strong> (F3), matching the SOW.</li>
+<li><strong>Law-enforcement cases under 30 miles go to the officer</strong> (D2). The FY27 SOW sets no distance limit, so this is
+  ODMHSAS&rsquo;s routing, not a contract term. Facility requests (F1, F2) have no distance split.</li>
+<li><strong>The tree is guidance, not contract.</strong> The contract binds the SOW and documents on ODMHSAS&rsquo;s provider site; the
+  tree sits on its public page. It shows how ODMHSAS expects rides to reach us.</li>
 </ul>
 <h3>Emergency Medicaid for riders without an SSN</h3>
 <p>Some riders cannot get an SSN, and since October 1, 2026 many lawfully present noncitizens, including refugees and
