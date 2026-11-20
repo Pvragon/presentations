@@ -19,7 +19,7 @@ const KEY = writerKey(TOKEN);
 const now = () => Math.floor(Date.now() / 1000);
 
 // ── in-memory PostgREST ────────────────────────────────────────────────────────────────────
-const T = { prez_threads: [], prez_messages: [], prez_pages: [] };
+const T = { prez_threads: [], prez_messages: [], prez_pages: [], prez_link_requests: [] };
 let seq = 0;
 const uuid = () => { const h = (++seq).toString(16).padStart(12, '0'); return `00000000-0000-4000-8000-${h}`; };
 function parse(path) {
@@ -35,6 +35,8 @@ function match(row, filters) {
   return filters.every(([k, v]) => {
     if (v.startsWith('eq.')) return String(row[k]) === v.slice(3);
     if (v === 'is.true') return row[k] === true;
+    if (v === 'is.null') return row[k] == null;
+    if (v.startsWith('gt.')) return String(row[k]) > v.slice(3);
     if (v.startsWith('in.(')) return v.slice(4, -1).split(',').map((x) => x.replace(/^"|"$/g, '')).includes(row[k]);
     throw new Error('fake db: unsupported filter ' + k + '=' + v);
   });
@@ -174,6 +176,26 @@ r = await call('POST', { cookies: JAIME, body: { action: 'resolve', thread_id: p
 check('resolving takes a thread off the queue', thread(plainId).to_agent === false && thread(plainId).status === 'resolved');
 r = await call('POST', { cookies: JAIME, body: { action: 'reply', thread_id: plainId, body: '@rowan one more thing' } });
 check('author @rowan on a resolved thread reopens and re-sends it', thread(plainId).status === 'open' && thread(plainId).to_agent === true);
+
+// ── 3b. "Author? Get link" requests ────────────────────────────────────────────────────────
+console.log('get-link requests');
+r = await call('POST', { cookies: SPOOF, body: { action: 'request_link', page: '/drafts/test-page' } });
+check('anyone can request; it is for the page author (Jaime), not the asker', r.status === 200 && r.json.requested && r.json.author === 'Jaime' && T.prez_link_requests.at(-1).writer_id === 'jaime');
+r = await call('POST', { body: { action: 'request_link', page: '/drafts/test-page' } });
+check('a second request within 10 min is not stored again', r.status === 200 && T.prez_link_requests.length === 1);
+r = await call('POST', { cookies: SPOOF, body: { action: 'request_link', page: '/echo1/roman-page' } });
+check('request on Roman\'s page is for Roman', T.prez_link_requests.at(-1).writer_id === 'roman' && r.json.author === 'Roman');
+r = await call('POST', { cookies: JAIME, body: { action: 'request_link', page: '/drafts/test-page' } });
+check('signed-in author gets "already" and no new request', r.json.already === true && T.prez_link_requests.length === 2);
+r = await call('GET', { query: 'scope=link_requests', cookies: JAIME });
+check('NEGATIVE: the request queue is agent-only', r.status === 403);
+r = await call('GET', { query: 'scope=link_requests', agent: true });
+check('agent sees both pending requests', r.json.requests.length === 2);
+r = await call('POST', { cookies: SPOOF, body: { action: 'link_handled', id: T.prez_link_requests[0].id } });
+check('NEGATIVE: link_handled is agent-only', r.status === 403);
+r = await call('POST', { agent: true, body: { action: 'link_handled', id: T.prez_link_requests[0].id, result: 'sent' } });
+r = await call('GET', { query: 'scope=link_requests', agent: true });
+check('handled request leaves the queue', r.json.requests.length === 1);
 
 // ── 4. claim link → cookie (api/writer.js) ────────────────────────────────────────────────
 console.log('claim link (api/writer.js)');

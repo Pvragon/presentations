@@ -19,6 +19,9 @@
  * GET  /api/comments?scope=all&status=open[&sent=1]   (agent only; sent=1 → only threads sent to the agent)
  * POST /api/comments  { action: create|reply|resolve|reopen|send, ..., send_to_agent? }
  * POST /api/comments  { action: set_author, page, author_id, author_name }   (agent only)
+ * POST /api/comments  { action: request_link, page }   anyone who can read the page: asks for the page author's sign-in
+ *                      link, which the agent's watcher emails to the AUTHOR (never to the asker). One per 10 min per author.
+ * GET  /api/comments?scope=link_requests   (agent only) pending requests;  POST { action: link_handled, id, result } (agent)
  */
 import { pageAccessGranted, parseCookies } from '../lib/protected-paths.js';
 import { writerFromCookies, mentionsAgent } from '../lib/writer-auth.js';
@@ -55,6 +58,10 @@ export async function handle(req, res, dbFactory) {
   try {
     if (req.method === 'GET') {
       const url = new URL(req.url, 'http://x');
+      if (url.searchParams.get('scope') === 'link_requests') {
+        if (!isAgent) return send(res, 403, { error: 'agent only' });
+        return send(res, 200, { requests: await db.get('prez_link_requests?handled_at=is.null&order=created_at.asc&limit=50') });
+      }
       if (url.searchParams.get('scope') === 'all') {
         if (!isAgent) return send(res, 403, { error: 'agent only' });
         const q = ['select=*,messages:prez_messages(*)', 'order=updated_at.desc', 'limit=200'];
@@ -88,6 +95,24 @@ export async function handle(req, res, dbFactory) {
 
     if (req.method !== 'POST') return send(res, 405, { error: 'method' });
     const body = await readJson(req);
+    if (body.action === 'request_link') {
+      const page = normPage(body.page);
+      if (!page) return send(res, 400, { error: 'page required' });
+      if (!canRead(page)) return send(res, 401, { error: 'page locked' });
+      const author = await pageAuthor(page);
+      if (writer && writer.id === author.author_id) return send(res, 200, { already: true, author: author.author_name });
+      const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+      const recent = await db.get(`prez_link_requests?writer_id=eq.${encodeURIComponent(author.author_id)}&handled_at=is.null&created_at=gt.${encodeURIComponent(since)}&select=id`);
+      if (!recent.length) await db.post('prez_link_requests', { page, writer_id: author.author_id });
+      return send(res, 200, { requested: true, author: author.author_name });
+    }
+    if (body.action === 'link_handled') {
+      if (!isAgent) return send(res, 403, { error: 'agent only' });
+      const id = (body.id || '').toString();
+      if (!/^[0-9a-f-]{36}$/.test(id)) return send(res, 400, { error: 'id required' });
+      await db.patch(`prez_link_requests?id=eq.${id}`, { handled_at: new Date().toISOString(), result: (body.result || 'sent').toString().slice(0, 200) });
+      return send(res, 200, { ok: true });
+    }
     if (body.action === 'set_author') {
       if (!isAgent) return send(res, 403, { error: 'agent only' });
       const page = normPage(body.page);

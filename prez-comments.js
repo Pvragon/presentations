@@ -197,7 +197,7 @@
     </div>
     <aside class="rail" aria-label="Comments">
       <div class="hd"><h2>Comments</h2><span class="authtag" hidden title="You are this page's verified author: @claude in your comments reaches Claude">Author</span><button class="chip who" type="button" title="Change your name or color"><span class="dot"></span><span class="nm">Set your name</span></button><button class="x close" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
-      <div class="tools"><button class="pagec" type="button">+ Comment on page</button><label><input type="checkbox" class="showres"> show resolved</label></div>
+      <div class="tools"><button class="pagec" type="button">+ Comment on page</button><button class="getlink" type="button" hidden title="Page author: email yourself a one-time sign-in link, so @claude in your comments reaches Claude">Author? Get link</button><label><input type="checkbox" class="showres"> show resolved</label></div>
       <div class="list"></div>
     </aside>
     <div class="modal"><form class="card"><h3>Pick a name + color</h3><p>Remembered on this device for every prgn.ai site.</p>
@@ -250,7 +250,7 @@
         m.addEventListener('click', () => { openRail(); focusThread(t.id); }); markers.appendChild(m);
       }
     }
-    $('.authtag').hidden = !isAuthor; $('.csendr').hidden = !isAuthor;
+    $('.authtag').hidden = !isAuthor; $('.csendr').hidden = !isAuthor; $('.getlink').hidden = isAuthor;
     const who = $('.who'); who.querySelector('.dot').style.background = identity ? identity.color : 'transparent'; who.querySelector('.nm').textContent = identity ? identity.name : 'Set your name';
     const showRes = $('.showres').checked; const vis = threads.filter(t => showRes || t.status === 'open');
     list.innerHTML = vis.length ? '' : `<div class="empty">${threads.length ? 'No open threads. Tick “show resolved” to see closed ones.' : 'No comments yet. Select some text and click <b>Comment</b>, or use <b>+ Comment on page</b>.'}</div>`;
@@ -294,6 +294,11 @@
   $('.showres').addEventListener('change', render);
   $('.who').addEventListener('click', () => showIdentity());
   $('.pagec').addEventListener('click', () => startCompose(null, null));
+  // "Author? Get link": the link is emailed to the page's author, never shown here, so pressing it is safe for anyone.
+  $('.getlink').addEventListener('click', async () => {
+    try { const j = await api('POST', { action: 'request_link', page: PAGE }); toast(j.already ? 'You are already signed in as the author' : `Sign-in link emailed to ${j.author}. Check your inbox in a minute.`); }
+    catch (e) { toast(e.status === 401 ? 'This page is locked — unlock it first' : e.message); }
+  });
 
   // ── selection → floating Comment button → compose popover ───────────────────────────────
   function onSelection() {
