@@ -26,7 +26,7 @@
   .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 24px 96px;}
   a{color:var(--heading);text-decoration-color:var(--accent-secondary);}
   a:hover{color:var(--text-main);}
-  h1,h2,h3,h4{line-height:1.2;letter-spacing:-.015em;text-wrap:balance;}
+  h1,h2,h3,h4{line-height:1.2;letter-spacing:-.015em;text-wrap:pretty;}
   .logo{display:block;height:34px;width:auto;}
 
   header{padding:44px 0 30px;border-bottom:3px solid var(--accent-secondary);}
@@ -147,16 +147,11 @@
   </div>
   <h1>Is the $45 + $2.25/mi contract rate <span class="accent">profitable?</span></h1>
   
-  <div class="meta"><span>Preliminary estimate · Echo1 rides, Samsara GPS and invoices sent · First published 2026-11-03 · Rebuilt 2026-11-18</span></div>
+  <div class="meta"><span>Echo1 rides, Samsara GPS and invoices sent · First published 2026-11-03 · Rebuilt 2026-11-18</span></div>
 </header>
 
 <article>
 <style>article h2{margin-top:64px}article h2::before{content:"";display:block;width:56px;height:3px;border-radius:2px;background:#E7511F;margin-bottom:16px}article h2:first-of-type{margin-top:40px}article h2:first-of-type::before{display:none}@media (max-width:600px){.table-scroll table{min-width:0}.table-scroll td,.table-scroll th{padding-left:10px;padding-right:10px}}@media (max-width:420px){.table-scroll table{font-size:14px}.table-scroll td,.table-scroll th{padding-left:8px;padding-right:8px}}@media (max-width:340px){.table-scroll table{font-size:13px}.table-scroll td,.table-scroll th{padding-left:6px;padding-right:6px}}</style>
-
-<div style="border:3px solid #E7511F;border-radius:10px;padding:18px 22px;margin:8px 0 22px;background:rgba(231,81,31,0.12)">
-<div style="font-size:1.5em;font-weight:800;letter-spacing:0.02em;margin-bottom:8px">⚠ PRELIMINARY: NOT FULLY VERIFIED</div>
-<div style="font-size:1.1em;line-height:1.5">These figures are a November 18 working estimate and have not been through our normal checks. An AI reviewer has rechecked them; no person has yet. August and September billing is not yet reconciled to QuickBooks. Treat them as directional until confirmed.</div>
-</div>
 
 <h2>At $45, even the best-loaded contract loses money</h2>
 <p class="callout"><strong>Oceans is the best case at this rate: its riders share vans, its trips are short, and it pays two driver fees. It still loses about $16 a ride on loaded-mile billing, about $6.2k a month. Other $45 contracts lose about $77 a ride.</strong></p>
@@ -323,6 +318,8 @@
 <ul>
 <li><strong>4 embedded-driver fees</strong> a month instead of two.</li>
 <li><strong>$61 a ride</strong> instead of $45, with the same mileage rate and fees.</li>
+<li><strong>$4.90 a mile over 30</strong> instead of $2.25, keeping $45 a ride and the fees.</li>
+<li><strong>Mileage from mile 7</strong> instead of mile 30, keeping $45 a ride, $2.25 a mile and the fees.</li>
 <li><strong>Rides 17% cheaper to run</strong>, about $78 each with payroll taxes instead of $94, from fuller vans or shorter empty legs.</li>
 </ul>
 <h3>Billing empty miles would make Oceans profitable</h3>
@@ -376,6 +373,7 @@
 <h2>How the costs are measured</h2>
 <ul>
 <li><strong>Invoices.</strong> June 3017 ($39,793), July 3018 ($30,442), August ($41,048.50) and September ($24,547), fees included.</li>
+<li><strong>Billing not yet reconciled.</strong> August and September billing is taken from the invoices sent and is not yet reconciled to QuickBooks.</li>
 <li><strong>Rides.</strong> Every completed ride in Echo1, including the V1 history, on days a vehicle carried an Oceans or other $45 rider. That is 17,898 rides on 152 vehicles, October 2025 to October 2026.</li>
 <li><strong>Time and miles.</strong> Samsara GPS trips, grouped into shifts at idle gaps over 3 hours, plus 15 minutes at each end. Drivers cost $28 an hour, vans 72.5 cents a mile, and payroll taxes 20% of driver pay.</li>
 <li><strong>Charging rule.</strong> Each ride carries its own drive to pickup, pickup wait and drop-off handoff, from the driver&rsquo;s trip start to drop-off departure in the trip log. Time with riders aboard is split evenly among them. Empty time between two jobs is split evenly between the job just finished and the next one. Before the first job it goes to that ride, and after the last drop-off to that ride.</li>
@@ -390,7 +388,7 @@
 
 <footer>
   <p>Source: Echo1 production (read-only), Samsara GPS trips, Oceans invoices June to September 2026. Scripts: ridecare-main/docs/investigations/261103-cost-per-billable-mile/echo1.</p>
-  <p class="mono">Internal &middot; Pvragon &middot; built 2026-11-18</p>
+  <p class="mono">Internal &middot; Pvragon &middot; built 2026-11-19</p>
 </footer>
 
 </div>
