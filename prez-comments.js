@@ -312,7 +312,9 @@
     try {
       await ensureIdentity();
       const j = await api('POST', { action: 'create', page: PAGE, anchor: pendingAnchor, body: text });
-      compose.classList.remove('show'); document.getSelection().removeAllRanges(); openRail(); await load(); focusThread(j.thread.id, false); toast('Comment posted');
+      // Posting leaves the rail as it was (Jaime, 2026-11-20): the highlight, marker and header count update in place;
+      // the Comments button opens the rail when he wants it.
+      compose.classList.remove('show'); document.getSelection().removeAllRanges(); await load(); focusThread(j.thread.id, false); toast('Comment posted');
     } catch (e) { if (e.need !== 'identity') toast(e.status === 401 ? 'This page is locked — unlock it first' : e.message); }
   });
 
