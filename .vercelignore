@@ -1,0 +1,12 @@
+# Workspace foundation files (added 2026-11-27): agent instructions, project memory and indexes.
+# vercel.json serves the repo root ("outputDirectory": "."), so without this they would be public URLs.
+# None of these holds a served page; never list a folder that does.
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+/memory/
+/context/
+/registry/
+/decisions/
+/docs/
+/config/
