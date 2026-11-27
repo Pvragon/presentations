@@ -1,0 +1,19 @@
+template: registry-map
+version: 0.1.0
+summary: Which presentations trees are indexed and how; read by team-lib build_registry.py and build_index.py.
+created: '2026-11-27'
+last_updated: '2026-11-27'
+maintainer: rowan-anicca
+summary_budget_words: 60
+registries:
+  context:
+    shape: map
+    field: summary
+    derived: [path, version, summary]
+    exclude: ['**/index.md']
+    file: registry/context.yaml
+    key: context
+    globs:
+    - context/*.md
+    - context/*/*.md
+    index: context/index.md

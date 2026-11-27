@@ -1,1 +1,10 @@
 .vercel
+
+# --- workspace foundation (new_project.py) ---
+# Large ignored data lives ONCE in the main checkout; worktrees read it at
+# $(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/<path>, never copy it.
+.tmp/
+.claude/settings.local.json
+__pycache__/
+*.pyc
+.env
