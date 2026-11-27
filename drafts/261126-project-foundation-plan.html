@@ -148,54 +148,68 @@
   </div>
   <h1>Every project runs on the <span class="accent">workspace core</span></h1>
   
-  <div class="meta"><span>Version 0.1.0</span><span>Updated 2026-11-26</span></div>
+  <div class="meta"><span>Version 0.2.0</span><span>Updated 2026-11-26</span></div>
 </header>
 
 <article>
 <h2>Most project work runs without the full core today</h2>
 <p class="callout"><strong>Only 4 of 31 project folders load the full operating core.</strong> Deckwright, the two Mahjong repos and ridecare-main
-carry a generated <code>docs/OPERATING-CORE.md</code> (version 2.20.1, current). Three long-run projects carry lr5&rsquo;s shorter
-11k-character extract. Seven have hand-written instructions of their own without the core, and 17 have nothing, so
-their sessions and subagents get only the workspace root rules and whatever the global <code>~/.claude/CLAUDE.md</code> brings.</p>
+carry a generated core (version 2.20.1, current). Three long-run projects carry lr5&rsquo;s shorter 11k-character extract.
+Seven have hand-written instructions without the core, and 17 have nothing, so their sessions and subagents get
+only the workspace root rules and whatever the global <code>~/.claude/CLAUDE.md</code> brings. These counts leave out archive
+and worktree folders; counting those, 25 of 42 folders have no instructions.</p>
 <p>The gaps show up in the work. The long-run assessment of 2026-11-25 and 26 traced the recurring failures (efforts
 that lose track of their goal and of what they already did, self-made checks that certify wrong answers, drift into
 complicated solutions) partly to missing coherence rules. The long-run extract drops exactly those: context
 efficiency, session economics, &ldquo;does it need to exist&rdquo;, holistic fixing, and model routing.</p>
-<h2>The split into core and lens was right and only partly rolled out</h2>
+<h2>The split into core and project rules was right and only partly rolled out</h2>
 <p>The design from July holds. <code>my-lib/executions/build_operating_core.py</code> generates the layer-universal half of
-<code>my-lib/AGENTS.md</code> (principles A1 to A13, metadata, authoring standards) as <code>OPERATING-CORE.md</code>. A project&rsquo;s own
-rules go in <code>PROJECT-T3-LENS.md</code>. Root RULE 1 defines the same universal half. What was missed are the scenarios
-around it:</p>
+<code>my-lib/AGENTS.md</code> (principles A1 to A13, metadata, authoring standards). A project&rsquo;s own rules sit beside it in
+<code>PROJECT-T3-LENS.md</code>, and the generator writes both into the project&rsquo;s <code>CLAUDE.md</code> as one file. Root RULE 1
+defines the same universal half. What was missed are the scenarios around it:</p>
 <ul>
 <li><strong>Coverage.</strong> Nothing gives a new project the core, and nothing retrofitted the existing ones.</li>
-<li><strong>A second implementation.</strong> lr5 built <code>build_universal_rules.py</code> instead of calling the existing generator, and
-  its allow-list keeps only principles 10 to 13. Two copies of one capability is what principle 15 forbids.</li>
-<li><strong>The fallback link is broken.</strong> <code>projects/CLAUDE.md</code> points at a team-lib path that was renamed in July, and
-  <code>projects/</code> is not a git repo, so nothing noticed.</li>
+<li><strong>A second implementation with a different map.</strong> lr5 built <code>build_universal_rules.py</code> instead of calling the
+  existing generator. Its allow-list keeps principles 10 to 13 and drops the coherence rules, and it keeps the
+  production-data guardrails that <code>operating-core-map.yaml</code> excludes. Two maps of one rule set, which principle 15
+  forbids.</li>
+<li><strong>The fallback link is broken.</strong> <code>projects/CLAUDE.md</code> points at a team-lib path renamed in July, and <code>projects/</code>
+  is not a git repo, so nothing noticed. Root RULE 1 still says projects were left without instructions on purpose.</li>
 <li><strong>Lessons leave the project.</strong> The core&rsquo;s memory section sends every agent&rsquo;s writes to Rowan&rsquo;s memory folder.
   The three long-run pilot projects hold 0 memory files and 0 lenses after four runs.</li>
-<li><strong>Project lenses do not fire.</strong> The global lens hook reads only Rowan&rsquo;s lens folder.</li>
+<li><strong>Two lens setups.</strong> Ordinary sessions fire only Rowan&rsquo;s 23 lenses; lr5 projects fire their own through
+  per-project settings. Neither reaches the other&rsquo;s projects.</li>
 <li><strong>Every session loads Rowan&rsquo;s identity.</strong> The global <code>CLAUDE.md</code> imports <code>identity.md</code> into workers and
   subagents, so a card-value builder believes it is Rowan and inherits the Gmail and signature rules.</li>
 <li><strong>No check asked what actually loads.</strong> Every gap above stayed invisible for months.</li>
 </ul>
-<h2>One core and one generator, inherited by symlink</h2>
-<h3><span class="num">1</span>Keep one generator and retire the copies</h3>
-<p><code>build_operating_core.py</code> is the full implementation and stays. It graduates to team-lib (a move, per principle
-15). lr5&rsquo;s <code>build_universal_rules.py</code> and the lr5 <code>config/universal-rules.md</code> extracts are retired. The
-generated core gets one stable, versioned home in team-lib.</p>
-<h3><span class="num">2</span>Projects inherit the core through a symlink</h3>
-<p><code>projects/CLAUDE.md</code> becomes a symlink to the generated core. Every project, worktree and subagent under
-<code>projects/</code> then loads it by Claude Code&rsquo;s ancestor walk, with no per-project copy. The four per-project
-<code>OPERATING-CORE.md</code> copies are retired so no project loads the core twice.</p>
+<h2>One core, one map and one generator</h2>
+<h3><span class="num">1</span>Consolidate the generator and settle the map</h3>
+<p><code>build_operating_core.py</code> is the full implementation and stays; lr5&rsquo;s <code>build_universal_rules.py</code> is retired once
+lr5 workers have the core another way. One map decides what is universal, including whether the production-data
+guardrails belong. The generator gains a rules-only mode, so a project&rsquo;s own rules can be written without a copy
+of the core beside them.</p>
+<p>Moving the generator to team-lib makes it read Jaime&rsquo;s personal <code>my-lib/AGENTS.md</code>, so teammates would inherit
+personal rules. Where the universal rules live is Jaime&rsquo;s decision.</p>
+<h3><span class="num">2</span>Personal projects inherit by symlink, team repos keep the core in-repo</h3>
+<p>For projects only Jaime&rsquo;s machine runs, <code>projects/CLAUDE.md</code> becomes a symlink to the generated core. Every
+project, worktree and subagent under <code>projects/</code> then loads it by Claude Code&rsquo;s ancestor walk, and their
+per-project copies are retired. Team repos such as ridecare-main keep their in-repo core, because a teammate&rsquo;s
+machine has no <code>projects/CLAUDE.md</code>; the audit keeps those copies current.</p>
 <p>A symlink beats an <code>@</code> import here. Claude Code asks for a one-time approval the first time a <code>CLAUDE.md</code> imports
 a file from outside the project, and a headless <code>claude -p</code> run or a fresh worktree has nobody to approve it, so
-the import silently loads nothing. lr5&rsquo;s <code>trust-worktree</code> pre-records that approval for this reason. A symlink
-needs no approval. Its one weakness is a target that moves, which the audit below checks every night.</p>
-<h2>Project knowledge climbs the same ladder as Rowan&rsquo;s memory</h2>
-<p>Rowan&rsquo;s memory already has tiers: topic memories (T2, facts and lessons with their reasons, read on demand through
-an index), lenses (T3, situational rules that fire on a matching path, tool or command), and always-loaded surfaces
-(T4, the core, hooks and AGENTS.md). Projects get the same ladder.</p>
+the import silently loads nothing. lr5&rsquo;s <code>trust-worktree</code> pre-records that approval for this reason. Imports of
+files inside the project need no approval. The symlink&rsquo;s one weakness is a target that moves, which the audit
+checks.</p>
+<h3><span class="num">3</span>Measure what the core costs each agent before rollout</h3>
+<p>The full core is about 37,000 characters, and lr5 capped its extract at 12,400 to keep worker briefs small. Every
+subagent would load the full core, so its token cost per agent is measured before rollout and weighed against the
+token-discipline rule. If it is too heavy for workers, a worker gets the core by role, the same way lr5 slices
+packs, from the one map.</p>
+<h2>Project knowledge uses the same ladder as Rowan&rsquo;s memory</h2>
+<p>Rowan&rsquo;s memory has tiers: topic memories (T2, facts and lessons with their reasons, read through an index), lenses
+(T3, rules that fire on a matching path, tool or command) and always-loaded surfaces (T4, the core, hooks,
+AGENTS.md). Projects get the same ladder.</p>
 <div class="table-scroll"><table>
 <thead>
 <tr>
@@ -207,7 +221,7 @@ an index), lenses (T3, situational rules that fire on a matching path, tool or c
 <tbody>
 <tr>
 <td>T4 always loaded</td>
-<td>Core via symlink, project rules</td>
+<td>Core, project rules</td>
 <td>AGENTS.md, hooks</td>
 </tr>
 <tr>
@@ -227,78 +241,100 @@ an index), lenses (T3, situational rules that fire on a matching path, tool or c
 </tr>
 </tbody>
 </table></div>
-<h3><span class="num">3</span>A lesson lands where it is true</h3>
-<p>The test is one question: would this be true in a different project? If yes, it goes to Rowan&rsquo;s memory; if no, to
-the project&rsquo;s <code>memory/</code>. When unsure, it goes to the project, and the debrief or dream cycle promotes it later. A
-lesson that recurs inside a project is promoted to a project lens; one that holds across projects moves up to
-Rowan&rsquo;s lenses or the core. The worst case is a lesson that stays local for a while, which fails safe.</p>
-<h3><span class="num">4</span>One writer per project, using the tools that exist</h3>
-<p>Subagents hand lessons back in their final reports, and the session (or the long-run architect) writes them at the
-end of a step, so concurrent agents never clobber the index. <code>rerank_memory_index.py</code> already indexes a memory
-folder, and the session-debrief skill gains one rule: its memory subagent writes project lessons to the project&rsquo;s
-<code>memory/</code> when the session ran inside a project that has one.</p>
-<p>Project memory is committed to the project repo, so the secrets and PHI rules apply to every lesson. Lessons in a
-team repo such as ridecare-main become visible to the team. Project-specific memories already in Rowan&rsquo;s folder
+<h3><span class="num">4</span>Lessons are written automatically and promoted only by approval</h3>
+<p>A lesson lands where it is true. The test is one question: would this be true in a different project? If yes, it
+goes to Rowan&rsquo;s memory; if no, to the project&rsquo;s <code>memory/</code>; when unsure, to the project. Writing a lesson into T2 is
+automatic, at the end of a step or a debrief.</p>
+<p>Promotion is not. The memory model makes T2 to T3 and T3 to T4 &ldquo;always deliberate human action&rdquo;, because an
+automatic promotion turns one error into a lasting distortion. So tooling proposes: the debrief or the audit lists
+lessons that recur and suggests a project lens, or a move to Rowan&rsquo;s memory for lessons that hold across projects,
+and Jaime approves each one.</p>
+<h3><span class="num">5</span>seeded.yaml is the one path down</h3>
+<p>Upward promotion has a downward partner that already exists. An lr5 project&rsquo;s <code>memory/seeded.yaml</code> lists Rowan&rsquo;s
+lessons that apply to it by path (41 for card-value), filtered by role. That becomes the single way a project
+receives cross-project lessons: <code>new-project</code> generates it, and the project&rsquo;s <code>CLAUDE.md</code> imports the project&rsquo;s own
+memory index, which is inside the project and needs no approval. Once identity stops loading into workers, this is
+how they still see the cross-project lessons that matter to them.</p>
+<h3><span class="num">6</span>One writer per project, using the tools that exist</h3>
+<p>Subagents hand lessons back in their final reports, and the session or the long-run architect writes them, so
+concurrent agents never clobber the index. <code>rerank_memory_index.py</code> reaches a project&rsquo;s memory through
+<code>PVRAGON_AGENT_HOME</code>, which also redirects the lens and state folders, so a debrief that writes to Rowan&rsquo;s memory
+and a project&rsquo;s runs the rerank once for each. The session-debrief skill is edited in my-lib and copied to its
+team-lib twin, per that skill&rsquo;s own maintenance rule. A worktree finds its project by git root, not by folder path.</p>
+<p>Project memory is committed to the project repo, so the secrets and PHI rules apply to every lesson, and lessons
+in a team repo become visible to the team. Project-specific memories already in Rowan&rsquo;s folder
 stay there and move only when touched.</p>
-<h3><span class="num">5</span>Run state and central context stay separate</h3>
+<h3><span class="num">7</span>Run state and central context stay separate</h3>
 <p>The run ledger (progress, state, a digest of what changed since the last step) is rebuilt fresh every session and is
 disposable. Central context (what the product is, decisions with their reasons, lessons, domain facts and data
 meanings) persists on disk and is open to every subagent through the indexes. Anything worth keeping from the
-ledger is promoted into central context.</p>
-<h2>Project lenses must fire, and today they do not</h2>
-<p>The global lens hook, <code>team-lib/executions/inject_lens.py</code>, reads one folder: Rowan&rsquo;s 25 lenses. In ordinary
-sessions and subagents, nothing in a project&rsquo;s <code>lenses/</code> ever fires. <code>PROJECT-T3-LENS.md</code> is concatenated into the
-older projects&rsquo; <code>CLAUDE.md</code>, so it is always loaded: it behaves as T4 project rules, not as a triggered lens.</p>
-<p>The mechanism already supports projects. <code>inject_lens.py</code> takes <code>--lenses-dir</code>, and lr5 runs it a second time on
-the project&rsquo;s <code>lenses/</code> for its workers. The fix reuses that: the global hook also reads the <code>lenses/</code> folder of the
-project the session is in. <code>new-project</code> uses the existing lens format and frontmatter triggers unchanged, with
-<code>PROJECT-T3-LENS.md</code> kept as the always-loaded project rules and <code>lenses/</code> for rules that fire on a match.</p>
+ledger is proposed for central context.</p>
+<h2>One lens mechanism serves every project</h2>
+<p>lr5 projects already fire their own lenses: their <code>.claude/settings.json</code> runs <code>inject_lens.py --lenses-dir</code> on the
+project&rsquo;s <code>lenses/</code>. Ordinary sessions run the global hook, which reads only Rowan&rsquo;s folder. Widening the global
+hook to project folders would fire lr5 lenses twice, and because the hook skips a lens by name alone, a project lens
+that shares a name with one of Rowan&rsquo;s could be silently suppressed.</p>
+<p>The fix uses one mechanism for every project: the per-project hook entry that lr5 already writes, generated by
+<code>new-project</code>, with a separate state file per lens folder so names never collide. The global hook stays as it is.
+Renaming <code>PROJECT-T3-LENS.md</code> to <code>PROJECT-RULES.md</code> during adoption makes its tier honest, since it is always
+loaded.</p>
 <h2>Identity loads by role</h2>
 <p>Rowan&rsquo;s identity belongs in Rowan&rsquo;s sessions: the everpresent pane, the deep-work sessions, the dream cycle.
 Workers, builders and project subagents get the core and the project&rsquo;s context, not a name, a signature rule or
-Gmail rules. The change is in global configuration (<code>~/.claude/CLAUDE.md</code> imports <code>identity.md</code> today), so it is
-Jaime&rsquo;s decision.</p>
+Gmail rules. <code>~/.claude/CLAUDE.md</code> imports <code>identity.md</code> today, so the change is global configuration and Jaime&rsquo;s
+decision.</p>
 <h2>new-project builds the foundation and adopts old projects</h2>
-<h3><span class="num">6</span>One skill replaces three overlapping scaffolds</h3>
+<h3><span class="num">8</span>One skill replaces three overlapping scaffolds</h3>
 <p>Today <code>scaffold-project-docs</code> (team-lib) builds only <code>docs/</code>, <code>build_operating_core.py</code> (my-lib) generates the core,
 and lr5 carries its own copy of <code>scaffold_project_workspace.py</code> for memory, context, decisions and lenses. A single
-<code>new-project</code> skill absorbs all three. It creates the folder and git repo, a project <code>CLAUDE.md</code> and <code>AGENTS.md</code>
-holding only local rules, <code>PROJECT-T3-LENS.md</code>, <code>lenses/</code>, <code>memory/</code> with its index, <code>context/index.md</code>,
-<code>decisions/</code>, and a registry entry, then runs the audit. lr5 calls it instead of keeping its own scaffold.</p>
-<h3><span class="num">7</span>Adopt mode retrofits the 27 that need it</h3>
+<code>new-project</code> skill absorbs all three. It creates the folder and git repo, a project <code>CLAUDE.md</code> that imports its
+rules and memory index, <code>PROJECT-RULES.md</code>, <code>lenses/</code> with its hook entry, <code>memory/</code> with its index and
+<code>seeded.yaml</code>, <code>context/index.md</code>, <code>decisions/</code> and a registry entry, then runs the audit. lr5 calls it instead of
+keeping its own scaffold.</p>
+<h3><span class="num">9</span>Adopt mode retrofits the 27 that need it</h3>
 <p><code>new-project --adopt &lt;folder&gt;</code> brings an existing project to the same shape without touching its content: it adds
-what is missing, retires stale copies of the core, and reports anything it cannot place. It is how the 17 projects
-with nothing, the seven with their own instructions and the three on the lr5 extract get the foundation.</p>
+what is missing, retires stale copies of the core where the symlink covers them, and reports anything it cannot
+place. It is how the 17 projects with nothing, the seven with their own instructions and the three on the lr5
+extract get the foundation.</p>
 <h2>audit-project-infra keeps it from drifting</h2>
-<h3><span class="num">8</span>The audit runs nightly across every project</h3>
+<h3><span class="num">10</span>The audit runs nightly and probes only on change</h3>
 <p><code>audit-project-infra</code> does for projects what <code>layer_drift_scan</code>, <code>registry-conformance</code> and <code>self-check</code> do for
 my-lib and team-lib. Per project, it checks that:</p>
 <ul>
-<li>the core symlink resolves and its content hash matches the current generated core;</li>
-<li>no stale per-project copy of the core remains;</li>
-<li>the lens and memory indexes match their files;</li>
+<li>the core symlink resolves, or an in-repo core matches the current generated one;</li>
+<li>no stale copy of the core remains where the symlink covers it;</li>
+<li>the lens and memory indexes match their files, and <code>seeded.yaml</code> resolves;</li>
 <li>every memory has frontmatter and a reason, and nothing points into <code>.tmp</code>;</li>
 <li>identity is absent where the role says it should be;</li>
-<li>a probe session in the project actually loads the core, the project rules and the lens hook.</li>
+<li>one lens hook entry per lens folder, with its own state file.</li>
 </ul>
-<p>It runs nightly from the dream tick across every project and files findings to the inbox. Before it is trusted, it
-must fail on a deliberately broken project.</p>
-<h2>Order of work: consolidate, prove, then roll out</h2>
+<p>The file checks run nightly from the dream tick across every project. A probe session, which confirms what a real
+session loads, runs only on a project whose foundation changed, so the audit spends no tokens on quiet nights.
+Findings go to the inbox, and lens or promotion proposals go to Jaime. Before it is trusted, the audit must fail on
+a deliberately broken project.</p>
+<h2>Order of work: prove on one project before changing shared loading</h2>
 <ol>
-<li><strong>Consolidate.</strong> Graduate <code>build_operating_core.py</code> to team-lib, retire lr5&rsquo;s extract, and give the core one
-   stable home. No session&rsquo;s behaviour changes yet.</li>
-<li><strong>Build the audit first.</strong> Prove it fails on a broken project, then run it on all 31 to get the starting picture.</li>
-<li><strong>Pilot on deckwright.</strong> Point it at the shared core, add project lens firing, and route its lessons to its own
-   memory. Run a debrief, then give a fresh session a task the new lesson should change, and confirm it uses it.</li>
-<li><strong>Switch the fallback.</strong> Repoint <code>projects/CLAUDE.md</code> and retire the per-project copies (Jaime&rsquo;s go-ahead).</li>
-<li><strong>Build <code>new-project</code> and adopt the rest,</strong> with the audit run after each adoption.</li>
-<li><strong>Long-run inherits the foundation.</strong> The architect rebuild starts on projects that already have the core,
-   central context and working lenses.</li>
+<li><strong>Consolidate the generator.</strong> Settle the one map and add the rules-only mode. No session&rsquo;s loading changes;
+   lr5&rsquo;s extract stays until lr5 workers have the core another way.</li>
+<li><strong>Build the audit first.</strong> Prove it fails on a broken project, then run it on all 31 for the starting picture.</li>
+<li><strong>Measure the core&rsquo;s cost per agent,</strong> and decide whether workers get it whole or by role.</li>
+<li><strong>Pilot on deckwright, through its own <code>CLAUDE.md</code>.</strong> Regenerate its core from the shared map, add its lens hook
+   entry, route its lessons to its own memory and seed its <code>seeded.yaml</code>. Run a debrief, then give a fresh session a
+   task the new lesson should change, and confirm it uses it.</li>
+<li><strong>Switch the fallback</strong> for personal projects (Jaime&rsquo;s go-ahead), rewrite root RULE 1 to match, and retire their
+   per-project copies.</li>
+<li><strong>Build <code>new-project</code> and adopt the rest,</strong> running the audit after each adoption.</li>
+<li><strong>Long-run inherits the foundation.</strong> lr5 calls <code>new-project</code>, retires its extract, and the architect rebuild
+   starts on projects that already have the core, central context and working lenses.</li>
 </ol>
 <h2>Decisions for Jaime</h2>
 <ul>
-<li><strong>Switching <code>projects/CLAUDE.md</code> to the shared core.</strong> It changes what every project session loads.</li>
-<li><strong>Loading identity by role.</strong> It changes global configuration.</li>
+<li><strong>The fallback.</strong> Switch <code>projects/CLAUDE.md</code> to the shared core and rewrite root RULE 1. It changes what every
+  personal project session loads.</li>
+<li><strong>Identity by role.</strong> Stop loading <code>identity.md</code> into workers and subagents. It changes global configuration.</li>
+<li><strong>Where universal rules live.</strong> A team-lib generator reading <code>my-lib/AGENTS.md</code> passes personal rules to
+  teammates; the universal half may need its own home in team-lib.</li>
+<li><strong>The one map,</strong> including whether the production-data guardrails are universal.</li>
 <li><strong>Team-repo memory.</strong> Whether lessons for team repos such as ridecare-main live in the repo, where the team sees
   them, or in a private folder beside it.</li>
 </ul>
