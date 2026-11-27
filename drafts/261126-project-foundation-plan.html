@@ -148,7 +148,7 @@
   </div>
   <h1>Every project runs on the <span class="accent">workspace core</span></h1>
   
-  <div class="meta"><span>Version 0.3.1</span><span>Updated 2026-11-26</span></div>
+  <div class="meta"><span>Version 0.4.0</span><span>Updated 2026-11-26</span></div>
 </header>
 
 <article>
@@ -312,28 +312,57 @@ entry, then runs the audit.</p>
 what is missing, retires stale copies of the core where the symlink covers them, and reports anything it cannot
 place. It covers the 17 projects with nothing, the six with their own instructions (echo1 excluded), and the three
 on lr5&rsquo;s extract.</p>
-<h2>audit-project-infra keeps it from drifting</h2>
-<h3><span class="num">11</span>The audit runs nightly and probes only on change</h3>
-<p><code>audit-project-infra</code> does for projects what <code>layer_drift_scan</code>, <code>registry-conformance</code> and <code>self-check</code> do for
-my-lib and team-lib. Per project, it checks that:</p>
+<h2>One infrastructure audit keeps the system self-maintaining</h2>
+<p>ai-workspace maintains its own memory and file system without oversight, and projects must too. Project memory
+looked like it worked because every check asked whether things were consistent (the scaffold existed, the reader
+worked, the conformance check passed), and an empty memory folder passes all of them. The nightly cycle on the
+ai-workspace side has the same shape: memory hygiene, consolidation, layer drift, the registry and index rebuild,
+the workstream sweep and the rerank all check consistency, and the findings they file can sit unread (39 open, the
+oldest 15 days, on 2026-11-20). So the audit is one engine, <code>audit-infra</code>, run nightly over ai-workspace and every
+project alike, with four kinds of check and a closed loop.</p>
+<h3><span class="num">11</span>Structure: is everything where it should be</h3>
 <ul>
-<li>the core symlink resolves, or an in-repo core matches the current shared core;</li>
-<li>no stale copy of the core remains where the symlink covers it;</li>
-<li>the memory index matches its files, and every memory has frontmatter and a reason;</li>
-<li>nothing durable points into <code>.tmp</code>;</li>
-<li>personal-layer content (identity, chat voice) is absent from the shared core and from project sessions;</li>
-<li>every worktree sits under <code>projects/</code> and has no uncommitted memory when closed.</li>
+<li>The core symlink resolves, or an in-repo core matches the current shared core; no stale copy remains.</li>
+<li>Indexes and registries match their files; every memory has frontmatter and a reason.</li>
+<li>Nothing durable points into <code>.tmp</code>; personal-layer content is absent from the shared core and project sessions.</li>
+<li>Every worktree sits under <code>projects/</code>; a project created outside <code>new-project</code> is found and reported.</li>
 </ul>
-<p>The file checks run nightly from the dream tick across every project. A probe session, which confirms what a real
-session loads, runs only on a project whose foundation changed. Findings go to the inbox, and promotion proposals
-go to Jaime. echo1 is a declared exclusion. Before it is trusted, the audit must fail on a deliberately broken
-project.</p>
+<h3><span class="num">12</span>Flow: is the system doing its job</h3>
+<p>Measured from what is already on disk, git history and session transcripts:</p>
+<ul>
+<li><strong>Capture.</strong> Sessions worked in a project against lessons written there. Ten sessions and no lesson is a finding,
+  which would have caught card-value&rsquo;s empty memory within a week.</li>
+<li><strong>Use.</strong> Whether lessons are read again, through the same <code>access_count</code> and <code>last_accessed</code> fields Rowan&rsquo;s
+  memories carry. A lesson nobody reads means the index or the disclosure is not working.</li>
+<li><strong>Freshness.</strong> Whether the index was regenerated after the last memory change.</li>
+<li><strong>Promotion.</strong> Whether recurring lessons produced proposals, and whether those were decided.</li>
+</ul>
+<h3><span class="num">13</span>Principles: are the key rules followed where disk can show it</h3>
+<ul>
+<li>Files left in <code>/tmp</code> or the session scratchpad instead of <code>runtime/</code>.</li>
+<li><code>.tmp</code> files reused but never promoted (<code>tmp_promotion_report.py</code>).</li>
+<li>Working trees and worktrees left dirty for days, and uncommitted lessons.</li>
+<li>Session context sizes from the transcripts (session economics).</li>
+<li>After a change to a project&rsquo;s foundation, a probe session confirms the core and the project lens actually load.</li>
+</ul>
+<h3><span class="num">14</span>Proof: the audit must be able to fail</h3>
+<p>A permanent canary project, deliberately broken in every way the audit checks, runs with every nightly pass. It
+must produce findings every night; if it ever comes back clean, the audit itself is broken and that is the top
+finding. Each new check ships with a canary case that it catches.</p>
+<h3><span class="num">15</span>The loop closes without Jaime</h3>
+<ul>
+<li><strong>Deterministic fixes happen automatically,</strong> without review: regenerate indexes, rebuild a stale core copy,
+  repair a symlink, adopt a project that has no foundation.</li>
+<li><strong>Judgment findings go to one owner with a clock.</strong> The dream wake triages them daily; a finding that keeps aging
+  is raised, and its age is the signal.</li>
+<li><strong>Only decisions reach Jaime:</strong> promotion proposals and anything that changes shared behaviour.</li>
+</ul>
 <h2>Order of work: prove on one project before changing shared loading</h2>
 <ol>
 <li><strong>Split the core.</strong> Write the shared core and the personal layer, move the generator to team-lib, add the
    rules-only mode, and retire lr5&rsquo;s extract.</li>
-<li><strong>Build the audit first.</strong> Prove it fails on a broken project, then run it on every project for the starting
-   picture.</li>
+<li><strong>Build the audit first.</strong> Build the canary, prove every check fails on it, then run the audit on ai-workspace
+   and every project for the starting picture, and wire it into the nightly cycle.</li>
 <li><strong>Pilot on deckwright, through its own <code>CLAUDE.md</code>.</strong> Regenerate its core from the shared source and route its
    lessons to its own memory. Run a debrief, then give a fresh session a task the new lesson should change, and
    confirm it uses it. Run the same check inside a deckwright worktree, merge it, and confirm the lesson arrives.</li>
@@ -341,10 +370,24 @@ project.</p>
 <li><strong>Load identity by role,</strong> moving the <code>identity.md</code> import out of the global <code>CLAUDE.md</code>, and confirm with a probe
    that Rowan&rsquo;s sessions still load it and a project subagent does not.</li>
 <li><strong>Switch the fallback</strong> for personal projects, rewrite root RULE 1, and retire their per-project copies.</li>
-<li><strong>Build <code>new-project</code> and adopt the rest,</strong> running the audit after each adoption.</li>
+<li><strong>Build <code>new-project</code> and adopt the rest,</strong> running the audit after each adoption.
+   The audit&rsquo;s auto-adopt then covers any project created later by other means.</li>
 <li><strong>Long-run builds on the foundation.</strong> The architect rebuild starts on projects that already have the core,
    central context and working memory. lr5&rsquo;s current behaviour is not preserved for its own sake.</li>
 </ol>
+<h2>It works by default once built</h2>
+<p>Three things make the system hold without anyone thinking about it:</p>
+<ul>
+<li><strong>Inheritance is automatic.</strong> Any folder under <code>projects/</code> loads the shared core through the symlink, whoever
+  creates it and however, so the core never depends on someone running a skill.</li>
+<li><strong>Repair is automatic.</strong> The nightly audit regenerates what is generated, adopts projects that lack a foundation,
+  and fixes what is deterministic.</li>
+<li><strong>Failure is visible.</strong> The canary proves the audit still works every night, flow checks catch a system that is
+  present but idle, and aging findings rise until someone acts.</li>
+</ul>
+<p>The build is accepted when: the canary fails every check; deckwright shows a lesson captured, read by a later
+session, and carried through a worktree merge; and two weeks of nightly runs show captures in every active project
+with no finding older than its clock.</p>
 <h2>Decided on 2026-11-26</h2>
 <ul>
 <li>Chat voice, identity and Jaime&rsquo;s git specifics form a personal layer; the rest of the core is shared, including
@@ -356,6 +399,8 @@ project.</p>
 <li>Session-debrief keeps one live copy, in team-lib.</li>
 <li>Worktrees carry memory and context through git, with ignored data kept outside on purpose.</li>
 <li>lr5 compatibility is not a constraint; the core loads at its full size for now.</li>
+<li>One audit engine, <code>audit-infra</code>, covers ai-workspace and every project, with flow checks, a canary and automatic
+  deterministic repair.</li>
 <li>Lessons for team repos such as ridecare-main live in the repo, like every other project, and the team sees them. This can change later if it causes problems.</li>
 </ul>
 <h2>What loads in a long-run worker today</h2>
