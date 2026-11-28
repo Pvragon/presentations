@@ -691,40 +691,14 @@ reaches an instance through the memory slice, and lenses through their own hook,
   case for each check.</li>
 </ul>
 <h2>How each measured gap is closed</h2>
-<div class="table-scroll"><table>
-<thead>
-<tr>
-<th>FACTS gap</th>
-<th>Closed by</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1. Roles and domains are lr5-only; no domain pack; <code>context-packs.yaml</code> empty and unread</td>
-<td>One assembler for every L3; central packs; generated registry</td>
-</tr>
-<tr>
-<td>2. Rowan&rsquo;s whole index loads everywhere via 5,961 links; project lessons near empty</td>
-<td>Auto-memory off in projects and lr5 workers; <code>link.sh</code> limited to Rowan&rsquo;s homes; Rowan slice by domain. Agent subagents in Rowan&rsquo;s homes still inherit the full index</td>
-</tr>
-<tr>
-<td>3. Core delivery depends on cwd; dream wake has none; worktrees double-load or get my-lib</td>
-<td><code>agents/CLAUDE.md</code> link; adopt mode retires stale core copies; the audit flags worktrees under my-lib, which stay open</td>
-</tr>
-<tr>
-<td>4. Central context is never pushed</td>
-<td>Domain packs put index rows in front of L2 and L3</td>
-</tr>
-<tr>
-<td>5. Output style and echo reach <code>-p</code> children; personal layer and memory reach lr5; lens dedup may withhold lenses from subagents</td>
-<td>L3 launchers turn the style and auto-memory off; lens dedup re-keyed if the probe confirms the leak</td>
-</tr>
-<tr>
-<td>6. <code>EXAMPLE-lens.md</code> live; project skills unlinked; state files never pushed</td>
-<td>Example lens disabled; project skills listed in the project domain pack; L1 assembler pushes state</td>
-</tr>
-</tbody>
-</table></div>
+<ol>
+<li><strong>Roles and domains are lr5-only; no domain pack; <code>context-packs.yaml</code> empty and unread.</strong> Closed by: one assembler for every L3; central packs; generated registry.</li>
+<li><strong>Rowan&rsquo;s whole index loads everywhere via 5,961 links; project lessons near empty.</strong> Closed by: auto-memory off in projects and lr5 workers; <code>link.sh</code> limited to Rowan&rsquo;s homes; Rowan slice by domain. Agent subagents in Rowan&rsquo;s homes still inherit the full index.</li>
+<li><strong>Core delivery depends on cwd; dream wake has none; worktrees double-load or get my-lib.</strong> Closed by: <code>agents/CLAUDE.md</code> link; adopt mode retires stale core copies; the audit flags worktrees under my-lib, which stay open.</li>
+<li><strong>Central context is never pushed.</strong> Closed by: domain packs put index rows in front of L2 and L3.</li>
+<li><strong>Output style and echo reach <code>-p</code> children; personal layer and memory reach lr5; lens dedup may withhold lenses from subagents.</strong> Closed by: L3 launchers turn the style and auto-memory off; lens dedup re-keyed if the probe confirms the leak.</li>
+<li><strong><code>EXAMPLE-lens.md</code> live; project skills unlinked; state files never pushed.</strong> Closed by: example lens disabled; project skills listed in the project domain pack; L1 assembler pushes state.</li>
+</ol>
 <p>Two of these need a small change outside the assembler:</p>
 <ul>
 <li><strong>Lens dedup.</strong> <code>inject_lens.py</code> keys &ldquo;once per session&rdquo; on <code>session_id</code>. That a subagent shares its parent&rsquo;s
