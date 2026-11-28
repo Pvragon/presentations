@@ -148,7 +148,7 @@
   </div>
   <h1>How every instantiation of Rowan <span class="accent">loads context</span></h1>
   
-  <div class="meta"><span>Version 0.2.0</span><span>Updated 2026-11-28</span></div>
+  <div class="meta"><span>Version 0.2.1</span><span>Updated 2026-11-28</span></div>
 </header>
 
 <article>
@@ -588,8 +588,10 @@ cross-project. No scope tag is added. Within a pool, level, role and domain pick
 <code>MEMORY.md</code> loads in every project, worktree, subagent and lr5 worker, and an lr5 builder gets both its curated slot
 and the whole index (FACTS gap 2). The change:</p>
 <ol>
-<li>Every project sets <code>autoMemoryEnabled: false</code> in its tracked <code>.claude/settings.json</code>. <code>new-project</code> writes it for
-   new projects and adopt mode writes it for existing ones, so worktrees carry it through git.</li>
+<li>Every personal project sets <code>autoMemoryEnabled: false</code> in its tracked <code>.claude/settings.json</code>. <code>new-project</code>
+   writes it for new projects and adopt mode writes it for existing ones, so worktrees carry it through git. The three
+   team repos get it in their untracked <code>.claude/settings.local.json</code>, where <code>audit_infra.py</code> already writes
+   <code>claudeMdExcludes</code>, so teammates&rsquo; sessions are untouched.</li>
 <li>L3 launchers (lr5 and other headless children) set <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY</code>, which covers workers whose
    settings sources exclude the project file.</li>
 <li><code>link.sh</code> links Rowan&rsquo;s memory only for slugs whose path is one of Rowan&rsquo;s homes: the workspace root, <code>my-lib/</code>,
@@ -598,9 +600,8 @@ and the whole index (FACTS gap 2). The change:</p>
    <code>memory/MEMORY.md</code>. That works in worktrees (the branch&rsquo;s copy), and on a teammate&rsquo;s machine.</li>
 <li>Rowan&rsquo;s cross-project lessons reach project work as the assembler&rsquo;s Rowan slice, chosen by the project&rsquo;s domains.</li>
 </ol>
-<p>Both switches are unprobed. Step 1 tests each one; the fallback is an unlinked slug, which
-loads an empty index. In the three team repos the tracked setting also turns auto-memory off for teammates, so it
-lands there through each repo&rsquo;s own review flow.</p>
+<p>Both switches are unprobed. Step 1 tests each one; the fallback for both is an unlinked slug, which step 1 also
+probes (row 8 of the probe table).</p>
 <h3>New memories carry tags; older ones are tagged as they are read</h3>
 <p><code>roles:</code> and <code>domains:</code> are required only on memory files created after the cutover. <code>session-debrief</code>, which
 writes memories, gains both fields and fills them when it writes a lesson, with <code>[any]</code> as an explicit value. A new
@@ -707,7 +708,7 @@ reaches an instance through the memory slice, and lenses through their own hook,
 <li><strong>Project skills.</strong> Project <code>skills/</code> folders stay unlinked from <code>~/.claude/skills/</code> (the 11/26 plan keeps projects
   lean), and the project&rsquo;s domain pack lists them as index rows, so a thread in the project sees them without search.</li>
 </ul>
-<h2>Seven facts wait on the step-1 probe</h2>
+<h2>Eight facts wait on the step-1 probe</h2>
 <p>Each fact below is either a Claude Code behaviour seen only in the binary&rsquo;s strings or a claim FACTS does not
 measure, with the mechanism that replaces it if the probe fails.</p>
 <div class="table-scroll"><table>
@@ -722,12 +723,12 @@ measure, with the mechanism that replaces it if the probe fails.</p>
 <tr>
 <td><code>autoMemoryEnabled: false</code> in tracked <code>.claude/settings.json</code> stops auto-memory</td>
 <td>Unprobed, binary strings</td>
-<td>Leave the project slug unlinked, so auto-memory finds an empty index</td>
+<td>Leave the project slug unlinked (row 8)</td>
 </tr>
 <tr>
 <td><code>CLAUDE_CODE_DISABLE_AUTO_MEMORY</code> stops auto-memory for an lr5 worker</td>
 <td>Unprobed, binary strings</td>
-<td>lr5 launches from a cwd whose slug is unlinked</td>
+<td>lr5 launches from a cwd whose slug is unlinked (row 8)</td>
 </tr>
 <tr>
 <td><code>SubagentStart</code> hook returns <code>additionalContext</code> to an Agent subagent</td>
@@ -753,6 +754,11 @@ measure, with the mechanism that replaces it if the probe fails.</p>
 <td>Lens dedup withholds a parent&rsquo;s lens from its subagent</td>
 <td>Inferred (FACTS M4)</td>
 <td>No re-key; dedup stays on <code>session_id</code></td>
+</tr>
+<tr>
+<td>An unlinked auto-memory slug loads an empty index, and a write there lands in the default folder under the protected <code>~/.claude/</code> tree, which prompts</td>
+<td>Unprobed</td>
+<td><code>link.sh</code> links non-Rowan slugs to one empty folder outside <code>~/.claude/</code>; the audit reports any file written there</td>
 </tr>
 </tbody>
 </table></div>
@@ -797,7 +803,7 @@ pack fits that rule.</p>
 <h2>Build order: probe, assembler, vocabulary, packs, wiring, audit</h2>
 <p>The build runs in a fresh session, and each step ends with a probe that shows what actually loaded.</p>
 <ol>
-<li><strong>Probe the seven facts</strong> in the table above, each with a negative control, and switch to the named fallback for
+<li><strong>Probe the eight facts</strong> in the table above, each with a negative control, and switch to the named fallback for
    any that fails.</li>
 <li><strong>Build the assembler and its daily record,</strong> with a self-check holding a known answer for each level, role and
    domain. Add the <code>slices:</code> map to <code>identity.md</code>; the self-check fails on a heading that matches no section.
@@ -807,7 +813,7 @@ pack fits that rule.</p>
 <li><strong>Move the lr5 role packs and write the first domain packs;</strong> make <code>context-packs.yaml</code> generated.</li>
 <li><strong>Wire the callers</strong> and retire <code>identity_by_role.py</code> in the same step: the SessionStart hook, the SubagentStart
    hook (or the parent fallback), and <code>briefs.py</code>. Write <code>autoMemoryEnabled: false</code> through <code>new-project</code> and adopt
-   mode, set <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY</code> in L3 launchers, limit <code>link.sh</code> to Rowan&rsquo;s homes, add
+   mode (tracked settings in personal projects, <code>settings.local.json</code> in team repos), set <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY</code> in L3 launchers, limit <code>link.sh</code> to Rowan&rsquo;s homes, add
    <code>agents/CLAUDE.md</code>, re-key lens dedup if step 1 confirmed the leak, and turn the output style off in L3 launchers.</li>
 <li><strong>Extend <code>audit-infra</code></strong> with the assembly checks, the untagged-new-memory check and record pruning, and their
    canary cases.</li>
